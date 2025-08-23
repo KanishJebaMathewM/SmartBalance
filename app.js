@@ -5884,8 +5884,10 @@ class WorkLifeBalanceApp {
             mealsForDate.filter(meal => meal.id !== skipMealId) :
             mealsForDate;
 
-        if (existingMeals.length >= 4) {
-            Utils.showNotification('Maximum 4 meals per day allowed (breakfast, lunch, snack, dinner)', 'error');
+        // Allow unlimited meals - users can add as many custom meal types as they want
+        // Reasonable limit to prevent excessive entries
+        if (existingMeals.length >= 10) {
+            Utils.showNotification('Maximum 10 meals per day allowed for reasonable tracking', 'error');
             return false;
         }
 
