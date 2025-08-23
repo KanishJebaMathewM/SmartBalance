@@ -72,7 +72,7 @@
                     </div>
                     
                     <div class="widget food-widget">
-                        <h3>���� Today's Meal</h3>
+                        <h3>��� Today's Meal</h3>
                         <div class="widget-content">
                             <div id="mealSuggestion">Healthy Oats Bowl</div>
                             <div class="stat-label">Suggested</div>
@@ -622,7 +622,7 @@
                             <div class="form-group">
                                 <label for="incomeSource">Primary Income Source</label>
                                 <select id="incomeSource">
-                                    <option value="salary">💼 Salary</option>
+                                    <option value="salary">��� Salary</option>
                                     <option value="freelance">💻 Freelance</option>
                                     <option value="business">🏢 Business</option>
                                     <option value="investment">📈 Investment</option>
@@ -1425,7 +1425,11 @@
             <section id="habits" class="section">
                 <div class="section-header">
                     <h1>🎯 Habits & Goals Tracker</h1>
-                    <button class="btn-primary" id="addHabitBtn">+ Add Habit</button>
+                    <div class="header-actions">
+                        <button class="btn-secondary export-btn" data-section="habits" data-format="csv">📊 Export CSV</button>
+                        <button class="btn-secondary export-btn" data-section="habits" data-format="json">📄 Export JSON</button>
+                        <button class="btn-primary" id="addHabitBtn">+ Add Habit</button>
+                    </div>
                 </div>
 
                 <!-- Habit Tracking Stats -->
