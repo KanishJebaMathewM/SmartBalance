@@ -3890,19 +3890,33 @@ class WorkLifeBalanceApp {
 
         if (!badgesList) return;
 
-        const badgeElements = badgesList.querySelectorAll('.badge');
-        badgeElements.forEach((badge, index) => {
-            const badgeNames = ['firstWorkout', 'sevenDayStreak', 'consistencyKing'];
-            const badgeName = badgeNames[index];
+        const badgeElements = badgesList.querySelectorAll('.badge[data-badge]');
+        badgeElements.forEach(badge => {
+            const badgeName = badge.dataset.badge;
 
             if (badges[badgeName]) {
                 badge.classList.remove('locked');
                 badge.classList.add('unlocked');
+                badge.title = 'Badge Unlocked! 🎉';
             } else {
                 badge.classList.add('locked');
                 badge.classList.remove('unlocked');
+                badge.title = 'Badge Locked - Keep working to unlock!';
             }
         });
+
+        // Update badge count in section header
+        this.updateBadgeCount(badges);
+    }
+
+    updateBadgeCount(badges) {
+        const unlockedCount = Object.values(badges).filter(Boolean).length;
+        const totalCount = Object.keys(badges).length;
+
+        const badgesSection = document.querySelector('.badges-section h3');
+        if (badgesSection) {
+            badgesSection.textContent = `Achievement Badges (${unlockedCount}/${totalCount})`;
+        }
     }
 
     markWorkout() {
