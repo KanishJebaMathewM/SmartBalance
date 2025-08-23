@@ -5328,8 +5328,16 @@ class WorkLifeBalanceApp {
             } else {
                 contextMessage = 'Late lunch option';
             }
+        } else if (nextMealType === 'snack') {
+            if (hour < 14) {
+                contextMessage = 'Plan afternoon snack';
+            } else if (hour < 17) {
+                contextMessage = 'Perfect snack time';
+            } else {
+                contextMessage = 'Evening snack option';
+            }
         } else if (nextMealType === 'dinner') {
-            if (hour < 17) {
+            if (hour < 18) {
                 contextMessage = 'Plan tonight\'s dinner';
             } else if (hour < 20) {
                 contextMessage = 'Dinner time';
