@@ -2349,7 +2349,7 @@ class WorkLifeBalanceApp {
         const icons = {
             food: '🍕',
             bills: '📧',
-            shopping: '��️',
+            shopping: '🛍️',
             travel: '✈���',
             entertainment: '🎬',
             healthcare: '🏥',
@@ -3677,7 +3677,7 @@ class WorkLifeBalanceApp {
             'entertainment': '🎬',
             'education': '📚',
             'fitness': '💪',
-            'subscriptions': '����',
+            'subscriptions': '📺',
             'groceries': '🛒',
             'clothing': '👕',
             'healthcare': '🏥',
@@ -5303,6 +5303,19 @@ class WorkLifeBalanceApp {
         };
 
         return mealSuggestions[mealType] || [];
+    }
+
+    generateFallbackSuggestions(mealType) {
+        // Generic meal suggestions for custom meal types
+        const fallbackSuggestions = [
+            { name: `Custom ${mealType} - Rice Bowl`, calories: 250, estimatedHomeCost: 30, estimatedHotelCost: 100 },
+            { name: `Custom ${mealType} - Chapati Meal`, calories: 220, estimatedHomeCost: 25, estimatedHotelCost: 90 },
+            { name: `Custom ${mealType} - Vegetable Curry`, calories: 180, estimatedHomeCost: 35, estimatedHotelCost: 120 },
+            { name: `Custom ${mealType} - Mixed Salad`, calories: 150, estimatedHomeCost: 20, estimatedHotelCost: 80 },
+            { name: `Custom ${mealType} - Soup & Bread`, calories: 200, estimatedHomeCost: 25, estimatedHotelCost: 95 }
+        ];
+
+        return fallbackSuggestions;
     }
 
     showMealSelection(suggestion) {
