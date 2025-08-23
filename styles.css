@@ -7432,9 +7432,7 @@ body.dark-mode {
     animation: fadeInUp 0.3s ease;
 }
 
-.calendar-day:hover {
-    transform: scale(1.02);
-}
+/* Removed calendar hover transform effect */
 
 .insight-item:hover {
     transform: translateY(-2px);
