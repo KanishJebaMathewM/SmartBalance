@@ -215,7 +215,12 @@ class Storage {
             darkMode: false,
             userName: 'User',
             savingsGoal: 10000,
-            dailyCalorieGoal: 2000
+            dailyCalorieGoal: 2000,
+            categoryBudgets: {},
+            savingsGoalDescription: 'Build your emergency fund',
+            currency: 'INR',
+            monthlyIncomeGoal: 50000,
+            expenseCategories: ['food', 'bills', 'shopping', 'travel', 'entertainment', 'healthcare', 'education', 'other']
         };
     }
 
