@@ -2758,7 +2758,7 @@ class WorkLifeBalanceApp {
                 <input type="checkbox" class="habit-checkbox" ${habit.completed ? 'checked' : ''} readonly>
                 <div class="habit-info">
                     <h4>${Utils.sanitizeInput(habit.name)}</h4>
-                    <p>${habit.target || 'Complete once'} • ${habit.category}</p>
+                    <p>${habit.target || 'Complete once'} �� ${habit.category}</p>
                 </div>
                 <div class="habit-streak">
                     <div class="streak-number">${habit.currentStreak || 0}🔥</div>
@@ -3678,7 +3678,7 @@ class WorkLifeBalanceApp {
             'education': '📚',
             'fitness': '💪',
             'subscriptions': '📺',
-            'groceries': '🛒',
+            'groceries': '��',
             'clothing': '👕',
             'healthcare': '🏥',
             'reminder': '⏰',
@@ -4310,26 +4310,61 @@ class WorkLifeBalanceApp {
     }
 
     updateNutritionStats() {
-        const savedMeals = JSON.parse(localStorage.getItem('daily_meals') || '[]');
-        const last7Days = savedMeals.filter(meal => {
+        const allMeals = window.storage.getMeals();
+        const last7Days = allMeals.filter(meal => {
             const mealDate = new Date(meal.date);
             const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             return mealDate >= weekAgo;
         });
 
+        const last14Days = allMeals.filter(meal => {
+            const mealDate = new Date(meal.date);
+            const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            return mealDate >= twoWeeksAgo && mealDate < weekAgo;
+        });
+
         // Calculate weekly calories
         const weeklyCalories = last7Days.reduce((sum, meal) => sum + (meal.calories || 0), 0);
+        const previousWeekCalories = last14Days.reduce((sum, meal) => sum + (meal.calories || 0), 0);
 
-        // Calculate average meal cost
-        const avgCost = last7Days.length > 0 ?
-            last7Days.reduce((sum, meal) => sum + (meal.cost || 0), 0) / last7Days.length : 0;
+        // Calculate average meal cost (combine ingredient cost for home meals and meal cost for hotel meals)
+        const weeklyMealCosts = last7Days.map(meal => {
+            if (meal.source === 'home') {
+                return meal.ingredientCost || 0;
+            } else {
+                return (meal.mealCost || 0) + (meal.deliveryCharges || 0);
+            }
+        });
+        const avgCost = weeklyMealCosts.length > 0 ?
+            weeklyMealCosts.reduce((sum, cost) => sum + cost, 0) / weeklyMealCosts.length : 0;
 
-        // Count home cooking days (unique dates)
-        const cookingDays = new Set(last7Days.map(meal => meal.date)).size;
+        const previousWeekMealCosts = last14Days.map(meal => {
+            if (meal.source === 'home') {
+                return meal.ingredientCost || 0;
+            } else {
+                return (meal.mealCost || 0) + (meal.deliveryCharges || 0);
+            }
+        });
+        const previousAvgCost = previousWeekMealCosts.length > 0 ?
+            previousWeekMealCosts.reduce((sum, cost) => sum + cost, 0) / previousWeekMealCosts.length : avgCost;
+
+        // Count home cooking days (unique dates with home-cooked meals)
+        const homeCookingDates = new Set(
+            last7Days.filter(meal => meal.source === 'home').map(meal => meal.date)
+        ).size;
+
+        const previousHomeCookingDates = new Set(
+            last14Days.filter(meal => meal.source === 'home').map(meal => meal.date)
+        ).size;
 
         // Count South Indian meals
         const southIndianMeals = last7Days.filter(meal =>
-            Utils.isSouthIndianFood(meal.name)
+            this.isSouthIndianFood(meal.name)
+        ).length;
+
+        const previousSouthIndianMeals = last14Days.filter(meal =>
+            this.isSouthIndianFood(meal.name)
         ).length;
 
         // Update UI
@@ -4339,7 +4374,6 @@ class WorkLifeBalanceApp {
         const southIndianMealsEl = document.getElementById('southIndianMeals');
 
         if (weeklyCaloriesEl) {
-            Utils.animateNumber(weeklyCaloriesEl, 0, weeklyCalories);
             weeklyCaloriesEl.textContent = weeklyCalories.toLocaleString();
         }
 
@@ -4348,30 +4382,60 @@ class WorkLifeBalanceApp {
         }
 
         if (homeCookingDaysEl) {
-            homeCookingDaysEl.textContent = `${cookingDays}/7`;
+            homeCookingDaysEl.textContent = `${homeCookingDates}/7`;
         }
 
         if (southIndianMealsEl) {
             southIndianMealsEl.textContent = southIndianMeals;
         }
 
-        // Update changes (mock data for demo)
-        this.updateNutritionChanges();
+        // Update changes with real comparisons
+        this.updateNutritionChanges({
+            calories: { current: weeklyCalories, previous: previousWeekCalories },
+            cost: { current: avgCost, previous: previousAvgCost },
+            cooking: { current: homeCookingDates, previous: previousHomeCookingDates },
+            southIndian: { current: southIndianMeals, previous: previousSouthIndianMeals }
+        });
     }
 
-    updateNutritionChanges() {
+    updateNutritionChanges(data) {
+        if (!data) return;
+
         const changes = [
-            { id: 'calorieChange', value: '+5%', positive: true },
-            { id: 'costChange', value: '-8%', positive: false },
-            { id: 'cookingChange', value: '+2', positive: true },
-            { id: 'southIndianChange', value: '+4', positive: true }
+            {
+                id: 'calorieChange',
+                value: this.calculatePercentageChange(data.calories.current, data.calories.previous),
+                isPercentage: true
+            },
+            {
+                id: 'costChange',
+                value: this.calculatePercentageChange(data.cost.current, data.cost.previous),
+                isPercentage: true
+            },
+            {
+                id: 'cookingChange',
+                value: data.cooking.current - data.cooking.previous,
+                isPercentage: false
+            },
+            {
+                id: 'southIndianChange',
+                value: data.southIndian.current - data.southIndian.previous,
+                isPercentage: false
+            }
         ];
 
         changes.forEach(change => {
             const element = document.getElementById(change.id);
             if (element) {
-                element.textContent = change.value;
-                element.className = `nutrition-change ${change.positive ? 'positive' : 'negative'}`;
+                let displayValue;
+                if (change.isPercentage) {
+                    displayValue = change.value > 0 ? `+${change.value}%` : `${change.value}%`;
+                } else {
+                    displayValue = change.value > 0 ? `+${change.value}` : `${change.value}`;
+                }
+
+                element.textContent = displayValue;
+                element.className = `nutrition-change ${change.value >= 0 ? 'positive' : 'negative'}`;
             }
         });
     }
@@ -4528,9 +4592,9 @@ class WorkLifeBalanceApp {
         const insightsList = document.getElementById('foodInsightsList');
         if (!insightsList) return;
 
-        // Generate dynamic insights based on data
-        const savedMeals = JSON.parse(localStorage.getItem('daily_meals') || '[]');
-        const insights = this.calculateFoodInsights(savedMeals);
+        // Generate dynamic insights based on actual meal data
+        const allMeals = window.storage.getMeals();
+        const insights = this.calculateFoodInsights(allMeals);
 
         insightsList.innerHTML = insights.map(insight => `
             <div class="insight-card">
@@ -4545,47 +4609,77 @@ class WorkLifeBalanceApp {
 
     calculateFoodInsights(meals) {
         const insights = [];
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const recentMeals = meals.filter(meal => new Date(meal.date) >= weekAgo);
+
+        if (recentMeals.length === 0) {
+            insights.push({
+                icon: '🍽️',
+                title: 'Start Your Food Journey',
+                description: 'Add your first meal to begin tracking your nutrition and getting personalized insights!'
+            });
+            return insights;
+        }
 
         // South Indian preference
-        const southIndianCount = meals.filter(meal => Utils.isSouthIndianFood(meal.name)).length;
-        const totalMeals = meals.length;
+        const southIndianCount = recentMeals.filter(meal => this.isSouthIndianFood(meal.name)).length;
+        const totalMeals = recentMeals.length;
 
-        if (southIndianCount > totalMeals * 0.6) {
+        if (southIndianCount > 0) {
+            const percentage = Math.round((southIndianCount / totalMeals) * 100);
             insights.push({
                 icon: '🥥',
                 title: 'South Indian Preference',
-                description: `You've enjoyed ${southIndianCount} South Indian meals recently. Your taste for traditional flavors is evident!`
+                description: `You've enjoyed ${southIndianCount} South Indian meals this week (${percentage}% of your meals). Your taste for traditional flavors is evident!`
             });
         }
 
-        // Cost efficiency
-        const avgCost = meals.reduce((sum, meal) => sum + (meal.cost || 0), 0) / Math.max(meals.length, 1);
-        if (avgCost < 50) {
+        // Cost analysis
+        const homeMeals = recentMeals.filter(meal => meal.source === 'home');
+        const hotelMeals = recentMeals.filter(meal => meal.source === 'hotel');
+
+        if (homeMeals.length > 0 && hotelMeals.length > 0) {
+            const homeAvgCost = homeMeals.reduce((sum, meal) => sum + (meal.ingredientCost || 0), 0) / homeMeals.length;
+            const hotelAvgCost = hotelMeals.reduce((sum, meal) => sum + ((meal.mealCost || 0) + (meal.deliveryCharges || 0)), 0) / hotelMeals.length;
+            const savings = Math.round((hotelAvgCost - homeAvgCost) * homeMeals.length);
+
             insights.push({
                 icon: '💰',
-                title: 'Budget-Friendly Eating',
-                description: `Your average meal cost of ₹${Math.round(avgCost)} shows excellent budget management. Keep it up!`
+                title: 'Cost Savings',
+                description: `Cooking at home saved you approximately ₹${savings} this week compared to ordering food delivery.`
+            });
+        } else if (homeMeals.length > hotelMeals.length) {
+            insights.push({
+                icon: '🏠',
+                title: 'Home Cooking Champion',
+                description: `Great job! You cooked ${homeMeals.length} meals at home this week. This is excellent for both your health and wallet.`
             });
         }
 
-        // Calorie balance
-        const avgCalories = meals.reduce((sum, meal) => sum + (meal.calories || 0), 0) / Math.max(meals.length, 1);
-        if (avgCalories >= 2000 && avgCalories <= 2200) {
-            insights.push({
-                icon: '🔥',
-                title: 'Well-Balanced Calories',
-                description: `Your daily average of ${Math.round(avgCalories)} calories is perfectly balanced for a healthy lifestyle.`
-            });
-        }
+        // Calorie tracking
+        const totalCalories = recentMeals.reduce((sum, meal) => sum + (meal.calories || 0), 0);
+        const avgDailyCalories = Math.round(totalCalories / 7);
 
-        // Consistency
-        const uniqueDays = new Set(meals.map(meal => meal.date)).size;
-        if (uniqueDays >= 5) {
-            insights.push({
-                icon: '🍽️',
-                title: 'Consistent Meal Planning',
-                description: `You've planned meals for ${uniqueDays} days recently. Great consistency in your food routine!`
-            });
+        if (totalCalories > 0) {
+            if (avgDailyCalories >= 1800 && avgDailyCalories <= 2400) {
+                insights.push({
+                    icon: '🔥',
+                    title: 'Calorie Balance',
+                    description: `Your daily average of ${avgDailyCalories} calories is well-balanced for a healthy lifestyle. Total this week: ${totalCalories.toLocaleString()} calories.`
+                });
+            } else if (avgDailyCalories < 1800) {
+                insights.push({
+                    icon: '⚡',
+                    title: 'Low Calorie Intake',
+                    description: `Your daily average of ${avgDailyCalories} calories seems low. Consider adding more nutritious meals to meet your energy needs.`
+                });
+            } else {
+                insights.push({
+                    icon: '🍽️',
+                    title: 'High Calorie Intake',
+                    description: `Your daily average of ${avgDailyCalories} calories is quite high. Consider balancing with lighter, more nutritious options.`
+                });
+            }
         }
 
         return insights.slice(0, 3); // Show only top 3 insights
