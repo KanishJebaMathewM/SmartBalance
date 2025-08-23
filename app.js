@@ -6063,6 +6063,33 @@ class WorkLifeBalanceApp {
     loadHabitsSection() {
         this.calculateLifeBalanceScore();
         this.loadOverallInsights();
+
+        // Ensure overall insights tab is shown by default
+        this.showHabitTab('overall-insights');
+    }
+
+    showHabitTab(tabName) {
+        // Hide all tab contents
+        document.querySelectorAll('#habits .tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Hide all tab buttons
+        document.querySelectorAll('#habits .tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected tab content
+        const selectedTab = document.getElementById(tabName);
+        if (selectedTab) {
+            selectedTab.classList.add('active');
+        }
+
+        // Show selected tab button
+        const selectedBtn = document.querySelector(`#habits .tab-btn[data-tab="${tabName}"]`);
+        if (selectedBtn) {
+            selectedBtn.classList.add('active');
+        }
     }
 
     // Life Balance Score Calculation
