@@ -3659,7 +3659,7 @@ class WorkLifeBalanceApp {
             viewToggleBtn.onclick = () => {
                 const newTab = this.currentExpenseTab === 'calendar' ? 'overview' : 'calendar';
                 this.switchExpenseTab(newTab);
-                viewToggleBtn.textContent = newTab === 'calendar' ? '📊 Overview' : '📅 Calendar View';
+                viewToggleBtn.textContent = newTab === 'calendar' ? '��� Overview' : '📅 Calendar View';
             };
         }
     }
@@ -3668,7 +3668,7 @@ class WorkLifeBalanceApp {
     getCategoryIcon(category) {
         const icons = {
             'work': '💼',
-            'personal': '👤',
+            'personal': '����',
             'health': '🏥',
             'food': '🍕',
             'bills': '📧',
@@ -4563,11 +4563,25 @@ class WorkLifeBalanceApp {
         // Clear canvas
         ctx.clearRect(0, 0, width, height);
 
-        // Data for home cooking vs delivery
+        // Get real cost data
+        const allMeals = window.storage.getMeals();
+        const costData = this.getMealCostComparisonData(allMeals);
+
+        if (costData.homeCost === 0 && costData.hotelCost === 0) {
+            // Show empty state
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '16px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('No cost data available', width / 2, height / 2);
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillText('Add meals with costs to see comparison', width / 2, height / 2 + 25);
+            return;
+        }
+
         const data = [
-            { label: 'Home Cooking', value: 45, color: '#10b981' },
-            { label: 'Delivery', value: 180, color: '#ef4444' }
-        ];
+            { label: 'Home Cooking', value: costData.homeCost, color: '#10b981' },
+            { label: 'Hotel/Delivery', value: costData.hotelCost, color: '#ef4444' }
+        ].filter(item => item.value > 0); // Only show categories with data
 
         const maxValue = Math.max(...data.map(d => d.value));
         const barWidth = 80;
