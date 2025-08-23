@@ -466,12 +466,15 @@ class WorkLifeBalanceApp {
         
         const weeklyWorkouts = workouts.filter(w => new Date(w.createdAt) >= weekAgo);
         
-        const stressedDays = moods.filter(m => 
-            new Date(m.date) >= weekAgo && 
+        const stressedDays = moods.filter(m =>
+            new Date(m.date) >= weekAgo &&
             ['stressed', 'very-stressed'].includes(m.mood)
         ).length;
 
-        const summaryText = `You completed ${taskPercentage}% of tasks, spent ${Utils.formatCurrency(weeklyExpenseAmount)}, did ${weeklyWorkouts.length} workouts, stress was high on ${stressedDays} days.`;
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        const homeCookingPercentage = weeklyStats.totalMeals > 0 ? Math.round((weeklyStats.homeMeals / weeklyStats.totalMeals) * 100) : 0;
+
+        const summaryText = `You completed ${taskPercentage}% of tasks, spent ${Utils.formatCurrency(weeklyExpenseAmount)}, cooked ${homeCookingPercentage}% of meals at home, did ${weeklyWorkouts.length} workouts, stress was high on ${stressedDays} days.`;
         
         const weeklySummaryEl = document.getElementById('weeklySummary');
         if (weeklySummaryEl) {
