@@ -405,7 +405,7 @@
                                     <option value="healthcare">🏥 Healthcare</option>
                                     <option value="education">📚 Education</option>
                                     <option value="fitness">💪 Fitness & Sports</option>
-                                    <option value="subscriptions">�� Subscriptions</option>
+                                    <option value="subscriptions">📺 Subscriptions</option>
                                     <option value="groceries">🛒 Groceries</option>
                                     <option value="clothing">👕 Clothing</option>
                                     <option value="other">📦 Other</option>
@@ -797,6 +797,358 @@
                             <p id="breathingText">Click Start to begin</p>
                         </div>
                         <button class="btn-primary" id="startBreathingBtn">Start Exercise</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Habits & Goals Section -->
+            <section id="habits" class="section">
+                <div class="section-header">
+                    <h1>🎯 Habits & Goals Tracker</h1>
+                    <button class="btn-primary" id="addHabitBtn">+ Add Habit</button>
+                </div>
+
+                <!-- Habit Tracking Stats -->
+                <div class="habit-stats">
+                    <div class="stat-card">
+                        <span id="habitStreak">0</span>
+                        <label>Longest Streak 🔥</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="todayHabits">0/0</span>
+                        <label>Today's Progress</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="weeklyConsistency">0%</span>
+                        <label>Weekly Consistency</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="activeHabits">0</span>
+                        <label>Active Habits</label>
+                    </div>
+                </div>
+
+                <!-- Habit Categories Tabs -->
+                <div class="habit-tabs">
+                    <button class="tab-btn active" data-tab="daily-habits">📅 Daily Habits</button>
+                    <button class="tab-btn" data-tab="habit-correlations">🔗 Connections</button>
+                    <button class="tab-btn" data-tab="habit-insights">📊 Insights</button>
+                    <button class="tab-btn" data-tab="habit-goals">🎯 Goals</button>
+                </div>
+
+                <!-- Daily Habits Tab -->
+                <div id="daily-habits" class="tab-content active">
+                    <div class="daily-tracker">
+                        <h3>Today's Habits</h3>
+                        <div class="habit-checklist" id="todayHabitChecklist">
+                            <!-- Today's habits will be displayed here -->
+                        </div>
+                    </div>
+
+                    <div class="habit-categories">
+                        <div class="category-section">
+                            <h3>💪 Fitness & Health</h3>
+                            <div class="habit-grid" id="fitnessHabits">
+                                <!-- Fitness habits will be displayed here -->
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <h3>🍲 Nutrition & Food</h3>
+                            <div class="habit-grid" id="nutritionHabits">
+                                <!-- Nutrition habits will be displayed here -->
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <h3>💼 Productivity & Work</h3>
+                            <div class="habit-grid" id="productivityHabits">
+                                <!-- Productivity habits will be displayed here -->
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <h3>😌 Mental Health & Wellness</h3>
+                            <div class="habit-grid" id="wellnessHabits">
+                                <!-- Wellness habits will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Habit Correlations Tab -->
+                <div id="habit-correlations" class="tab-content">
+                    <div class="correlations-dashboard">
+                        <h3>🔗 How Your Habits Connect</h3>
+                        <p class="correlation-intro">Discover patterns and connections between your different life areas.</p>
+
+                        <div class="correlation-grid">
+                            <div class="correlation-card">
+                                <h4>💪 Fitness → 😌 Mood</h4>
+                                <div class="correlation-strength" id="fitnessStressCorrelation">
+                                    <div class="correlation-bar">
+                                        <div class="correlation-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="correlation-value">0% correlation</span>
+                                </div>
+                                <p class="correlation-insight" id="fitnessStressInsight">Track more data to see patterns</p>
+                            </div>
+
+                            <div class="correlation-card">
+                                <h4>🍲 Nutrition → 💼 Productivity</h4>
+                                <div class="correlation-strength" id="nutritionProductivityCorrelation">
+                                    <div class="correlation-bar">
+                                        <div class="correlation-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="correlation-value">0% correlation</span>
+                                </div>
+                                <p class="correlation-insight" id="nutritionProductivityInsight">Track more data to see patterns</p>
+                            </div>
+
+                            <div class="correlation-card">
+                                <h4>😌 Mood → 💰 Spending</h4>
+                                <div class="correlation-strength" id="moodSpendingCorrelation">
+                                    <div class="correlation-bar">
+                                        <div class="correlation-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="correlation-value">0% correlation</span>
+                                </div>
+                                <p class="correlation-insight" id="moodSpendingInsight">Track more data to see patterns</p>
+                            </div>
+
+                            <div class="correlation-card">
+                                <h4>💼 Productivity → 😌 Stress</h4>
+                                <div class="correlation-strength" id="productivityStressCorrelation">
+                                    <div class="correlation-bar">
+                                        <div class="correlation-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="correlation-value">0% correlation</span>
+                                </div>
+                                <p class="correlation-insight" id="productivityStressInsight">Track more data to see patterns</p>
+                            </div>
+                        </div>
+
+                        <div class="habit-impact-chart">
+                            <h3>📈 Habit Impact Over Time</h3>
+                            <canvas id="habitImpactChart" width="800" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Habit Insights Tab -->
+                <div id="habit-insights" class="tab-content">
+                    <div class="insights-dashboard">
+                        <h3>🧠 Smart Insights</h3>
+
+                        <div class="insight-categories">
+                            <div class="insight-section">
+                                <h4>🎯 Best Performance Days</h4>
+                                <div class="performance-analysis" id="bestPerformanceDays">
+                                    <!-- Performance analysis will be displayed here -->
+                                </div>
+                            </div>
+
+                            <div class="insight-section">
+                                <h4>⚠️ Challenge Areas</h4>
+                                <div class="challenge-analysis" id="challengeAreas">
+                                    <!-- Challenge analysis will be displayed here -->
+                                </div>
+                            </div>
+
+                            <div class="insight-section">
+                                <h4>💡 Personalized Recommendations</h4>
+                                <div class="recommendations" id="habitRecommendations">
+                                    <!-- Habit recommendations will be displayed here -->
+                                </div>
+                            </div>
+
+                            <div class="insight-section">
+                                <h4>📊 Habit Trends</h4>
+                                <canvas id="habitTrendsChart" width="600" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Habit Goals Tab -->
+                <div id="habit-goals" class="tab-content">
+                    <div class="goals-dashboard">
+                        <h3>🎯 Your Goals & Milestones</h3>
+
+                        <div class="goals-grid">
+                            <div class="goal-card active-goal">
+                                <h4>30-Day Fitness Challenge</h4>
+                                <div class="goal-progress">
+                                    <div class="progress-circle">
+                                        <div class="progress-value" id="fitnessGoalProgress">0%</div>
+                                    </div>
+                                    <div class="goal-details">
+                                        <p>Exercise 25 days this month</p>
+                                        <span class="goal-status" id="fitnessGoalStatus">0/25 days completed</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="goal-card active-goal">
+                                <h4>Healthy Eating Streak</h4>
+                                <div class="goal-progress">
+                                    <div class="progress-circle">
+                                        <div class="progress-value" id="nutritionGoalProgress">0%</div>
+                                    </div>
+                                    <div class="goal-details">
+                                        <p>Cook at home 20 days this month</p>
+                                        <span class="goal-status" id="nutritionGoalStatus">0/20 days completed</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="goal-card active-goal">
+                                <h4>Productivity Boost</h4>
+                                <div class="goal-progress">
+                                    <div class="progress-circle">
+                                        <div class="progress-value" id="productivityGoalProgress">0%</div>
+                                    </div>
+                                    <div class="goal-details">
+                                        <p>Complete daily tasks 90% of the time</p>
+                                        <span class="goal-status" id="productivityGoalStatus">0% completion rate</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="goal-card active-goal">
+                                <h4>Stress Management</h4>
+                                <div class="goal-progress">
+                                    <div class="progress-circle">
+                                        <div class="progress-value" id="stressGoalProgress">0%</div>
+                                    </div>
+                                    <div class="goal-details">
+                                        <p>Practice mindfulness 15 days this month</p>
+                                        <span class="goal-status" id="stressGoalStatus">0/15 days completed</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="goal-actions">
+                            <button class="btn-primary" id="addGoalBtn">+ Add Custom Goal</button>
+                            <button class="btn-secondary" id="editGoalsBtn">✏️ Edit Goals</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Habit Modal -->
+                <div id="habitModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Add New Habit</h2>
+                        <form id="habitForm">
+                            <div class="form-group">
+                                <label for="habitName">Habit Name</label>
+                                <input type="text" id="habitName" placeholder="e.g., Drink 8 glasses of water" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="habitCategory">Category</label>
+                                <select id="habitCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="fitness">💪 Fitness & Health</option>
+                                    <option value="nutrition">🍲 Nutrition & Food</option>
+                                    <option value="productivity">💼 Productivity & Work</option>
+                                    <option value="wellness">😌 Mental Health & Wellness</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="habitFrequency">Frequency</label>
+                                <select id="habitFrequency">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="custom">Custom</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="habitTarget">Target</label>
+                                <input type="text" id="habitTarget" placeholder="e.g., 1 time, 30 minutes, 8 glasses">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="habitReminder">Reminder Time</label>
+                                <input type="time" id="habitReminder">
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="habitNotifications">
+                                    <span class="checkmark"></span>
+                                    Enable notifications
+                                </label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="app.closeModal('habitModal')">Cancel</button>
+                                <button type="submit" class="btn-primary">Create Habit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Add Goal Modal -->
+                <div id="goalModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Add Custom Goal</h2>
+                        <form id="goalForm">
+                            <div class="form-group">
+                                <label for="goalName">Goal Name</label>
+                                <input type="text" id="goalName" placeholder="e.g., Read 12 books this year" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="goalCategory">Category</label>
+                                <select id="goalCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="fitness">💪 Fitness & Health</option>
+                                    <option value="nutrition">🍲 Nutrition & Food</option>
+                                    <option value="productivity">💼 Productivity & Work</option>
+                                    <option value="wellness">😌 Mental Health & Wellness</option>
+                                    <option value="financial">💰 Financial</option>
+                                    <option value="learning">📚 Learning & Growth</option>
+                                </select>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="goalTarget">Target Number</label>
+                                    <input type="number" id="goalTarget" placeholder="12" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="goalUnit">Unit</label>
+                                    <input type="text" id="goalUnit" placeholder="books, workouts, etc." required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="goalStartDate">Start Date</label>
+                                    <input type="date" id="goalStartDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="goalEndDate">End Date</label>
+                                    <input type="date" id="goalEndDate" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="goalDescription">Description (Optional)</label>
+                                <textarea id="goalDescription" placeholder="Additional details about your goal..." rows="3"></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="app.closeModal('goalModal')">Cancel</button>
+                                <button type="submit" class="btn-primary">Create Goal</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </section>
