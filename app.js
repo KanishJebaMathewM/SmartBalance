@@ -3688,7 +3688,7 @@ class WorkLifeBalanceApp {
             'clothing': '👕',
             'healthcare': '🏥',
             'reminder': '⏰',
-            'other': '����'
+            'other': '📦'
         };
         return icons[category] || '📦';
     }
@@ -4995,7 +4995,7 @@ class WorkLifeBalanceApp {
                     </div>
                 </div>
                 <div class="meal-source ${meal.source}">
-                    <span class="icon">${meal.source === 'home' ? '�����' : '🏨'}</span>
+                    <span class="icon">${meal.source === 'home' ? '���' : '🏨'}</span>
                     <span>${meal.source === 'home' ? 'Home' : 'Hotel'}</span>
                 </div>
             </div>
@@ -6437,15 +6437,7 @@ class WorkLifeBalanceApp {
         Utils.showNotification('Score refreshed successfully!', 'success');
     }
 
-    initializeHabitTabHandlers() {
-        // Add click handlers for habit tabs
-        document.querySelectorAll('#habits .tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tabName = btn.dataset.tab;
-                this.showHabitTab(tabName);
-            });
-        });
-    }
+    // No tab handlers needed for simplified version
 
     // Enhanced Life Analytics Calculation
     calculateLifeAnalytics() {
