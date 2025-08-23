@@ -199,25 +199,117 @@ class Utils {
     // Food utilities
     static calculateCalories(meal) {
         const calorieData = {
+            // Basic ingredients
             'oats': 150,
             'rice': 200,
+            'brown rice': 180,
             'dal': 120,
             'chapati': 100,
+            'roti': 100,
             'vegetables': 50,
-            'fruits': 60
+            'fruits': 60,
+            'coconut': 160,
+            'ghee': 120,
+            'oil': 100,
+
+            // South Indian staples
+            'dosa': 150,
+            'idli': 40,
+            'vada': 180,
+            'appam': 120,
+            'puttu': 180,
+            'upma': 200,
+            'uttapam': 170,
+            'pongal': 250,
+            'adai': 160,
+            'pesarattu': 140,
+            'paniyaram': 80,
+            'kozhukattai': 130,
+            'pathiri': 110,
+            'idiappam': 190,
+
+            // Rice varieties
+            'lemon rice': 280,
+            'tomato rice': 270,
+            'curd rice': 220,
+            'coconut rice': 320,
+            'tamarind rice': 290,
+            'puliyodarai': 290,
+            'vangi bath': 310,
+            'chitranna': 260,
+            'bisi bele bath': 350,
+            'biryani': 400,
+
+            // Curries and sides
+            'sambar': 80,
+            'rasam': 60,
+            'avial': 90,
+            'thoran': 70,
+            'olan': 85,
+            'koottu': 100,
+            'mor kuzhambu': 75,
+            'coconut chutney': 90,
+            'tomato chutney': 60,
+            'mint chutney': 50,
+            'pickle': 40,
+            'papad': 30,
+            'curry': 120,
+            'stew': 110,
+            'korma': 180,
+            'kurma': 180,
+            'sagu': 140,
+
+            // Healthy alternatives
+            'quinoa': 170,
+            'millet': 160,
+            'ragi': 140,
+            'jowar': 150,
+            'bajra': 155
         };
-        
-        // Simple calorie calculation based on meal components
+
+        // Enhanced calorie calculation based on meal components
         let totalCalories = 0;
         const mealLower = meal.toLowerCase();
-        
-        Object.keys(calorieData).forEach(food => {
+
+        // Count occurrences and calculate calories
+        Object.entries(calorieData).forEach(([food, calories]) => {
             if (mealLower.includes(food)) {
-                totalCalories += calorieData[food];
+                totalCalories += calories;
             }
         });
-        
-        return totalCalories || 200; // Default calories
+
+        // Special combinations and portions
+        if (mealLower.includes('with')) {
+            // If it's a combination meal, add base calories for accompaniments
+            if (mealLower.includes('rice with')) {
+                totalCalories += 50; // Extra for variety
+            }
+            if (mealLower.includes('coconut') && mealLower.includes('chutney')) {
+                totalCalories += 30; // Additional coconut content
+            }
+        }
+
+        // Portion adjustments
+        if (mealLower.includes('large') || mealLower.includes('full')) {
+            totalCalories *= 1.3;
+        } else if (mealLower.includes('small') || mealLower.includes('light')) {
+            totalCalories *= 0.7;
+        }
+
+        // Default calories based on meal type if nothing matched
+        if (totalCalories === 0) {
+            if (mealLower.includes('breakfast')) {
+                totalCalories = 280;
+            } else if (mealLower.includes('lunch')) {
+                totalCalories = 400;
+            } else if (mealLower.includes('dinner')) {
+                totalCalories = 320;
+            } else {
+                totalCalories = 250; // General default
+            }
+        }
+
+        return Math.round(totalCalories);
     }
 
     static getMealSuggestions(availableItems = []) {
@@ -634,7 +726,7 @@ class Utils {
             const withinBudget = Object.values(budgetStatus).every(status => !status.overBudget);
             if (withinBudget && Object.keys(budgetStatus).length > 0) {
                 newBadges.budgetBoss = true;
-                badgesEarned.push('💰 Budget Boss');
+                badgesEarned.push('��� Budget Boss');
             }
         }
 
