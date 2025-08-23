@@ -10,6 +10,13 @@ class WorkLifeBalanceApp {
         this.currentCalendarDate = new Date();
         this.selectedCalendarDate = null;
 
+        // Timer state
+        this.exerciseTimer = null;
+        this.timerState = 'stopped'; // stopped, running, paused
+        this.timerDuration = 0; // in seconds
+        this.timerRemaining = 0; // in seconds
+        this.currentExerciseType = null;
+
         this.init();
     }
 
@@ -252,6 +259,23 @@ class WorkLifeBalanceApp {
         const startBreathingBtn = document.getElementById('startBreathingBtn');
         if (startBreathingBtn) {
             startBreathingBtn.addEventListener('click', () => this.startBreathingExercise());
+        }
+
+        // Exercise timer controls
+        const startTimerBtn = document.getElementById('startTimerBtn');
+        const pauseTimerBtn = document.getElementById('pauseTimerBtn');
+        const resetTimerBtn = document.getElementById('resetTimerBtn');
+
+        if (startTimerBtn) {
+            startTimerBtn.addEventListener('click', () => this.startExerciseTimer());
+        }
+
+        if (pauseTimerBtn) {
+            pauseTimerBtn.addEventListener('click', () => this.pauseExerciseTimer());
+        }
+
+        if (resetTimerBtn) {
+            resetTimerBtn.addEventListener('click', () => this.resetExerciseTimer());
         }
 
         // Export button
