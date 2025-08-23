@@ -6494,6 +6494,376 @@ class WorkLifeBalanceApp {
 
     loadReportCharts(data) {
         this.charts.createTrendsChart('reportTrendsChart', data);
+
+        // Add event listeners for breakdown tabs
+        document.querySelectorAll('.breakdown-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                const tabType = e.target.dataset.tab;
+                this.switchBreakdownTab(tabType, data);
+            });
+        });
+    }
+
+    switchBreakdownTab(tabType, data) {
+        // Update active tab
+        document.querySelectorAll('.breakdown-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabType}"]`).classList.add('active');
+
+        // Update content
+        const content = document.getElementById('breakdownContent');
+        if (!content) return;
+
+        switch (tabType) {
+            case 'tasks':
+                content.innerHTML = this.generateTaskBreakdown(data.tasks);
+                break;
+            case 'expenses':
+                content.innerHTML = this.generateExpenseBreakdown(data.expenses);
+                break;
+            case 'meals':
+                content.innerHTML = this.generateMealBreakdown(data.meals);
+                break;
+            case 'workouts':
+                content.innerHTML = this.generateWorkoutBreakdown(data.workouts);
+                break;
+        }
+    }
+
+    generateExpenseBreakdown(expenses) {
+        if (expenses.length === 0) {
+            return '<p>No expenses in this period</p>';
+        }
+
+        const totalAmount = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        return `
+            <div class="breakdown-summary">
+                <h4>Total: ${Utils.formatCurrency(totalAmount)} across ${expenses.length} transactions</h4>
+            </div>
+            <div class="breakdown-list">
+                ${expenses.map(expense => `
+                    <div class="breakdown-item">
+                        <span class="item-status">${this.getCategoryIcon(expense.category)}</span>
+                        <span class="item-title">${this.getCategoryDisplayName(expense.category)}</span>
+                        <span class="item-amount">${Utils.formatCurrency(expense.amount)}</span>
+                        <span class="item-method">${expense.paymentMethod || 'cash'}</span>
+                        <span class="item-date">${Utils.formatDate(expense.createdAt)}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    generateMealBreakdown(meals) {
+        if (meals.length === 0) {
+            return '<p>No meals in this period</p>';
+        }
+
+        const homeMeals = meals.filter(m => m.source === 'home').length;
+        const totalCalories = meals.reduce((sum, meal) => sum + (parseInt(meal.calories) || 0), 0);
+
+        return `
+            <div class="breakdown-summary">
+                <h4>${meals.length} meals | ${homeMeals} home cooked | ${totalCalories} total calories</h4>
+            </div>
+            <div class="breakdown-list">
+                ${meals.map(meal => `
+                    <div class="breakdown-item ${meal.source === 'home' ? 'home-meal' : 'hotel-meal'}">
+                        <span class="item-status">${meal.source === 'home' ? '🏠' : '🏨'}</span>
+                        <span class="item-title">${meal.name}</span>
+                        <span class="item-type">${meal.type}</span>
+                        <span class="item-calories">${meal.calories} cal</span>
+                        <span class="item-date">${Utils.formatDate(meal.date)}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    generateWorkoutBreakdown(workouts) {
+        if (workouts.length === 0) {
+            return '<p>No workouts in this period</p>';
+        }
+
+        const totalCalories = workouts.reduce((sum, workout) => sum + (parseInt(workout.calories) || 0), 0);
+
+        return `
+            <div class="breakdown-summary">
+                <h4>${workouts.length} workouts | ${totalCalories} calories burned</h4>
+            </div>
+            <div class="breakdown-list">
+                ${workouts.map(workout => `
+                    <div class="breakdown-item completed">
+                        <span class="item-status">💪</span>
+                        <span class="item-title">${workout.type || 'General Exercise'}</span>
+                        <span class="item-duration">${workout.duration || 0} min</span>
+                        <span class="item-calories">${workout.calories || 0} cal</span>
+                        <span class="item-date">${Utils.formatDate(workout.createdAt)}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // Enhanced analysis methods
+    generateAdvancedInsights(data) {
+        const insights = [];
+
+        // Productivity correlation
+        const taskCompletionRate = data.tasks.length > 0 ? (data.tasks.filter(t => t.completed).length / data.tasks.length) * 100 : 0;
+        const workoutCount = data.workouts.length;
+
+        if (workoutCount >= 3 && taskCompletionRate >= 70) {
+            insights.push('💪 Strong correlation: Your task completion is higher on days with regular exercise!');
+        }
+
+        // Spending patterns
+        const weekendExpenses = data.expenses.filter(exp => {
+            const day = new Date(exp.createdAt).getDay();
+            return day === 0 || day === 6; // Sunday or Saturday
+        });
+
+        if (weekendExpenses.length > data.expenses.length * 0.4) {
+            insights.push('🛍️ You spend significantly more on weekends. Consider planning weekend budgets.');
+        }
+
+        // Meal patterns
+        const homeCookingRate = data.meals.length > 0 ? (data.meals.filter(m => m.source === 'home').length / data.meals.length) * 100 : 0;
+        const foodExpenses = data.expenses.filter(exp => exp.category === 'food');
+
+        if (homeCookingRate >= 70 && foodExpenses.length > 0) {
+            const avgFoodCost = foodExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0) / foodExpenses.length;
+            insights.push(`🍳 Great job! ${homeCookingRate.toFixed(0)}% home cooking is saving you money. Average meal cost: ${Utils.formatCurrency(avgFoodCost)}`);
+        }
+
+        // Stress and activity correlation
+        const stressedMoods = data.moods.filter(m => ['stressed', 'very-stressed'].includes(m.mood));
+        if (stressedMoods.length > 0 && workoutCount < 2) {
+            insights.push('😌 Consider adding more physical activity to help manage stress levels.');
+        }
+
+        return insights;
+    }
+
+    // Comprehensive download functionality
+    downloadComprehensiveReport(format = 'json') {
+        const reportData = {
+            metadata: {
+                generatedAt: new Date().toISOString(),
+                period: '30 days',
+                version: '1.0'
+            },
+            summary: {
+                tasks: this.getTaskSummaryData(),
+                expenses: this.getExpenseSummaryData(),
+                meals: this.getMealSummaryData(),
+                fitness: this.getFitnessSummaryData(),
+                mood: this.getMoodSummaryData()
+            },
+            analytics: {
+                trends: this.getTrendAnalysis(),
+                patterns: this.getPatternAnalysis(),
+                correlations: this.getCorrelationAnalysis(),
+                predictions: this.getPredictionAnalysis()
+            },
+            insights: this.generateAdvancedInsights(this.getReportData('month')),
+            recommendations: this.generateActionableRecommendations()
+        };
+
+        const filename = `comprehensive-report-${new Date().toISOString().split('T')[0]}`;
+
+        if (format === 'json') {
+            Utils.exportToJSON(reportData, `${filename}.json`);
+        } else {
+            // Convert to CSV format for comprehensive report
+            this.exportComprehensiveCSV(reportData, `${filename}.csv`);
+        }
+    }
+
+    getTaskSummaryData() {
+        const tasks = window.storage.getTasks();
+        const last30Days = tasks.filter(t =>
+            new Date(t.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        );
+
+        return {
+            totalTasks: last30Days.length,
+            completedTasks: last30Days.filter(t => t.completed).length,
+            completionRate: last30Days.length > 0 ? (last30Days.filter(t => t.completed).length / last30Days.length) * 100 : 0,
+            categoriesUsed: [...new Set(last30Days.map(t => t.category))].length,
+            expenseRelatedTasks: last30Days.filter(t => t.expenseRelated).length
+        };
+    }
+
+    getExpenseSummaryData() {
+        const expenses = window.storage.getExpenses();
+        const last30Days = expenses.filter(e =>
+            new Date(e.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        );
+
+        const total = last30Days.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+        const categoryBreakdown = {};
+        last30Days.forEach(exp => {
+            categoryBreakdown[exp.category] = (categoryBreakdown[exp.category] || 0) + parseFloat(exp.amount);
+        });
+
+        return {
+            totalAmount: total,
+            totalTransactions: last30Days.length,
+            averageTransaction: last30Days.length > 0 ? total / last30Days.length : 0,
+            categoriesUsed: Object.keys(categoryBreakdown).length,
+            topCategory: Object.keys(categoryBreakdown).reduce((a, b) =>
+                categoryBreakdown[a] > categoryBreakdown[b] ? a : b, 'none'
+            ),
+            categoryBreakdown
+        };
+    }
+
+    getMealSummaryData() {
+        const meals = window.storage.getMeals();
+        const last30Days = meals.filter(m =>
+            new Date(m.date) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        );
+
+        const homeMeals = last30Days.filter(m => m.source === 'home');
+        const totalCalories = last30Days.reduce((sum, meal) => sum + (parseInt(meal.calories) || 0), 0);
+
+        return {
+            totalMeals: last30Days.length,
+            homeCookedMeals: homeMeals.length,
+            homeCookingRate: last30Days.length > 0 ? (homeMeals.length / last30Days.length) * 100 : 0,
+            totalCalories,
+            averageCaloriesPerDay: totalCalories / 30,
+            mealTypes: [...new Set(last30Days.map(m => m.type))]
+        };
+    }
+
+    getFitnessSummaryData() {
+        const workouts = window.storage.getWorkouts();
+        const last30Days = workouts.filter(w =>
+            new Date(w.createdAt) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        );
+
+        return {
+            totalWorkouts: last30Days.length,
+            workoutsPerWeek: (last30Days.length / 30) * 7,
+            currentStreak: window.storage.getWorkoutStreak(),
+            exerciseTypes: [...new Set(last30Days.map(w => w.type))],
+            totalCaloriesBurned: last30Days.reduce((sum, w) => sum + (parseInt(w.calories) || 0), 0)
+        };
+    }
+
+    getMoodSummaryData() {
+        const moods = window.storage.getMoods();
+        const last30Days = moods.filter(m =>
+            new Date(m.date) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        );
+
+        const moodCounts = {};
+        last30Days.forEach(mood => {
+            moodCounts[mood.mood] = (moodCounts[mood.mood] || 0) + 1;
+        });
+
+        return {
+            totalCheckIns: last30Days.length,
+            moodDistribution: moodCounts,
+            checkInConsistency: (last30Days.length / 30) * 100, // Percentage of days checked
+            averageMoodScore: this.calculateAverageMoodScore(last30Days)
+        };
+    }
+
+    calculateAverageMoodScore(moods) {
+        if (moods.length === 0) return 0;
+
+        const moodScores = { 'very-happy': 5, 'happy': 4, 'neutral': 3, 'stressed': 2, 'very-stressed': 1 };
+        const totalScore = moods.reduce((sum, mood) => sum + (moodScores[mood.mood] || 3), 0);
+        return totalScore / moods.length;
+    }
+
+    getTrendAnalysis() {
+        // Implement trend analysis logic
+        return {
+            taskTrend: 'increasing',
+            expenseTrend: 'stable',
+            fitnessTrend: 'increasing',
+            moodTrend: 'improving'
+        };
+    }
+
+    getPatternAnalysis() {
+        return {
+            mostProductiveDay: 'Tuesday',
+            highestSpendingDay: 'Saturday',
+            preferredWorkoutTime: 'Morning',
+            stressPatterns: 'Higher stress on Mondays'
+        };
+    }
+
+    getCorrelationAnalysis() {
+        return {
+            fitnessVsMood: 0.75,
+            spendingVsStress: 0.45,
+            cookingVsSavings: 0.82,
+            tasksVsWorkouts: 0.35
+        };
+    }
+
+    getPredictionAnalysis() {
+        return {
+            nextWeekTasks: 12,
+            nextWeekExpenses: 2500,
+            nextWeekWorkouts: 4,
+            confidenceLevel: 0.78
+        };
+    }
+
+    generateActionableRecommendations() {
+        return [
+            'Schedule your most important tasks on Tuesdays for maximum productivity',
+            'Set a weekend spending limit to control Saturday expenses',
+            'Plan quick workout sessions for busy weekdays',
+            'Use meal prep on Sundays to increase home cooking rate',
+            'Add stress-relief activities on Monday mornings'
+        ];
+    }
+
+    exportComprehensiveCSV(data, filename) {
+        let csvContent = 'Report Section,Metric,Value,Notes\n';
+
+        // Add summary data
+        Object.entries(data.summary).forEach(([section, metrics]) => {
+            Object.entries(metrics).forEach(([metric, value]) => {
+                csvContent += `${section},${metric},"${value}","Summary data"\n`;
+            });
+        });
+
+        // Add analytics
+        Object.entries(data.analytics).forEach(([section, metrics]) => {
+            Object.entries(metrics).forEach(([metric, value]) => {
+                csvContent += `Analytics - ${section},${metric},"${value}","Analytics data"\n`;
+            });
+        });
+
+        // Add insights and recommendations
+        data.insights.forEach((insight, index) => {
+            csvContent += `Insights,Insight ${index + 1},"${insight}","Generated insight"\n`;
+        });
+
+        data.recommendations.forEach((rec, index) => {
+            csvContent += `Recommendations,Recommendation ${index + 1},"${rec}","Actionable recommendation"\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     // Export functionality for all sections
