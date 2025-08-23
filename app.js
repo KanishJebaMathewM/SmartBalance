@@ -7174,45 +7174,7 @@ class WorkLifeBalanceApp {
         this.startExercise('desk-stretches');
     }
 
-    loadDailyHabits() {
-        const habits = window.storage.getHabits();
-        this.renderHabitsByCategory(habits);
-        this.updateTodayHabitChecklist(habits);
-    }
-
-    renderHabitsByCategory(habits) {
-        const categories = ['fitness', 'nutrition', 'productivity', 'wellness'];
-
-        categories.forEach(category => {
-            const container = document.getElementById(`${category}Habits`);
-            if (!container) return;
-
-            const categoryHabits = habits.filter(h => h.category === category && h.active !== false);
-
-            if (categoryHabits.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p>No ${category} habits yet</p>
-                        <button class="btn-secondary" onclick="app.openHabitModal('${category}')">Add ${category} habit</button>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = categoryHabits.map(habit => `
-                <div class="habit-item" data-habit-id="${habit.id}">
-                    <div class="habit-info">
-                        <div class="habit-name">${habit.name}</div>
-                        <div class="habit-streak">🔥 ${habit.currentStreak || 0} days</div>
-                    </div>
-                    <div class="habit-actions">
-                        <button class="btn-complete" onclick="app.completeHabit(${habit.id})">✓</button>
-                        <button class="btn-skip" onclick="app.skipHabit(${habit.id})">Skip</button>
-                    </div>
-                </div>
-            `).join('');
-        });
-    }
+    // Old habit tracking functions removed - now using insights and analysis approach
 
     updateTodayHabitChecklist(habits) {
         const container = document.getElementById('todayHabitChecklist');
