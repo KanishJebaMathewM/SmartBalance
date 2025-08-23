@@ -4447,7 +4447,7 @@ class WorkLifeBalanceApp {
 
     // Food tracking tab handlers
     initializeFoodTrackingTabHandlers() {
-        document.querySelectorAll('[data-tab^="today-food"], [data-tab^="yesterday-food"], [data-tab^="weekly-food"]').forEach(btn => {
+        document.querySelectorAll('.food-tracking-tabs .tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tab = e.target.dataset.tab;
                 this.switchFoodTrackingTab(tab);
