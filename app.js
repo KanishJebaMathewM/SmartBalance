@@ -5693,6 +5693,35 @@ class WorkLifeBalanceApp {
         }
     }
 
+    validateMealLimit(date, skipMealId = null) {
+        const mealsForDate = window.storage.getMealsByDate(new Date(date));
+        const existingMeals = skipMealId ?
+            mealsForDate.filter(meal => meal.id !== skipMealId) :
+            mealsForDate;
+
+        if (existingMeals.length >= 4) {
+            Utils.showNotification('Maximum 4 meals per day allowed (breakfast, lunch, snack, dinner)', 'error');
+            return false;
+        }
+
+        return true;
+    }
+
+    checkMealTypeConflict(date, mealType, skipMealId = null) {
+        const mealsForDate = window.storage.getMealsByDate(new Date(date));
+        const existingMeals = skipMealId ?
+            mealsForDate.filter(meal => meal.id !== skipMealId) :
+            mealsForDate;
+
+        const existingMealOfType = existingMeals.find(meal => meal.type === mealType);
+        if (existingMealOfType) {
+            Utils.showNotification(`You already have ${mealType} planned for this date`, 'error');
+            return false;
+        }
+
+        return true;
+    }
+
     addMealForDate(date) {
         this.currentPlanDate = new Date(date);
         this.closeModal('mealCalendarModal');
