@@ -4492,6 +4492,202 @@ select[id="expensePriority"] option[value="essential"] {
     }
 }
 
+/* Enhanced Meal Plan Styles */
+.meal-planner h3 {
+    color: #111827;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dark-mode .meal-planner h3 {
+    color: #f9fafb;
+}
+
+.meal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.meal-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dark-mode .meal-card {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.meal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.meal-emoji {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.meal-card h4 {
+    color: #111827;
+    margin-bottom: 12px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.dark-mode .meal-card h4 {
+    color: #f9fafb;
+}
+
+.meal-card p {
+    color: #374151;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    min-height: 42px;
+}
+
+.dark-mode .meal-card p {
+    color: #d1d5db;
+}
+
+.meal-details {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 16px;
+    padding: 8px 0;
+    border-top: 1px solid #f3f4f6;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.dark-mode .meal-details {
+    border-color: #374151;
+}
+
+.calories,
+.cost {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.calories {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.dark-mode .calories {
+    background: #451a03;
+    color: #fbbf24;
+}
+
+.cost {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.dark-mode .cost {
+    background: #022c22;
+    color: #34d399;
+}
+
+.btn-edit-meal {
+    width: 100%;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    color: #475569;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-edit-meal:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+    color: #334155;
+}
+
+.dark-mode .btn-edit-meal {
+    background: #334155;
+    border-color: #475569;
+    color: #cbd5e1;
+}
+
+.dark-mode .btn-edit-meal:hover {
+    background: #475569;
+    border-color: #64748b;
+    color: #e2e8f0;
+}
+
+.meal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.meal-actions button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Responsive meal plan styles */
+@media (max-width: 768px) {
+    .meal-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .meal-card {
+        padding: 16px;
+    }
+
+    .meal-emoji {
+        font-size: 1.5rem;
+    }
+
+    .meal-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .meal-actions button {
+        min-width: 200px;
+    }
+}
+
 @media (max-width: 480px) {
     .badges-grid {
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
