@@ -417,11 +417,17 @@ class WorkLifeBalanceApp {
     }
 
     updateMealWidget() {
-        const suggestions = Utils.getMealSuggestions();
+        const todayMeals = window.storage.getTodayMeals();
         const mealSuggestionEl = document.getElementById('mealSuggestion');
-        
+
         if (mealSuggestionEl) {
-            mealSuggestionEl.textContent = suggestions.breakfast;
+            if (todayMeals.length > 0) {
+                const lastMeal = todayMeals[todayMeals.length - 1];
+                mealSuggestionEl.textContent = `Last: ${lastMeal.name}`;
+            } else {
+                const suggestions = Utils.getMealSuggestions();
+                mealSuggestionEl.textContent = suggestions.breakfast;
+            }
         }
     }
 
