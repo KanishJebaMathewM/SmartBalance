@@ -1050,6 +1050,7 @@ class Storage {
             if (data.tasks) this.set(this.keys.tasks, data.tasks);
             if (data.expenses) this.set(this.keys.expenses, data.expenses);
             if (data.foodItems) this.set(this.keys.foodItems, data.foodItems);
+            if (data.meals) this.set(this.keys.meals, data.meals);
             if (data.workouts) this.set(this.keys.workouts, data.workouts);
             if (data.moods) this.set(this.keys.moods, data.moods);
             if (data.settings) this.set(this.keys.settings, data.settings);
