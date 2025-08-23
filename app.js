@@ -74,7 +74,8 @@ class WorkLifeBalanceApp {
             'moodCheckBtn': 'moodModal',
             'breathingBtn': 'breathingModal',
             'addHabitBtn': 'habitModal',
-            'addGoalBtn': 'goalModal'
+            'addGoalBtn': 'goalModal',
+            'setIncomeBtn': 'incomeModal'
         };
 
         Object.entries(modalTriggers).forEach(([buttonId, modalId]) => {
@@ -515,7 +516,7 @@ class WorkLifeBalanceApp {
             });
             
             if (updatedTask.completed) {
-                Utils.showNotification('Task completed! 🎉', 'success');
+                Utils.showNotification('Task completed! ���', 'success');
                 
                 // Add expense if task is expense-related
                 if (updatedTask.expenseRelated && updatedTask.amount) {
