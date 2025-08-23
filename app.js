@@ -3679,7 +3679,7 @@ class WorkLifeBalanceApp {
             'fitness': '💪',
             'subscriptions': '📺',
             'groceries': '��',
-            'clothing': '��',
+            'clothing': '👕',
             'healthcare': '🏥',
             'reminder': '⏰',
             'other': '📦'
@@ -6851,6 +6851,157 @@ class WorkLifeBalanceApp {
                 `;
             }
         });
+    }
+
+    generateCrossDataInsights(data) {
+        // Analyze correlations between different life areas
+        const correlationInsights = [];
+
+        // Fitness vs Mood correlation
+        const fitnessStressCorrelation = this.analyzeFitnessStressCorrelation(data.workouts, data.moods);
+        if (fitnessStressCorrelation.correlation > 0.3) {
+            correlationInsights.push({
+                title: '💪 Fitness Boost',
+                insight: `Your mood is ${Math.round(fitnessStressCorrelation.correlation * 100)}% better on workout days!`,
+                strength: fitnessStressCorrelation.correlation
+            });
+        }
+
+        // Nutrition vs Productivity correlation
+        const nutritionProductivityCorrelation = this.analyzeNutritionProductivityCorrelation(data.meals, data.tasks);
+        if (nutritionProductivityCorrelation.correlation > 0.3) {
+            correlationInsights.push({
+                title: '🍲 Nutrition Impact',
+                insight: `Home cooking correlates with ${Math.round(nutritionProductivityCorrelation.correlation * 100)}% higher task completion`,
+                strength: nutritionProductivityCorrelation.correlation
+            });
+        }
+
+        // Mood vs Spending correlation
+        const moodSpendingCorrelation = this.analyzeMoodSpendingCorrelation(data.moods, data.expenses);
+        if (moodSpendingCorrelation.correlation > 0.3) {
+            correlationInsights.push({
+                title: '😌 Emotional Spending',
+                insight: `Stress levels correlate with ${Math.round(moodSpendingCorrelation.correlation * 100)}% higher spending`,
+                strength: moodSpendingCorrelation.correlation
+            });
+        }
+
+        // Display the insights
+        this.displayCrossDataInsights(correlationInsights);
+    }
+
+    analyzeFitnessStressCorrelation(workouts, moods) {
+        if (workouts.length === 0 || moods.length === 0) {
+            return { correlation: 0, insight: 'Not enough data for analysis' };
+        }
+
+        // Simple correlation: compare days with workouts vs days without
+        const workoutDays = new Set(workouts.map(w => new Date(w.createdAt).toDateString()));
+
+        const workoutDayMoods = moods.filter(m => workoutDays.has(new Date(m.date).toDateString()));
+        const nonWorkoutDayMoods = moods.filter(m => !workoutDays.has(new Date(m.date).toDateString()));
+
+        if (workoutDayMoods.length === 0 || nonWorkoutDayMoods.length === 0) {
+            return { correlation: 0, insight: 'Not enough data for analysis' };
+        }
+
+        const moodScores = { 'very-happy': 5, 'happy': 4, 'neutral': 3, 'stressed': 2, 'very-stressed': 1 };
+
+        const avgWorkoutDayMood = workoutDayMoods.reduce((sum, m) => sum + (moodScores[m.mood] || 3), 0) / workoutDayMoods.length;
+        const avgNonWorkoutDayMood = nonWorkoutDayMoods.reduce((sum, m) => sum + (moodScores[m.mood] || 3), 0) / nonWorkoutDayMoods.length;
+
+        const correlation = avgWorkoutDayMood > avgNonWorkoutDayMood ?
+            Math.min((avgWorkoutDayMood - avgNonWorkoutDayMood) / 2, 1) : 0;
+
+        return { correlation, insight: `Mood ${correlation > 0.3 ? 'significantly' : 'slightly'} better on workout days` };
+    }
+
+    analyzeNutritionProductivityCorrelation(meals, tasks) {
+        if (meals.length === 0 || tasks.length === 0) {
+            return { correlation: 0, insight: 'Not enough data for analysis' };
+        }
+
+        // Find days with home cooking vs days without
+        const homeCookingDays = new Set(
+            meals.filter(m => m.source === 'home').map(m => new Date(m.date).toDateString())
+        );
+
+        const homeCookingDayTasks = tasks.filter(t => homeCookingDays.has(new Date(t.createdAt).toDateString()));
+        const otherDayTasks = tasks.filter(t => !homeCookingDays.has(new Date(t.createdAt).toDateString()));
+
+        if (homeCookingDayTasks.length === 0 || otherDayTasks.length === 0) {
+            return { correlation: 0, insight: 'Not enough data for analysis' };
+        }
+
+        const homeCookingCompletionRate = homeCookingDayTasks.filter(t => t.completed).length / homeCookingDayTasks.length;
+        const otherDayCompletionRate = otherDayTasks.filter(t => t.completed).length / otherDayTasks.length;
+
+        const correlation = homeCookingCompletionRate > otherDayCompletionRate ?
+            Math.min((homeCookingCompletionRate - otherDayCompletionRate) * 2, 1) : 0;
+
+        return { correlation, insight: `Productivity ${correlation > 0.3 ? 'significantly' : 'slightly'} higher on home cooking days` };
+    }
+
+    analyzeMoodSpendingCorrelation(moods, expenses) {
+        if (moods.length === 0 || expenses.length === 0) {
+            return { correlation: 0, insight: 'Not enough data for analysis' };
+        }
+
+        // Find stressed vs happy days and compare spending
+        const stressedDays = new Set(
+            moods.filter(m => ['stressed', 'very-stressed'].includes(m.mood))
+                .map(m => new Date(m.date).toDateString())
+        );
+
+        const happyDays = new Set(
+            moods.filter(m => ['happy', 'very-happy'].includes(m.mood))
+                .map(m => new Date(m.date).toDateString())
+        );
+
+        const stressedDayExpenses = expenses.filter(e => stressedDays.has(new Date(e.createdAt).toDateString()));
+        const happyDayExpenses = expenses.filter(e => happyDays.has(new Date(e.createdAt).toDateString()));
+
+        if (stressedDayExpenses.length === 0 || happyDayExpenses.length === 0) {
+            return { correlation: 0, insight: 'Not enough data for analysis' };
+        }
+
+        const avgStressedDaySpending = stressedDayExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0) / stressedDayExpenses.length;
+        const avgHappyDaySpending = happyDayExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0) / happyDayExpenses.length;
+
+        const correlation = avgStressedDaySpending > avgHappyDaySpending ?
+            Math.min((avgStressedDaySpending - avgHappyDaySpending) / avgHappyDaySpending, 1) : 0;
+
+        return { correlation, insight: `Spending ${correlation > 0.3 ? 'significantly' : 'slightly'} higher on stressed days` };
+    }
+
+    displayCrossDataInsights(insights) {
+        // Display these insights in a visible area
+        const insightContainer = document.querySelector('.insights-grid');
+        if (insightContainer && insights.length > 0) {
+            const crossInsightSection = document.createElement('div');
+            crossInsightSection.className = 'insight-section cross-insights';
+            crossInsightSection.innerHTML = `
+                <h3>🔗 Behavioral Connections</h3>
+                <div class="performance-metrics">
+                    ${insights.map(insight => `
+                        <div class="correlation-insight-card">
+                            <h4>${insight.title}</h4>
+                            <p>${insight.insight}</p>
+                            <div class="correlation-strength">
+                                <div class="correlation-bar">
+                                    <div class="correlation-fill" style="width: ${insight.strength * 100}%"></div>
+                                </div>
+                                <span class="correlation-percentage">${Math.round(insight.strength * 100)}% correlation</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            // Insert after the existing insight sections
+            insightContainer.appendChild(crossInsightSection);
+        }
     }
 
     generateBehaviorInsights() {
