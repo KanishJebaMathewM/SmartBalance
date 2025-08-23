@@ -1541,6 +1541,12 @@ class WorkLifeBalanceApp {
     }
 
     loadFoodData() {
+        // Ensure storage is initialized
+        if (!window.storage) {
+            setTimeout(() => this.loadFoodData(), 100);
+            return;
+        }
+
         this.loadPantryItems();
         this.updateMealPlan();
         this.updateFoodStats();
@@ -1549,14 +1555,14 @@ class WorkLifeBalanceApp {
     loadPantryItems() {
         const items = window.storage.getFoodItems();
         const pantryList = document.getElementById('pantryList');
-        
+
         if (!pantryList) return;
 
-        if (items.length === 0) {
+        if (!items || items.length === 0) {
             pantryList.innerHTML = `
                 <div class="empty-state">
-                    <h3>Empty pantry</h3>
-                    <p>Add food items to get meal suggestions!</p>
+                    <h3>Your pantry is ready!</h3>
+                    <p>Start by adding your first food item to track your inventory.</p>
                     <button class="btn-primary" onclick="app.openModal('foodModal')">Add Food Item</button>
                 </div>
             `;
@@ -4341,7 +4347,7 @@ class WorkLifeBalanceApp {
             insights.push({
                 icon: '💰',
                 title: 'Budget-Friendly Eating',
-                description: `Your average meal cost of ₹${Math.round(avgCost)} shows excellent budget management. Keep it up!`
+                description: `Your average meal cost of ��${Math.round(avgCost)} shows excellent budget management. Keep it up!`
             });
         }
 
