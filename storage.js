@@ -55,12 +55,36 @@ class Storage {
 
         if (!this.get(this.keys.badges)) {
             this.set(this.keys.badges, {
+                // Fitness badges
                 firstWorkout: false,
                 sevenDayStreak: false,
                 consistencyKing: false,
+                exerciseExplorer: false,
+                timerMaster: false,
+
+                // Food & Nutrition badges
+                southIndianFoodie: false,
+                calorieTracker: false,
+                homeCookChampion: false,
+                nutritionExpert: false,
+                mealPlanMaster: false,
+                healthyChoice: false,
+
+                // Habit & Lifestyle badges
                 firstHabitCompletion: false,
                 habitStreak7: false,
-                habitStreak30: false
+                habitStreak30: false,
+                wellnessWarrior: false,
+
+                // Financial badges
+                budgetBoss: false,
+                savingsChampion: false,
+                expenseTracker: false,
+
+                // Productivity badges
+                taskMaster: false,
+                weeklyChampion: false,
+                organizer: false
             });
         }
 
