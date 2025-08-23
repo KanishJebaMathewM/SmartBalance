@@ -6420,11 +6420,11 @@ class WorkLifeBalanceApp {
     }
 
     loadHabitsSection() {
-        this.calculateLifeBalanceScore();
-        this.loadOverallInsights();
+        this.calculateLifeAnalytics();
+        this.loadAnalyticsDashboard();
 
-        // Ensure overall insights tab is shown by default
-        this.showHabitTab('overall-insights');
+        // Ensure correlations tab is shown by default
+        this.showHabitTab('correlations');
     }
 
     showHabitTab(tabName) {
@@ -6452,17 +6452,20 @@ class WorkLifeBalanceApp {
 
         // Load content for the selected tab
         switch (tabName) {
-            case 'overall-insights':
-                this.loadOverallInsights();
+            case 'correlations':
+                this.loadSmartCorrelations();
                 break;
-            case 'behavior-patterns':
-                this.loadBehaviorPatterns();
+            case 'patterns':
+                this.loadLifePatterns();
+                break;
+            case 'predictions':
+                this.loadPredictions();
                 break;
             case 'recommendations':
-                this.loadRecommendations();
+                this.loadAIRecommendations();
                 break;
-            case 'progress-analysis':
-                this.loadProgressAnalysis();
+            case 'insights':
+                this.loadDeepInsights();
                 break;
         }
     }
@@ -6477,7 +6480,13 @@ class WorkLifeBalanceApp {
         });
     }
 
-    // Life Balance Score Calculation
+    // Enhanced Life Analytics Calculation
+    calculateLifeAnalytics() {
+        this.calculateLifeBalanceScore();
+        this.calculateWellnessMetrics();
+        this.updateAnalyticsDashboard();
+    }
+
     calculateLifeBalanceScore() {
         const tasks = window.storage.getTasks();
         const expenses = window.storage.getExpenses();
@@ -6496,6 +6505,16 @@ class WorkLifeBalanceApp {
         const lifeBalanceScore = Math.round(
             (fitnessScore + nutritionScore + productivityScore + financialScore + wellnessScore) / 5
         );
+
+        // Update analytics dashboard
+        this.updateLifeAnalyticsDashboard({
+            lifeBalanceScore,
+            fitnessScore,
+            nutritionScore,
+            productivityScore,
+            financialScore,
+            wellnessScore
+        });
 
         // Update UI
         const scoreElement = document.getElementById('lifeBalanceScore');
