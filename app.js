@@ -5267,14 +5267,48 @@ class WorkLifeBalanceApp {
         if (!grid) return;
 
         grid.innerHTML = suggestions.map(suggestion => `
-            <div class="meal-suggestion-card" onclick="app.selectSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">
+            <div class="meal-suggestion-card">
                 <div class="meal-emoji">${this.getMealTypeIcon(suggestion.type)}</div>
                 <div class="meal-name">${Utils.sanitizeInput(suggestion.name)}</div>
                 <div class="meal-details">
                     ${suggestion.calories} cal • ₹${suggestion.estimatedHomeCost}
                 </div>
+                <div class="suggestion-actions">
+                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">✓ Accept</button>
+                    <button class="btn-secondary btn-small" onclick="app.selectSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">Customize</button>
+                </div>
             </div>
         `).join('');
+    }
+
+    acceptSuggestedMeal(mealType, encodedSuggestion) {
+        const suggestion = JSON.parse(decodeURIComponent(encodedSuggestion));
+
+        // Auto-accept with default settings (planned, home-cooked)
+        const mealData = {
+            name: suggestion.name,
+            type: mealType,
+            calories: suggestion.calories,
+            source: 'home', // Default to home cooking
+            status: 'planned', // Default to planned
+            date: new Date().toISOString().split('T')[0], // Today's date
+            ingredientCost: suggestion.estimatedHomeCost || 0
+        };
+
+        // Add to storage
+        window.storage.addMeal(mealData);
+
+        Utils.showNotification(`${suggestion.name} added to your meal plan!`, 'success');
+        this.closeModal('regenerateMealModal');
+
+        // Refresh related sections
+        this.loadMealPlan();
+        this.loadUpcomingMeals();
+        this.updateDashboard();
+
+        if (this.currentSection === 'food') {
+            this.updateFoodStats();
+        }
     }
 
     selectSuggestedMeal(mealType, encodedSuggestion) {
