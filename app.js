@@ -1932,9 +1932,11 @@ class WorkLifeBalanceApp {
             expenses: window.storage.getExpenses()
         };
         Utils.checkBadgeEligibility(data);
-        
+
+        // Update fitness data and dashboard
         if (this.currentSection === 'fitness') {
             this.loadFitnessData();
+            this.updateFitnessStats();
         }
         this.updateDashboard();
     }
@@ -3705,7 +3707,7 @@ class WorkLifeBalanceApp {
             'education': '📚',
             'fitness': '💪',
             'subscriptions': '📺',
-            'groceries': '��',
+            'groceries': '����',
             'clothing': '👕',
             'healthcare': '🏥',
             'reminder': '⏰',
