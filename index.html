@@ -1472,12 +1472,114 @@
                     </div>
                 </div>
 
-                <!-- Analysis Tabs -->
-                <div class="analysis-tabs">
-                    <button class="tab-btn active" data-tab="overall-insights">📊 Overall Insights</button>
-                    <button class="tab-btn" data-tab="behavior-patterns">🔗 Behavior Patterns</button>
-                    <button class="tab-btn" data-tab="recommendations">💡 Recommendations</button>
-                    <button class="tab-btn" data-tab="progress-analysis">📈 Progress Analysis</button>
+                <!-- Help Instructions Section -->
+                <div class="help-instructions-section">
+                    <h3>📖 How to Use This App</h3>
+
+                    <div class="help-navigation">
+                        <button class="btn-secondary" id="prevHelpBtn" onclick="app.showPreviousHelp()">⬅️ Previous</button>
+                        <span id="helpPageIndicator">1 / 6</span>
+                        <button class="btn-secondary" id="nextHelpBtn" onclick="app.showNextHelp()">Next ➡️</button>
+                    </div>
+
+                    <div class="help-content">
+                        <!-- Help Page 1: Dashboard -->
+                        <div class="help-page active" id="helpPage1">
+                            <div class="help-icon">🏠</div>
+                            <h4>Dashboard Overview</h4>
+                            <p>Your dashboard provides a quick summary of your daily activities:</p>
+                            <ul>
+                                <li><strong>Tasks:</strong> Track and complete your daily to-do items</li>
+                                <li><strong>Expenses:</strong> Monitor your weekly spending patterns</li>
+                                <li><strong>Meals:</strong> View suggested healthy meal options</li>
+                                <li><strong>Workouts:</strong> Keep track of your fitness streak</li>
+                                <li><strong>Mood:</strong> Check in with your emotional well-being</li>
+                            </ul>
+                            <p>The Life Balance Score above shows your overall wellness across all areas.</p>
+                        </div>
+
+                        <!-- Help Page 2: Tasks -->
+                        <div class="help-page" id="helpPage2">
+                            <div class="help-icon">📑</div>
+                            <h4>Task Management</h4>
+                            <p>Organize your daily productivity:</p>
+                            <ul>
+                                <li>Click <strong>"+ Add Task"</strong> to create new tasks</li>
+                                <li>Choose categories like work, personal, health, etc.</li>
+                                <li>Set due dates for important deadlines</li>
+                                <li>Mark tasks as expense-related if they involve spending</li>
+                                <li>Filter tasks by status: All, Today, Upcoming, Completed</li>
+                            </ul>
+                            <p>Completing tasks consistently builds your productivity streak!</p>
+                        </div>
+
+                        <!-- Help Page 3: Expenses -->
+                        <div class="help-page" id="helpPage3">
+                            <div class="help-icon">💰</div>
+                            <h4>Expense Tracking</h4>
+                            <p>Keep your finances organized:</p>
+                            <ul>
+                                <li><strong>Overview:</strong> See recent expenses and budget tracking</li>
+                                <li><strong>Calendar:</strong> View expenses by date with color coding</li>
+                                <li><strong>Analytics:</strong> Analyze spending trends and patterns</li>
+                                <li><strong>Insights:</strong> Get financial health scores and predictions</li>
+                                <li>Set monthly budgets and income to track savings</li>
+                            </ul>
+                            <p>Use different payment methods and categorize expenses for better insights.</p>
+                        </div>
+
+                        <!-- Help Page 4: Food & Nutrition -->
+                        <div class="help-page" id="helpPage4">
+                            <div class="help-icon">🍲</div>
+                            <h4>Food & Nutrition Planning</h4>
+                            <p>Manage your meals and nutrition:</p>
+                            <ul>
+                                <li>Track meals as either home-cooked or ordered</li>
+                                <li>Log calories for each meal you consume</li>
+                                <li>Plan daily meals with the meal planner</li>
+                                <li>Compare costs between cooking and ordering</li>
+                                <li>View meal calendar to plan ahead</li>
+                                <li>Manage your pantry inventory</li>
+                            </ul>
+                            <p>Cooking at home more often improves both health and savings!</p>
+                        </div>
+
+                        <!-- Help Page 5: Fitness & Wellness -->
+                        <div class="help-page" id="helpPage5">
+                            <div class="help-icon">🏋️</div>
+                            <h4>Fitness & Wellness</h4>
+                            <p>Stay active and manage stress:</p>
+                            <ul>
+                                <li><strong>Fitness:</strong> Try home exercises like desk stretches, yoga, breathing</li>
+                                <li><strong>Stress & Mood:</strong> Daily mood check-ins and stress relief</li>
+                                <li>Mark workouts complete to build your fitness streak</li>
+                                <li>Use guided breathing exercises for stress relief</li>
+                                <li>Track your mood trends over time</li>
+                            </ul>
+                            <p>Regular exercise and mood tracking help maintain mental and physical health.</p>
+                        </div>
+
+                        <!-- Help Page 6: Reports & Export -->
+                        <div class="help-page" id="helpPage6">
+                            <div class="help-icon">📊</div>
+                            <h4>Reports & Data Export</h4>
+                            <p>Analyze your progress and export data:</p>
+                            <ul>
+                                <li>Generate weekly summary reports</li>
+                                <li>Export data in CSV or JSON format from any section</li>
+                                <li>View comprehensive analysis of all life areas</li>
+                                <li>Track progress over time with trends and charts</li>
+                                <li>Get personalized advice based on your patterns</li>
+                            </ul>
+                            <p>Regular review of your data helps identify patterns and areas for improvement.</p>
+
+                            <div class="contact-info">
+                                <p><strong>Need Help or Have Suggestions?</strong></p>
+                                <p>If you need any other doubts or if you think if it is a mistake and you can suggest improvements.</p>
+                                <p><strong>Contact: <a href="mailto:kanishjebamathew.m@gmail.com">kanishjebamathew.m@gmail.com</a></strong></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Overall Insights Tab -->
