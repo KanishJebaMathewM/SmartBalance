@@ -305,6 +305,122 @@ class Utils {
                 ],
                 duration: '5 minutes',
                 calories: 25
+            },
+            'breathing': {
+                title: '🫁 Deep Breathing',
+                instructions: [
+                    'Sit comfortably with your back straight',
+                    'Place one hand on your chest, one on your belly',
+                    'Breathe in slowly through your nose for 4 counts',
+                    'Hold your breath for 4 counts',
+                    'Exhale slowly through your mouth for 6 counts',
+                    'Feel your belly rise and fall with each breath',
+                    'Repeat for 10-15 cycles',
+                    'Focus on releasing tension with each exhale'
+                ],
+                duration: '3 minutes',
+                calories: 5
+            },
+            'wall-pushups': {
+                title: '🚪 Wall Push-ups',
+                instructions: [
+                    'Stand arm\'s length away from a wall',
+                    'Place palms flat against the wall at shoulder height',
+                    'Lean forward slowly until your nose almost touches the wall',
+                    'Push back to starting position',
+                    'Keep your body straight throughout the movement',
+                    'Start with 10-15 repetitions',
+                    'Rest for 30 seconds and repeat 2-3 sets'
+                ],
+                duration: '5 minutes',
+                calories: 15
+            },
+            'calf-raises': {
+                title: '🦵 Calf Raises',
+                instructions: [
+                    'Stand with feet hip-width apart',
+                    'Hold onto a chair or wall for balance if needed',
+                    'Slowly rise up onto your toes',
+                    'Hold the position for 2 seconds',
+                    'Lower back down slowly',
+                    'Repeat 15-20 times',
+                    'Do 2-3 sets with 30-second rest between sets'
+                ],
+                duration: '3 minutes',
+                calories: 10
+            },
+            'arm-circles': {
+                title: '💪 Arm Circles',
+                instructions: [
+                    'Stand with feet shoulder-width apart',
+                    'Extend arms out to the sides at shoulder height',
+                    'Make small circles forward for 15 seconds',
+                    'Make small circles backward for 15 seconds',
+                    'Make larger circles forward for 15 seconds',
+                    'Make larger circles backward for 15 seconds',
+                    'Shake arms out and relax'
+                ],
+                duration: '2 minutes',
+                calories: 8
+            },
+            'seated-twists': {
+                title: '🔄 Seated Spinal Twists',
+                instructions: [
+                    'Sit tall in your chair with feet flat on floor',
+                    'Place your right hand on the back of your chair',
+                    'Place your left hand on your right knee',
+                    'Gently twist your torso to the right',
+                    'Hold for 15-30 seconds',
+                    'Return to center and repeat on the left side',
+                    'Do 5 twists on each side',
+                    'Keep your shoulders relaxed'
+                ],
+                duration: '3 minutes',
+                calories: 5
+            },
+            'march-in-place': {
+                title: '🚶 March in Place',
+                instructions: [
+                    'Stand with feet hip-width apart',
+                    'Lift your right knee up toward your chest',
+                    'Lower it down and lift your left knee',
+                    'Continue alternating for a marching motion',
+                    'Swing your arms naturally as you march',
+                    'Keep a steady, comfortable pace',
+                    'March for 1 minute, rest 30 seconds, repeat 3 times'
+                ],
+                duration: '4 minutes',
+                calories: 20
+            },
+            'ankle-pumps': {
+                title: '🦶 Ankle Pumps',
+                instructions: [
+                    'Sit in your chair with feet flat on the floor',
+                    'Lift your toes up while keeping heels down',
+                    'Hold for 2 seconds',
+                    'Lower toes and lift heels up',
+                    'Hold for 2 seconds',
+                    'Repeat this pumping motion 20 times',
+                    'Then make circles with your ankles (10 each direction)',
+                    'This helps improve circulation'
+                ],
+                duration: '2 minutes',
+                calories: 3
+            },
+            'chair-squats': {
+                title: '🪑 Chair Squats',
+                instructions: [
+                    'Stand in front of your chair with feet shoulder-width apart',
+                    'Cross your arms over your chest',
+                    'Slowly lower yourself as if sitting down',
+                    'Lightly touch the chair seat with your bottom',
+                    'Immediately stand back up using your leg muscles',
+                    'Keep your weight on your heels',
+                    'Start with 8-12 repetitions',
+                    'Do 2-3 sets with 1-minute rest between sets'
+                ],
+                duration: '4 minutes',
+                calories: 18
             }
         };
 
