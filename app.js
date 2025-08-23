@@ -4122,6 +4122,304 @@ class WorkLifeBalanceApp {
             this.regenerateMealPlan();
         }
     }
+
+    // Food Analytics Methods
+    updateFoodAnalytics() {
+        this.updateNutritionStats();
+        this.createFoodCharts();
+        this.generateFoodInsights();
+    }
+
+    updateNutritionStats() {
+        const savedMeals = JSON.parse(localStorage.getItem('daily_meals') || '[]');
+        const last7Days = savedMeals.filter(meal => {
+            const mealDate = new Date(meal.date);
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            return mealDate >= weekAgo;
+        });
+
+        // Calculate weekly calories
+        const weeklyCalories = last7Days.reduce((sum, meal) => sum + (meal.calories || 0), 0);
+
+        // Calculate average meal cost
+        const avgCost = last7Days.length > 0 ?
+            last7Days.reduce((sum, meal) => sum + (meal.cost || 0), 0) / last7Days.length : 0;
+
+        // Count home cooking days (unique dates)
+        const cookingDays = new Set(last7Days.map(meal => meal.date)).size;
+
+        // Count South Indian meals
+        const southIndianMeals = last7Days.filter(meal =>
+            Utils.isSouthIndianFood(meal.name)
+        ).length;
+
+        // Update UI
+        const weeklyCaloriesEl = document.getElementById('weeklyCalories');
+        const avgMealCostEl = document.getElementById('avgMealCost');
+        const homeCookingDaysEl = document.getElementById('homeCookingDays');
+        const southIndianMealsEl = document.getElementById('southIndianMeals');
+
+        if (weeklyCaloriesEl) {
+            Utils.animateNumber(weeklyCaloriesEl, 0, weeklyCalories);
+            weeklyCaloriesEl.textContent = weeklyCalories.toLocaleString();
+        }
+
+        if (avgMealCostEl) {
+            avgMealCostEl.textContent = `₹${Math.round(avgCost)}`;
+        }
+
+        if (homeCookingDaysEl) {
+            homeCookingDaysEl.textContent = `${cookingDays}/7`;
+        }
+
+        if (southIndianMealsEl) {
+            southIndianMealsEl.textContent = southIndianMeals;
+        }
+
+        // Update changes (mock data for demo)
+        this.updateNutritionChanges();
+    }
+
+    updateNutritionChanges() {
+        const changes = [
+            { id: 'calorieChange', value: '+5%', positive: true },
+            { id: 'costChange', value: '-8%', positive: false },
+            { id: 'cookingChange', value: '+2', positive: true },
+            { id: 'southIndianChange', value: '+4', positive: true }
+        ];
+
+        changes.forEach(change => {
+            const element = document.getElementById(change.id);
+            if (element) {
+                element.textContent = change.value;
+                element.className = `nutrition-change ${change.positive ? 'positive' : 'negative'}`;
+            }
+        });
+    }
+
+    createFoodCharts() {
+        this.createCalorieChart();
+        this.createMealCostChart();
+    }
+
+    createCalorieChart() {
+        const canvas = document.getElementById('calorieChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Mock data for last 7 days
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const calories = [2100, 1950, 2200, 2050, 2300, 1850, 2150];
+
+        // Chart settings
+        const padding = 40;
+        const chartWidth = width - 2 * padding;
+        const chartHeight = height - 2 * padding;
+        const maxCalories = Math.max(...calories) * 1.1;
+
+        // Draw axes
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+
+        // Y-axis
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, height - padding);
+        ctx.stroke();
+
+        // X-axis
+        ctx.beginPath();
+        ctx.moveTo(padding, height - padding);
+        ctx.lineTo(width - padding, height - padding);
+        ctx.stroke();
+
+        // Draw grid lines
+        ctx.strokeStyle = '#f3f4f6';
+        for (let i = 1; i <= 4; i++) {
+            const y = padding + (i * chartHeight / 4);
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(width - padding, y);
+            ctx.stroke();
+        }
+
+        // Draw data line
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+
+        calories.forEach((calorie, index) => {
+            const x = padding + (index * chartWidth / (calories.length - 1));
+            const y = height - padding - (calorie / maxCalories * chartHeight);
+
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.stroke();
+
+        // Draw data points
+        ctx.fillStyle = '#3b82f6';
+        calories.forEach((calorie, index) => {
+            const x = padding + (index * chartWidth / (calories.length - 1));
+            const y = height - padding - (calorie / maxCalories * chartHeight);
+
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+        });
+
+        // Draw labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '12px Inter, sans-serif';
+        ctx.textAlign = 'center';
+
+        days.forEach((day, index) => {
+            const x = padding + (index * chartWidth / (days.length - 1));
+            ctx.fillText(day, x, height - 10);
+        });
+
+        // Y-axis labels
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 4; i++) {
+            const value = Math.round((maxCalories / 4) * i);
+            const y = height - padding - (i * chartHeight / 4);
+            ctx.fillText(value.toString(), padding - 10, y + 4);
+        }
+    }
+
+    createMealCostChart() {
+        const canvas = document.getElementById('mealCostChart');
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Data for home cooking vs delivery
+        const data = [
+            { label: 'Home Cooking', value: 45, color: '#10b981' },
+            { label: 'Delivery', value: 180, color: '#ef4444' }
+        ];
+
+        const maxValue = Math.max(...data.map(d => d.value));
+        const barWidth = 80;
+        const barSpacing = 100;
+        const padding = 60;
+
+        // Draw bars
+        data.forEach((item, index) => {
+            const x = padding + index * (barWidth + barSpacing);
+            const barHeight = (item.value / maxValue) * (height - 2 * padding);
+            const y = height - padding - barHeight;
+
+            // Draw bar
+            ctx.fillStyle = item.color;
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            // Draw value label
+            ctx.fillStyle = '#374151';
+            ctx.font = '14px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`₹${item.value}`, x + barWidth/2, y - 10);
+
+            // Draw category label
+            ctx.fillText(item.label, x + barWidth/2, height - 20);
+        });
+
+        // Add title
+        ctx.fillStyle = '#111827';
+        ctx.font = 'bold 16px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Average Cost per Meal', width/2, 25);
+    }
+
+    generateFoodInsights() {
+        const insightsList = document.getElementById('foodInsightsList');
+        if (!insightsList) return;
+
+        // Generate dynamic insights based on data
+        const savedMeals = JSON.parse(localStorage.getItem('daily_meals') || '[]');
+        const insights = this.calculateFoodInsights(savedMeals);
+
+        insightsList.innerHTML = insights.map(insight => `
+            <div class="insight-card">
+                <div class="insight-icon">${insight.icon}</div>
+                <div class="insight-content">
+                    <h5>${insight.title}</h5>
+                    <p>${insight.description}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    calculateFoodInsights(meals) {
+        const insights = [];
+
+        // South Indian preference
+        const southIndianCount = meals.filter(meal => Utils.isSouthIndianFood(meal.name)).length;
+        const totalMeals = meals.length;
+
+        if (southIndianCount > totalMeals * 0.6) {
+            insights.push({
+                icon: '🥥',
+                title: 'South Indian Preference',
+                description: `You've enjoyed ${southIndianCount} South Indian meals recently. Your taste for traditional flavors is evident!`
+            });
+        }
+
+        // Cost efficiency
+        const avgCost = meals.reduce((sum, meal) => sum + (meal.cost || 0), 0) / Math.max(meals.length, 1);
+        if (avgCost < 50) {
+            insights.push({
+                icon: '💰',
+                title: 'Budget-Friendly Eating',
+                description: `Your average meal cost of ₹${Math.round(avgCost)} shows excellent budget management. Keep it up!`
+            });
+        }
+
+        // Calorie balance
+        const avgCalories = meals.reduce((sum, meal) => sum + (meal.calories || 0), 0) / Math.max(meals.length, 1);
+        if (avgCalories >= 2000 && avgCalories <= 2200) {
+            insights.push({
+                icon: '🔥',
+                title: 'Well-Balanced Calories',
+                description: `Your daily average of ${Math.round(avgCalories)} calories is perfectly balanced for a healthy lifestyle.`
+            });
+        }
+
+        // Consistency
+        const uniqueDays = new Set(meals.map(meal => meal.date)).size;
+        if (uniqueDays >= 5) {
+            insights.push({
+                icon: '🍽️',
+                title: 'Consistent Meal Planning',
+                description: `You've planned meals for ${uniqueDays} days recently. Great consistency in your food routine!`
+            });
+        }
+
+        return insights.slice(0, 3); // Show only top 3 insights
+    }
+
+    // Enhanced loadFoodData to include analytics
+    loadFoodData() {
+        this.loadPantryItems();
+        this.updateMealPlan();
+        this.updateFoodStats();
+        this.loadSavedMealPlan();
+        this.updateFoodAnalytics();
+    }
 }
 
 // Initialize the app when DOM is loaded
