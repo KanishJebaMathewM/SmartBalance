@@ -1558,6 +1558,9 @@ class WorkLifeBalanceApp {
 
         if (!pantryList) return;
 
+        // Debug log to see what items we have
+        console.log('Loading pantry items:', items?.length || 0, 'items found');
+
         if (!items || items.length === 0) {
             pantryList.innerHTML = `
                 <div class="empty-state">
@@ -4347,7 +4350,7 @@ class WorkLifeBalanceApp {
             insights.push({
                 icon: '💰',
                 title: 'Budget-Friendly Eating',
-                description: `Your average meal cost of ��${Math.round(avgCost)} shows excellent budget management. Keep it up!`
+                description: `Your average meal cost of ₹${Math.round(avgCost)} shows excellent budget management. Keep it up!`
             });
         }
 
@@ -6900,7 +6903,7 @@ class WorkLifeBalanceApp {
 
         if (stressedDays >= 4) {
             recommendations.push({
-                icon: '😌',
+                icon: '����',
                 title: 'Stress Management',
                 description: 'You had multiple stressful days this week. Try breathing exercises or short meditation sessions.',
                 priority: 'high',
