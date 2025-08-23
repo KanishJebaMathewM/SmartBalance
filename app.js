@@ -17,6 +17,10 @@ class WorkLifeBalanceApp {
         this.timerRemaining = 0; // in seconds
         this.currentExerciseType = null;
 
+        // Help navigation state
+        this.currentHelpPage = 1;
+        this.totalHelpPages = 6;
+
         this.init();
     }
 
