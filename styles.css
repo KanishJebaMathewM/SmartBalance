@@ -1748,6 +1748,494 @@ body.dark-mode {
     border-color: #374151;
 }
 
+/* Enhanced Food & Nutrition Styles */
+
+.food-header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.daily-food-tracking {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    margin-bottom: 24px;
+}
+
+.dark-mode .daily-food-tracking {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.food-tracking-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dark-mode .food-tracking-tabs {
+    border-bottom-color: #374151;
+}
+
+.daily-summary {
+    margin-bottom: 24px;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.summary-card {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .summary-card {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.summary-card.home-cooking {
+    border-left: 4px solid #10b981;
+}
+
+.summary-card.hotel-delivery {
+    border-left: 4px solid #f59e0b;
+}
+
+.summary-card h4 {
+    color: #111827;
+    margin-bottom: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.dark-mode .summary-card h4 {
+    color: #f9fafb;
+}
+
+.summary-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.summary-stats .count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+.home-cooking .count {
+    color: #10b981;
+}
+
+.hotel-delivery .count {
+    color: #f59e0b;
+}
+
+.summary-stats .calories,
+.summary-stats .cost {
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dark-mode .summary-stats .calories,
+.dark-mode .summary-stats .cost {
+    color: #9ca3af;
+}
+
+.meals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.meal-item {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+
+.meal-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.dark-mode .meal-item {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.meal-type-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.meal-type-icon.breakfast {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.meal-type-icon.lunch {
+    background: #dbeafe;
+    color: #3b82f6;
+}
+
+.meal-type-icon.dinner {
+    background: #ede9fe;
+    color: #8b5cf6;
+}
+
+.meal-type-icon.snack {
+    background: #fecaca;
+    color: #ef4444;
+}
+
+.meal-info {
+    flex: 1;
+}
+
+.meal-name {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.dark-mode .meal-name {
+    color: #f9fafb;
+}
+
+.meal-details {
+    display: flex;
+    gap: 16px;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.dark-mode .meal-details {
+    color: #9ca3af;
+}
+
+.meal-source {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.meal-source.home {
+    background: #dcfdf7;
+    color: #064e3b;
+}
+
+.meal-source.hotel {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.dark-mode .meal-source.home {
+    background: #064e3b;
+    color: #a7f3d0;
+}
+
+.dark-mode .meal-source.hotel {
+    background: #451a03;
+    color: #fbbf24;
+}
+
+/* Home vs Hotel Analysis */
+.home-vs-hotel-analysis {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    margin-bottom: 24px;
+}
+
+.dark-mode .home-vs-hotel-analysis {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.comparison-insights {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.dark-mode .comparison-insights {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.insight-card {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+    margin-bottom: 12px;
+}
+
+.dark-mode .insight-card {
+    background: #1f2937;
+}
+
+.insight-card:last-child {
+    margin-bottom: 0;
+}
+
+.insight-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.insight-content h5 {
+    color: #111827;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.dark-mode .insight-content h5 {
+    color: #f9fafb;
+}
+
+.insight-content p {
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.dark-mode .insight-content p {
+    color: #9ca3af;
+}
+
+/* Meal Modal Styles */
+.meal-source-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.source-option {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.source-option:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.source-option.active {
+    background: #dbeafe;
+    border-color: #3b82f6;
+    color: #1e40af;
+}
+
+.dark-mode .source-option {
+    background: #374151;
+    border-color: #4b5563;
+    color: #d1d5db;
+}
+
+.dark-mode .source-option:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+}
+
+.dark-mode .source-option.active {
+    background: #1e3a8a;
+    border-color: #3b82f6;
+    color: #dbeafe;
+}
+
+.source-option .icon {
+    font-size: 1.5rem;
+}
+
+.cooking-details {
+    background: #f9fafb;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+    border: 1px solid #e5e7eb;
+}
+
+.dark-mode .cooking-details {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.dark-mode .form-group label {
+    color: #d1d5db;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.dark-mode .form-actions {
+    border-top-color: #374151;
+}
+
+/* Weekly Food Analysis */
+.weekly-analysis {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.weekly-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.weekly-summary-card {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.dark-mode .weekly-summary-card {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.weekly-summary-card h4 {
+    color: #111827;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.dark-mode .weekly-summary-card h4 {
+    color: #f9fafb;
+}
+
+.weekly-summary-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #3b82f6;
+    margin-bottom: 4px;
+}
+
+.weekly-summary-card .label {
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.dark-mode .weekly-summary-card .label {
+    color: #9ca3af;
+}
+
+/* Empty states */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6b7280;
+}
+
+.dark-mode .empty-state {
+    color: #9ca3af;
+}
+
+.empty-state h3 {
+    color: #374151;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.dark-mode .empty-state h3 {
+    color: #d1d5db;
+}
+
+/* Wide modal for meal modal */
+.modal-content.wide-modal {
+    max-width: 600px;
+}
+
+/* Chart container responsiveness */
+.chart-container canvas {
+    max-width: 100%;
+    height: auto;
+}
+
 .income-vs-expenses h3 {
     color: #111827;
     margin-bottom: 20px;
