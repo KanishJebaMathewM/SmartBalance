@@ -346,6 +346,12 @@ class WorkLifeBalanceApp {
 
         // Export button handlers
         this.initializeExportHandlers();
+
+        // Refresh analysis button
+        const refreshAnalysisBtn = document.getElementById('refreshAnalysisBtn');
+        if (refreshAnalysisBtn) {
+            refreshAnalysisBtn.addEventListener('click', () => this.refreshAnalysis());
+        }
     }
 
     initializeFilterHandlers() {
@@ -8296,7 +8302,7 @@ class WorkLifeBalanceApp {
         container.innerHTML = metrics.map(metric => {
             const change = metric.current - metric.previous;
             const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
-            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '���️';
+            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '➡️';
 
             return `
                 <div class="progress-metric">
