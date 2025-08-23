@@ -422,17 +422,36 @@ class WorkLifeBalanceApp {
     }
 
     updateMealWidget() {
-        const todayMeals = window.storage.getTodayMeals();
         const mealSuggestionEl = document.getElementById('mealSuggestion');
+        if (!mealSuggestionEl) return;
 
-        if (mealSuggestionEl) {
-            if (todayMeals.length > 0) {
-                const lastMeal = todayMeals[todayMeals.length - 1];
-                mealSuggestionEl.textContent = `Last: ${lastMeal.name}`;
-            } else {
-                const suggestions = Utils.getMealSuggestions();
-                mealSuggestionEl.textContent = suggestions.breakfast;
-            }
+        // First check for upcoming planned meals
+        const upcomingMeals = window.storage.getMeals().filter(meal => {
+            const mealDate = new Date(meal.date);
+            const now = new Date();
+            return mealDate >= now && meal.status === 'planned';
+        }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        if (upcomingMeals.length > 0) {
+            const nextMeal = upcomingMeals[0];
+            const mealDate = new Date(nextMeal.date);
+            const isToday = mealDate.toDateString() === new Date().toDateString();
+            mealSuggestionEl.textContent = `${isToday ? 'Next' : 'Upcoming'}: ${nextMeal.name}`;
+            return;
+        }
+
+        // If no upcoming planned meals, suggest next meal based on time
+        const nextMealType = this.getNextMealType();
+        const todayMeals = window.storage.getTodayMeals();
+        const plannedMealTypes = todayMeals.map(meal => meal.type);
+
+        if (!plannedMealTypes.includes(nextMealType)) {
+            const suggestions = this.generateMealSuggestions(nextMealType);
+            mealSuggestionEl.textContent = `Plan ${nextMealType}: ${suggestions[0].name}`;
+        } else {
+            // All meals for today are planned, suggest tomorrow's breakfast
+            const tomorrowSuggestions = this.generateMealSuggestions('breakfast');
+            mealSuggestionEl.textContent = `Tomorrow: ${tomorrowSuggestions[0].name}`;
         }
     }
 
