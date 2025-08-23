@@ -3767,7 +3767,13 @@ class WorkLifeBalanceApp {
         // Reset the expense task details
         document.getElementById('expenseTaskDetails').style.display = 'none';
         document.getElementById('selectedExpenseCategory').textContent = '-';
-        document.getElementById('taskExpenseCategory').style.display = 'none';
+        const expenseCategorySelect = document.getElementById('taskExpenseCategory');
+        expenseCategorySelect.style.display = 'none';
+        // Hide the container as well
+        const expenseCategoryContainer = expenseCategorySelect.parentElement;
+        if (expenseCategoryContainer) {
+            expenseCategoryContainer.style.display = 'none';
+        }
         document.getElementById('changeExpenseCategoryBtn').style.display = 'none';
 
         if (this.currentSection === 'tasks') {
