@@ -3110,7 +3110,7 @@ class WorkLifeBalanceApp {
         const insight = correlation > 0.3 ?
             '�� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
-            '����� Completing tasks reduces your stress levels!' :
+            '������ Completing tasks reduces your stress levels!' :
             '📊 Keep tracking to understand your productivity-stress patterns';
 
         this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
@@ -9189,6 +9189,54 @@ class WorkLifeBalanceApp {
             homeCost: Math.round(homeCost),
             hotelCost: Math.round(hotelCost)
         };
+    }
+
+    // Help Navigation Methods
+    showPreviousHelp() {
+        if (this.currentHelpPage > 1) {
+            this.currentHelpPage--;
+            this.updateHelpDisplay();
+        }
+    }
+
+    showNextHelp() {
+        if (this.currentHelpPage < this.totalHelpPages) {
+            this.currentHelpPage++;
+            this.updateHelpDisplay();
+        }
+    }
+
+    updateHelpDisplay() {
+        // Hide all help pages
+        document.querySelectorAll('.help-page').forEach(page => {
+            page.classList.remove('active');
+        });
+
+        // Show current help page
+        const currentPage = document.getElementById(`helpPage${this.currentHelpPage}`);
+        if (currentPage) {
+            currentPage.classList.add('active');
+        }
+
+        // Update page indicator
+        const pageIndicator = document.getElementById('helpPageIndicator');
+        if (pageIndicator) {
+            pageIndicator.textContent = `${this.currentHelpPage} / ${this.totalHelpPages}`;
+        }
+
+        // Update button states
+        const prevBtn = document.getElementById('prevHelpBtn');
+        const nextBtn = document.getElementById('nextHelpBtn');
+
+        if (prevBtn) {
+            prevBtn.disabled = this.currentHelpPage === 1;
+            prevBtn.style.opacity = this.currentHelpPage === 1 ? '0.5' : '1';
+        }
+
+        if (nextBtn) {
+            nextBtn.disabled = this.currentHelpPage === this.totalHelpPages;
+            nextBtn.style.opacity = this.currentHelpPage === this.totalHelpPages ? '0.5' : '1';
+        }
     }
 }
 
