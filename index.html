@@ -326,13 +326,33 @@
                                     <div class="prediction-amount" id="nextMonthPrediction">₹0</div>
                                     <div class="prediction-confidence">Confidence: <span id="monthConfidence">78%</span></div>
                                 </div>
+                                <div class="prediction-card">
+                                    <h4>Recurring Expenses</h4>
+                                    <div class="prediction-amount" id="recurringPrediction">₹0</div>
+                                    <div class="prediction-confidence">Next 30 days</div>
+                                </div>
                             </div>
+                        </div>
+
+                        <div class="recurring-management">
+                            <h3>🔄 Recurring Expenses</h3>
+                            <div class="recurring-list" id="recurringExpensesList">
+                                <!-- Recurring expenses will be listed here -->
+                            </div>
+                            <button class="btn-primary" id="manageRecurringBtn">Manage Recurring</button>
                         </div>
 
                         <div class="patterns-section">
                             <h3>🧩 Spending Patterns</h3>
                             <div class="pattern-analysis" id="patternAnalysis">
                                 <!-- Pattern analysis will be generated here -->
+                            </div>
+                        </div>
+
+                        <div class="smart-alerts">
+                            <h3>⚠️ Smart Alerts</h3>
+                            <div class="alerts-list" id="smartAlertsList">
+                                <!-- Smart alerts will be generated here -->
                             </div>
                         </div>
 
@@ -362,6 +382,7 @@
                                 <div class="form-group">
                                     <label for="expenseAmount">Amount (₹)</label>
                                     <input type="number" id="expenseAmount" placeholder="0.00" required step="0.01">
+                                    <div class="smart-suggestions" id="amountSuggestions" style="display: none;"></div>
                                 </div>
                                 <div class="form-group">
                                     <label for="expenseDate">Date</label>
@@ -380,23 +401,41 @@
                                     <option value="entertainment">🎬 Entertainment</option>
                                     <option value="healthcare">🏥 Healthcare</option>
                                     <option value="education">📚 Education</option>
+                                    <option value="fitness">💪 Fitness & Sports</option>
+                                    <option value="subscriptions">📺 Subscriptions</option>
+                                    <option value="groceries">🛒 Groceries</option>
+                                    <option value="clothing">👕 Clothing</option>
                                     <option value="other">📦 Other</option>
                                 </select>
+                                <div class="smart-category-suggestion" id="categorySuggestion" style="display: none;"></div>
                             </div>
 
                             <div class="form-group">
                                 <label for="expenseNotes">Description</label>
                                 <input type="text" id="expenseNotes" placeholder="What was this expense for?">
+                                <div class="auto-complete-suggestions" id="descriptionSuggestions" style="display: none;"></div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="expensePaymentMethod">Payment Method</label>
-                                <select id="expensePaymentMethod">
-                                    <option value="cash">💵 Cash</option>
-                                    <option value="card">💳 Card</option>
-                                    <option value="upi">📱 UPI</option>
-                                    <option value="bank">🏦 Bank Transfer</option>
-                                </select>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expensePaymentMethod">Payment Method</label>
+                                    <select id="expensePaymentMethod">
+                                        <option value="cash">💵 Cash</option>
+                                        <option value="card">💳 Card</option>
+                                        <option value="upi">📱 UPI</option>
+                                        <option value="bank">🏦 Bank Transfer</option>
+                                        <option value="wallet">📱 Digital Wallet</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="expensePriority">Priority</label>
+                                    <select id="expensePriority">
+                                        <option value="low">🟢 Low</option>
+                                        <option value="medium" selected>🟡 Medium</option>
+                                        <option value="high">🔴 High</option>
+                                        <option value="essential">⭐ Essential</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="form-group checkbox-group">
@@ -405,6 +444,52 @@
                                     <span class="checkmark"></span>
                                     This is a recurring expense
                                 </label>
+                            </div>
+
+                            <div id="recurringOptions" class="recurring-options" style="display: none;">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="recurringFrequency">Frequency</label>
+                                        <select id="recurringFrequency">
+                                            <option value="weekly">Weekly</option>
+                                            <option value="monthly" selected>Monthly</option>
+                                            <option value="quarterly">Quarterly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recurringEndDate">End Date (Optional)</label>
+                                        <input type="date" id="recurringEndDate">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="recurringReminder">Reminder (days before)</label>
+                                    <input type="number" id="recurringReminder" value="3" min="0" max="30">
+                                </div>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="expenseShared">
+                                    <span class="checkmark"></span>
+                                    Shared expense
+                                </label>
+                            </div>
+
+                            <div id="sharedOptions" class="shared-options" style="display: none;">
+                                <div class="form-group">
+                                    <label for="sharedWith">Shared with</label>
+                                    <input type="text" id="sharedWith" placeholder="Person's name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="shareAmount">Your share (₹)</label>
+                                    <input type="number" id="shareAmount" placeholder="0.00" step="0.01">
+                                </div>
+                            </div>
+
+                            <div class="expense-forecast" id="expenseForecast" style="display: none;">
+                                <h4>💡 Smart Insights</h4>
+                                <div class="forecast-content" id="forecastContent"></div>
                             </div>
 
                             <div class="form-actions">
