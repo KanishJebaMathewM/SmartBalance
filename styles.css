@@ -3228,8 +3228,7 @@ body.dark-mode {
 }
 
 /* Recurring and Shared Options */
-.recurring-options,
-.shared-options {
+.recurring-options {
     margin-top: 16px;
     padding: 16px;
     background: #f8fafc;
@@ -3237,8 +3236,7 @@ body.dark-mode {
     border: 1px solid #e2e8f0;
 }
 
-.dark-mode .recurring-options,
-.dark-mode .shared-options {
+.dark-mode .recurring-options {
     background: #1e293b;
     border-color: #334155;
 }
