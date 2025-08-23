@@ -5900,9 +5900,16 @@ class WorkLifeBalanceApp {
             mealsForDate.filter(meal => meal.id !== skipMealId) :
             mealsForDate;
 
-        const existingMealOfType = existingMeals.find(meal => meal.type === mealType);
+        // Normalize meal type for case-insensitive comparison
+        const normalizedMealType = mealType.toLowerCase().trim();
+
+        const existingMealOfType = existingMeals.find(meal =>
+            meal.type && meal.type.toLowerCase().trim() === normalizedMealType
+        );
+
         if (existingMealOfType) {
-            Utils.showNotification(`You already have ${mealType} planned for this date`, 'error');
+            const dateStr = new Date(date).toLocaleDateString();
+            Utils.showNotification(`You already have a ${mealType} meal planned for ${dateStr}. Each meal type can only be added once per day.`, 'error');
             return false;
         }
 
@@ -8116,7 +8123,7 @@ class WorkLifeBalanceApp {
         // Task recommendations
         const taskCompletion = data.tasks.length > 0 ? (data.tasks.filter(t => t.completed).length / data.tasks.length) * 100 : 0;
         if (taskCompletion < 70) {
-            recommendations.push('📝 Focus on completing more tasks for better productivity');
+            recommendations.push('���� Focus on completing more tasks for better productivity');
         }
 
         // Fitness recommendations
