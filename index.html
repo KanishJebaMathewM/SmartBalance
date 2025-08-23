@@ -583,7 +583,7 @@
                             </div>
 
                             <div class="expense-forecast" id="expenseForecast" style="display: none;">
-                                <h4>��� Smart Insights</h4>
+                                <h4>💡 Smart Insights</h4>
                                 <div class="forecast-content" id="forecastContent"></div>
                             </div>
 
@@ -790,37 +790,8 @@
                             <button class="btn-small" onclick="app.changeMealPlanDate(1)">Tomorrow →</button>
                         </div>
                     </div>
-                    <div class="meal-grid">
-                        <div class="meal-card">
-                            <div class="meal-emoji">🌅</div>
-                            <h4>Breakfast</h4>
-                            <p id="breakfastMeal">Crispy Dosa with Coconut Chutney</p>
-                            <div class="meal-details">
-                                <span class="calories" id="breakfastCalories">280 cal</span>
-                                <span class="cost" id="breakfastCost">₹35</span>
-                            </div>
-                            <button class="btn-edit-meal" onclick="app.editMealSuggestion('breakfast')">✏️ Edit</button>
-                        </div>
-                        <div class="meal-card">
-                            <div class="meal-emoji">🌞</div>
-                            <h4>Lunch</h4>
-                            <p id="lunchMeal">Steamed Rice with Sambar and Rasam</p>
-                            <div class="meal-details">
-                                <span class="calories" id="lunchCalories">420 cal</span>
-                                <span class="cost" id="lunchCost">₹55</span>
-                            </div>
-                            <button class="btn-edit-meal" onclick="app.editMealSuggestion('lunch')">✏️ Edit</button>
-                        </div>
-                        <div class="meal-card">
-                            <div class="meal-emoji">🌙</div>
-                            <h4>Dinner</h4>
-                            <p id="dinnerMeal">Appam with Coconut Stew</p>
-                            <div class="meal-details">
-                                <span class="calories" id="dinnerCalories">340 cal</span>
-                                <span class="cost" id="dinnerCost">₹45</span>
-                            </div>
-                            <button class="btn-edit-meal" onclick="app.editMealSuggestion('dinner')">✏️ Edit</button>
-                        </div>
+                    <div class="meal-grid" id="mealPlanGrid">
+                        <!-- Meal cards will be dynamically generated -->
                     </div>
                     <div class="meal-actions">
                         <button class="btn-secondary" onclick="app.regenerateMealPlan()">🔄 Regenerate Plan</button>
