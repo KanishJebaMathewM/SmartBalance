@@ -264,6 +264,80 @@ class Storage {
         return true;
     }
 
+    // Meals methods
+    getMeals() {
+        return this.get(this.keys.meals) || [];
+    }
+
+    addMeal(meal) {
+        const meals = this.getMeals();
+        meal.id = Date.now();
+        meal.createdAt = new Date().toISOString();
+        meals.push(meal);
+        this.set(this.keys.meals, meals);
+        return meal;
+    }
+
+    updateMeal(id, updates) {
+        const meals = this.getMeals();
+        const index = meals.findIndex(meal => meal.id === id);
+        if (index !== -1) {
+            meals[index] = { ...meals[index], ...updates };
+            this.set(this.keys.meals, meals);
+            return meals[index];
+        }
+        return null;
+    }
+
+    deleteMeal(id) {
+        const meals = this.getMeals();
+        const filteredMeals = meals.filter(meal => meal.id !== id);
+        this.set(this.keys.meals, filteredMeals);
+        return true;
+    }
+
+    getMealsByDate(date) {
+        const meals = this.getMeals();
+        const targetDate = new Date(date).toDateString();
+        return meals.filter(meal => new Date(meal.date).toDateString() === targetDate);
+    }
+
+    getTodayMeals() {
+        return this.getMealsByDate(new Date());
+    }
+
+    getYesterdayMeals() {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        return this.getMealsByDate(yesterday);
+    }
+
+    getWeeklyMealStats() {
+        const meals = this.getMeals();
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+
+        const weeklyMeals = meals.filter(meal => new Date(meal.date) >= weekAgo);
+
+        const homeMeals = weeklyMeals.filter(meal => meal.source === 'home');
+        const hotelMeals = weeklyMeals.filter(meal => meal.source === 'hotel');
+
+        const totalCalories = weeklyMeals.reduce((sum, meal) => sum + parseInt(meal.calories), 0);
+        const totalHomeCost = homeMeals.reduce((sum, meal) => sum + (parseFloat(meal.ingredientCost) || 0), 0);
+        const totalHotelCost = hotelMeals.reduce((sum, meal) => sum + (parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0), 0);
+
+        return {
+            totalMeals: weeklyMeals.length,
+            homeMeals: homeMeals.length,
+            hotelMeals: hotelMeals.length,
+            totalCalories,
+            totalHomeCost,
+            totalHotelCost,
+            avgCaloriesPerDay: totalCalories / 7,
+            moneySaved: Math.max(0, (hotelMeals.length * 200) - totalHomeCost) // Assuming avg hotel meal cost is 200
+        };
+    }
+
     // Workouts methods
     getWorkouts() {
         return this.get(this.keys.workouts) || [];
