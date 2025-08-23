@@ -3879,7 +3879,7 @@ class WorkLifeBalanceApp {
 
         // Update fitness data if on fitness section
         if (this.currentSection === 'fitness') {
-            this.loadFitnessData();
+            this.loadFitnessDataEnhanced();
         }
 
         this.updateDashboard();
@@ -4720,7 +4720,7 @@ class WorkLifeBalanceApp {
             breakfast: '🌅',
             lunch: '🌞',
             dinner: '🌙',
-            snack: '🥨'
+            snack: '��'
         };
         return icons[type] || '🍽️';
     }
