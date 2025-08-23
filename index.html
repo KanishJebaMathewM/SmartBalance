@@ -1421,80 +1421,72 @@
                 </div>
             </section>
 
-            <!-- Habits & Goals Section -->
+            <!-- Insights & Analysis Section -->
             <section id="habits" class="section">
                 <div class="section-header">
-                    <h1>🎯 Habits & Goals Tracker</h1>
+                    <h1>🎯 Insights & Life Analysis</h1>
                     <div class="header-actions">
                         <button class="btn-secondary export-btn" data-section="habits" data-format="csv">📊 Export CSV</button>
                         <button class="btn-secondary export-btn" data-section="habits" data-format="json">📄 Export JSON</button>
-                        <button class="btn-primary" id="addHabitBtn">+ Add Habit</button>
                     </div>
                 </div>
 
-                <!-- Habit Tracking Stats -->
-                <div class="habit-stats">
-                    <div class="stat-card">
-                        <span id="habitStreak">0</span>
-                        <label>Longest Streak 🔥</label>
-                    </div>
-                    <div class="stat-card">
-                        <span id="todayHabits">0/0</span>
-                        <label>Today's Progress</label>
-                    </div>
-                    <div class="stat-card">
-                        <span id="weeklyConsistency">0%</span>
-                        <label>Weekly Consistency</label>
-                    </div>
-                    <div class="stat-card">
-                        <span id="activeHabits">0</span>
-                        <label>Active Habits</label>
+                <!-- Life Balance Overview -->
+                <div class="life-balance-overview">
+                    <div class="balance-score-container">
+                        <div class="balance-score-circle">
+                            <div class="balance-score-value" id="lifeBalanceScore">0</div>
+                            <div class="balance-score-label">Life Balance Score</div>
+                        </div>
+                        <div class="balance-breakdown" id="balanceBreakdown">
+                            <!-- Balance breakdown will be shown here -->
+                        </div>
                     </div>
                 </div>
 
-                <!-- Habit Categories Tabs -->
-                <div class="habit-tabs">
-                    <button class="tab-btn active" data-tab="daily-habits">📅 Daily Habits</button>
-                    <button class="tab-btn" data-tab="habit-correlations">🔗 Connections</button>
-                    <button class="tab-btn" data-tab="habit-insights">📊 Insights</button>
-                    <button class="tab-btn" data-tab="habit-goals">🎯 Goals</button>
+                <!-- Analysis Tabs -->
+                <div class="analysis-tabs">
+                    <button class="tab-btn active" data-tab="overall-insights">📊 Overall Insights</button>
+                    <button class="tab-btn" data-tab="behavior-patterns">🔗 Behavior Patterns</button>
+                    <button class="tab-btn" data-tab="recommendations">💡 Recommendations</button>
+                    <button class="tab-btn" data-tab="progress-analysis">📈 Progress Analysis</button>
                 </div>
 
-                <!-- Daily Habits Tab -->
-                <div id="daily-habits" class="tab-content active">
-                    <div class="daily-tracker">
-                        <h3>Today's Habits</h3>
-                        <div class="habit-checklist" id="todayHabitChecklist">
-                            <!-- Today's habits will be displayed here -->
-                        </div>
-                    </div>
-
-                    <div class="habit-categories">
-                        <div class="category-section">
-                            <h3>💪 Fitness & Health</h3>
-                            <div class="habit-grid" id="fitnessHabits">
-                                <!-- Fitness habits will be displayed here -->
+                <!-- Overall Insights Tab -->
+                <div id="overall-insights" class="tab-content active">
+                    <div class="insights-grid">
+                        <div class="insight-section">
+                            <h3>💪 Fitness & Wellness Performance</h3>
+                            <div class="performance-metrics" id="fitnessPerformance">
+                                <!-- Fitness analysis will be displayed here -->
                             </div>
                         </div>
 
-                        <div class="category-section">
-                            <h3>🍲 Nutrition & Food</h3>
-                            <div class="habit-grid" id="nutritionHabits">
-                                <!-- Nutrition habits will be displayed here -->
+                        <div class="insight-section">
+                            <h3>🍲 Nutrition & Lifestyle Patterns</h3>
+                            <div class="performance-metrics" id="nutritionPerformance">
+                                <!-- Nutrition analysis will be displayed here -->
                             </div>
                         </div>
 
-                        <div class="category-section">
-                            <h3>💼 Productivity & Work</h3>
-                            <div class="habit-grid" id="productivityHabits">
-                                <!-- Productivity habits will be displayed here -->
+                        <div class="insight-section">
+                            <h3>💼 Productivity & Task Management</h3>
+                            <div class="performance-metrics" id="productivityPerformance">
+                                <!-- Productivity analysis will be displayed here -->
                             </div>
                         </div>
 
-                        <div class="category-section">
-                            <h3>😌 Mental Health & Wellness</h3>
-                            <div class="habit-grid" id="wellnessHabits">
-                                <!-- Wellness habits will be displayed here -->
+                        <div class="insight-section">
+                            <h3>💰 Financial Health & Spending</h3>
+                            <div class="performance-metrics" id="financialPerformance">
+                                <!-- Financial analysis will be displayed here -->
+                            </div>
+                        </div>
+
+                        <div class="insight-section">
+                            <h3>😌 Mental Health & Stress Management</h3>
+                            <div class="performance-metrics" id="wellnessPerformance">
+                                <!-- Wellness analysis will be displayed here -->
                             </div>
                         </div>
                     </div>
