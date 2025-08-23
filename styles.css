@@ -1435,6 +1435,46 @@ body.dark-mode {
     border-color: #4b5563;
 }
 
+.expense-category-info {
+    background: #f0f9ff;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #0ea5e9;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dark-mode .expense-category-info {
+    background: #0c4a6e;
+    border-color: #0284c7;
+}
+
+.expense-category-info label {
+    color: #0c4a6e;
+    font-weight: 500;
+    margin: 0;
+}
+
+.dark-mode .expense-category-info label {
+    color: #7dd3fc;
+}
+
+#selectedExpenseCategory {
+    font-weight: 600;
+    color: #0369a1;
+}
+
+.dark-mode #selectedExpenseCategory {
+    color: #38bdf8;
+}
+
+#changeExpenseCategoryBtn {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+}
+
 /* Enhanced Task Item Styles */
 .task-item.expense-related {
     border-left: 4px solid #f59e0b;
