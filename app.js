@@ -1626,7 +1626,7 @@ class WorkLifeBalanceApp {
                     <div class="pantry-expiry">Expires: ${Utils.formatDate(item.expiry)}</div>
                 </div>
                 <div class="pantry-actions">
-                    <button onclick="app.deleteFoodItem(${item.id})" title="Delete">������</button>
+                    <button onclick="app.deleteFoodItem(${item.id})" title="Delete">���️</button>
                 </div>
             </div>
         `).join('');
@@ -3848,7 +3848,7 @@ class WorkLifeBalanceApp {
     }
 
     // Enhanced completeExercise method
-    completeExercise(exerciseType, exercise) {
+    completeExerciseEnhanced(exerciseType, exercise) {
         // Stop timer if running
         if (this.timerState === 'running') {
             this.resetExerciseTimer();
@@ -4855,7 +4855,7 @@ class WorkLifeBalanceApp {
 
         if (homePercentage >= 70) {
             insights.push({
-                icon: '���',
+                icon: '🏠',
                 title: 'Excellent Home Cooking Habit',
                 description: `You cooked at home ${homePercentage}% of the time this week. This is great for both health and budget!`
             });
@@ -6920,7 +6920,7 @@ class WorkLifeBalanceApp {
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
             { name: 'Productivity', score: scores.productivity, icon: '����' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
-            { name: 'Wellness', score: scores.wellness, icon: '😌' }
+            { name: 'Wellness', score: scores.wellness, icon: '��' }
         ];
 
         const topAreas = areas.filter(area => area.score >= 70).sort((a, b) => b.score - a.score);
