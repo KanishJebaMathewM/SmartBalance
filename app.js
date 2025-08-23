@@ -4918,6 +4918,447 @@ class WorkLifeBalanceApp {
             this.loadFoodData();
         }
     }
+
+    // Interactive Meal Planner Methods
+    currentPlanDate = new Date();
+    currentSelectedMeal = null;
+
+    initializeInteractiveMealPlanner() {
+        // Initialize meal selection modal handlers
+        this.initializeMealSelectionModal();
+
+        // Initialize regenerate meal modal handlers
+        this.initializeRegenerateMealModal();
+
+        // Load current meal plan
+        this.loadMealPlan();
+
+        // Load upcoming meals
+        this.loadUpcomingMeals();
+    }
+
+    initializeMealSelectionModal() {
+        // Source selection handlers
+        document.querySelectorAll('.source-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Remove active class from all source buttons
+                document.querySelectorAll('.source-btn').forEach(b => b.classList.remove('active'));
+
+                // Add active class to clicked button
+                e.currentTarget.classList.add('active');
+
+                const source = e.currentTarget.dataset.source;
+                this.handleSourceSelection(source);
+            });
+        });
+
+        // Status selection handlers
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Remove active class from all status buttons
+                document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+
+                // Add active class to clicked button
+                e.currentTarget.classList.add('active');
+            });
+        });
+    }
+
+    initializeRegenerateMealModal() {
+        // Will be initialized when modal is opened
+    }
+
+    handleSourceSelection(source) {
+        const homeCookingOptions = document.getElementById('homeCookingOptions');
+        const hotelOrderOptions = document.getElementById('hotelOrderOptions');
+
+        if (source === 'home') {
+            homeCookingOptions.style.display = 'block';
+            hotelOrderOptions.style.display = 'none';
+        } else if (source === 'hotel') {
+            homeCookingOptions.style.display = 'none';
+            hotelOrderOptions.style.display = 'block';
+        }
+    }
+
+    changeMealPlanDate(days) {
+        this.currentPlanDate.setDate(this.currentPlanDate.getDate() + days);
+        this.updatePlanDateDisplay();
+        this.loadMealPlan();
+    }
+
+    updatePlanDateDisplay() {
+        const currentPlanDateEl = document.getElementById('currentPlanDate');
+        if (currentPlanDateEl) {
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            if (this.currentPlanDate.toDateString() === today.toDateString()) {
+                currentPlanDateEl.textContent = 'Today';
+            } else if (this.currentPlanDate.toDateString() === yesterday.toDateString()) {
+                currentPlanDateEl.textContent = 'Yesterday';
+            } else if (this.currentPlanDate.toDateString() === tomorrow.toDateString()) {
+                currentPlanDateEl.textContent = 'Tomorrow';
+            } else {
+                currentPlanDateEl.textContent = this.currentPlanDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                });
+            }
+        }
+    }
+
+    loadMealPlan() {
+        const meals = window.storage.getMealsByDate(this.currentPlanDate);
+        this.renderMealPlan(meals);
+    }
+
+    renderMealPlan(meals) {
+        const mealPlanGrid = document.getElementById('mealPlanGrid');
+        if (!mealPlanGrid) return;
+
+        const mealTypes = ['breakfast', 'lunch', 'dinner'];
+        const mealTypeInfo = {
+            breakfast: { emoji: '🌅', name: 'Breakfast', defaultTime: '8:00 AM' },
+            lunch: { emoji: '🌞', name: 'Lunch', defaultTime: '1:00 PM' },
+            dinner: { emoji: '🌙', name: 'Dinner', defaultTime: '7:00 PM' }
+        };
+
+        let gridHTML = '';
+
+        mealTypes.forEach(type => {
+            const meal = meals.find(m => m.type === type);
+            const typeInfo = mealTypeInfo[type];
+
+            if (meal) {
+                gridHTML += `
+                    <div class="meal-card" onclick="app.editExistingMeal('${meal.id}')">
+                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '📅 Planned'}</div>
+                        <div class="meal-emoji">${typeInfo.emoji}</div>
+                        <h4>${typeInfo.name}</h4>
+                        <p class="meal-name">${Utils.sanitizeInput(meal.name)}</p>
+                        <div class="meal-details">
+                            <span class="calories">${meal.calories} cal</span>
+                            <span class="cost">₹${meal.source === 'home' ? (meal.ingredientCost || 0) : ((parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0))}</span>
+                        </div>
+                        <div class="meal-source-indicator ${meal.source}">
+                            <span>${meal.source === 'home' ? '🏠' : '🏨'}</span>
+                            <span>${meal.source === 'home' ? 'Home Cooked' : 'Ordered'}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                gridHTML += `
+                    <div class="meal-card clickable" onclick="app.selectMealType('${type}')">
+                        <div class="meal-emoji">${typeInfo.emoji}</div>
+                        <h4>${typeInfo.name}</h4>
+                        <p>Click to add ${type}</p>
+                        <small>${typeInfo.defaultTime}</small>
+                    </div>
+                `;
+            }
+        });
+
+        mealPlanGrid.innerHTML = gridHTML;
+    }
+
+    selectMealType(mealType) {
+        this.currentSelectedMeal = {
+            type: mealType,
+            date: this.currentPlanDate.toISOString().split('T')[0]
+        };
+
+        // Generate suggestions for this meal type
+        const suggestions = this.generateMealSuggestions(mealType);
+        this.showMealSelection(suggestions[0]); // Show first suggestion
+    }
+
+    generateMealSuggestions(mealType) {
+        const mealSuggestions = {
+            breakfast: [
+                { name: 'Masala Dosa with Coconut Chutney', calories: 280, estimatedHomeCost: 35, estimatedHotelCost: 120 },
+                { name: 'Idli Sambar', calories: 220, estimatedHomeCost: 25, estimatedHotelCost: 80 },
+                { name: 'Upma with Vegetables', calories: 190, estimatedHomeCost: 20, estimatedHotelCost: 70 },
+                { name: 'Rava Dosa', calories: 260, estimatedHomeCost: 30, estimatedHotelCost: 100 },
+                { name: 'Poha with Peanuts', calories: 180, estimatedHomeCost: 15, estimatedHotelCost: 60 }
+            ],
+            lunch: [
+                { name: 'South Indian Thali', calories: 420, estimatedHomeCost: 55, estimatedHotelCost: 180 },
+                { name: 'Curd Rice with Pickle', calories: 320, estimatedHomeCost: 30, estimatedHotelCost: 90 },
+                { name: 'Vegetable Biryani', calories: 380, estimatedHomeCost: 45, estimatedHotelCost: 150 },
+                { name: 'Rasam Rice with Papad', calories: 290, estimatedHomeCost: 25, estimatedHotelCost: 100 },
+                { name: 'Lemon Rice with Curry', calories: 340, estimatedHomeCost: 35, estimatedHotelCost: 120 }
+            ],
+            dinner: [
+                { name: 'Appam with Coconut Stew', calories: 340, estimatedHomeCost: 45, estimatedHotelCost: 160 },
+                { name: 'Chapati with Dal Curry', calories: 300, estimatedHomeCost: 35, estimatedHotelCost: 130 },
+                { name: 'Vegetable Curry with Rice', calories: 350, estimatedHomeCost: 40, estimatedHotelCost: 140 },
+                { name: 'Sambar Rice', calories: 320, estimatedHomeCost: 30, estimatedHotelCost: 110 },
+                { name: 'Mixed Vegetable Kootu', calories: 280, estimatedHomeCost: 35, estimatedHotelCost: 120 }
+            ]
+        };
+
+        return mealSuggestions[mealType] || [];
+    }
+
+    showMealSelection(suggestion) {
+        // Populate modal with suggestion data
+        document.getElementById('selectedMealName').textContent = suggestion.name;
+        document.getElementById('selectedMealCalories').textContent = `${suggestion.calories} cal`;
+        document.getElementById('selectedMealType').textContent = this.currentSelectedMeal.type.charAt(0).toUpperCase() + this.currentSelectedMeal.type.slice(1);
+
+        // Set estimated costs
+        document.getElementById('homeEstimatedCost').value = suggestion.estimatedHomeCost;
+        document.getElementById('hotelEstimatedCost').value = suggestion.estimatedHotelCost;
+        document.getElementById('deliveryEstimate').value = 25; // Default delivery charge
+
+        // Reset selections
+        document.querySelectorAll('.source-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('plannedStatusBtn').classList.add('active');
+
+        // Hide option details
+        document.getElementById('homeCookingOptions').style.display = 'none';
+        document.getElementById('hotelOrderOptions').style.display = 'none';
+
+        // Store current suggestion
+        this.currentSelectedMeal.suggestion = suggestion;
+
+        // Show modal
+        this.openModal('mealSelectionModal');
+    }
+
+    confirmMealSelection() {
+        const selectedSource = document.querySelector('.source-btn.active');
+        const selectedStatus = document.querySelector('.status-btn.active');
+
+        if (!selectedSource) {
+            Utils.showNotification('Please select where you will have this meal', 'error');
+            return;
+        }
+
+        const mealData = {
+            name: this.currentSelectedMeal.suggestion.name,
+            type: this.currentSelectedMeal.type,
+            calories: this.currentSelectedMeal.suggestion.calories,
+            source: selectedSource.dataset.source,
+            status: selectedStatus.dataset.status,
+            date: this.currentSelectedMeal.date
+        };
+
+        if (mealData.source === 'home') {
+            mealData.ingredientCost = parseFloat(document.getElementById('homeEstimatedCost').value) || 0;
+        } else {
+            mealData.mealCost = parseFloat(document.getElementById('hotelEstimatedCost').value) || 0;
+            mealData.deliveryCharges = parseFloat(document.getElementById('deliveryEstimate').value) || 0;
+        }
+
+        // Add to storage
+        window.storage.addMeal(mealData);
+
+        // If meal is eaten and from hotel, add expense
+        if (mealData.status === 'eaten' && mealData.source === 'hotel') {
+            const expenseData = {
+                amount: mealData.mealCost + mealData.deliveryCharges,
+                category: 'food',
+                notes: `${mealData.name} (${mealData.type})`,
+                date: mealData.date,
+                paymentMethod: 'card',
+                priority: 'medium',
+                mealRelated: true
+            };
+            window.storage.addExpense(expenseData);
+        }
+
+        Utils.showNotification('Meal added to your plan!', 'success');
+        this.closeModal('mealSelectionModal');
+
+        // Refresh meal plan and other sections
+        this.loadMealPlan();
+        this.loadUpcomingMeals();
+        this.updateDashboard();
+
+        if (this.currentSection === 'food') {
+            this.updateFoodStats();
+        }
+    }
+
+    editExistingMeal(mealId) {
+        const meal = window.storage.getMeals().find(m => m.id == mealId);
+        if (!meal) return;
+
+        // Open meal modal with existing data
+        this.openModal('mealModal');
+
+        // Populate form with existing meal data
+        document.getElementById('mealName').value = meal.name;
+        document.getElementById('mealType').value = meal.type;
+        document.getElementById('mealCalories').value = meal.calories;
+        document.getElementById('mealDate').value = meal.date;
+        document.getElementById('mealNotes').value = meal.notes || '';
+
+        // Set source
+        const sourceOptions = document.querySelectorAll('.source-option');
+        sourceOptions.forEach(opt => opt.classList.remove('active'));
+        document.querySelector(`[data-source="${meal.source}"]`).classList.add('active');
+        this.handleMealSourceChange(meal.source);
+
+        if (meal.source === 'home') {
+            document.getElementById('ingredientCost').value = meal.ingredientCost || '';
+            document.getElementById('cookingTime').value = meal.cookingTime || '';
+        } else {
+            document.getElementById('mealCost').value = meal.mealCost || '';
+            document.getElementById('deliveryCharges').value = meal.deliveryCharges || '';
+            document.getElementById('restaurantName').value = meal.restaurantName || '';
+        }
+
+        // Store meal ID for update
+        document.getElementById('mealForm').dataset.editId = mealId;
+    }
+
+    regenerateMealPlan() {
+        const suggestions = [];
+        const mealTypes = ['breakfast', 'lunch', 'dinner'];
+
+        mealTypes.forEach(type => {
+            const typeSuggestions = this.generateMealSuggestions(type);
+            suggestions.push(...typeSuggestions.slice(0, 3).map(s => ({...s, type})));
+        });
+
+        this.renderMealSuggestions(suggestions);
+        this.openModal('regenerateMealModal');
+    }
+
+    renderMealSuggestions(suggestions) {
+        const grid = document.getElementById('mealSuggestionsGrid');
+        if (!grid) return;
+
+        grid.innerHTML = suggestions.map(suggestion => `
+            <div class="meal-suggestion-card" onclick="app.selectSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">
+                <div class="meal-emoji">${this.getMealTypeIcon(suggestion.type)}</div>
+                <div class="meal-name">${Utils.sanitizeInput(suggestion.name)}</div>
+                <div class="meal-details">
+                    ${suggestion.calories} cal • ₹${suggestion.estimatedHomeCost}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    selectSuggestedMeal(mealType, encodedSuggestion) {
+        const suggestion = JSON.parse(decodeURIComponent(encodedSuggestion));
+
+        this.currentSelectedMeal = {
+            type: mealType,
+            date: this.currentPlanDate.toISOString().split('T')[0],
+            suggestion: suggestion
+        };
+
+        this.closeModal('regenerateMealModal');
+        this.showMealSelection(suggestion);
+    }
+
+    regenerateMoreSuggestions() {
+        // Generate more meal suggestions
+        this.regenerateMealPlan();
+    }
+
+    addCustomMeal() {
+        this.openModal('mealModal');
+        // Reset form
+        document.getElementById('mealForm').reset();
+        delete document.getElementById('mealForm').dataset.editId;
+
+        // Set current plan date
+        document.getElementById('mealDate').value = this.currentPlanDate.toISOString().split('T')[0];
+    }
+
+    loadUpcomingMeals() {
+        const upcomingMealsList = document.getElementById('upcomingMealsList');
+        if (!upcomingMealsList) return;
+
+        const meals = window.storage.getMeals();
+        const now = new Date();
+        const upcomingMeals = meals.filter(meal => {
+            const mealDate = new Date(meal.date);
+            return mealDate >= now && meal.status === 'planned';
+        }).sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 5);
+
+        if (upcomingMeals.length === 0) {
+            upcomingMealsList.innerHTML = `
+                <div class="empty-state">
+                    <p>No upcoming meals planned</p>
+                    <button class="btn-primary" onclick="app.addCustomMeal()">Plan Your Next Meal</button>
+                </div>
+            `;
+            return;
+        }
+
+        upcomingMealsList.innerHTML = upcomingMeals.map(meal => {
+            const mealDate = new Date(meal.date);
+            const isToday = mealDate.toDateString() === now.toDateString();
+            const isTomorrow = mealDate.toDateString() === new Date(now.getTime() + 24 * 60 * 60 * 1000).toDateString();
+
+            let dateDisplay = mealDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            if (isToday) dateDisplay = 'Today';
+            else if (isTomorrow) dateDisplay = 'Tomorrow';
+
+            return `
+                <div class="upcoming-meal-item">
+                    <div class="upcoming-meal-info">
+                        <div class="upcoming-meal-name">${Utils.sanitizeInput(meal.name)}</div>
+                        <div class="upcoming-meal-details">
+                            ${meal.type.charAt(0).toUpperCase() + meal.type.slice(1)} • ${meal.calories} cal • ${meal.source === 'home' ? '🏠 Home' : '🏨 Hotel'}
+                        </div>
+                    </div>
+                    <div class="upcoming-meal-time">${dateDisplay}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Update the main loadFoodData to include interactive meal planner
+    loadFoodData() {
+        this.loadPantryItems();
+        this.updateMealPlan();
+        this.updateFoodStats();
+        this.loadSavedMealPlan();
+        this.updateFoodAnalytics();
+        this.loadDailyFoodTracking();
+        this.loadHomeVsHotelAnalysis();
+        this.initializeInteractiveMealPlanner();
+    }
+
+    // Update dashboard to show upcoming meal
+    updateMealWidget() {
+        const upcomingMeals = window.storage.getMeals().filter(meal => {
+            const mealDate = new Date(meal.date);
+            const now = new Date();
+            return mealDate >= now && meal.status === 'planned';
+        }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        const mealSuggestionEl = document.getElementById('mealSuggestion');
+
+        if (mealSuggestionEl) {
+            if (upcomingMeals.length > 0) {
+                const nextMeal = upcomingMeals[0];
+                const mealDate = new Date(nextMeal.date);
+                const isToday = mealDate.toDateString() === new Date().toDateString();
+                mealSuggestionEl.textContent = `${isToday ? 'Next' : 'Upcoming'}: ${nextMeal.name}`;
+            } else {
+                const todayMeals = window.storage.getTodayMeals();
+                if (todayMeals.length > 0) {
+                    const lastMeal = todayMeals[todayMeals.length - 1];
+                    mealSuggestionEl.textContent = `Last: ${lastMeal.name}`;
+                } else {
+                    const suggestions = Utils.getMealSuggestions();
+                    mealSuggestionEl.textContent = suggestions.breakfast;
+                }
+            }
+        }
+    }
 }
 
 // Initialize the app when DOM is loaded
