@@ -5224,14 +5224,39 @@ class WorkLifeBalanceApp {
         document.getElementById('mealForm').dataset.editId = mealId;
     }
 
-    regenerateMealPlan() {
-        const suggestions = [];
+    getNextMealType() {
+        const now = new Date();
+        const hour = now.getHours();
+        const todayMeals = window.storage.getTodayMeals();
         const mealTypes = ['breakfast', 'lunch', 'dinner'];
 
-        mealTypes.forEach(type => {
-            const typeSuggestions = this.generateMealSuggestions(type);
-            suggestions.push(...typeSuggestions.slice(0, 3).map(s => ({...s, type})));
-        });
+        // Check which meals are already planned/eaten today
+        const plannedMealTypes = todayMeals.map(meal => meal.type);
+
+        // Time-based meal suggestions
+        if (hour < 11 && !plannedMealTypes.includes('breakfast')) {
+            return 'breakfast';
+        } else if (hour < 16 && !plannedMealTypes.includes('lunch')) {
+            return 'lunch';
+        } else if (hour < 22 && !plannedMealTypes.includes('dinner')) {
+            return 'dinner';
+        }
+
+        // Fallback: suggest the first unplanned meal
+        for (const mealType of mealTypes) {
+            if (!plannedMealTypes.includes(mealType)) {
+                return mealType;
+            }
+        }
+
+        // If all meals are planned, suggest next day's breakfast
+        return 'breakfast';
+    }
+
+    regenerateMealPlan() {
+        const nextMealType = this.getNextMealType();
+        const typeSuggestions = this.generateMealSuggestions(nextMealType);
+        const suggestions = typeSuggestions.slice(0, 6).map(s => ({...s, type: nextMealType}));
 
         this.renderMealSuggestions(suggestions);
         this.openModal('regenerateMealModal');
