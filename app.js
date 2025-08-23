@@ -6651,69 +6651,17 @@ class WorkLifeBalanceApp {
     }
 
     loadEnhancedHabitsAnalytics() {
-        const habits = window.storage.getHabits();
+        // Get all data from existing sections - no habit data needed
         const tasks = window.storage.getTasks();
         const workouts = window.storage.getWorkouts();
         const meals = window.storage.getMeals();
         const moods = window.storage.getMoods();
+        const expenses = window.storage.getExpenses();
 
-        if (habits.length === 0) {
-            this.displayEmptyHabitsState();
-            return;
-        }
-
+        // Always show comprehensive insights based on existing data
         this.generateComprehensiveInsights({
-            habits, tasks, workouts, meals, moods
+            tasks, workouts, meals, moods, expenses
         });
-    }
-
-    displayEmptyHabitsState() {
-        const insightsContainer = document.getElementById('overall-insights');
-        if (insightsContainer) {
-            insightsContainer.innerHTML = `
-                <div class="empty-state-large">
-                    <div class="empty-icon">🎯</div>
-                    <h3>Start Your Habit Journey</h3>
-                    <p>Track your daily habits to get meaningful insights about your lifestyle patterns.</p>
-                    <div class="habit-suggestions">
-                        <h4>Popular Habits to Start:</h4>
-                        <div class="suggested-habits">
-                            <button class="habit-suggestion-btn" onclick="app.addSuggestedHabit('Morning Exercise', 'fitness')">
-                                <span class="habit-icon">🏃</span>
-                                <span>Morning Exercise</span>
-                            </button>
-                            <button class="habit-suggestion-btn" onclick="app.addSuggestedHabit('Daily Reading', 'education')">
-                                <span class="habit-icon">📚</span>
-                                <span>Daily Reading</span>
-                            </button>
-                            <button class="habit-suggestion-btn" onclick="app.addSuggestedHabit('Meditation', 'wellness')">
-                                <span class="habit-icon">🧘</span>
-                                <span>Meditation</span>
-                            </button>
-                            <button class="habit-suggestion-btn" onclick="app.addSuggestedHabit('Drink Water', 'health')">
-                                <span class="habit-icon">💧</span>
-                                <span>Drink 8 Glasses Water</span>
-                            </button>
-                        </div>
-                    </div>
-                    <button class="btn-primary" onclick="app.openModal('habitModal')">Add Your First Habit</button>
-                </div>
-            `;
-        }
-    }
-
-    addSuggestedHabit(name, category) {
-        const habit = {
-            name: name,
-            category: category,
-            frequency: 'daily',
-            target: '1 time',
-            active: true
-        };
-
-        window.storage.addHabit(habit);
-        Utils.showNotification(`${name} habit added!`, 'success');
-        this.loadHabitsSection();
     }
 
     generateComprehensiveInsights(data) {
