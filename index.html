@@ -141,15 +141,44 @@
                         <form id="taskForm">
                             <input type="text" id="taskTitle" placeholder="Task title" required>
                             <select id="taskCategory">
-                                <option value="work">Work</option>
-                                <option value="personal">Personal</option>
-                                <option value="reminder">Reminder</option>
+                                <option value="work">💼 Work</option>
+                                <option value="personal">👤 Personal</option>
+                                <option value="health">🏥 Health & Fitness</option>
+                                <option value="food">🍕 Food & Dining</option>
+                                <option value="bills">📧 Bills & Utilities</option>
+                                <option value="shopping">🛍️ Shopping</option>
+                                <option value="travel">✈️ Travel & Transport</option>
+                                <option value="entertainment">🎬 Entertainment</option>
+                                <option value="education">📚 Education</option>
+                                <option value="reminder">⏰ Reminder</option>
+                                <option value="other">📦 Other</option>
                             </select>
                             <input type="date" id="taskDate">
-                            <label>
-                                <input type="checkbox" id="taskExpense"> Expense-related
-                            </label>
-                            <input type="number" id="taskAmount" placeholder="Amount (₹)" style="display:none;">
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="taskExpense">
+                                    <span class="checkmark"></span>
+                                    This task involves an expense
+                                </label>
+                            </div>
+                            <div id="expenseTaskDetails" style="display:none;">
+                                <input type="number" id="taskAmount" placeholder="Expected amount (₹)" step="0.01">
+                                <select id="taskExpenseCategory">
+                                    <option value="">Select expense category</option>
+                                    <option value="food">🍕 Food & Dining</option>
+                                    <option value="bills">📧 Bills & Utilities</option>
+                                    <option value="shopping">🛍️ Shopping</option>
+                                    <option value="travel">✈️ Travel & Transport</option>
+                                    <option value="entertainment">🎬 Entertainment</option>
+                                    <option value="healthcare">🏥 Healthcare</option>
+                                    <option value="education">📚 Education</option>
+                                    <option value="fitness">💪 Fitness & Sports</option>
+                                    <option value="subscriptions">📺 Subscriptions</option>
+                                    <option value="groceries">🛒 Groceries</option>
+                                    <option value="clothing">👕 Clothing</option>
+                                    <option value="other">📦 Other</option>
+                                </select>
+                            </div>
                             <button type="submit" class="btn-primary">Add Task</button>
                         </form>
                     </div>
@@ -176,6 +205,32 @@
 
                 <!-- Overview Tab -->
                 <div id="overview-tab" class="tab-content active">
+                    <!-- Monthly Income Section -->
+                    <div class="income-tracker">
+                        <h3>💰 Monthly Financial Overview</h3>
+                        <div class="income-stats">
+                            <div class="income-card">
+                                <div class="income-amount">
+                                    <span id="monthlyIncomeDisplay">₹0</span>
+                                    <button class="btn-link" id="setIncomeBtn">Set Income</button>
+                                </div>
+                                <label>Monthly Income</label>
+                            </div>
+                            <div class="income-card">
+                                <span id="monthlySpendingTotal">₹0</span>
+                                <label>Monthly Spending</label>
+                            </div>
+                            <div class="income-card savings-card">
+                                <span id="monthlySavingsAmount">₹0</span>
+                                <label>Monthly Savings</label>
+                            </div>
+                            <div class="income-card">
+                                <span id="savingsPercentage">0%</span>
+                                <label>Savings Rate</label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="expense-stats">
                         <div class="stat-card">
                             <span id="dailySpending">₹0</span>
@@ -537,6 +592,38 @@
                             <div class="form-actions">
                                 <button type="button" class="btn-secondary" onclick="app.closeModal('savingsGoalModal')">Cancel</button>
                                 <button type="submit" class="btn-primary">Set Goal</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Monthly Income Modal -->
+                <div id="incomeModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Set Monthly Income</h2>
+                        <form id="incomeForm">
+                            <div class="form-group">
+                                <label for="monthlyIncomeAmount">Monthly Income (₹)</label>
+                                <input type="number" id="monthlyIncomeAmount" placeholder="50000" required step="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="incomeSource">Primary Income Source</label>
+                                <select id="incomeSource">
+                                    <option value="salary">💼 Salary</option>
+                                    <option value="freelance">💻 Freelance</option>
+                                    <option value="business">🏢 Business</option>
+                                    <option value="investment">📈 Investment</option>
+                                    <option value="other">📦 Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="incomeNotes">Notes (Optional)</label>
+                                <input type="text" id="incomeNotes" placeholder="Additional details about your income">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="app.closeModal('incomeModal')">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Income</button>
                             </div>
                         </form>
                     </div>
