@@ -5205,7 +5205,7 @@ class WorkLifeBalanceApp {
 
             if (meal) {
                 gridHTML += `
-                    <div class="meal-card" onclick="app.editExistingMeal('${meal.id}')">
+                    <div class="meal-card ${meal.status || 'planned'}">
                         <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '📅 Planned'}</div>
                         <div class="meal-emoji">${typeInfo.emoji}</div>
                         <h4>${typeInfo.name}</h4>
@@ -5217,6 +5217,13 @@ class WorkLifeBalanceApp {
                         <div class="meal-source-indicator ${meal.source}">
                             <span>${meal.source === 'home' ? '🏠' : '🏨'}</span>
                             <span>${meal.source === 'home' ? 'Home Cooked' : 'Ordered'}</span>
+                        </div>
+                        <div class="meal-actions">
+                            ${(meal.status === 'planned') ?
+                                `<button class="btn-small btn-success" onclick="event.stopPropagation(); app.markMealAsEaten(${meal.id})">✓ Eaten</button>` :
+                                `<button class="btn-small btn-secondary" onclick="event.stopPropagation(); app.editExistingMeal('${meal.id}')">Edit</button>`
+                            }
+                            <button class="btn-small btn-danger" onclick="event.stopPropagation(); app.deleteMeal(${meal.id})">🗑️</button>
                         </div>
                     </div>
                 `;
