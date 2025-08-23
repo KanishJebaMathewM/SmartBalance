@@ -2837,7 +2837,7 @@ class WorkLifeBalanceApp {
         const correlation = this.calculateCorrelation(workouts, moods, 'workout', 'stress');
         const percentage = Math.abs(correlation * 100);
         const insight = correlation > 0.3 ?
-            '��� Working out significantly improves your mood!' :
+            '💪 Working out significantly improves your mood!' :
             correlation < -0.3 ?
             '😰 High workout intensity might be causing stress' :
             '�� Moderate correlation - keep tracking for better insights';
@@ -7178,27 +7178,7 @@ class WorkLifeBalanceApp {
 
     // updateTodayHabitChecklist removed - replaced with insights analysis
 
-    updateHabitStats() {
-        const habits = window.storage.getHabits();
-        const stats = window.storage.getOverallHabitStats();
-
-        const habitStreakEl = document.getElementById('habitStreak');
-        const todayHabitsEl = document.getElementById('todayHabits');
-        const weeklyConsistencyEl = document.getElementById('weeklyConsistency');
-        const activeHabitsEl = document.getElementById('activeHabits');
-
-        if (habitStreakEl) habitStreakEl.textContent = stats.averageStreak;
-        if (activeHabitsEl) activeHabitsEl.textContent = habits.filter(h => h.active !== false).length;
-
-        const today = new Date().toDateString();
-        const todayCompletions = habits.filter(h => {
-            const completions = window.storage.getHabitCompletions(h.id);
-            return completions.some(c => new Date(c.date).toDateString() === today);
-        }).length;
-
-        if (todayHabitsEl) todayHabitsEl.textContent = `${todayCompletions}/${habits.length}`;
-        if (weeklyConsistencyEl) weeklyConsistencyEl.textContent = `${Math.round(stats.completionRate)}%`;
-    }
+    // updateHabitStats removed - replaced with life balance scoring system
 
     // Report Generator (replaces Weekly Report)
     loadReportGenerator() {
