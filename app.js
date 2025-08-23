@@ -2039,17 +2039,7 @@ class WorkLifeBalanceApp {
 
             // Special handling for expense modal
             if (modalId === 'expenseModal') {
-                // Set today's date as default
-                const dateInput = document.getElementById('expenseDate');
-                if (dateInput && !dateInput.value) {
-                    dateInput.value = new Date().toISOString().split('T')[0];
-                }
-
-                // Reset modal title if not editing
-                const form = document.getElementById('expenseForm');
-                if (!form.dataset.editId) {
-                    document.getElementById('expenseModalTitle').textContent = 'Add New Expense';
-                }
+                this.resetExpenseForm();
             }
         }
     }
