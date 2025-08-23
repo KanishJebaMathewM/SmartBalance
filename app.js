@@ -2605,7 +2605,7 @@ class WorkLifeBalanceApp {
             'healthcare': '🏥',
             'education': '📚',
             'fitness': '💪',
-            'subscriptions': '���',
+            'subscriptions': '����',
             'groceries': '🛒',
             'clothing': '👕',
             'other': '��'
@@ -3725,8 +3725,12 @@ class WorkLifeBalanceApp {
         }
 
         if (taskData.expenseRelated) {
-            if (!taskData.amount || parseFloat(taskData.amount) <= 0) {
-                Utils.showNotification('Please enter a valid expense amount', 'error');
+            if (!taskData.amount) {
+                Utils.showNotification('Amount is required for expense-related tasks', 'error');
+                return;
+            }
+            if (parseFloat(taskData.amount) <= 0) {
+                Utils.showNotification('Expense amount must be greater than 0', 'error');
                 return;
             }
             // Expense category is automatically assigned, so we don't need to validate it separately
