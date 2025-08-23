@@ -1,17 +1,54 @@
-// Charts and visualization utilities using Canvas API
+// Enhanced Charts and visualization utilities using Canvas API
 
 class Charts {
     constructor() {
         this.colors = {
             primary: '#3b82f6',
+            secondary: '#6366f1',
             success: '#10b981',
             warning: '#f59e0b',
             error: '#ef4444',
             info: '#06b6d4',
             purple: '#8b5cf6',
             pink: '#ec4899',
-            gray: '#6b7280'
+            gray: '#6b7280',
+            slate: '#64748b',
+            emerald: '#059669',
+            orange: '#ea580c',
+            teal: '#0d9488',
+            cyan: '#0891b2',
+            indigo: '#4f46e5',
+            violet: '#7c3aed'
         };
+
+        this.categoryColors = {
+            food: '#ef4444',
+            bills: '#3b82f6',
+            shopping: '#8b5cf6',
+            travel: '#06b6d4',
+            entertainment: '#ec4899',
+            healthcare: '#10b981',
+            education: '#f59e0b',
+            other: '#6b7280'
+        };
+
+        this.gradients = {};
+    }
+
+    // Create gradient for canvas
+    createGradient(ctx, color1, color2, direction = 'vertical') {
+        const gradient = direction === 'vertical'
+            ? ctx.createLinearGradient(0, 0, 0, ctx.canvas.height)
+            : ctx.createLinearGradient(0, 0, ctx.canvas.width, 0);
+
+        gradient.addColorStop(0, color1);
+        gradient.addColorStop(1, color2);
+        return gradient;
+    }
+
+    // Utility to get category color
+    getCategoryColor(category) {
+        return this.categoryColors[category] || this.colors.gray;
     }
 
     // Expense pie chart
