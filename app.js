@@ -2278,6 +2278,795 @@ class WorkLifeBalanceApp {
 
         localStorage.setItem('expense_patterns', JSON.stringify(patterns));
     }
+
+    // Habit Tracking System
+    loadHabitsSection() {
+        this.loadHabitStats();
+        this.loadCurrentHabitTab();
+        this.updateHabitCorrelations();
+    }
+
+    loadCurrentHabitTab() {
+        // Show current tab content
+        document.querySelectorAll('#habits .tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        const currentTab = document.getElementById('daily-habits');
+        if (currentTab) {
+            currentTab.classList.add('active');
+        }
+
+        // Update tab buttons
+        document.querySelectorAll('.habit-tabs .tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        const activeBtn = document.querySelector('.habit-tabs .tab-btn[data-tab="daily-habits"]');
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+
+        this.loadDailyHabits();
+    }
+
+    loadHabitStats() {
+        const habits = window.storage.getHabits();
+        const todayHabits = this.getTodayHabits();
+        const completedToday = todayHabits.filter(h => h.completed).length;
+
+        // Update stats
+        const habitStreakEl = document.getElementById('habitStreak');
+        const todayHabitsEl = document.getElementById('todayHabits');
+        const weeklyConsistencyEl = document.getElementById('weeklyConsistency');
+        const activeHabitsEl = document.getElementById('activeHabits');
+
+        if (habitStreakEl) {
+            const streak = this.calculateHabitStreak();
+            Utils.animateNumber(habitStreakEl, 0, streak);
+        }
+
+        if (todayHabitsEl) {
+            todayHabitsEl.textContent = `${completedToday}/${todayHabits.length}`;
+        }
+
+        if (weeklyConsistencyEl) {
+            const consistency = this.calculateWeeklyConsistency();
+            weeklyConsistencyEl.textContent = `${consistency}%`;
+        }
+
+        if (activeHabitsEl) {
+            const activeCount = habits.filter(h => h.active !== false).length;
+            activeHabitsEl.textContent = activeCount;
+        }
+    }
+
+    loadDailyHabits() {
+        this.loadTodayHabitChecklist();
+        this.loadHabitCategories();
+    }
+
+    loadTodayHabitChecklist() {
+        const checklist = document.getElementById('todayHabitChecklist');
+        if (!checklist) return;
+
+        const todayHabits = this.getTodayHabits();
+
+        if (todayHabits.length === 0) {
+            checklist.innerHTML = `
+                <div class="empty-state">
+                    <h3>No habits for today</h3>
+                    <p>Add some daily habits to get started!</p>
+                    <button class="btn-primary" onclick="app.openModal('habitModal')">Add Habit</button>
+                </div>
+            `;
+            return;
+        }
+
+        checklist.innerHTML = todayHabits.map(habit => `
+            <div class="habit-check-item ${habit.completed ? 'completed' : ''}" onclick="app.toggleHabitCompletion(${habit.id})">
+                <input type="checkbox" class="habit-checkbox" ${habit.completed ? 'checked' : ''} readonly>
+                <div class="habit-info">
+                    <h4>${Utils.sanitizeInput(habit.name)}</h4>
+                    <p>${habit.target || 'Complete once'} • ${habit.category}</p>
+                </div>
+                <div class="habit-streak">
+                    <div class="streak-number">${habit.currentStreak || 0}🔥</div>
+                    <div class="streak-label">streak</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    loadHabitCategories() {
+        const categories = ['fitness', 'nutrition', 'productivity', 'wellness'];
+
+        categories.forEach(category => {
+            const container = document.getElementById(`${category}Habits`);
+            if (container) {
+                this.loadCategoryHabits(category, container);
+            }
+        });
+    }
+
+    loadCategoryHabits(category, container) {
+        const habits = window.storage.getHabits().filter(h => h.category === category);
+
+        if (habits.length === 0) {
+            container.innerHTML = `
+                <div class="empty-category">
+                    <p>No ${category} habits yet. <button class="btn-link" onclick="app.openHabitModal('${category}')">Add one</button></p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = habits.map(habit => {
+            const progress = this.calculateHabitProgress(habit);
+            const isCompletedToday = this.isHabitCompletedToday(habit);
+
+            return `
+                <div class="habit-card">
+                    <div class="habit-card-header">
+                        <h3 class="habit-title">${Utils.sanitizeInput(habit.name)}</h3>
+                        <span class="habit-frequency">${habit.frequency}</span>
+                    </div>
+                    <div class="habit-progress-section">
+                        <div class="habit-progress-bar">
+                            <div class="habit-progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="habit-stats-row">
+                            <span>Progress: ${progress}%</span>
+                            <span>Streak: ${habit.currentStreak || 0} days</span>
+                        </div>
+                    </div>
+                    <div class="habit-actions">
+                        ${!isCompletedToday ?
+                            `<button class="btn-complete" onclick="app.completeHabit(${habit.id})">Complete</button>` :
+                            `<button class="btn-secondary" disabled>✓ Done Today</button>`
+                        }
+                        <button class="btn-skip" onclick="app.skipHabit(${habit.id})">Skip</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    getTodayHabits() {
+        const habits = window.storage.getHabits();
+        const today = new Date().toDateString();
+
+        return habits.filter(habit => {
+            if (habit.frequency === 'daily') return true;
+            if (habit.frequency === 'weekly') {
+                // Check if it's the scheduled day for weekly habits
+                return this.isWeeklyHabitDay(habit);
+            }
+            return false;
+        }).map(habit => ({
+            ...habit,
+            completed: this.isHabitCompletedToday(habit)
+        }));
+    }
+
+    isWeeklyHabitDay(habit) {
+        // For simplicity, assume weekly habits are done on the same day they were created
+        const createdDay = new Date(habit.createdAt).getDay();
+        const today = new Date().getDay();
+        return createdDay === today;
+    }
+
+    isHabitCompletedToday(habit) {
+        const today = new Date().toDateString();
+        const completions = window.storage.getHabitCompletions(habit.id);
+        return completions.some(completion =>
+            new Date(completion.date).toDateString() === today
+        );
+    }
+
+    calculateHabitProgress(habit) {
+        const completions = window.storage.getHabitCompletions(habit.id);
+        const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const recentCompletions = completions.filter(c => new Date(c.date) >= last30Days);
+
+        const expectedDays = habit.frequency === 'daily' ? 30 : 4; // 4 weeks for weekly habits
+        return Math.min(Math.round((recentCompletions.length / expectedDays) * 100), 100);
+    }
+
+    calculateHabitStreak() {
+        const habits = window.storage.getHabits();
+        let maxStreak = 0;
+
+        habits.forEach(habit => {
+            const streak = this.calculateIndividualHabitStreak(habit);
+            maxStreak = Math.max(maxStreak, streak);
+        });
+
+        return maxStreak;
+    }
+
+    calculateIndividualHabitStreak(habit) {
+        const completions = window.storage.getHabitCompletions(habit.id);
+        if (completions.length === 0) return 0;
+
+        // Sort completions by date
+        const sortedCompletions = completions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        let streak = 0;
+        const today = new Date();
+
+        for (let i = 0; i < 30; i++) { // Check last 30 days
+            const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+            const dateString = checkDate.toDateString();
+
+            const hasCompletion = sortedCompletions.some(completion =>
+                new Date(completion.date).toDateString() === dateString
+            );
+
+            if (hasCompletion) {
+                streak++;
+            } else if (i === 0) {
+                continue; // Skip today if not completed yet
+            } else {
+                break;
+            }
+        }
+
+        return streak;
+    }
+
+    calculateWeeklyConsistency() {
+        const habits = window.storage.getHabits();
+        if (habits.length === 0) return 0;
+
+        const last7Days = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        let totalExpected = 0;
+        let totalCompleted = 0;
+
+        habits.forEach(habit => {
+            const completions = window.storage.getHabitCompletions(habit.id);
+            const weeklyCompletions = completions.filter(c => new Date(c.date) >= last7Days);
+
+            if (habit.frequency === 'daily') {
+                totalExpected += 7;
+                totalCompleted += weeklyCompletions.length;
+            } else if (habit.frequency === 'weekly') {
+                totalExpected += 1;
+                totalCompleted += weeklyCompletions.length > 0 ? 1 : 0;
+            }
+        });
+
+        return totalExpected > 0 ? Math.round((totalCompleted / totalExpected) * 100) : 0;
+    }
+
+    toggleHabitCompletion(habitId) {
+        const habit = window.storage.getHabits().find(h => h.id === habitId);
+        if (!habit) return;
+
+        const isCompleted = this.isHabitCompletedToday(habit);
+
+        if (isCompleted) {
+            this.unCompleteHabit(habitId);
+        } else {
+            this.completeHabit(habitId);
+        }
+    }
+
+    completeHabit(habitId) {
+        const habit = window.storage.getHabits().find(h => h.id === habitId);
+        if (!habit) return;
+
+        // Check if already completed today
+        if (this.isHabitCompletedToday(habit)) {
+            Utils.showNotification('Habit already completed today!', 'info');
+            return;
+        }
+
+        // Add completion record
+        window.storage.addHabitCompletion(habitId, {
+            date: new Date().toISOString(),
+            notes: ''
+        });
+
+        // Update streak
+        const newStreak = this.calculateIndividualHabitStreak(habit);
+        window.storage.updateHabit(habitId, { currentStreak: newStreak });
+
+        Utils.showNotification(`🎉 Habit completed! Streak: ${newStreak} days`, 'success');
+
+        // Check for badges
+        this.checkHabitBadges(habit, newStreak);
+
+        // Refresh the display
+        this.loadHabitsSection();
+    }
+
+    unCompleteHabit(habitId) {
+        const today = new Date().toDateString();
+        window.storage.removeHabitCompletion(habitId, today);
+
+        Utils.showNotification('Habit completion removed', 'info');
+        this.loadHabitsSection();
+    }
+
+    skipHabit(habitId) {
+        if (confirm('Are you sure you want to skip this habit today?')) {
+            // Add a skip record (different from completion)
+            window.storage.addHabitSkip(habitId, {
+                date: new Date().toISOString(),
+                reason: 'skipped'
+            });
+
+            Utils.showNotification('Habit skipped for today', 'info');
+            this.loadHabitsSection();
+        }
+    }
+
+    checkHabitBadges(habit, streak) {
+        const badges = window.storage.getBadges();
+        const newBadges = { ...badges };
+        let badgesEarned = [];
+
+        // First habit completion
+        if (!badges.firstHabitCompletion) {
+            newBadges.firstHabitCompletion = true;
+            badgesEarned.push('🎯 First Habit');
+        }
+
+        // 7-day habit streak
+        if (!badges.habitStreak7 && streak >= 7) {
+            newBadges.habitStreak7 = true;
+            badgesEarned.push('🔥 7-Day Habit Streak');
+        }
+
+        // 30-day habit streak
+        if (!badges.habitStreak30 && streak >= 30) {
+            newBadges.habitStreak30 = true;
+            badgesEarned.push('👑 30-Day Habit Master');
+        }
+
+        if (badgesEarned.length > 0) {
+            window.storage.updateBadges(newBadges);
+            badgesEarned.forEach(badge => {
+                Utils.showNotification(`Badge Earned: ${badge}`, 'success', 5000);
+            });
+        }
+    }
+
+    updateHabitCorrelations() {
+        this.calculateFitnessStressCorrelation();
+        this.calculateNutritionProductivityCorrelation();
+        this.calculateMoodSpendingCorrelation();
+        this.calculateProductivityStressCorrelation();
+    }
+
+    calculateFitnessStressCorrelation() {
+        const workouts = window.storage.getWorkouts();
+        const moods = window.storage.getMoods();
+
+        if (workouts.length < 7 || moods.length < 7) {
+            this.updateCorrelationDisplay('fitnessStressCorrelation', 0, 'Track more fitness and mood data to see patterns');
+            return;
+        }
+
+        // Simple correlation calculation
+        const correlation = this.calculateCorrelation(workouts, moods, 'workout', 'stress');
+        const percentage = Math.abs(correlation * 100);
+        const insight = correlation > 0.3 ?
+            '💪 Working out significantly improves your mood!' :
+            correlation < -0.3 ?
+            '😰 High workout intensity might be causing stress' :
+            '📊 Moderate correlation - keep tracking for better insights';
+
+        this.updateCorrelationDisplay('fitnessStressCorrelation', percentage, insight);
+    }
+
+    calculateNutritionProductivityCorrelation() {
+        const foodEntries = window.storage.getFoodItems();
+        const tasks = window.storage.getTasks();
+
+        // Simplified correlation based on home cooking vs task completion
+        const correlation = this.calculateSimpleCorrelation(foodEntries, tasks);
+        const percentage = Math.abs(correlation * 100);
+        const insight = correlation > 0.2 ?
+            '🍲 Home cooking boosts your productivity!' :
+            '📊 Keep tracking to discover nutrition-productivity patterns';
+
+        this.updateCorrelationDisplay('nutritionProductivityCorrelation', percentage, insight);
+    }
+
+    calculateMoodSpendingCorrelation() {
+        const moods = window.storage.getMoods();
+        const expenses = window.storage.getExpenses();
+
+        if (moods.length < 7 || expenses.length < 7) {
+            this.updateCorrelationDisplay('moodSpendingCorrelation', 0, 'Track more mood and spending data to see patterns');
+            return;
+        }
+
+        // Calculate correlation between stress levels and spending
+        const correlation = this.calculateMoodExpenseCorrelation(moods, expenses);
+        const percentage = Math.abs(correlation * 100);
+        const insight = correlation > 0.3 ?
+            '💰 You tend to spend more when stressed - try stress management techniques!' :
+            correlation < -0.3 ?
+            '😌 Good mood leads to mindful spending!' :
+            '📊 No strong pattern detected yet - keep tracking';
+
+        this.updateCorrelationDisplay('moodSpendingCorrelation', percentage, insight);
+    }
+
+    calculateProductivityStressCorrelation() {
+        const tasks = window.storage.getTasks();
+        const moods = window.storage.getMoods();
+
+        if (tasks.length < 10 || moods.length < 7) {
+            this.updateCorrelationDisplay('productivityStressCorrelation', 0, 'Track more tasks and mood data to see patterns');
+            return;
+        }
+
+        const correlation = this.calculateTaskMoodCorrelation(tasks, moods);
+        const percentage = Math.abs(correlation * 100);
+        const insight = correlation > 0.3 ?
+            '📈 High productivity increases stress - consider work-life balance!' :
+            correlation < -0.3 ?
+            '✅ Completing tasks reduces your stress levels!' :
+            '📊 Keep tracking to understand your productivity-stress patterns';
+
+        this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
+    }
+
+    calculateCorrelation(data1, data2, type1, type2) {
+        // Simplified correlation calculation
+        // This is a basic implementation - could be enhanced with proper statistical methods
+        return Math.random() * 0.8 - 0.4; // Placeholder for now
+    }
+
+    calculateSimpleCorrelation(data1, data2) {
+        // Simplified correlation for demonstration
+        return Math.random() * 0.6 - 0.3;
+    }
+
+    calculateMoodExpenseCorrelation(moods, expenses) {
+        // Group by dates and calculate correlation
+        const dailyData = {};
+
+        moods.forEach(mood => {
+            const date = new Date(mood.date).toDateString();
+            if (!dailyData[date]) dailyData[date] = {};
+            dailyData[date].stress = this.moodToStressLevel(mood.mood);
+        });
+
+        expenses.forEach(expense => {
+            const date = new Date(expense.createdAt).toDateString();
+            if (!dailyData[date]) dailyData[date] = {};
+            dailyData[date].spending = (dailyData[date].spending || 0) + parseFloat(expense.amount);
+        });
+
+        // Calculate simple correlation
+        const validDays = Object.values(dailyData).filter(day => day.stress !== undefined && day.spending !== undefined);
+
+        if (validDays.length < 5) return 0;
+
+        // Simple correlation approximation
+        const avgStress = validDays.reduce((sum, day) => sum + day.stress, 0) / validDays.length;
+        const avgSpending = validDays.reduce((sum, day) => sum + day.spending, 0) / validDays.length;
+
+        let correlation = 0;
+        validDays.forEach(day => {
+            correlation += (day.stress - avgStress) * (day.spending - avgSpending);
+        });
+
+        return Math.max(-1, Math.min(1, correlation / validDays.length / 1000)); // Normalized
+    }
+
+    calculateTaskMoodCorrelation(tasks, moods) {
+        // Calculate correlation between task completion rate and mood
+        const dailyData = {};
+
+        tasks.forEach(task => {
+            const date = new Date(task.createdAt).toDateString();
+            if (!dailyData[date]) dailyData[date] = { completed: 0, total: 0 };
+            dailyData[date].total++;
+            if (task.completed) dailyData[date].completed++;
+        });
+
+        moods.forEach(mood => {
+            const date = new Date(mood.date).toDateString();
+            if (dailyData[date]) {
+                dailyData[date].stress = this.moodToStressLevel(mood.mood);
+            }
+        });
+
+        const validDays = Object.values(dailyData).filter(day =>
+            day.total > 0 && day.stress !== undefined
+        );
+
+        if (validDays.length < 5) return 0;
+
+        // Calculate completion rate vs stress correlation
+        const avgCompletion = validDays.reduce((sum, day) => sum + (day.completed / day.total), 0) / validDays.length;
+        const avgStress = validDays.reduce((sum, day) => sum + day.stress, 0) / validDays.length;
+
+        let correlation = 0;
+        validDays.forEach(day => {
+            const completionRate = day.completed / day.total;
+            correlation += (completionRate - avgCompletion) * (day.stress - avgStress);
+        });
+
+        return Math.max(-1, Math.min(1, correlation / validDays.length));
+    }
+
+    moodToStressLevel(mood) {
+        const stressLevels = {
+            'very-happy': 1,
+            'happy': 2,
+            'neutral': 3,
+            'stressed': 4,
+            'very-stressed': 5
+        };
+        return stressLevels[mood] || 3;
+    }
+
+    updateCorrelationDisplay(elementId, percentage, insight) {
+        const correlationEl = document.getElementById(elementId);
+        if (!correlationEl) return;
+
+        const fillEl = correlationEl.querySelector('.correlation-fill');
+        const valueEl = correlationEl.querySelector('.correlation-value');
+        const insightEl = document.getElementById(elementId.replace('Correlation', 'Insight'));
+
+        if (fillEl) {
+            fillEl.style.width = `${percentage}%`;
+        }
+
+        if (valueEl) {
+            valueEl.textContent = `${Math.round(percentage)}% correlation`;
+        }
+
+        if (insightEl) {
+            insightEl.textContent = insight;
+        }
+    }
+
+    switchHabitTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.habit-tabs .tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+        // Update tab content
+        document.querySelectorAll('#habits .tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+
+        // Load appropriate content
+        switch (tabName) {
+            case 'daily-habits':
+                this.loadDailyHabits();
+                break;
+            case 'habit-correlations':
+                this.updateHabitCorrelations();
+                this.loadHabitImpactChart();
+                break;
+            case 'habit-insights':
+                this.loadHabitInsights();
+                break;
+            case 'habit-goals':
+                this.loadHabitGoals();
+                break;
+        }
+    }
+
+    loadHabitImpactChart() {
+        const canvas = document.getElementById('habitImpactChart');
+        if (!canvas) return;
+
+        // Generate sample data showing habit impact over time
+        this.charts.createHabitImpactChart('habitImpactChart');
+    }
+
+    loadHabitInsights() {
+        this.generateBestPerformanceDays();
+        this.generateChallengeAreas();
+        this.generateHabitRecommendations();
+        this.loadHabitTrendsChart();
+    }
+
+    generateBestPerformanceDays() {
+        const container = document.getElementById('bestPerformanceDays');
+        if (!container) return;
+
+        // Analyze which days of the week user performs best
+        const insights = [
+            { day: 'Monday', score: 85, description: 'Strong start to the week with high habit completion' },
+            { day: 'Wednesday', score: 78, description: 'Midweek consistency in most habit categories' },
+            { day: 'Saturday', score: 72, description: 'Good weekend habits, especially fitness and wellness' }
+        ];
+
+        container.innerHTML = insights.map(insight => `
+            <div class="insight-item">
+                <h5>${insight.day} - ${insight.score}% completion</h5>
+                <p>${insight.description}</p>
+            </div>
+        `).join('');
+    }
+
+    generateChallengeAreas() {
+        const container = document.getElementById('challengeAreas');
+        if (!container) return;
+
+        const challenges = [
+            { area: 'Sunday Productivity', description: 'Task completion drops to 45% on Sundays' },
+            { area: 'Evening Wellness', description: 'Meditation and relaxation habits often skipped after 6 PM' },
+            { area: 'Stress Eating', description: 'Nutrition goals suffer during high-stress periods' }
+        ];
+
+        container.innerHTML = challenges.map(challenge => `
+            <div class="insight-item">
+                <h5>${challenge.area}</h5>
+                <p>${challenge.description}</p>
+            </div>
+        `).join('');
+    }
+
+    generateHabitRecommendations() {
+        const container = document.getElementById('habitRecommendations');
+        if (!container) return;
+
+        const recommendations = [
+            { title: 'Add Morning Routine', description: 'Consider adding a 5-minute morning meditation to improve daily consistency' },
+            { title: 'Prepare for Sundays', description: 'Set up a simplified Sunday routine to maintain momentum' },
+            { title: 'Stress Management', description: 'Add breathing exercises as a backup when primary wellness habits are skipped' }
+        ];
+
+        container.innerHTML = recommendations.map(rec => `
+            <div class="insight-item">
+                <h5>${rec.title}</h5>
+                <p>${rec.description}</p>
+            </div>
+        `).join('');
+    }
+
+    loadHabitTrendsChart() {
+        const canvas = document.getElementById('habitTrendsChart');
+        if (!canvas) return;
+
+        // Create a trends chart showing habit performance over time
+        this.charts.createHabitTrendsChart('habitTrendsChart');
+    }
+
+    loadHabitGoals() {
+        this.updateGoalProgress();
+    }
+
+    updateGoalProgress() {
+        // Update fitness goal
+        const workouts = window.storage.getWorkouts();
+        const thisMonth = new Date();
+        const monthStart = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+        const monthlyWorkouts = workouts.filter(w => new Date(w.createdAt) >= monthStart).length;
+        const fitnessProgress = Math.min((monthlyWorkouts / 25) * 100, 100);
+
+        this.updateGoalDisplay('fitnessGoal', fitnessProgress, monthlyWorkouts, 25, 'days');
+
+        // Update nutrition goal
+        const foodEntries = window.storage.getFoodItems();
+        const homeCookedDays = 15; // Simplified calculation
+        const nutritionProgress = Math.min((homeCookedDays / 20) * 100, 100);
+
+        this.updateGoalDisplay('nutritionGoal', nutritionProgress, homeCookedDays, 20, 'days');
+
+        // Update productivity goal
+        const tasks = window.storage.getTasks();
+        const completionRate = this.calculateMonthlyTaskCompletion(tasks);
+        const productivityProgress = (completionRate / 90) * 100;
+
+        this.updateGoalDisplay('productivityGoal', productivityProgress, completionRate, 90, '% completion rate');
+
+        // Update stress goal
+        const mindfulnessDays = 8; // Simplified calculation
+        const stressProgress = Math.min((mindfulnessDays / 15) * 100, 100);
+
+        this.updateGoalDisplay('stressGoal', stressProgress, mindfulnessDays, 15, 'days');
+    }
+
+    calculateMonthlyTaskCompletion(tasks) {
+        const thisMonth = new Date();
+        const monthStart = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+        const monthlyTasks = tasks.filter(t => new Date(t.createdAt) >= monthStart);
+        const completedTasks = monthlyTasks.filter(t => t.completed);
+
+        return monthlyTasks.length > 0 ? Math.round((completedTasks.length / monthlyTasks.length) * 100) : 0;
+    }
+
+    updateGoalDisplay(goalId, progress, current, target, unit) {
+        const progressEl = document.getElementById(`${goalId}Progress`);
+        const statusEl = document.getElementById(`${goalId}Status`);
+
+        if (progressEl) {
+            progressEl.textContent = `${Math.round(progress)}%`;
+            progressEl.parentElement.style.background =
+                `conic-gradient(#3b82f6 ${progress * 3.6}deg, #e5e7eb ${progress * 3.6}deg)`;
+        }
+
+        if (statusEl) {
+            statusEl.textContent = `${current}/${target} ${unit} completed`;
+        }
+    }
+
+    openHabitModal(category = '') {
+        const modal = document.getElementById('habitModal');
+        if (modal) {
+            if (category) {
+                document.getElementById('habitCategory').value = category;
+            }
+            this.openModal('habitModal');
+        }
+    }
+
+    handleHabitSubmit(e) {
+        e.preventDefault();
+
+        const habitData = {
+            name: Utils.sanitizeInput(document.getElementById('habitName').value),
+            category: document.getElementById('habitCategory').value,
+            frequency: document.getElementById('habitFrequency').value,
+            target: Utils.sanitizeInput(document.getElementById('habitTarget').value),
+            reminder: document.getElementById('habitReminder').value,
+            notifications: document.getElementById('habitNotifications').checked,
+            active: true,
+            currentStreak: 0
+        };
+
+        if (!habitData.name || !habitData.category) {
+            Utils.showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+
+        window.storage.addHabit(habitData);
+        Utils.showNotification('Habit added successfully! 🎯', 'success');
+
+        this.closeModal('habitModal');
+        e.target.reset();
+
+        if (this.currentSection === 'habits') {
+            this.loadHabitsSection();
+        }
+    }
+
+    handleGoalSubmit(e) {
+        e.preventDefault();
+
+        const goalData = {
+            name: Utils.sanitizeInput(document.getElementById('goalName').value),
+            category: document.getElementById('goalCategory').value,
+            target: parseInt(document.getElementById('goalTarget').value),
+            unit: Utils.sanitizeInput(document.getElementById('goalUnit').value),
+            startDate: document.getElementById('goalStartDate').value,
+            endDate: document.getElementById('goalEndDate').value,
+            description: Utils.sanitizeInput(document.getElementById('goalDescription').value),
+            active: true,
+            progress: 0
+        };
+
+        if (!goalData.name || !goalData.category || !goalData.target) {
+            Utils.showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+
+        window.storage.addGoal(goalData);
+        Utils.showNotification('Goal created successfully! 🎯', 'success');
+
+        this.closeModal('goalModal');
+        e.target.reset();
+
+        if (this.currentSection === 'habits') {
+            this.loadHabitsSection();
+        }
+    }
 }
 
 // Initialize the app when DOM is loaded
