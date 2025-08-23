@@ -1954,7 +1954,7 @@ class WorkLifeBalanceApp {
     }
 
     skipExercise(exerciseType, exercise) {
-        Utils.showNotification(`Skipped ${exercise.title}. Try again later! ���`, 'info');
+        Utils.showNotification(`Skipped ${exercise.title}. Try again later! 💪`, 'info');
         this.closeModal('exerciseModal');
 
         // Reset any running timers
@@ -3688,7 +3688,7 @@ class WorkLifeBalanceApp {
             'clothing': '👕',
             'healthcare': '🏥',
             'reminder': '⏰',
-            'other': '📦'
+            'other': '����'
         };
         return icons[category] || '📦';
     }
@@ -4696,7 +4696,7 @@ class WorkLifeBalanceApp {
         if (totalCalories > 0) {
             if (avgDailyCalories >= 1800 && avgDailyCalories <= 2400) {
                 insights.push({
-                    icon: '����',
+                    icon: '🔥',
                     title: 'Calorie Balance',
                     description: `Your daily average of ${avgDailyCalories} calories is well-balanced for a healthy lifestyle. Total this week: ${totalCalories.toLocaleString()} calories.`
                 });
@@ -4995,7 +4995,7 @@ class WorkLifeBalanceApp {
                     </div>
                 </div>
                 <div class="meal-source ${meal.source}">
-                    <span class="icon">${meal.source === 'home' ? '���' : '🏨'}</span>
+                    <span class="icon">${meal.source === 'home' ? '�����' : '🏨'}</span>
                     <span>${meal.source === 'home' ? 'Home' : 'Hotel'}</span>
                 </div>
             </div>
@@ -6430,47 +6430,11 @@ class WorkLifeBalanceApp {
         // No tabs needed - just show the life balance score
     }
 
-    showHabitTab(tabName) {
-        // Hide all tab contents
-        document.querySelectorAll('#habits .tab-content').forEach(tab => {
-            tab.classList.remove('active');
-        });
-
-        // Hide all tab buttons
-        document.querySelectorAll('#habits .tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-
-        // Show selected tab content
-        const selectedTab = document.getElementById(tabName);
-        if (selectedTab) {
-            selectedTab.classList.add('active');
-        }
-
-        // Show selected tab button
-        const selectedBtn = document.querySelector(`#habits .tab-btn[data-tab="${tabName}"]`);
-        if (selectedBtn) {
-            selectedBtn.classList.add('active');
-        }
-
-        // Load content for the selected tab
-        switch (tabName) {
-            case 'correlations':
-                this.loadSmartCorrelations();
-                break;
-            case 'patterns':
-                this.loadLifePatterns();
-                break;
-            case 'predictions':
-                this.loadPredictions();
-                break;
-            case 'recommendations':
-                this.loadAIRecommendations();
-                break;
-            case 'insights':
-                this.loadDeepInsights();
-                break;
-        }
+    // Simplified - no tabs needed, just life balance score
+    refreshAnalysis() {
+        Utils.showNotification('Refreshing life balance score...', 'info');
+        this.calculateLifeBalanceScore();
+        Utils.showNotification('Score refreshed successfully!', 'success');
     }
 
     initializeHabitTabHandlers() {
