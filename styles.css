@@ -4688,6 +4688,277 @@ select[id="expensePriority"] option[value="essential"] {
     }
 }
 
+/* Food Analytics Dashboard Styles */
+.food-analytics-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: #f8fafc;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.dark-mode .food-analytics-section {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.food-analytics-section h3 {
+    color: #111827;
+    margin-bottom: 24px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.dark-mode .food-analytics-section h3 {
+    color: #f9fafb;
+}
+
+.nutrition-overview {
+    margin-bottom: 32px;
+}
+
+.nutrition-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.nutrition-stat {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+}
+
+.dark-mode .nutrition-stat {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.nutrition-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #3b82f6;
+    margin-bottom: 4px;
+}
+
+.dark-mode .nutrition-value {
+    color: #60a5fa;
+}
+
+.nutrition-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.dark-mode .nutrition-label {
+    color: #9ca3af;
+}
+
+.nutrition-change {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.nutrition-change.positive {
+    background: #dcfdf7;
+    color: #065f46;
+}
+
+.nutrition-change.negative {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.dark-mode .nutrition-change.positive {
+    background: #022c22;
+    color: #34d399;
+}
+
+.dark-mode .nutrition-change.negative {
+    background: #450a0a;
+    color: #f87171;
+}
+
+.food-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.chart-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+}
+
+.dark-mode .chart-container {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.chart-container h4 {
+    color: #111827;
+    margin-bottom: 16px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.dark-mode .chart-container h4 {
+    color: #f9fafb;
+}
+
+.food-insights h4 {
+    color: #111827;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.dark-mode .food-insights h4 {
+    color: #f9fafb;
+}
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.insight-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.dark-mode .insight-card {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.insight-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.insight-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: #dbeafe;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark-mode .insight-icon {
+    background: #1e3a8a;
+}
+
+.insight-content h5 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.dark-mode .insight-content h5 {
+    color: #f9fafb;
+}
+
+.insight-content p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.dark-mode .insight-content p {
+    color: #d1d5db;
+}
+
+/* Responsive food analytics styles */
+@media (max-width: 768px) {
+    .nutrition-stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .nutrition-stat {
+        padding: 16px;
+    }
+
+    .nutrition-value {
+        font-size: 1.5rem;
+    }
+
+    .food-charts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .chart-container {
+        padding: 16px;
+    }
+
+    .insights-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .insight-card {
+        padding: 12px;
+    }
+
+    .insight-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .food-analytics-section {
+        padding: 16px;
+        margin-top: 24px;
+    }
+
+    .nutrition-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .nutrition-stat {
+        padding: 12px;
+    }
+
+    .nutrition-value {
+        font-size: 1.25rem;
+    }
+
+    .nutrition-label {
+        font-size: 0.75rem;
+    }
+}
+
 @media (max-width: 480px) {
     .badges-grid {
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
