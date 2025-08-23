@@ -1954,7 +1954,7 @@ class WorkLifeBalanceApp {
     }
 
     skipExercise(exerciseType, exercise) {
-        Utils.showNotification(`Skipped ${exercise.title}. Try again later! 💪`, 'info');
+        Utils.showNotification(`Skipped ${exercise.title}. Try again later! ���`, 'info');
         this.closeModal('exerciseModal');
 
         // Reset any running timers
@@ -4696,7 +4696,7 @@ class WorkLifeBalanceApp {
         if (totalCalories > 0) {
             if (avgDailyCalories >= 1800 && avgDailyCalories <= 2400) {
                 insights.push({
-                    icon: '🔥',
+                    icon: '����',
                     title: 'Calorie Balance',
                     description: `Your daily average of ${avgDailyCalories} calories is well-balanced for a healthy lifestyle. Total this week: ${totalCalories.toLocaleString()} calories.`
                 });
@@ -6426,11 +6426,8 @@ class WorkLifeBalanceApp {
     }
 
     loadHabitsSection() {
-        this.calculateLifeAnalytics();
-        this.loadAnalyticsDashboard();
-
-        // Ensure correlations tab is shown by default
-        this.showHabitTab('correlations');
+        this.calculateLifeBalanceScore();
+        // No tabs needed - just show the life balance score
     }
 
     showHabitTab(tabName) {
