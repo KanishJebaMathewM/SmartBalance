@@ -190,9 +190,16 @@ class WorkLifeBalanceApp {
             // Show/hide expense task details
             const expenseCheckbox = document.getElementById('taskExpense');
             const expenseDetails = document.getElementById('expenseTaskDetails');
+            const amountField = document.getElementById('taskAmount');
             if (expenseCheckbox && expenseDetails) {
                 expenseCheckbox.addEventListener('change', () => {
                     expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
+
+                    // Make amount field required when expense is checked
+                    if (amountField) {
+                        amountField.required = expenseCheckbox.checked;
+                    }
+
                     if (expenseCheckbox.checked) {
                         this.updateExpenseCategory();
                     } else {
@@ -8001,7 +8008,7 @@ class WorkLifeBalanceApp {
         const weeklySpending = window.storage.getWeeklyExpenses();
         if (weeklySpending > 5000) {
             recommendations.push({
-                icon: '💰',
+                icon: '����',
                 title: 'Monitor Weekly Spending',
                 description: `Your weekly spending of ${Utils.formatCurrency(weeklySpending)} is quite high. Consider reviewing your expenses.`,
                 priority: 'medium',
@@ -8204,7 +8211,7 @@ class WorkLifeBalanceApp {
                 title: 'Nutrition Progress',
                 current: currentScores.nutrition,
                 previous: previousScores.nutrition,
-                icon: '����'
+                icon: '�����'
             },
             {
                 title: 'Productivity Progress',
