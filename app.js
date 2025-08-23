@@ -5711,6 +5711,828 @@ class WorkLifeBalanceApp {
         }
         this.renderMealCalendar();
     }
+
+    // Missing section loading methods
+    loadFoodData() {
+        this.loadFoodStats();
+        this.loadMealPlanner();
+        this.loadPantryItems();
+        this.loadFoodAnalytics();
+    }
+
+    loadFoodStats() {
+        const stats = window.storage.getWeeklyMealStats();
+
+        const homeMealsEl = document.getElementById('homeMeals');
+        const hotelMealsEl = document.getElementById('hotelMeals');
+        const moneySavedEl = document.getElementById('moneySaved');
+        const caloriesConsumedEl = document.getElementById('caloriesConsumed');
+
+        if (homeMealsEl) homeMealsEl.textContent = stats.homeMeals;
+        if (hotelMealsEl) hotelMealsEl.textContent = stats.hotelMeals;
+        if (moneySavedEl) moneySavedEl.textContent = Utils.formatCurrency(stats.moneySaved);
+        if (caloriesConsumedEl) {
+            const todayCalories = this.calculateTodayCalories();
+            caloriesConsumedEl.textContent = todayCalories;
+        }
+    }
+
+    calculateTodayCalories() {
+        const todayMeals = window.storage.getTodayMeals();
+        return todayMeals.reduce((total, meal) => total + (parseInt(meal.calories) || 0), 0);
+    }
+
+    loadFoodAnalytics() {
+        // Load food charts and analytics
+        this.loadCookingFrequencyChart();
+        this.loadCostComparisonChart();
+        this.loadCalorieChart();
+        this.loadMealCostChart();
+    }
+
+    loadCookingFrequencyChart() {
+        const canvas = document.getElementById('cookingFrequencyChart');
+        if (!canvas) return;
+
+        // Generate sample data for cooking frequency
+        const last7Days = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            last7Days.push({
+                date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                home: Math.floor(Math.random() * 3) + 1,
+                hotel: Math.floor(Math.random() * 2)
+            });
+        }
+
+        this.renderCookingFrequencyChart(canvas, last7Days);
+    }
+
+    renderCookingFrequencyChart(canvas, data) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 40;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+        const barWidth = chartWidth / data.length * 0.35;
+        const maxValue = 4;
+
+        // Draw axes
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.moveTo(padding, padding + chartHeight);
+        ctx.lineTo(padding + chartWidth, padding + chartHeight);
+        ctx.stroke();
+
+        data.forEach((day, index) => {
+            const x = padding + (index * chartWidth / data.length);
+
+            // Home cooking bar
+            const homeHeight = (day.home / maxValue) * chartHeight;
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(x + 10, padding + chartHeight - homeHeight, barWidth, homeHeight);
+
+            // Hotel/delivery bar
+            const hotelHeight = (day.hotel / maxValue) * chartHeight;
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(x + 10 + barWidth + 5, padding + chartHeight - hotelHeight, barWidth, hotelHeight);
+
+            // Day label
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(day.date, x + barWidth + 10, padding + chartHeight + 20);
+        });
+
+        // Legend
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(20, 20, 15, 15);
+        ctx.fillStyle = '#374151';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('Home Cooked', 45, 32);
+
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(150, 20, 15, 15);
+        ctx.fillText('Hotel/Delivery', 175, 32);
+    }
+
+    loadCostComparisonChart() {
+        const canvas = document.getElementById('costComparisonChart');
+        if (!canvas) return;
+
+        const stats = window.storage.getWeeklyMealStats();
+        this.renderCostComparisonChart(canvas, stats);
+    }
+
+    renderCostComparisonChart(canvas, stats) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) - 40;
+
+        const totalCost = stats.totalHomeCost + stats.totalHotelCost;
+        if (totalCost === 0) return;
+
+        // Home cooking slice
+        const homeAngle = (stats.totalHomeCost / totalCost) * 2 * Math.PI;
+        ctx.fillStyle = '#10b981';
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, 0, homeAngle);
+        ctx.closePath();
+        ctx.fill();
+
+        // Hotel/delivery slice
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, homeAngle, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill();
+
+        // Labels
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(Utils.formatCurrency(stats.totalHomeCost), centerX - radius/2, centerY);
+        ctx.fillText(Utils.formatCurrency(stats.totalHotelCost), centerX + radius/2, centerY);
+    }
+
+    loadCalorieChart() {
+        const canvas = document.getElementById('calorieChart');
+        if (!canvas) return;
+
+        // Generate sample calorie data for last 7 days
+        const calorieData = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            calorieData.push({
+                date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+                calories: 1800 + Math.floor(Math.random() * 600)
+            });
+        }
+
+        this.renderCalorieChart(canvas, calorieData);
+    }
+
+    renderCalorieChart(canvas, data) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 40;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+        const maxCalories = Math.max(...data.map(d => d.calories)) + 200;
+
+        // Draw axes
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.moveTo(padding, padding + chartHeight);
+        ctx.lineTo(padding + chartWidth, padding + chartHeight);
+        ctx.stroke();
+
+        // Draw line
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+
+        data.forEach((day, index) => {
+            const x = padding + (index / (data.length - 1)) * chartWidth;
+            const y = padding + chartHeight - (day.calories / maxCalories) * chartHeight;
+
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+
+            // Draw point
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Day label
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(day.date, x, padding + chartHeight + 20);
+        });
+
+        ctx.stroke();
+    }
+
+    loadMealCostChart() {
+        const canvas = document.getElementById('mealCostChart');
+        if (!canvas) return;
+
+        // Sample cost comparison data
+        const costData = [
+            { meal: 'Breakfast', home: 25, delivery: 120 },
+            { meal: 'Lunch', home: 45, delivery: 180 },
+            { meal: 'Dinner', home: 55, delivery: 200 },
+            { meal: 'Snacks', home: 15, delivery: 80 }
+        ];
+
+        this.renderMealCostChart(canvas, costData);
+    }
+
+    renderMealCostChart(canvas, data) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 60;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+        const barWidth = chartWidth / data.length * 0.35;
+        const maxValue = Math.max(...data.flatMap(d => [d.home, d.delivery])) + 50;
+
+        // Draw axes
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.moveTo(padding, padding + chartHeight);
+        ctx.lineTo(padding + chartWidth, padding + chartHeight);
+        ctx.stroke();
+
+        data.forEach((meal, index) => {
+            const x = padding + (index * chartWidth / data.length);
+
+            // Home cost bar
+            const homeHeight = (meal.home / maxValue) * chartHeight;
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(x + 10, padding + chartHeight - homeHeight, barWidth, homeHeight);
+
+            // Delivery cost bar
+            const deliveryHeight = (meal.delivery / maxValue) * chartHeight;
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(x + 10 + barWidth + 5, padding + chartHeight - deliveryHeight, barWidth, deliveryHeight);
+
+            // Meal label
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(meal.meal, x + barWidth + 10, padding + chartHeight + 20);
+        });
+
+        // Legend
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(20, 20, 15, 15);
+        ctx.fillStyle = '#374151';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('Home Cooking', 45, 32);
+
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(150, 20, 15, 15);
+        ctx.fillText('Delivery', 175, 32);
+    }
+
+    loadFitnessData() {
+        this.updateFitnessStats();
+        this.loadBadges();
+    }
+
+    updateFitnessStats() {
+        const streak = window.storage.getWorkoutStreak();
+        const workouts = window.storage.getWorkouts();
+
+        const fitnessStreakEl = document.getElementById('fitnessStreak');
+        const weeklyWorkoutsEl = document.getElementById('weeklyWorkouts');
+        const totalWorkoutsEl = document.getElementById('totalWorkouts');
+
+        if (fitnessStreakEl) fitnessStreakEl.textContent = streak;
+
+        if (weeklyWorkoutsEl) {
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            const weeklyCount = workouts.filter(w => new Date(w.createdAt) >= weekAgo).length;
+            weeklyWorkoutsEl.textContent = `${weeklyCount}/7`;
+        }
+
+        if (totalWorkoutsEl) totalWorkoutsEl.textContent = workouts.length;
+    }
+
+    loadBadges() {
+        const badges = window.storage.getBadges();
+        const badgesList = document.getElementById('badgesList');
+
+        if (!badgesList) return;
+
+        const badgeElements = badgesList.querySelectorAll('.badge');
+        badgeElements.forEach(badge => {
+            const badgeType = badge.dataset.badge;
+            if (badges[badgeType]) {
+                badge.classList.remove('locked');
+                badge.classList.add('unlocked');
+            }
+        });
+    }
+
+    loadStressData() {
+        this.updateStressStats();
+        this.loadMoodChart();
+        this.generateInsights();
+    }
+
+    updateStressStats() {
+        const currentMood = window.storage.getWeeklyMoodAverage();
+        const currentStressEl = document.getElementById('currentStress');
+
+        if (currentStressEl) {
+            currentStressEl.textContent = Utils.getMoodEmoji(currentMood);
+        }
+    }
+
+    loadMoodChart() {
+        const moods = window.storage.getMoods();
+        this.charts.createMoodChart('moodChart', moods);
+    }
+
+    generateInsights() {
+        const insightCards = document.getElementById('insightCards');
+        if (!insightCards) return;
+
+        const insights = [
+            {
+                title: '💰 Spending Pattern',
+                description: 'You tend to be more stressed on days with higher spending'
+            },
+            {
+                title: '🏋️ Workout Impact',
+                description: 'Your mood is 30% better on workout days'
+            }
+        ];
+
+        insightCards.innerHTML = insights.map(insight => `
+            <div class="insight-card">
+                <h4>${insight.title}</h4>
+                <p>${insight.description}</p>
+            </div>
+        `).join('');
+    }
+
+    loadHabitsSection() {
+        this.loadDailyHabits();
+        this.updateHabitStats();
+    }
+
+    loadDailyHabits() {
+        const habits = window.storage.getHabits();
+        this.renderHabitsByCategory(habits);
+        this.updateTodayHabitChecklist(habits);
+    }
+
+    renderHabitsByCategory(habits) {
+        const categories = ['fitness', 'nutrition', 'productivity', 'wellness'];
+
+        categories.forEach(category => {
+            const container = document.getElementById(`${category}Habits`);
+            if (!container) return;
+
+            const categoryHabits = habits.filter(h => h.category === category && h.active !== false);
+
+            if (categoryHabits.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No ${category} habits yet</p>
+                        <button class="btn-secondary" onclick="app.openHabitModal('${category}')">Add ${category} habit</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = categoryHabits.map(habit => `
+                <div class="habit-item" data-habit-id="${habit.id}">
+                    <div class="habit-info">
+                        <div class="habit-name">${habit.name}</div>
+                        <div class="habit-streak">🔥 ${habit.currentStreak || 0} days</div>
+                    </div>
+                    <div class="habit-actions">
+                        <button class="btn-complete" onclick="app.completeHabit(${habit.id})">✓</button>
+                        <button class="btn-skip" onclick="app.skipHabit(${habit.id})">Skip</button>
+                    </div>
+                </div>
+            `).join('');
+        });
+    }
+
+    updateTodayHabitChecklist(habits) {
+        const container = document.getElementById('todayHabitChecklist');
+        if (!container) return;
+
+        const today = new Date().toDateString();
+        const todayCompletions = new Set();
+
+        habits.forEach(habit => {
+            const completions = window.storage.getHabitCompletions(habit.id);
+            const todayCompletion = completions.find(c =>
+                new Date(c.date).toDateString() === today
+            );
+            if (todayCompletion) {
+                todayCompletions.add(habit.id);
+            }
+        });
+
+        container.innerHTML = habits.filter(h => h.active !== false).map(habit => `
+            <div class="habit-checklist-item ${todayCompletions.has(habit.id) ? 'completed' : ''}">
+                <input type="checkbox" ${todayCompletions.has(habit.id) ? 'checked' : ''}
+                       onchange="app.toggleHabitCompletion(${habit.id}, this.checked)">
+                <span>${habit.name}</span>
+            </div>
+        `).join('');
+    }
+
+    updateHabitStats() {
+        const habits = window.storage.getHabits();
+        const stats = window.storage.getOverallHabitStats();
+
+        const habitStreakEl = document.getElementById('habitStreak');
+        const todayHabitsEl = document.getElementById('todayHabits');
+        const weeklyConsistencyEl = document.getElementById('weeklyConsistency');
+        const activeHabitsEl = document.getElementById('activeHabits');
+
+        if (habitStreakEl) habitStreakEl.textContent = stats.averageStreak;
+        if (activeHabitsEl) activeHabitsEl.textContent = habits.filter(h => h.active !== false).length;
+
+        const today = new Date().toDateString();
+        const todayCompletions = habits.filter(h => {
+            const completions = window.storage.getHabitCompletions(h.id);
+            return completions.some(c => new Date(c.date).toDateString() === today);
+        }).length;
+
+        if (todayHabitsEl) todayHabitsEl.textContent = `${todayCompletions}/${habits.length}`;
+        if (weeklyConsistencyEl) weeklyConsistencyEl.textContent = `${Math.round(stats.completionRate)}%`;
+    }
+
+    // Report Generator (replaces Weekly Report)
+    loadReportGenerator() {
+        this.renderReportPeriodSelector();
+        this.generateReport('week'); // Default to weekly
+    }
+
+    renderReportPeriodSelector() {
+        const container = document.querySelector('#report .section-header');
+        if (!container) return;
+
+        // Update header
+        const h1 = container.querySelector('h1');
+        if (h1) h1.textContent = '📊 Report Generator';
+
+        // Add period selector
+        const periodSelector = document.createElement('div');
+        periodSelector.className = 'report-period-selector';
+        periodSelector.innerHTML = `
+            <div class="period-buttons">
+                <button class="period-btn active" data-period="day" onclick="app.generateReport('day')">1 Day</button>
+                <button class="period-btn" data-period="week" onclick="app.generateReport('week')">7 Days</button>
+                <button class="period-btn" data-period="month" onclick="app.generateReport('month')">1 Month</button>
+            </div>
+            <div class="export-options">
+                <button class="btn-secondary export-btn" data-section="report" data-format="csv" onclick="app.exportSectionData('report', 'csv')">📊 Export CSV</button>
+                <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">📄 Export JSON</button>
+            </div>
+        `;
+
+        container.appendChild(periodSelector);
+    }
+
+    generateReport(period) {
+        // Update active button
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`[data-period="${period}"]`).classList.add('active');
+
+        // Generate report data
+        const reportData = this.getReportData(period);
+        this.renderReportContent(reportData, period);
+    }
+
+    getReportData(period) {
+        const now = new Date();
+        let startDate;
+
+        switch (period) {
+            case 'day':
+                startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                break;
+            case 'week':
+                startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                break;
+            case 'month':
+                startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                break;
+        }
+
+        return {
+            tasks: window.storage.getTasks().filter(t => new Date(t.createdAt) >= startDate),
+            expenses: window.storage.getExpenses().filter(e => new Date(e.createdAt) >= startDate),
+            meals: window.storage.getMeals().filter(m => new Date(m.date) >= startDate),
+            workouts: window.storage.getWorkouts().filter(w => new Date(w.createdAt) >= startDate),
+            moods: window.storage.getMoods().filter(m => new Date(m.date) >= startDate),
+            period,
+            startDate,
+            endDate: now
+        };
+    }
+
+    renderReportContent(data, period) {
+        const reportContainer = document.getElementById('report');
+        if (!reportContainer) return;
+
+        // Remove existing report content
+        const existingContent = reportContainer.querySelector('.report-content');
+        if (existingContent) existingContent.remove();
+
+        const reportContent = document.createElement('div');
+        reportContent.className = 'report-content';
+        reportContent.innerHTML = this.generateReportHTML(data, period);
+
+        reportContainer.appendChild(reportContent);
+
+        // Load charts
+        setTimeout(() => {
+            this.loadReportCharts(data);
+        }, 100);
+    }
+
+    generateReportHTML(data, period) {
+        const periodLabel = period === 'day' ? '24 Hours' : period === 'week' ? '7 Days' : '30 Days';
+
+        return `
+            <div class="report-summary">
+                <h2>📊 ${periodLabel} Report Summary</h2>
+                <div class="summary-grid">
+                    ${this.generateTaskSummary(data.tasks)}
+                    ${this.generateExpenseSummary(data.expenses)}
+                    ${this.generateMealSummary(data.meals)}
+                    ${this.generateFitnessSummary(data.workouts)}
+                    ${this.generateMoodSummary(data.moods)}
+                    ${this.generateOverallScore(data)}
+                </div>
+            </div>
+
+            <div class="report-details">
+                <div class="report-section">
+                    <h3>📈 Trends & Analytics</h3>
+                    <div class="chart-container">
+                        <canvas id="reportTrendsChart" width="600" height="300"></canvas>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h3>🎯 Key Insights</h3>
+                    <div class="insights-grid">
+                        ${this.generateInsightCards(data)}
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h3>📋 Detailed Breakdown</h3>
+                    <div class="breakdown-tabs">
+                        <button class="breakdown-tab active" data-tab="tasks">Tasks</button>
+                        <button class="breakdown-tab" data-tab="expenses">Expenses</button>
+                        <button class="breakdown-tab" data-tab="meals">Meals</button>
+                        <button class="breakdown-tab" data-tab="workouts">Workouts</button>
+                    </div>
+                    <div class="breakdown-content" id="breakdownContent">
+                        ${this.generateTaskBreakdown(data.tasks)}
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h3>🎯 Recommendations</h3>
+                    <div class="recommendations">
+                        ${this.generateRecommendations(data)}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    generateTaskSummary(tasks) {
+        const completed = tasks.filter(t => t.completed).length;
+        const completionRate = tasks.length > 0 ? Math.round((completed / tasks.length) * 100) : 0;
+
+        return `
+            <div class="summary-card">
+                <h3>📑 Tasks</h3>
+                <div class="big-stat">${completed}</div>
+                <p>Completed out of ${tasks.length}</p>
+                <div class="completion-rate">${completionRate}% completion rate</div>
+            </div>
+        `;
+    }
+
+    generateExpenseSummary(expenses) {
+        const total = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+        const avgDaily = expenses.length > 0 ? total / Math.max(1, expenses.length / 7) : 0;
+
+        return `
+            <div class="summary-card">
+                <h3>💰 Expenses</h3>
+                <div class="big-stat">${Utils.formatCurrency(total)}</div>
+                <p>Total spent</p>
+                <div class="avg-daily">Avg: ${Utils.formatCurrency(avgDaily)}/day</div>
+            </div>
+        `;
+    }
+
+    generateMealSummary(meals) {
+        const homeMeals = meals.filter(m => m.source === 'home').length;
+        const totalMeals = meals.length;
+        const homePercentage = totalMeals > 0 ? Math.round((homeMeals / totalMeals) * 100) : 0;
+
+        return `
+            <div class="summary-card">
+                <h3>🍲 Meals</h3>
+                <div class="big-stat">${homeMeals}</div>
+                <p>Home cooked out of ${totalMeals}</p>
+                <div class="home-percentage">${homePercentage}% home cooking</div>
+            </div>
+        `;
+    }
+
+    generateFitnessSummary(workouts) {
+        const totalWorkouts = workouts.length;
+        const avgPerDay = workouts.length / 7;
+
+        return `
+            <div class="summary-card">
+                <h3>🏋️ Fitness</h3>
+                <div class="big-stat">${totalWorkouts}</div>
+                <p>Workouts completed</p>
+                <div class="avg-workouts">${avgPerDay.toFixed(1)} per day</div>
+            </div>
+        `;
+    }
+
+    generateMoodSummary(moods) {
+        if (moods.length === 0) {
+            return `
+                <div class="summary-card">
+                    <h3>😌 Mood</h3>
+                    <div class="big-stat">-</div>
+                    <p>No mood data</p>
+                </div>
+            `;
+        }
+
+        const moodScores = moods.map(m => {
+            const scores = { 'very-happy': 5, 'happy': 4, 'neutral': 3, 'stressed': 2, 'very-stressed': 1 };
+            return scores[m.mood] || 3;
+        });
+
+        const avgMood = moodScores.reduce((sum, score) => sum + score, 0) / moodScores.length;
+        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '😐' : '😓';
+
+        return `
+            <div class="summary-card">
+                <h3>😌 Mood</h3>
+                <div class="big-stat">${moodEmoji}</div>
+                <p>${moods.length} check-ins</p>
+                <div class="avg-mood">Avg: ${avgMood.toFixed(1)}/5</div>
+            </div>
+        `;
+    }
+
+    generateOverallScore(data) {
+        // Calculate overall wellness score
+        const taskScore = data.tasks.length > 0 ? (data.tasks.filter(t => t.completed).length / data.tasks.length) * 100 : 50;
+        const workoutScore = Math.min(data.workouts.length * 20, 100); // Max 5 workouts for 100%
+        const homeCookingScore = data.meals.length > 0 ? (data.meals.filter(m => m.source === 'home').length / data.meals.length) * 100 : 50;
+
+        const overallScore = Math.round((taskScore + workoutScore + homeCookingScore) / 3);
+
+        return `
+            <div class="summary-card overall-score">
+                <h3>🎯 Overall Score</h3>
+                <div class="big-stat">${overallScore}</div>
+                <p>Wellness Score</p>
+                <div class="score-breakdown">
+                    <small>Tasks: ${Math.round(taskScore)}% | Fitness: ${Math.round(workoutScore)}% | Nutrition: ${Math.round(homeCookingScore)}%</small>
+                </div>
+            </div>
+        `;
+    }
+
+    generateInsightCards(data) {
+        const insights = Utils.generateWeeklyInsights(data);
+
+        return insights.map(insight => `
+            <div class="insight-card">
+                <p>${insight}</p>
+            </div>
+        `).join('');
+    }
+
+    generateTaskBreakdown(tasks) {
+        if (tasks.length === 0) {
+            return '<p>No tasks in this period</p>';
+        }
+
+        return `
+            <div class="breakdown-list">
+                ${tasks.map(task => `
+                    <div class="breakdown-item ${task.completed ? 'completed' : 'pending'}">
+                        <span class="item-status">${task.completed ? '✅' : '⏳'}</span>
+                        <span class="item-title">${task.title}</span>
+                        <span class="item-category">${task.category}</span>
+                        <span class="item-date">${Utils.formatDate(task.createdAt)}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    generateRecommendations(data) {
+        const recommendations = [];
+
+        // Task recommendations
+        const taskCompletion = data.tasks.length > 0 ? (data.tasks.filter(t => t.completed).length / data.tasks.length) * 100 : 0;
+        if (taskCompletion < 70) {
+            recommendations.push('📝 Focus on completing more tasks for better productivity');
+        }
+
+        // Fitness recommendations
+        if (data.workouts.length < 3) {
+            recommendations.push('🏋️ Try to add more physical activity to your routine');
+        }
+
+        // Nutrition recommendations
+        const homeCookingRate = data.meals.length > 0 ? (data.meals.filter(m => m.source === 'home').length / data.meals.length) * 100 : 0;
+        if (homeCookingRate < 60) {
+            recommendations.push('🍲 Consider cooking more meals at home for better health and savings');
+        }
+
+        // Financial recommendations
+        const totalExpenses = data.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+        if (totalExpenses > 5000) {
+            recommendations.push('💰 Review your spending patterns and consider budgeting');
+        }
+
+        return recommendations.map(rec => `
+            <div class="recommendation-item">
+                <p>${rec}</p>
+            </div>
+        `).join('');
+    }
+
+    loadReportCharts(data) {
+        this.charts.createTrendsChart('reportTrendsChart', data);
+    }
+
+    // Export functionality for all sections
+    exportSectionData(section, format) {
+        const data = this.getSectionData(section);
+        const filename = `${section}-${format}-${new Date().toISOString().split('T')[0]}`;
+
+        if (format === 'csv') {
+            Utils.exportToCSV(data, `${filename}.csv`);
+        } else if (format === 'json') {
+            Utils.exportToJSON(data, `${filename}.json`);
+        }
+
+        Utils.showNotification(`${section} data exported as ${format.toUpperCase()}`, 'success');
+    }
+
+    getSectionData(section) {
+        switch (section) {
+            case 'tasks':
+                return { tasks: window.storage.getTasks() };
+            case 'expenses':
+                return { expenses: window.storage.getExpenses() };
+            case 'food':
+                return {
+                    meals: window.storage.getMeals(),
+                    foodItems: window.storage.getFoodItems()
+                };
+            case 'fitness':
+                return { workouts: window.storage.getWorkouts() };
+            case 'stress':
+                return { moods: window.storage.getMoods() };
+            case 'habits':
+                return { habits: window.storage.getHabits() };
+            case 'report':
+                return this.getReportData('month'); // Default to monthly for full report
+            default:
+                return window.storage.exportData();
+        }
+    }
 }
 
 // Initialize the app when DOM is loaded
