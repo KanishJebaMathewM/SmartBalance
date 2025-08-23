@@ -583,7 +583,7 @@
                             </div>
 
                             <div class="expense-forecast" id="expenseForecast" style="display: none;">
-                                <h4>💡 Smart Insights</h4>
+                                <h4>��� Smart Insights</h4>
                                 <div class="forecast-content" id="forecastContent"></div>
                             </div>
 
@@ -782,7 +782,14 @@
                 </div>
 
                 <div class="meal-planner">
-                    <h3>Today's South Indian Meal Plan</h3>
+                    <div class="meal-planner-header">
+                        <h3>📅 Daily Meal Planner</h3>
+                        <div class="date-selector">
+                            <button class="btn-small" onclick="app.changeMealPlanDate(-1)">← Yesterday</button>
+                            <span id="currentPlanDate">Today</span>
+                            <button class="btn-small" onclick="app.changeMealPlanDate(1)">Tomorrow →</button>
+                        </div>
+                    </div>
                     <div class="meal-grid">
                         <div class="meal-card">
                             <div class="meal-emoji">🌅</div>
