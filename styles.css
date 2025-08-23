@@ -3241,22 +3241,6 @@ body.dark-mode {
     border-color: #334155;
 }
 
-/* Priority Colors */
-select[id="expensePriority"] option[value="low"] {
-    color: #059669;
-}
-
-select[id="expensePriority"] option[value="medium"] {
-    color: #d97706;
-}
-
-select[id="expensePriority"] option[value="high"] {
-    color: #dc2626;
-}
-
-select[id="expensePriority"] option[value="essential"] {
-    color: #7c2d12;
-}
 
 /* Expense Forecast */
 .expense-forecast {
