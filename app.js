@@ -6952,6 +6952,22 @@ class WorkLifeBalanceApp {
         return html;
     }
 
+    refreshAnalysis() {
+        Utils.showNotification('Refreshing life analytics...', 'info');
+
+        // Recalculate all analytics
+        this.calculateLifeAnalytics();
+
+        // Reload current tab content
+        const activeTab = document.querySelector('#habits .tab-btn.active');
+        if (activeTab) {
+            const tabName = activeTab.dataset.tab;
+            this.showHabitTab(tabName);
+        }
+
+        Utils.showNotification('Analytics refreshed successfully!', 'success');
+    }
+
     // Additional methods for other analytics sections
     generateWeeklyPredictions() {
         // Generate AI predictions for the week
