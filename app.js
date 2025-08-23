@@ -800,7 +800,7 @@ class WorkLifeBalanceApp {
                 </div>
                 <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
-                    <button onclick="app.editExpense(${expense.id})" title="Edit">✏�����</button>
+                    <button onclick="app.editExpense(${expense.id})" title="Edit">✏���</button>
                     <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
                 </div>
             </div>
@@ -2652,10 +2652,12 @@ class WorkLifeBalanceApp {
             const expenseDetails = document.getElementById('expenseTaskDetails');
             const amountField = document.getElementById('taskAmount');
 
-            if (expenseCheckbox) expenseCheckbox.checked = false;
-            if (expenseDetails) expenseDetails.style.display = 'none';
+            if (expenseCheckbox) {
+                expenseCheckbox.checked = false;
+                // Trigger change event to ensure UI updates properly
+                expenseCheckbox.dispatchEvent(new Event('change'));
+            }
             if (amountField) {
-                amountField.required = false;
                 amountField.value = '';
             }
 
@@ -6028,7 +6030,7 @@ class WorkLifeBalanceApp {
                             <span class="meal-calories">${meal.calories} cal</span>
                         </div>
                         <div class="meal-status ${meal.status}">
-                            ${meal.status === 'eaten' ? '✅ Eaten' : '📅 Planned'}
+                            ${meal.status === 'eaten' ? '✅ Eaten' : '���� Planned'}
                         </div>
                     </div>
                 `).join('');
@@ -7353,7 +7355,7 @@ class WorkLifeBalanceApp {
         );
 
         if (recentWorkouts.length >= 4) {
-            insights.push('💪 Great workout consistency this week!');
+            insights.push('���� Great workout consistency this week!');
         } else if (recentWorkouts.length >= 2) {
             insights.push('🏃 Decent activity level. Try to add one more workout.');
         } else {
