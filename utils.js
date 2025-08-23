@@ -1006,6 +1006,206 @@ class Utils {
         return sectionsUsed;
     }
 
+    // Helper methods for tougher achievements
+    static getHomeCookingRate(expenses, days) {
+        const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+        const recentExpenses = expenses.filter(e => new Date(e.createdAt) >= cutoffDate);
+
+        const foodExpenses = recentExpenses.filter(e => e.category === 'food');
+        const deliveryExpenses = foodExpenses.filter(e =>
+            e.notes?.toLowerCase().includes('delivery') ||
+            e.notes?.toLowerCase().includes('order') ||
+            e.notes?.toLowerCase().includes('zomato') ||
+            e.notes?.toLowerCase().includes('swiggy')
+        );
+
+        if (foodExpenses.length === 0) return 0;
+        return ((foodExpenses.length - deliveryExpenses.length) / foodExpenses.length) * 100;
+    }
+
+    static getLongTermSavingsRate(expenses, days) {
+        const settings = window.storage.getSettings();
+        const monthlyIncome = settings.monthlyIncome || 0;
+
+        if (monthlyIncome === 0) return 0;
+
+        const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+        const recentExpenses = expenses.filter(e => new Date(e.createdAt) >= cutoffDate);
+        const totalExpenses = recentExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        const monthsInPeriod = days / 30;
+        const totalIncome = monthlyIncome * monthsInPeriod;
+        const totalSavings = totalIncome - totalExpenses;
+
+        return totalIncome > 0 ? (totalSavings / totalIncome) * 100 : 0;
+    }
+
+    static getBudgetCompliance(expenses, days) {
+        // This would need actual budget data - for now return a mock value based on expense patterns
+        const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+        const recentExpenses = expenses.filter(e => new Date(e.createdAt) >= cutoffDate);
+
+        // Simplified calculation - assume compliance is good if expenses are consistent
+        const monthlyExpenses = recentExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0) / (days / 30);
+        return monthlyExpenses < 25000 ? 100 : Math.max(0, 100 - ((monthlyExpenses - 25000) / 1000));
+    }
+
+    static getPerfectTaskStreak(tasks) {
+        // Calculate consecutive days with 100% task completion
+        let streak = 0;
+        let currentDate = new Date();
+
+        for (let i = 0; i < 365; i++) { // Check up to 365 days back
+            const checkDate = new Date(currentDate);
+            checkDate.setDate(checkDate.getDate() - i);
+            const dateStr = checkDate.toDateString();
+
+            const dayTasks = tasks.filter(t =>
+                new Date(t.createdAt).toDateString() === dateStr
+            );
+
+            if (dayTasks.length === 0) continue; // Skip days with no tasks
+
+            const completedTasks = dayTasks.filter(t => t.completed);
+            const completionRate = completedTasks.length / dayTasks.length;
+
+            if (completionRate === 1.0) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+
+        return streak;
+    }
+
+    static getMoodStreak(moods) {
+        // Calculate consecutive days with mood entries
+        let streak = 0;
+        let currentDate = new Date();
+
+        for (let i = 0; i < 365; i++) { // Check up to 365 days back
+            const checkDate = new Date(currentDate);
+            checkDate.setDate(checkDate.getDate() - i);
+            const dateStr = checkDate.toDateString();
+
+            const dayMoods = moods.filter(m =>
+                new Date(m.date).toDateString() === dateStr
+            );
+
+            if (dayMoods.length > 0) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+
+        return streak;
+    }
+
+    static getAppUsageStreak() {
+        // This would need to track app usage - for now return mock based on localStorage activity
+        const keys = ['wlb_tasks', 'wlb_expenses', 'wlb_workouts', 'wlb_moods'];
+        let maxStreak = 0;
+
+        keys.forEach(key => {
+            const data = localStorage.getItem(key);
+            if (data) {
+                try {
+                    const items = JSON.parse(data);
+                    const recentItems = items.filter(item =>
+                        Utils.getDaysDifference(new Date(), new Date(item.createdAt || item.date)) <= 180
+                    );
+                    if (recentItems.length > 100) { // Active usage indicator
+                        maxStreak = Math.max(maxStreak, 180);
+                    }
+                } catch (e) {
+                    // Skip invalid data
+                }
+            }
+        });
+
+        return maxStreak;
+    }
+
+    static getAllHabitsStreak(data) {
+        // Calculate streak where user maintains activity in all areas
+        let minStreak = 365;
+
+        // Check workout streak
+        const workoutStreak = window.storage.getWorkoutStreak();
+        minStreak = Math.min(minStreak, workoutStreak);
+
+        // Check mood tracking streak
+        const moodStreak = this.getMoodStreak(data.moods || []);
+        minStreak = Math.min(minStreak, moodStreak);
+
+        // Check task completion consistency
+        const taskStreak = this.getPerfectTaskStreak(data.tasks || []);
+        minStreak = Math.min(minStreak, taskStreak);
+
+        return Math.max(0, minStreak);
+    }
+
+    static getDataTrackingStreak(data) {
+        // Calculate consecutive days with entries in all categories
+        let streak = 0;
+        let currentDate = new Date();
+
+        for (let i = 0; i < 365; i++) {
+            const checkDate = new Date(currentDate);
+            checkDate.setDate(checkDate.getDate() - i);
+            const dateStr = checkDate.toDateString();
+
+            // Check if all data types have entries for this day
+            const hasMeal = (data.meals || []).some(m =>
+                new Date(m.date).toDateString() === dateStr
+            );
+            const hasExpense = (data.expenses || []).some(e =>
+                new Date(e.createdAt).toDateString() === dateStr
+            );
+            const hasWorkout = (data.workouts || []).some(w =>
+                new Date(w.createdAt).toDateString() === dateStr
+            );
+
+            if (hasMeal && hasExpense && hasWorkout) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+
+        return streak;
+    }
+
+    static getPositiveCashFlowMonths(expenses) {
+        const settings = window.storage.getSettings();
+        const monthlyIncome = settings.monthlyIncome || 0;
+
+        if (monthlyIncome === 0) return 0;
+
+        let positiveMonths = 0;
+        const currentDate = new Date();
+
+        for (let i = 0; i < 12; i++) {
+            const monthStart = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+            const monthEnd = new Date(currentDate.getFullYear(), currentDate.getMonth() - i + 1, 0);
+
+            const monthExpenses = expenses.filter(e => {
+                const expenseDate = new Date(e.createdAt);
+                return expenseDate >= monthStart && expenseDate <= monthEnd;
+            }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+            if (monthlyIncome > monthExpenses) {
+                positiveMonths++;
+            } else {
+                break; // Streak broken
+            }
+        }
+
+        return positiveMonths;
+    }
+
     // Export utilities
     static exportToJSON(data, filename = 'wlb-data-export.json') {
         const dataStr = JSON.stringify(data, null, 2);
