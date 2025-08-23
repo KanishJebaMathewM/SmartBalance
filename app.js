@@ -180,6 +180,12 @@ class WorkLifeBalanceApp {
             foodForm.addEventListener('submit', (e) => this.handleFoodSubmit(e));
         }
 
+        // Meal form
+        const mealForm = document.getElementById('mealForm');
+        if (mealForm) {
+            mealForm.addEventListener('submit', (e) => this.handleMealSubmit(e));
+        }
+
         // Habit form
         const habitForm = document.getElementById('habitForm');
         if (habitForm) {
