@@ -4835,6 +4835,83 @@ body.dark-mode {
     border-color: #ef4444;
 }
 
+/* Meal Calendar Indicator Styles */
+.day-meal-indicator {
+    width: 100%;
+    margin-top: 4px;
+}
+
+.day-meal-indicator.meal-complete {
+    background: rgba(16, 185, 129, 0.2);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.day-meal-indicator.meal-planned {
+    background: rgba(59, 130, 246, 0.2);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.day-meal-indicator.meal-partial {
+    background: rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.meal-dots {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    font-size: 12px;
+}
+
+.meal-dot {
+    color: #d1d5db;
+    transition: color 0.2s ease;
+}
+
+.meal-dot.planned {
+    color: #3b82f6;
+}
+
+.meal-dot.eaten {
+    color: #10b981;
+}
+
+.meal-dot.empty {
+    color: #e5e7eb;
+}
+
+/* Dark mode styles for meal indicators */
+.dark-mode .day-meal-indicator.meal-complete {
+    background: rgba(16, 185, 129, 0.3);
+}
+
+.dark-mode .day-meal-indicator.meal-planned {
+    background: rgba(96, 165, 250, 0.3);
+}
+
+.dark-mode .day-meal-indicator.meal-partial {
+    background: rgba(245, 158, 11, 0.3);
+}
+
+.dark-mode .meal-dot {
+    color: #4b5563;
+}
+
+.dark-mode .meal-dot.planned {
+    color: #60a5fa;
+}
+
+.dark-mode .meal-dot.eaten {
+    color: #34d399;
+}
+
+.dark-mode .meal-dot.empty {
+    color: #374151;
+}
+
 .day-expense-amount {
     font-size: 0.7rem;
     font-weight: 600;
