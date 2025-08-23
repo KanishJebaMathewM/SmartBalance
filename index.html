@@ -1021,7 +1021,7 @@
                 <div id="regenerateMealModal" class="modal">
                     <div class="modal-content wide-modal">
                         <span class="close">&times;</span>
-                        <h2>�� Random Meal Suggestions</h2>
+                        <h2>🔄 Random Meal Suggestions</h2>
 
                         <div class="regenerate-content">
                             <p>Accept any meal you like or regenerate for new options. Only empty meal slots are suggested:</p>
@@ -1130,7 +1130,11 @@
             <section id="fitness" class="section">
                 <div class="section-header">
                     <h1>🏋️ Fitness & Home Workouts</h1>
-                    <button class="btn-primary" id="markWorkoutBtn">✓ Mark Today's Workout</button>
+                    <div class="header-actions">
+                        <button class="btn-secondary export-btn" data-section="fitness" data-format="csv">📊 Export CSV</button>
+                        <button class="btn-secondary export-btn" data-section="fitness" data-format="json">📄 Export JSON</button>
+                        <button class="btn-primary" id="markWorkoutBtn">✓ Mark Today's Workout</button>
+                    </div>
                 </div>
 
                 <div class="fitness-stats">
