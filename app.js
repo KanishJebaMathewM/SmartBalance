@@ -1050,10 +1050,12 @@ class WorkLifeBalanceApp {
     loadInsightsTab() {
         const expenses = window.storage.getExpenses();
 
+        this.loadFinancialHealthScore();
+        this.loadIncomeVsExpensesChart();
+        this.loadCategoryInsights();
         this.generateSpendingPredictions(expenses);
         this.generateSpendingPatterns(expenses);
         this.generateSmartRecommendations(expenses);
-        this.loadFinancialGoals();
     }
 
     generateSpendingPredictions(expenses) {
