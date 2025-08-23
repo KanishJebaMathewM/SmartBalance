@@ -2349,7 +2349,7 @@ class WorkLifeBalanceApp {
         const icons = {
             food: '🍕',
             bills: '📧',
-            shopping: '🛍️',
+            shopping: '��️',
             travel: '✈���',
             entertainment: '🎬',
             healthcare: '🏥',
@@ -3677,7 +3677,7 @@ class WorkLifeBalanceApp {
             'entertainment': '🎬',
             'education': '📚',
             'fitness': '💪',
-            'subscriptions': '📺',
+            'subscriptions': '����',
             'groceries': '🛒',
             'clothing': '👕',
             'healthcare': '🏥',
@@ -5538,14 +5538,21 @@ class WorkLifeBalanceApp {
 
     regenerateMealPlan() {
         const todayMeals = window.storage.getTodayMeals();
-        const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
 
-        // Find which meal types are not eaten or planned
+        // Get all possible meal types from both predefined and user's custom meals
+        const predefinedMealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
+        const allMeals = window.storage.getMeals();
+        const customMealTypes = [...new Set(allMeals.map(meal => meal.type))];
+
+        // Combine predefined and custom meal types, removing duplicates
+        const allMealTypes = [...new Set([...predefinedMealTypes, ...customMealTypes])];
+
+        // Find which meal types are not eaten or planned for today
         const plannedMealTypes = todayMeals.map(meal => meal.type);
-        const emptyMealSlots = mealTypes.filter(type => !plannedMealTypes.includes(type));
+        const emptyMealSlots = allMealTypes.filter(type => !plannedMealTypes.includes(type));
 
         if (emptyMealSlots.length === 0) {
-            Utils.showNotification('All meals for today are already planned!', 'info');
+            Utils.showNotification('All meal types for today are already planned!', 'info');
             return;
         }
 
@@ -5553,9 +5560,18 @@ class WorkLifeBalanceApp {
         const allSuggestions = [];
         emptyMealSlots.forEach(mealType => {
             const typeSuggestions = this.generateMealSuggestions(mealType);
-            // Get one random suggestion for each meal type
-            const randomSuggestion = typeSuggestions[Math.floor(Math.random() * typeSuggestions.length)];
-            allSuggestions.push({...randomSuggestion, type: mealType});
+
+            // If no predefined suggestions exist for this meal type, create generic ones
+            if (typeSuggestions.length === 0) {
+                // Generate fallback suggestions for custom meal types
+                const fallbackSuggestions = this.generateFallbackSuggestions(mealType);
+                const randomSuggestion = fallbackSuggestions[Math.floor(Math.random() * fallbackSuggestions.length)];
+                allSuggestions.push({...randomSuggestion, type: mealType});
+            } else {
+                // Get one random suggestion for meal types with predefined suggestions
+                const randomSuggestion = typeSuggestions[Math.floor(Math.random() * typeSuggestions.length)];
+                allSuggestions.push({...randomSuggestion, type: mealType});
+            }
         });
 
         this.renderMealSuggestions(allSuggestions);
