@@ -440,19 +440,10 @@ class WorkLifeBalanceApp {
             return;
         }
 
-        // If no upcoming planned meals, suggest next meal based on time
-        const nextMealType = this.getNextMealType();
-        const todayMeals = window.storage.getTodayMeals();
-        const plannedMealTypes = todayMeals.map(meal => meal.type);
-
-        if (!plannedMealTypes.includes(nextMealType)) {
-            const suggestions = this.generateMealSuggestions(nextMealType);
-            mealSuggestionEl.textContent = `Plan ${nextMealType}: ${suggestions[0].name}`;
-        } else {
-            // All meals for today are planned, suggest tomorrow's breakfast
-            const tomorrowSuggestions = this.generateMealSuggestions('breakfast');
-            mealSuggestionEl.textContent = `Tomorrow: ${tomorrowSuggestions[0].name}`;
-        }
+        // If no upcoming planned meals, use smart suggestion
+        const smartSuggestion = this.getSmartMealSuggestion();
+        const suggestions = this.generateMealSuggestions(smartSuggestion.mealType);
+        mealSuggestionEl.textContent = `${smartSuggestion.context}: ${suggestions[0].name}`;
     }
 
     updateWorkoutWidget() {
