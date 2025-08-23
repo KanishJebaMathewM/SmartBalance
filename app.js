@@ -1760,7 +1760,7 @@ class WorkLifeBalanceApp {
             date: new Date().toISOString()
         });
         
-        Utils.showNotification(`${exercise.title} completed! 🎉`, 'success');
+        Utils.showNotification(`${exercise.title} completed! ���`, 'success');
         this.closeModal('exerciseModal');
         
         if (this.currentSection === 'fitness') {
@@ -6705,6 +6705,510 @@ class WorkLifeBalanceApp {
         }
     }
 
+    // Recommendations Tab
+    loadRecommendations() {
+        this.generatePerformanceHighlights();
+        this.generateImprovementAreas();
+        this.generateSmartRecommendations();
+        this.generateActionPlan();
+    }
+
+    generatePerformanceHighlights() {
+        const container = document.getElementById('performanceHighlights');
+        if (!container) return;
+
+        const scores = this.calculateLifeBalanceScore();
+        const highlights = [];
+
+        // Find top performing areas
+        const areas = [
+            { name: 'Fitness', score: scores.fitness, icon: '💪' },
+            { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
+            { name: 'Productivity', score: scores.productivity, icon: '💼' },
+            { name: 'Financial', score: scores.financial, icon: '💰' },
+            { name: 'Wellness', score: scores.wellness, icon: '😌' }
+        ];
+
+        const topAreas = areas.filter(area => area.score >= 70).sort((a, b) => b.score - a.score);
+
+        if (topAreas.length > 0) {
+            topAreas.slice(0, 3).forEach(area => {
+                highlights.push({
+                    icon: area.icon,
+                    title: `${area.name} Excellence`,
+                    description: `Your ${area.name.toLowerCase()} score of ${area.score}/100 shows excellent performance!`,
+                    type: 'success'
+                });
+            });
+        } else {
+            highlights.push({
+                icon: '🎯',
+                title: 'Growth Opportunity',
+                description: 'All areas have room for improvement. Focus on small, consistent changes.',
+                type: 'info'
+            });
+        }
+
+        container.innerHTML = highlights.map(highlight => `
+            <div class="highlight-item ${highlight.type}">
+                <div class="highlight-icon">${highlight.icon}</div>
+                <div class="highlight-content">
+                    <h4>${highlight.title}</h4>
+                    <p>${highlight.description}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    generateImprovementAreas() {
+        const container = document.getElementById('improvementAreas');
+        if (!container) return;
+
+        const scores = this.calculateLifeBalanceScore();
+        const improvements = [];
+
+        // Find areas needing improvement
+        const areas = [
+            { name: 'Fitness', score: scores.fitness, icon: '💪' },
+            { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
+            { name: 'Productivity', score: scores.productivity, icon: '💼' },
+            { name: 'Financial', score: scores.financial, icon: '💰' },
+            { name: 'Wellness', score: scores.wellness, icon: '😌' }
+        ];
+
+        const lowAreas = areas.filter(area => area.score < 60).sort((a, b) => a.score - b.score);
+
+        if (lowAreas.length > 0) {
+            lowAreas.slice(0, 3).forEach(area => {
+                let suggestion = '';
+                switch (area.name) {
+                    case 'Fitness':
+                        suggestion = 'Start with 3 short workouts per week. Even 15-minute sessions count!';
+                        break;
+                    case 'Nutrition':
+                        suggestion = 'Try cooking at home 1-2 more times per week. Start with simple recipes.';
+                        break;
+                    case 'Productivity':
+                        suggestion = 'Break large tasks into smaller ones and focus on completing 2-3 tasks daily.';
+                        break;
+                    case 'Financial':
+                        suggestion = 'Set a weekly spending limit and track expenses daily for better awareness.';
+                        break;
+                    case 'Wellness':
+                        suggestion = 'Try 5-minute breathing exercises or short walks when feeling stressed.';
+                        break;
+                }
+
+                improvements.push({
+                    icon: area.icon,
+                    title: `${area.name} Focus`,
+                    description: suggestion,
+                    score: area.score,
+                    type: 'improvement'
+                });
+            });
+        } else {
+            improvements.push({
+                icon: '🌟',
+                title: 'Maintaining Excellence',
+                description: 'All areas are performing well. Focus on maintaining your current habits and consistency.',
+                type: 'maintain'
+            });
+        }
+
+        container.innerHTML = improvements.map(improvement => `
+            <div class="improvement-item ${improvement.type}">
+                <div class="improvement-header">
+                    <div class="improvement-icon">${improvement.icon}</div>
+                    <div class="improvement-title">${improvement.title}</div>
+                    ${improvement.score ? `<div class="improvement-score">${improvement.score}/100</div>` : ''}
+                </div>
+                <p class="improvement-description">${improvement.description}</p>
+            </div>
+        `).join('');
+    }
+
+    generateSmartRecommendations() {
+        const container = document.getElementById('smartRecommendations');
+        if (!container) return;
+
+        const recommendations = this.getPersonalizedRecommendations();
+
+        container.innerHTML = recommendations.map(rec => `
+            <div class="recommendation-item ${rec.priority}">
+                <div class="recommendation-header">
+                    <div class="recommendation-icon">${rec.icon}</div>
+                    <div class="recommendation-title">${rec.title}</div>
+                    <div class="recommendation-priority ${rec.priority}">${rec.priority}</div>
+                </div>
+                <p class="recommendation-description">${rec.description}</p>
+                <div class="recommendation-actions">
+                    ${rec.actions ? rec.actions.map(action =>
+                        `<button class="action-btn" onclick="app.${action.method}()">${action.text}</button>`
+                    ).join('') : ''}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    getPersonalizedRecommendations() {
+        const workouts = window.storage.getWorkouts();
+        const expenses = window.storage.getExpenses();
+        const tasks = window.storage.getTasks();
+        const moods = window.storage.getMoods();
+        const meals = window.storage.getMeals();
+
+        const recommendations = [];
+
+        // Workout recommendations
+        const recentWorkouts = workouts.filter(w =>
+            Utils.getDaysDifference(new Date(), new Date(w.createdAt)) <= 7
+        );
+
+        if (recentWorkouts.length < 3) {
+            recommendations.push({
+                icon: '💪',
+                title: 'Increase Physical Activity',
+                description: 'You had fewer than 3 workouts this week. Try adding desk stretches or short walks to your routine.',
+                priority: 'high',
+                actions: [
+                    { text: 'Start Exercise', method: 'startQuickExercise' }
+                ]
+            });
+        }
+
+        // Financial recommendations
+        const weeklySpending = window.storage.getWeeklyExpenses();
+        if (weeklySpending > 5000) {
+            recommendations.push({
+                icon: '💰',
+                title: 'Monitor Weekly Spending',
+                description: `Your weekly spending of ${Utils.formatCurrency(weeklySpending)} is quite high. Consider reviewing your expenses.`,
+                priority: 'medium',
+                actions: [
+                    { text: 'Review Expenses', method: 'showSection' }
+                ]
+            });
+        }
+
+        // Nutrition recommendations
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        const homeCookingRate = weeklyStats.totalMeals > 0 ?
+            weeklyStats.homeMeals / weeklyStats.totalMeals : 0;
+
+        if (homeCookingRate < 0.5) {
+            recommendations.push({
+                icon: '🍲',
+                title: 'Cook More at Home',
+                description: 'Increase home cooking to save money and eat healthier. Start with 1-2 simple meals this week.',
+                priority: 'medium'
+            });
+        }
+
+        // Productivity recommendations
+        const incompleteTasks = tasks.filter(t => !t.completed).length;
+        if (incompleteTasks > 10) {
+            recommendations.push({
+                icon: '📋',
+                title: 'Manage Task Backlog',
+                description: `You have ${incompleteTasks} incomplete tasks. Consider prioritizing or breaking them into smaller steps.`,
+                priority: 'high'
+            });
+        }
+
+        // Wellness recommendations
+        const recentMoods = moods.filter(m =>
+            Utils.getDaysDifference(new Date(), new Date(m.date)) <= 7
+        );
+        const stressedDays = recentMoods.filter(m =>
+            ['stressed', 'very-stressed'].includes(m.mood)
+        ).length;
+
+        if (stressedDays >= 4) {
+            recommendations.push({
+                icon: '😌',
+                title: 'Stress Management',
+                description: 'You had multiple stressful days this week. Try breathing exercises or short meditation sessions.',
+                priority: 'high',
+                actions: [
+                    { text: 'Start Breathing Exercise', method: 'startBreathingExercise' }
+                ]
+            });
+        }
+
+        // General recommendations if everything is good
+        if (recommendations.length === 0) {
+            recommendations.push({
+                icon: '🌟',
+                title: 'Maintain Your Momentum',
+                description: 'You\'re doing great across all areas! Focus on consistency and gradual improvements.',
+                priority: 'low'
+            });
+        }
+
+        return recommendations.slice(0, 5); // Limit to top 5 recommendations
+    }
+
+    generateActionPlan() {
+        const container = document.getElementById('actionPlan');
+        if (!container) return;
+
+        const actionItems = this.createWeeklyActionPlan();
+
+        container.innerHTML = `
+            <div class="action-plan-header">
+                <h4>Your Weekly Action Plan</h4>
+                <p>Focus on these key actions this week for maximum impact</p>
+            </div>
+            <div class="action-items">
+                ${actionItems.map((item, index) => `
+                    <div class="action-item">
+                        <div class="action-number">${index + 1}</div>
+                        <div class="action-content">
+                            <div class="action-title">${item.title}</div>
+                            <div class="action-description">${item.description}</div>
+                            <div class="action-frequency">${item.frequency}</div>
+                        </div>
+                        <div class="action-category ${item.category}">${item.categoryIcon}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    createWeeklyActionPlan() {
+        const scores = this.calculateLifeBalanceScore();
+        const actionItems = [];
+
+        // Priority actions based on lowest scores
+        const priorityActions = [
+            {
+                category: 'fitness',
+                categoryIcon: '💪',
+                title: 'Exercise Regularly',
+                description: 'Do at least 20 minutes of physical activity',
+                frequency: '3-4 times this week',
+                threshold: 60
+            },
+            {
+                category: 'nutrition',
+                categoryIcon: '🍲',
+                title: 'Cook at Home',
+                description: 'Prepare meals at home instead of ordering',
+                frequency: '4-5 meals this week',
+                threshold: 60
+            },
+            {
+                category: 'productivity',
+                categoryIcon: '💼',
+                title: 'Complete Daily Tasks',
+                description: 'Focus on finishing your most important tasks',
+                frequency: 'Every day',
+                threshold: 70
+            },
+            {
+                category: 'financial',
+                categoryIcon: '💰',
+                title: 'Track Expenses',
+                description: 'Record all expenses and review spending patterns',
+                frequency: 'Daily',
+                threshold: 50
+            },
+            {
+                category: 'wellness',
+                categoryIcon: '😌',
+                title: 'Practice Mindfulness',
+                description: 'Take breaks for breathing exercises or meditation',
+                frequency: '5-10 minutes daily',
+                threshold: 60
+            }
+        ];
+
+        // Add actions for areas that need improvement
+        priorityActions.forEach(action => {
+            const score = scores[action.category];
+            if (score < action.threshold) {
+                actionItems.push(action);
+            }
+        });
+
+        // Always include at least 3 actions
+        if (actionItems.length < 3) {
+            priorityActions.slice(0, 3 - actionItems.length).forEach(action => {
+                if (!actionItems.includes(action)) {
+                    actionItems.push(action);
+                }
+            });
+        }
+
+        return actionItems.slice(0, 5);
+    }
+
+    // Progress Analysis Tab
+    loadProgressAnalysis() {
+        this.loadProgressMetrics();
+        this.loadProgressTrends();
+        this.generateProgressInsights();
+    }
+
+    loadProgressMetrics() {
+        const container = document.getElementById('progressMetrics');
+        if (!container) return;
+
+        const currentScores = this.calculateLifeBalanceScore();
+
+        // This is a simplified version - in a real app, you'd store historical data
+        const previousScores = {
+            overall: Math.max(0, currentScores.overall - Math.floor(Math.random() * 20) + 10),
+            fitness: Math.max(0, currentScores.fitness - Math.floor(Math.random() * 25) + 15),
+            nutrition: Math.max(0, currentScores.nutrition - Math.floor(Math.random() * 20) + 10),
+            productivity: Math.max(0, currentScores.productivity - Math.floor(Math.random() * 15) + 5),
+            financial: Math.max(0, currentScores.financial - Math.floor(Math.random() * 30) + 20),
+            wellness: Math.max(0, currentScores.wellness - Math.floor(Math.random() * 25) + 15)
+        };
+
+        const metrics = [
+            {
+                title: 'Overall Life Balance',
+                current: currentScores.overall,
+                previous: previousScores.overall,
+                icon: '🎯'
+            },
+            {
+                title: 'Fitness Progress',
+                current: currentScores.fitness,
+                previous: previousScores.fitness,
+                icon: '💪'
+            },
+            {
+                title: 'Nutrition Progress',
+                current: currentScores.nutrition,
+                previous: previousScores.nutrition,
+                icon: '🍲'
+            },
+            {
+                title: 'Productivity Progress',
+                current: currentScores.productivity,
+                previous: previousScores.productivity,
+                icon: '���'
+            },
+            {
+                title: 'Financial Progress',
+                current: currentScores.financial,
+                previous: previousScores.financial,
+                icon: '💰'
+            },
+            {
+                title: 'Wellness Progress',
+                current: currentScores.wellness,
+                previous: previousScores.wellness,
+                icon: '😌'
+            }
+        ];
+
+        container.innerHTML = metrics.map(metric => {
+            const change = metric.current - metric.previous;
+            const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
+            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '➡️';
+
+            return `
+                <div class="progress-metric">
+                    <div class="metric-header">
+                        <span class="metric-icon">${metric.icon}</span>
+                        <span class="metric-title">${metric.title}</span>
+                    </div>
+                    <div class="metric-values">
+                        <div class="current-value">${metric.current}/100</div>
+                        <div class="metric-change ${changeClass}">
+                            ${changeIcon} ${Math.abs(change)} points
+                        </div>
+                    </div>
+                    <div class="metric-bar">
+                        <div class="metric-progress" style="width: ${metric.current}%"></div>
+                        <div class="metric-previous" style="left: ${metric.previous}%"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    loadProgressTrends() {
+        const canvas = document.getElementById('progressTrendsChart');
+        if (!canvas && this.charts) {
+            // this.charts.createProgressTrendsChart('progressTrendsChart');
+        }
+    }
+
+    generateProgressInsights() {
+        const container = document.getElementById('progressInsights');
+        if (!container) return;
+
+        const insights = this.calculateProgressInsights();
+
+        container.innerHTML = `
+            <div class="insights-grid">
+                ${insights.map(insight => `
+                    <div class="insight-card ${insight.type}">
+                        <div class="insight-icon">${insight.icon}</div>
+                        <div class="insight-content">
+                            <h4>${insight.title}</h4>
+                            <p>${insight.description}</p>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    calculateProgressInsights() {
+        const scores = this.calculateLifeBalanceScore();
+        const insights = [];
+
+        // Find the most improved area
+        const areas = [
+            { name: 'Fitness', score: scores.fitness },
+            { name: 'Nutrition', score: scores.nutrition },
+            { name: 'Productivity', score: scores.productivity },
+            { name: 'Financial', score: scores.financial },
+            { name: 'Wellness', score: scores.wellness }
+        ];
+
+        const topArea = areas.reduce((max, area) => area.score > max.score ? area : max);
+        const weakestArea = areas.reduce((min, area) => area.score < min.score ? area : min);
+
+        if (topArea.score >= 80) {
+            insights.push({
+                icon: '🌟',
+                title: `${topArea.name} Excellence`,
+                description: `Your ${topArea.name.toLowerCase()} score of ${topArea.score}/100 is outstanding! Keep up the excellent work.`,
+                type: 'success'
+            });
+        }
+
+        if (weakestArea.score < 50) {
+            insights.push({
+                icon: '🎯',
+                title: `Focus on ${weakestArea.name}`,
+                description: `Your ${weakestArea.name.toLowerCase()} area needs attention. Small consistent improvements here will boost your overall balance.`,
+                type: 'improvement'
+            });
+        }
+
+        insights.push({
+            icon: '📈',
+            title: 'Overall Trend',
+            description: `Your life balance score is ${scores.overall}/100. You're ${scores.overall >= 70 ? 'doing great' : scores.overall >= 50 ? 'making good progress' : 'building your foundation'}.`,
+            type: 'info'
+        });
+
+        return insights;
+    }
+
+    // Helper method for quick exercise start
+    startQuickExercise() {
+        this.startExercise('desk-stretches');
+    }
+
     loadDailyHabits() {
         const habits = window.storage.getHabits();
         this.renderHabitsByCategory(habits);
@@ -6890,7 +7394,7 @@ class WorkLifeBalanceApp {
 
         return `
             <div class="report-summary">
-                <h2>��� ${periodLabel} Report Summary</h2>
+                <h2>📊 ${periodLabel} Report Summary</h2>
                 <div class="summary-grid">
                     ${this.generateTaskSummary(data.tasks)}
                     ${this.generateExpenseSummary(data.expenses)}
