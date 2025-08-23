@@ -1468,7 +1468,6 @@ class WorkLifeBalanceApp {
             notes: Utils.sanitizeInput(document.getElementById('expenseNotes').value),
             date: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0],
             paymentMethod: document.getElementById('expensePaymentMethod').value,
-            priority: document.getElementById('expensePriority').value,
             recurring: document.getElementById('expenseRecurring').checked,
         };
 
@@ -2414,7 +2413,7 @@ class WorkLifeBalanceApp {
 
     getCategoryIcon(category) {
         const categoryIcons = {
-            'food': '🍕',
+            'food': '����',
             'bills': '📧',
             'shopping': '🛍️',
             'travel': '✈️',
