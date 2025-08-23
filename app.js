@@ -2646,6 +2646,7 @@ class WorkLifeBalanceApp {
     }
 
     resetTaskForm() {
+        console.log('resetTaskForm called');
         const form = document.getElementById('taskForm');
         if (form) {
             form.reset();
@@ -3698,7 +3699,7 @@ class WorkLifeBalanceApp {
         const viewToggleBtn = document.getElementById('viewToggleBtn');
         if (viewToggleBtn) {
             const isCalendarActive = this.currentExpenseTab === 'calendar';
-            viewToggleBtn.textContent = isCalendarActive ? '���� Overview' : '📅 Calendar View';
+            viewToggleBtn.textContent = isCalendarActive ? '📊 Overview' : '📅 Calendar View';
 
             // Add toggle behavior
             viewToggleBtn.onclick = () => {
