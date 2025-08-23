@@ -5232,7 +5232,6 @@ class WorkLifeBalanceApp {
 
         // Refresh meal plan and other sections
         this.loadMealPlan();
-        this.loadUpcomingMeals();
         this.updateDashboard();
 
         if (this.currentSection === 'food') {
@@ -5458,7 +5457,6 @@ class WorkLifeBalanceApp {
 
         // Refresh related sections
         this.loadMealPlan();
-        this.loadUpcomingMeals();
         this.updateDashboard();
 
         if (this.currentSection === 'food') {
