@@ -865,6 +865,277 @@ class Charts {
         this.drawSimpleLegend(ctx, ['Current', 'Previous'], [this.colors.primary, this.colors.gray], 20, 20);
     }
 
+    // Habit Impact Chart
+    createHabitImpactChart(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 60;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+
+        // Generate sample data for the last 30 days
+        const last30Days = [];
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            last30Days.push(date);
+        }
+
+        // Sample data for different life areas
+        const habitData = last30Days.map((date, index) => ({
+            date,
+            fitness: Math.random() * 100,
+            nutrition: Math.random() * 100,
+            productivity: Math.random() * 100,
+            wellness: Math.random() * 100,
+            overall: Math.random() * 100
+        }));
+
+        // Draw axes
+        this.drawAxes(ctx, padding, chartWidth, chartHeight);
+
+        // Draw multiple lines for different habit categories
+        const metrics = [
+            { key: 'fitness', color: this.colors.success, label: 'Fitness' },
+            { key: 'nutrition', color: this.colors.warning, label: 'Nutrition' },
+            { key: 'productivity', color: this.colors.primary, label: 'Productivity' },
+            { key: 'wellness', color: this.colors.purple, label: 'Wellness' },
+            { key: 'overall', color: this.colors.error, label: 'Overall' }
+        ];
+
+        const xStep = chartWidth / (habitData.length - 1);
+
+        metrics.forEach(metric => {
+            ctx.strokeStyle = metric.color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+
+            habitData.forEach((day, index) => {
+                const x = padding + (index * xStep);
+                const y = padding + chartHeight - (day[metric.key] / 100 * chartHeight);
+
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+
+            ctx.stroke();
+
+            // Draw points
+            habitData.forEach((day, index) => {
+                const x = padding + (index * xStep);
+                const y = padding + chartHeight - (day[metric.key] / 100 * chartHeight);
+
+                ctx.fillStyle = metric.color;
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+        });
+
+        // Draw legend
+        this.drawHabitLegend(ctx, metrics, canvas.width - 150, 20);
+
+        // Draw X-axis labels (dates)
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+
+        for (let i = 0; i < habitData.length; i += 5) {
+            const x = padding + (i * xStep);
+            const dayLabel = habitData[i].date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            });
+            ctx.fillText(dayLabel, x, padding + chartHeight + 20);
+        }
+
+        // Draw Y-axis labels
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 5; i++) {
+            const y = padding + (i * chartHeight / 5);
+            const value = 100 - (i * 20);
+            ctx.fillText(`${value}%`, padding - 10, y + 5);
+        }
+    }
+
+    // Habit Trends Chart
+    createHabitTrendsChart(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 50;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+
+        // Generate weekly trend data
+        const weeklyData = [];
+        for (let i = 11; i >= 0; i--) {
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - (i * 7));
+
+            weeklyData.push({
+                week: weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                completion: 60 + Math.random() * 30, // 60-90% completion rate
+                streakAvg: Math.random() * 10,
+                newHabits: Math.floor(Math.random() * 3)
+            });
+        }
+
+        // Draw axes
+        this.drawAxes(ctx, padding, chartWidth, chartHeight);
+
+        // Draw completion rate line
+        ctx.strokeStyle = this.colors.primary;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+
+        const xStep = chartWidth / (weeklyData.length - 1);
+
+        weeklyData.forEach((week, index) => {
+            const x = padding + (index * xStep);
+            const y = padding + chartHeight - (week.completion / 100 * chartHeight);
+
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+
+        ctx.stroke();
+
+        // Draw completion rate points
+        weeklyData.forEach((week, index) => {
+            const x = padding + (index * xStep);
+            const y = padding + chartHeight - (week.completion / 100 * chartHeight);
+
+            ctx.fillStyle = this.colors.primary;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Add value labels
+            ctx.fillStyle = '#374151';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${Math.round(week.completion)}%`, x, y - 10);
+        });
+
+        // Draw X-axis labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+
+        weeklyData.forEach((week, index) => {
+            if (index % 2 === 0) { // Show every other label to avoid crowding
+                const x = padding + (index * xStep);
+                ctx.fillText(week.week, x, padding + chartHeight + 20);
+            }
+        });
+
+        // Draw Y-axis labels
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 5; i++) {
+            const y = padding + (i * chartHeight / 5);
+            const value = 100 - (i * 20);
+            ctx.fillText(`${value}%`, padding - 10, y + 5);
+        }
+
+        // Add chart title
+        ctx.fillStyle = '#111827';
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Weekly Habit Completion Trends', canvas.width / 2, 25);
+    }
+
+    // Helper method for habit legend
+    drawHabitLegend(ctx, metrics, x, y) {
+        ctx.font = '11px Arial';
+        ctx.textAlign = 'left';
+
+        metrics.forEach((metric, index) => {
+            const legendY = y + (index * 18);
+
+            // Color line
+            ctx.strokeStyle = metric.color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(x, legendY - 5);
+            ctx.lineTo(x + 20, legendY - 5);
+            ctx.stroke();
+
+            // Label text
+            ctx.fillStyle = '#374151';
+            ctx.fillText(metric.label, x + 25, legendY);
+        });
+    }
+
+    // Correlation Heatmap for habits
+    createHabitCorrelationHeatmap(canvasId, correlationData) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const categories = ['Fitness', 'Nutrition', 'Productivity', 'Wellness'];
+        const cellSize = 60;
+        const padding = 80;
+
+        // Draw heatmap grid
+        categories.forEach((category1, i) => {
+            categories.forEach((category2, j) => {
+                const x = padding + (j * cellSize);
+                const y = padding + (i * cellSize);
+
+                // Calculate correlation strength (mock data)
+                const correlation = Math.random();
+                const intensity = Math.floor(correlation * 255);
+
+                ctx.fillStyle = `rgba(59, 130, 246, ${correlation})`;
+                ctx.fillRect(x, y, cellSize, cellSize);
+
+                // Add correlation value
+                ctx.fillStyle = correlation > 0.5 ? '#ffffff' : '#000000';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(
+                    (correlation * 100).toFixed(0) + '%',
+                    x + cellSize / 2,
+                    y + cellSize / 2 + 5
+                );
+            });
+        });
+
+        // Draw labels
+        ctx.fillStyle = '#374151';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+
+        // Top labels
+        categories.forEach((category, i) => {
+            const x = padding + (i * cellSize) + cellSize / 2;
+            ctx.fillText(category, x, padding - 10);
+        });
+
+        // Left labels
+        ctx.textAlign = 'right';
+        categories.forEach((category, i) => {
+            const y = padding + (i * cellSize) + cellSize / 2 + 5;
+            ctx.fillText(category, padding - 10, y);
+        });
+    }
+
     // Helper methods for data processing
     getWeeklyData(expenses, weeks) {
         const data = [];
