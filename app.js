@@ -256,6 +256,9 @@ class WorkLifeBalanceApp {
             case 'stress':
                 this.loadStressData();
                 break;
+            case 'habits':
+                this.loadHabitsSection();
+                break;
             case 'report':
                 this.generateWeeklyReport();
                 break;
