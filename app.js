@@ -5385,11 +5385,28 @@ class WorkLifeBalanceApp {
     }
 
     regenerateMealPlan() {
-        const nextMealType = this.getNextMealType();
-        const typeSuggestions = this.generateMealSuggestions(nextMealType);
-        const suggestions = typeSuggestions.slice(0, 6).map(s => ({...s, type: nextMealType}));
+        const todayMeals = window.storage.getTodayMeals();
+        const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
 
-        this.renderMealSuggestions(suggestions);
+        // Find which meal types are not eaten or planned
+        const plannedMealTypes = todayMeals.map(meal => meal.type);
+        const emptyMealSlots = mealTypes.filter(type => !plannedMealTypes.includes(type));
+
+        if (emptyMealSlots.length === 0) {
+            Utils.showNotification('All meals for today are already planned!', 'info');
+            return;
+        }
+
+        // Generate suggestions for all empty meal slots
+        const allSuggestions = [];
+        emptyMealSlots.forEach(mealType => {
+            const typeSuggestions = this.generateMealSuggestions(mealType);
+            // Get one random suggestion for each meal type
+            const randomSuggestion = typeSuggestions[Math.floor(Math.random() * typeSuggestions.length)];
+            allSuggestions.push({...randomSuggestion, type: mealType});
+        });
+
+        this.renderMealSuggestions(allSuggestions);
         this.openModal('regenerateMealModal');
     }
 
