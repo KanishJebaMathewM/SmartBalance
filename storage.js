@@ -41,28 +41,28 @@ class Storage {
         if (!this.get(this.keys.foodItems)) {
             this.set(this.keys.foodItems, [
                 // Staples
-                { id: 1, name: 'Basmati Rice', quantity: 5, unit: 'kg', expiry: '2024-08-30', caloriesPer100g: 130 },
-                { id: 2, name: 'Toor Dal (Arhar)', quantity: 1, unit: 'kg', expiry: '2024-10-15', caloriesPer100g: 120 },
-                { id: 3, name: 'Urad Dal', quantity: 500, unit: 'g', expiry: '2024-09-20', caloriesPer100g: 115 },
+                { id: 1, name: 'Basmati Rice', quantity: 5, unit: 'kg', expiry: '2025-08-30', caloriesPer100g: 130 },
+                { id: 2, name: 'Toor Dal (Arhar)', quantity: 1, unit: 'kg', expiry: '2025-10-15', caloriesPer100g: 120 },
+                { id: 3, name: 'Urad Dal', quantity: 500, unit: 'g', expiry: '2025-09-20', caloriesPer100g: 115 },
 
                 // South Indian essentials
-                { id: 4, name: 'Coconut (Fresh)', quantity: 3, unit: 'pieces', expiry: '2024-06-10', caloriesPer100g: 160 },
-                { id: 5, name: 'Curry Leaves', quantity: 100, unit: 'g', expiry: '2024-06-15', caloriesPer100g: 10 },
-                { id: 6, name: 'Mustard Seeds', quantity: 200, unit: 'g', expiry: '2025-01-01', caloriesPer100g: 5 },
-                { id: 7, name: 'Rava (Semolina)', quantity: 1, unit: 'kg', expiry: '2024-09-30', caloriesPer100g: 150 },
-                { id: 8, name: 'Idli Rice', quantity: 2, unit: 'kg', expiry: '2024-08-20', calories: 130 },
-                { id: 9, name: 'Fenugreek Seeds', quantity: 100, unit: 'g', expiry: '2024-12-31', calories: 8 },
-                { id: 10, name: 'Tamarind', quantity: 250, unit: 'g', expiry: '2024-11-15', caloriesPer100g: 25 },
+                { id: 4, name: 'Coconut (Fresh)', quantity: 3, unit: 'pieces', expiry: '2025-02-10', caloriesPer100g: 160 },
+                { id: 5, name: 'Curry Leaves', quantity: 100, unit: 'g', expiry: '2025-02-15', caloriesPer100g: 10 },
+                { id: 6, name: 'Mustard Seeds', quantity: 200, unit: 'g', expiry: '2026-01-01', caloriesPer100g: 5 },
+                { id: 7, name: 'Rava (Semolina)', quantity: 1, unit: 'kg', expiry: '2025-09-30', caloriesPer100g: 150 },
+                { id: 8, name: 'Idli Rice', quantity: 2, unit: 'kg', expiry: '2025-08-20', caloriesPer100g: 130 },
+                { id: 9, name: 'Fenugreek Seeds', quantity: 100, unit: 'g', expiry: '2025-12-31', caloriesPer100g: 8 },
+                { id: 10, name: 'Tamarind', quantity: 250, unit: 'g', expiry: '2025-11-15', caloriesPer100g: 25 },
 
                 // Flours and grains
-                { id: 11, name: 'Ragi Flour', quantity: 1, unit: 'kg', expiry: '2024-07-30', caloriesPer100g: 140 },
-                { id: 12, name: 'Besan (Gram Flour)', quantity: 500, unit: 'g', expiry: '2024-08-15', caloriesPer100g: 110 },
-                { id: 13, name: 'Oats', quantity: 1, unit: 'kg', expiry: '2024-09-10', caloriesPer100g: 150 },
+                { id: 11, name: 'Ragi Flour', quantity: 1, unit: 'kg', expiry: '2025-07-30', caloriesPer100g: 140 },
+                { id: 12, name: 'Besan (Gram Flour)', quantity: 500, unit: 'g', expiry: '2025-08-15', caloriesPer100g: 110 },
+                { id: 13, name: 'Oats', quantity: 1, unit: 'kg', expiry: '2025-09-10', caloriesPer100g: 150 },
 
                 // Spices and seasonings
-                { id: 14, name: 'Hing (Asafoetida)', quantity: 50, unit: 'g', expiry: '2025-06-01', caloriesPer100g: 2 },
-                { id: 15, name: 'Turmeric Powder', quantity: 200, unit: 'g', expiry: '2024-12-31', caloriesPer100g: 3 },
-                { id: 16, name: 'Red Chili Powder', quantity: 200, unit: 'g', expiry: '2024-11-30', caloriesPer100g: 5 }
+                { id: 14, name: 'Hing (Asafoetida)', quantity: 50, unit: 'g', expiry: '2026-06-01', caloriesPer100g: 2 },
+                { id: 15, name: 'Turmeric Powder', quantity: 200, unit: 'g', expiry: '2025-12-31', caloriesPer100g: 3 },
+                { id: 16, name: 'Red Chili Powder', quantity: 200, unit: 'g', expiry: '2025-11-30', caloriesPer100g: 5 }
             ]);
         }
 
