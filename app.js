@@ -1793,6 +1793,260 @@ class WorkLifeBalanceApp {
         const settings = window.storage.getSettings();
         Utils.applyTheme(settings.darkMode);
     }
+
+    // Enhanced Expense Tab Handlers
+    initializeExpenseTabHandlers() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tab = e.target.dataset.tab;
+                if (tab) {
+                    this.switchExpenseTab(tab);
+                }
+            });
+        });
+
+        // Chart control handlers
+        document.querySelectorAll('[data-chart]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const chartType = e.target.dataset.chart;
+                if (chartType) {
+                    this.switchCategoryChart(chartType);
+
+                    // Update active state
+                    e.target.parentNode.querySelectorAll('.btn-small').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                }
+            });
+        });
+
+        // Period control handlers
+        const trendPeriodSelect = document.getElementById('trendPeriod');
+        if (trendPeriodSelect) {
+            trendPeriodSelect.addEventListener('change', (e) => {
+                const expenses = window.storage.getExpenses();
+                this.charts.createSpendingTrendChart('spendingTrendChart', expenses, e.target.value);
+            });
+        }
+
+        const comparisonTypeSelect = document.getElementById('comparisonType');
+        if (comparisonTypeSelect) {
+            comparisonTypeSelect.addEventListener('change', (e) => {
+                const expenses = window.storage.getExpenses();
+                this.charts.createComparisonChart('comparisonChart', expenses, e.target.value);
+            });
+        }
+
+        // Budget form handler
+        const budgetForm = document.getElementById('budgetForm');
+        if (budgetForm) {
+            budgetForm.addEventListener('submit', (e) => this.handleBudgetSubmit(e));
+        }
+
+        // Savings goal form handler
+        const savingsGoalForm = document.getElementById('savingsGoalForm');
+        if (savingsGoalForm) {
+            savingsGoalForm.addEventListener('submit', (e) => this.handleSavingsGoalSubmit(e));
+        }
+    }
+
+    // Calendar Event Handlers
+    initializeCalendarHandlers() {
+        const prevMonthBtn = document.getElementById('prevMonthBtn');
+        const nextMonthBtn = document.getElementById('nextMonthBtn');
+
+        if (prevMonthBtn) {
+            prevMonthBtn.addEventListener('click', () => {
+                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
+                this.loadCalendarTab();
+            });
+        }
+
+        if (nextMonthBtn) {
+            nextMonthBtn.addEventListener('click', () => {
+                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
+                this.loadCalendarTab();
+            });
+        }
+    }
+
+    switchExpenseTab(tabName) {
+        this.currentExpenseTab = tabName;
+        this.loadCurrentExpenseTab();
+        this.loadExpenseTabs();
+    }
+
+    switchCategoryChart(chartType) {
+        const expenses = window.storage.getExpenses();
+        this.charts.createCategoryAnalysisChart('categoryAnalysisChart', expenses, chartType);
+    }
+
+    // Helper methods for expense categories
+    getCategoryIcon(category) {
+        const icons = {
+            food: '🍕',
+            bills: '📧',
+            shopping: '🛍️',
+            travel: '✈️',
+            entertainment: '🎬',
+            healthcare: '🏥',
+            education: '📚',
+            other: '📦'
+        };
+        return icons[category] || '📦';
+    }
+
+    getCategoryDisplayName(category) {
+        const names = {
+            food: 'Food & Dining',
+            bills: 'Bills & Utilities',
+            shopping: 'Shopping',
+            travel: 'Travel & Transport',
+            entertainment: 'Entertainment',
+            healthcare: 'Healthcare',
+            education: 'Education',
+            other: 'Other'
+        };
+        return names[category] || 'Other';
+    }
+
+    // Budget handling
+    handleBudgetSubmit(e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const budgets = {};
+
+        // Collect budget data from form
+        for (let [key, value] of formData.entries()) {
+            if (key.startsWith('budget_') && value) {
+                const category = key.replace('budget_', '');
+                budgets[category] = parseFloat(value);
+            }
+        }
+
+        if (Object.keys(budgets).length === 0) {
+            Utils.showNotification('Please set at least one budget', 'error');
+            return;
+        }
+
+        // Save budgets
+        const settings = window.storage.getSettings();
+        settings.categoryBudgets = budgets;
+        window.storage.updateSettings(settings);
+
+        Utils.showNotification('Budget saved successfully!', 'success');
+        this.closeModal('budgetModal');
+
+        if (this.currentSection === 'expenses') {
+            this.loadExpenseSection();
+        }
+    }
+
+    // Savings goal handling
+    handleSavingsGoalSubmit(e) {
+        e.preventDefault();
+
+        const goalAmount = parseFloat(document.getElementById('goalAmount').value);
+        const goalDescription = document.getElementById('goalDescription').value;
+
+        if (!Utils.validateAmount(goalAmount)) {
+            Utils.showNotification('Please enter a valid goal amount', 'error');
+            return;
+        }
+
+        const settings = window.storage.getSettings();
+        settings.savingsGoal = goalAmount;
+        settings.savingsGoalDescription = goalDescription;
+        window.storage.updateSettings(settings);
+
+        // Update UI
+        const savingsGoalAmountEl = document.getElementById('savingsGoalAmount');
+        if (savingsGoalAmountEl) {
+            savingsGoalAmountEl.textContent = goalAmount.toLocaleString();
+        }
+
+        Utils.showNotification('Savings goal updated!', 'success');
+        this.closeModal('savingsGoalModal');
+
+        if (this.currentSection === 'expenses') {
+            this.loadExpenseSection();
+        }
+        this.updateDashboard();
+    }
+
+    // Enhanced modal handling
+    openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Special handling for budget modal
+            if (modalId === 'budgetModal') {
+                this.setupBudgetForm();
+            }
+
+            // Special handling for expense modal
+            if (modalId === 'expenseModal') {
+                // Set today's date as default
+                const dateInput = document.getElementById('expenseDate');
+                if (dateInput && !dateInput.value) {
+                    dateInput.value = new Date().toISOString().split('T')[0];
+                }
+
+                // Reset modal title if not editing
+                const form = document.getElementById('expenseForm');
+                if (!form.dataset.editId) {
+                    document.getElementById('expenseModalTitle').textContent = 'Add New Expense';
+                }
+            }
+        }
+    }
+
+    closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+
+            // Clear edit state for expense modal
+            if (modalId === 'expenseModal') {
+                const form = document.getElementById('expenseForm');
+                delete form.dataset.editId;
+                document.getElementById('expenseModalTitle').textContent = 'Add New Expense';
+                form.reset();
+            }
+        }
+
+        // Stop breathing exercise if closing that modal
+        if (modalId === 'breathingModal') {
+            this.stopBreathingExercise();
+        }
+    }
+
+    setupBudgetForm() {
+        const budgetForm = document.getElementById('budgetCategoriesForm');
+        if (!budgetForm) return;
+
+        const settings = window.storage.getSettings();
+        const existingBudgets = settings.categoryBudgets || {};
+
+        const categories = ['food', 'bills', 'shopping', 'travel', 'entertainment', 'healthcare', 'education', 'other'];
+
+        budgetForm.innerHTML = categories.map(category => `
+            <div class="form-group">
+                <label for="budget_${category}">
+                    ${this.getCategoryIcon(category)} ${this.getCategoryDisplayName(category)}
+                </label>
+                <input type="number"
+                       id="budget_${category}"
+                       name="budget_${category}"
+                       placeholder="Monthly budget (₹)"
+                       value="${existingBudgets[category] || ''}"
+                       step="0.01">
+            </div>
+        `).join('');
+    }
 }
 
 // Initialize the app when DOM is loaded
