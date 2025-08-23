@@ -5248,7 +5248,7 @@ class WorkLifeBalanceApp {
         const hour = now.getHours();
         const minute = now.getMinutes();
         const todayMeals = window.storage.getTodayMeals();
-        const mealTypes = ['breakfast', 'lunch', 'dinner'];
+        const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
 
         // Check which meals are already planned/eaten today
         const plannedMealTypes = todayMeals.map(meal => meal.type);
@@ -5262,13 +5262,18 @@ class WorkLifeBalanceApp {
             return 'breakfast';
         }
 
-        // Lunch window: 11:00 AM - 4:00 PM
-        if (timeInMinutes >= 660 && timeInMinutes < 960 && !plannedMealTypes.includes('lunch')) {
+        // Lunch window: 11:00 AM - 2:00 PM
+        if (timeInMinutes >= 660 && timeInMinutes < 840 && !plannedMealTypes.includes('lunch')) {
             return 'lunch';
         }
 
-        // Dinner window: 4:00 PM - 10:00 PM
-        if (timeInMinutes >= 960 && timeInMinutes < 1320 && !plannedMealTypes.includes('dinner')) {
+        // Snack window: 2:00 PM - 6:00 PM
+        if (timeInMinutes >= 840 && timeInMinutes < 1080 && !plannedMealTypes.includes('snack')) {
+            return 'snack';
+        }
+
+        // Dinner window: 6:00 PM - 10:00 PM
+        if (timeInMinutes >= 1080 && timeInMinutes < 1320 && !plannedMealTypes.includes('dinner')) {
             return 'dinner';
         }
 
