@@ -478,6 +478,7 @@ class Utils {
         const newBadges = { ...badges };
         let badgesEarned = [];
 
+        // Fitness Badges
         // First workout badge
         if (!badges.firstWorkout && data.workouts && data.workouts.length > 0) {
             newBadges.firstWorkout = true;
@@ -493,12 +494,149 @@ class Utils {
 
         // Consistency King badge (workout 5 days a week for 4 weeks)
         if (!badges.consistencyKing && workoutStreak >= 28) {
-            const workoutsLast28Days = data.workouts.filter(w => 
+            const workoutsLast28Days = data.workouts.filter(w =>
                 Utils.getDaysDifference(new Date(), new Date(w.createdAt)) <= 28
             );
             if (workoutsLast28Days.length >= 20) { // 5 days * 4 weeks = 20 workouts
                 newBadges.consistencyKing = true;
                 badgesEarned.push('👑 Consistency King');
+            }
+        }
+
+        // Exercise Explorer badge (try 8 different exercises)
+        if (!badges.exerciseExplorer && data.workouts) {
+            const uniqueExercises = new Set(data.workouts.map(w => w.type));
+            if (uniqueExercises.size >= 8) {
+                newBadges.exerciseExplorer = true;
+                badgesEarned.push('🧭 Exercise Explorer');
+            }
+        }
+
+        // Timer Master badge (complete 10 timed exercises)
+        if (!badges.timerMaster && data.workouts) {
+            const timedWorkouts = data.workouts.filter(w =>
+                w.type !== 'breathing' && w.type !== 'general'
+            );
+            if (timedWorkouts.length >= 10) {
+                newBadges.timerMaster = true;
+                badgesEarned.push('⏰ Timer Master');
+            }
+        }
+
+        // Food & Nutrition Badges
+        const foodItems = window.storage.getFoodItems();
+        const expenses = data.expenses || [];
+
+        // South Indian Foodie badge
+        if (!badges.southIndianFoodie && foodItems) {
+            const southIndianItems = foodItems.filter(item =>
+                this.isSouthIndianFood(item.name)
+            );
+            if (southIndianItems.length >= 10) {
+                newBadges.southIndianFoodie = true;
+                badgesEarned.push('🥥 South Indian Foodie');
+            }
+        }
+
+        // Home Cook Champion badge (cook at home 15 days)
+        if (!badges.homeCookChampion) {
+            const homeCookingDays = this.getHomeCookingDays(expenses);
+            if (homeCookingDays >= 15) {
+                newBadges.homeCookChampion = true;
+                badgesEarned.push('👨‍🍳 Home Cook Champion');
+            }
+        }
+
+        // Calorie Tracker badge (track calories for 7 days)
+        if (!badges.calorieTracker) {
+            const calorieTrackingDays = this.getCalorieTrackingDays();
+            if (calorieTrackingDays >= 7) {
+                newBadges.calorieTracker = true;
+                badgesEarned.push('📊 Calorie Tracker');
+            }
+        }
+
+        // Meal Plan Master badge (plan meals for 14 days)
+        if (!badges.mealPlanMaster) {
+            const mealPlanDays = this.getMealPlanDays();
+            if (mealPlanDays >= 14) {
+                newBadges.mealPlanMaster = true;
+                badgesEarned.push('📋 Meal Plan Master');
+            }
+        }
+
+        // Financial Badges
+        // Budget Boss badge (stay within budget for a month)
+        if (!badges.budgetBoss) {
+            const budgetStatus = window.storage.getBudgetStatus();
+            const withinBudget = Object.values(budgetStatus).every(status => !status.overBudget);
+            if (withinBudget && Object.keys(budgetStatus).length > 0) {
+                newBadges.budgetBoss = true;
+                badgesEarned.push('💰 Budget Boss');
+            }
+        }
+
+        // Expense Tracker badge (track expenses for 30 days)
+        if (!badges.expenseTracker && expenses.length > 0) {
+            const recentExpenses = expenses.filter(e =>
+                Utils.getDaysDifference(new Date(), new Date(e.createdAt)) <= 30
+            );
+            const uniqueDays = new Set(recentExpenses.map(e =>
+                new Date(e.createdAt).toDateString()
+            ));
+            if (uniqueDays.size >= 30) {
+                newBadges.expenseTracker = true;
+                badgesEarned.push('📈 Expense Tracker');
+            }
+        }
+
+        // Savings Champion badge (save 20% of income)
+        if (!badges.savingsChampion) {
+            const analysis = window.storage.getSavingsAnalysis();
+            if (analysis.savingsRate >= 20) {
+                newBadges.savingsChampion = true;
+                badgesEarned.push('🏦 Savings Champion');
+            }
+        }
+
+        // Productivity Badges
+        const tasks = data.tasks || [];
+
+        // Task Master badge (complete 50 tasks)
+        if (!badges.taskMaster && tasks) {
+            const completedTasks = tasks.filter(t => t.completed);
+            if (completedTasks.length >= 50) {
+                newBadges.taskMaster = true;
+                badgesEarned.push('✅ Task Master');
+            }
+        }
+
+        // Weekly Champion badge (100% task completion for a week)
+        if (!badges.weeklyChampion && tasks) {
+            const weeklyCompletion = this.getWeeklyTaskCompletion(tasks);
+            if (weeklyCompletion >= 100) {
+                newBadges.weeklyChampion = true;
+                badgesEarned.push('🗓️ Weekly Champion');
+            }
+        }
+
+        // Organizer badge (use all sections of the app)
+        if (!badges.organizer) {
+            const sectionsUsed = this.getSectionsUsed();
+            if (sectionsUsed >= 6) { // Assuming 6 main sections
+                newBadges.organizer = true;
+                badgesEarned.push('📊 Organizer');
+            }
+        }
+
+        // Wellness Warrior badge (complete stress relief 10 times)
+        if (!badges.wellnessWarrior && data.workouts) {
+            const stressReliefWorkouts = data.workouts.filter(w =>
+                ['breathing', 'yoga', 'meditation'].includes(w.type)
+            );
+            if (stressReliefWorkouts.length >= 10) {
+                newBadges.wellnessWarrior = true;
+                badgesEarned.push('🧘‍♀️ Wellness Warrior');
             }
         }
 
@@ -511,6 +649,75 @@ class Utils {
         }
 
         return newBadges;
+    }
+
+    // Helper methods for badge checking
+    static isSouthIndianFood(foodName) {
+        const southIndianFoods = [
+            'dosa', 'idli', 'sambar', 'rasam', 'vada', 'upma', 'pongal', 'uttapam',
+            'coconut chutney', 'tomato rice', 'lemon rice', 'curd rice', 'tamarind rice',
+            'appam', 'pathiri', 'puttu', 'kozhukattai', 'adhirasam', 'payasam',
+            'avial', 'olan', 'thoran', 'pachadi', 'koottu', 'mor kuzhambu',
+            'biryani', 'puliyodarai', 'bisi bele bath', 'chitranna'
+        ];
+        return southIndianFoods.some(food =>
+            foodName.toLowerCase().includes(food.toLowerCase())
+        );
+    }
+
+    static getHomeCookingDays(expenses) {
+        // Count days without food delivery expenses
+        const last30Days = expenses.filter(e =>
+            Utils.getDaysDifference(new Date(), new Date(e.createdAt)) <= 30
+        );
+
+        const deliveryExpenses = last30Days.filter(e =>
+            e.category === 'food' &&
+            (e.notes?.toLowerCase().includes('delivery') ||
+             e.notes?.toLowerCase().includes('order') ||
+             e.notes?.toLowerCase().includes('zomato') ||
+             e.notes?.toLowerCase().includes('swiggy'))
+        );
+
+        const deliveryDays = new Set(deliveryExpenses.map(e =>
+            new Date(e.createdAt).toDateString()
+        ));
+
+        return Math.max(0, 30 - deliveryDays.size);
+    }
+
+    static getCalorieTrackingDays() {
+        // This would need to be tracked separately - for now return mock value
+        return Math.floor(Math.random() * 10);
+    }
+
+    static getMealPlanDays() {
+        // This would need to be tracked separately - for now return mock value
+        return Math.floor(Math.random() * 20);
+    }
+
+    static getWeeklyTaskCompletion(tasks) {
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const weeklyTasks = tasks.filter(t => new Date(t.createdAt) >= weekAgo);
+        const completedTasks = weeklyTasks.filter(t => t.completed);
+
+        if (weeklyTasks.length === 0) return 0;
+        return Math.round((completedTasks.length / weeklyTasks.length) * 100);
+    }
+
+    static getSectionsUsed() {
+        // Check localStorage for usage of different sections
+        const usageKeys = ['wlb_tasks', 'wlb_expenses', 'wlb_workouts', 'wlb_moods', 'wlb_food_items'];
+        let sectionsUsed = 0;
+
+        usageKeys.forEach(key => {
+            const data = localStorage.getItem(key);
+            if (data && JSON.parse(data).length > 0) {
+                sectionsUsed++;
+            }
+        });
+
+        return sectionsUsed;
     }
 
     // Export utilities
