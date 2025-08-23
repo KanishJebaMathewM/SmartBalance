@@ -4456,9 +4456,22 @@ class WorkLifeBalanceApp {
         // Clear canvas
         ctx.clearRect(0, 0, width, height);
 
-        // Mock data for last 7 days
-        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-        const calories = [2100, 1950, 2200, 2050, 2300, 1850, 2150];
+        // Get real data for last 7 days
+        const allMeals = window.storage.getMeals();
+        const last7DaysData = this.getLast7DaysCalorieData(allMeals);
+        const days = last7DaysData.map(d => d.day);
+        const calories = last7DaysData.map(d => d.calories);
+
+        if (calories.every(cal => cal === 0)) {
+            // Show empty state
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '16px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('No calorie data available', width / 2, height / 2);
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillText('Add meals to see your calorie trends', width / 2, height / 2 + 25);
+            return;
+        }
 
         // Chart settings
         const padding = 40;
