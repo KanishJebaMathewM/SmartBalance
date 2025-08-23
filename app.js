@@ -2491,7 +2491,7 @@ class WorkLifeBalanceApp {
             'clothing': '👕',
             'other': '📦'
         };
-        return categoryIcons[category] || '📦';
+        return categoryIcons[category] || '����';
     }
 
     resetExpenseForm() {
@@ -3751,7 +3751,7 @@ class WorkLifeBalanceApp {
         // Auto-complete the exercise
         if (this.currentExerciseType) {
             const exercise = Utils.getExerciseInstructions(this.currentExerciseType);
-            this.completeExercise(this.currentExerciseType, exercise);
+            this.completeExerciseEnhanced(this.currentExerciseType, exercise);
         }
 
         // Close modal after a short delay
