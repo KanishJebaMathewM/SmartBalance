@@ -1058,16 +1058,148 @@ class WorkLifeBalanceApp {
         this.generateSmartRecommendations(expenses);
     }
 
+    loadFinancialHealthScore() {
+        const analysis = window.storage.getSavingsAnalysis();
+        const healthScoreEl = document.getElementById('healthScoreValue');
+        const healthBreakdownEl = document.getElementById('healthBreakdown');
+
+        if (healthScoreEl) {
+            healthScoreEl.textContent = Math.round(analysis.healthScore);
+
+            // Update the progress circle
+            const circle = healthScoreEl.closest('.health-score-circle');
+            if (circle) {
+                const angle = (analysis.healthScore / 100) * 360;
+                circle.style.setProperty('--score-angle', `${angle}deg`);
+
+                // Update color based on score
+                let color = '#ef4444'; // red for poor
+                if (analysis.healthScore >= 70) color = '#10b981'; // green for good
+                else if (analysis.healthScore >= 40) color = '#f59e0b'; // yellow for fair
+
+                circle.style.background = `conic-gradient(${color} 0deg, ${color} ${angle}deg, #e5e7eb ${angle}deg)`;
+            }
+        }
+
+        if (healthBreakdownEl) {
+            const breakdown = [
+                { label: 'Savings Rate', value: `${analysis.savingsRate}%`, type: analysis.savingsRate >= 20 ? 'good' : analysis.savingsRate >= 10 ? 'warning' : 'danger' },
+                { label: 'Emergency Fund', value: `${analysis.emergencyFundCoverage} months`, type: analysis.emergencyFundCoverage >= 6 ? 'good' : analysis.emergencyFundCoverage >= 3 ? 'warning' : 'danger' },
+                { label: 'Income Status', value: analysis.monthlyIncome > analysis.monthlyExpenses ? 'Surplus' : 'Deficit', type: analysis.monthlyIncome > analysis.monthlyExpenses ? 'good' : 'danger' }
+            ];
+
+            healthBreakdownEl.innerHTML = breakdown.map(item => `
+                <div class="health-breakdown-item">
+                    <span class="breakdown-label">${item.label}</span>
+                    <span class="breakdown-value ${item.type}">${item.value}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    loadIncomeVsExpensesChart() {
+        const summaryEl = document.getElementById('comparisonSummary');
+        if (!summaryEl) return;
+
+        const analysis = window.storage.getSavingsAnalysis();
+        const stats = [
+            { label: 'Monthly Income', value: Utils.formatCurrency(analysis.monthlyIncome), type: 'neutral' },
+            { label: 'Monthly Expenses', value: Utils.formatCurrency(analysis.monthlyExpenses), type: 'neutral' },
+            { label: 'Monthly Savings', value: Utils.formatCurrency(analysis.monthlySavings), type: analysis.monthlySavings > 0 ? 'positive' : 'negative' },
+            { label: 'Savings Rate', value: `${analysis.savingsRate}%`, type: analysis.savingsRate >= 20 ? 'positive' : analysis.savingsRate >= 10 ? 'neutral' : 'negative' }
+        ];
+
+        summaryEl.innerHTML = stats.map(stat => `
+            <div class="comparison-stat ${stat.type}">
+                <div class="comparison-stat-value">${stat.value}</div>
+                <div class="comparison-stat-label">${stat.label}</div>
+            </div>
+        `).join('');
+
+        // Create a simple bar chart using canvas
+        const canvas = document.getElementById('incomeVsExpensesChart');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Chart data
+            const maxValue = Math.max(analysis.monthlyIncome, analysis.monthlyExpenses) * 1.1;
+            const barWidth = 80;
+            const barSpacing = 100;
+            const startX = (width - 2 * barWidth - barSpacing) / 2;
+
+            // Draw income bar
+            const incomeHeight = (analysis.monthlyIncome / maxValue) * (height - 80);
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(startX, height - incomeHeight - 40, barWidth, incomeHeight);
+
+            // Draw expenses bar
+            const expenseHeight = (analysis.monthlyExpenses / maxValue) * (height - 80);
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(startX + barWidth + barSpacing, height - expenseHeight - 40, barWidth, expenseHeight);
+
+            // Add labels
+            ctx.fillStyle = '#374151';
+            ctx.font = '14px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Income', startX + barWidth/2, height - 20);
+            ctx.fillText('Expenses', startX + barWidth + barSpacing + barWidth/2, height - 20);
+
+            // Add values
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillText(Utils.formatCurrency(analysis.monthlyIncome), startX + barWidth/2, height - incomeHeight - 45);
+            ctx.fillText(Utils.formatCurrency(analysis.monthlyExpenses), startX + barWidth + barSpacing + barWidth/2, height - expenseHeight - 45);
+        }
+    }
+
+    loadCategoryInsights() {
+        const gridEl = document.getElementById('categoryAnalysisGrid');
+        if (!gridEl) return;
+
+        const categoryAnalysis = window.storage.getCategoryWiseAnalysis('month');
+        const entries = Object.entries(categoryAnalysis)
+            .sort(([,a], [,b]) => b.total - a.total)
+            .slice(0, 6); // Show top 6 categories
+
+        gridEl.innerHTML = entries.map(([category, data]) => `
+            <div class="category-analysis-item">
+                <div class="category-analysis-header">
+                    <div class="category-analysis-name">
+                        ${this.getCategoryIcon(category)}
+                        ${this.getCategoryDisplayName(category)}
+                    </div>
+                    <div class="category-analysis-percentage">${data.percentage}%</div>
+                </div>
+                <div class="category-analysis-details">
+                    <span>Total: ${Utils.formatCurrency(data.total)}</span>
+                    <span>Avg: ${Utils.formatCurrency(data.averageTransaction)}</span>
+                </div>
+                ${data.recommendation ? `
+                    <div class="category-recommendation ${data.recommendation.type}">
+                        ${data.recommendation.message}
+                    </div>
+                ` : ''}
+            </div>
+        `).join('');
+    }
+
     generateSpendingPredictions(expenses) {
         const predictions = this.calculateSpendingPredictions(expenses);
+        const analysis = window.storage.getSavingsAnalysis();
 
         const nextWeekEl = document.getElementById('nextWeekPrediction');
         const nextMonthEl = document.getElementById('nextMonthPrediction');
+        const annualSavingsEl = document.getElementById('annualSavingsPrediction');
         const weekConfidenceEl = document.getElementById('weekConfidence');
         const monthConfidenceEl = document.getElementById('monthConfidence');
 
         if (nextWeekEl) nextWeekEl.textContent = Utils.formatCurrency(predictions.nextWeek.amount);
         if (nextMonthEl) nextMonthEl.textContent = Utils.formatCurrency(predictions.nextMonth.amount);
+        if (annualSavingsEl) annualSavingsEl.textContent = Utils.formatCurrency(analysis.projectedAnnualSavings);
         if (weekConfidenceEl) weekConfidenceEl.textContent = `${predictions.nextWeek.confidence}%`;
         if (monthConfidenceEl) monthConfidenceEl.textContent = `${predictions.nextMonth.confidence}%`;
     }
