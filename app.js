@@ -215,7 +215,13 @@ class WorkLifeBalanceApp {
             const expenseCategorySelect = document.getElementById('taskExpenseCategory');
             if (changeExpenseCategoryBtn && expenseCategorySelect) {
                 changeExpenseCategoryBtn.addEventListener('click', () => {
+                    // Show the category select dropdown
                     expenseCategorySelect.style.display = 'block';
+                    // Show the container if it was hidden
+                    const expenseCategoryContainer = expenseCategorySelect.parentElement;
+                    if (expenseCategoryContainer) {
+                        expenseCategoryContainer.style.display = 'block';
+                    }
                     changeExpenseCategoryBtn.style.display = 'none';
                 });
 
