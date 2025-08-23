@@ -1765,7 +1765,7 @@ class WorkLifeBalanceApp {
                     <div class="pantry-expiry">Expires: ${Utils.formatDate(item.expiry)}</div>
                 </div>
                 <div class="pantry-actions">
-                    <button onclick="app.deleteFoodItem(${item.id})" title="Delete">���️</button>
+                    <button onclick="app.deleteFoodItem(${item.id})" title="Delete">🗑️</button>
                 </div>
             </div>
         `).join('');
@@ -3646,8 +3646,14 @@ class WorkLifeBalanceApp {
             changeBtn.style.display = 'inline';
         }
 
-        // Hide the select dropdown initially
+        // Hide the select dropdown initially since category is auto-mapped
         expenseCategorySelect.style.display = 'none';
+
+        // Hide the entire expense category selection section since it's auto-mapped
+        const expenseCategoryContainer = expenseCategorySelect.parentElement;
+        if (expenseCategoryContainer) {
+            expenseCategoryContainer.style.display = 'none';
+        }
     }
 
     // Calendar view switching
