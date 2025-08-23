@@ -4646,6 +4646,18 @@ class WorkLifeBalanceApp {
             });
         });
 
+        // Status option handlers
+        const statusOptions = document.querySelectorAll('.status-option');
+        statusOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                // Remove active class from all options
+                statusOptions.forEach(opt => opt.classList.remove('active'));
+
+                // Add active class to clicked option
+                e.currentTarget.classList.add('active');
+            });
+        });
+
         // Set today's date as default
         const mealDateInput = document.getElementById('mealDate');
         if (mealDateInput) {
