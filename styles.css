@@ -5866,13 +5866,7 @@ body.dark-mode {
     background: #1f2937;
 }
 
-.calendar-day:hover {
-    background: #f8fafc;
-}
-
-.dark-mode .calendar-day:hover {
-    background: #1e293b;
-}
+/* Removed hover effects for calendar days to better see meal status colors */
 
 .calendar-day.other-month {
     color: #cbd5e1;
