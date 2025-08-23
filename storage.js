@@ -543,6 +543,183 @@ class Storage {
         return expenses.filter(expense => expense.recurring === true);
     }
 
+    // Habits methods
+    getHabits() {
+        return this.get(this.keys.habits) || [];
+    }
+
+    addHabit(habit) {
+        const habits = this.getHabits();
+        habit.id = Date.now();
+        habit.createdAt = new Date().toISOString();
+        habit.active = habit.active !== false; // Default to true
+        habit.currentStreak = 0;
+        habits.push(habit);
+        this.set(this.keys.habits, habits);
+        return habit;
+    }
+
+    updateHabit(id, updates) {
+        const habits = this.getHabits();
+        const index = habits.findIndex(habit => habit.id === id);
+        if (index !== -1) {
+            habits[index] = { ...habits[index], ...updates };
+            this.set(this.keys.habits, habits);
+            return habits[index];
+        }
+        return null;
+    }
+
+    deleteHabit(id) {
+        const habits = this.getHabits();
+        const filteredHabits = habits.filter(habit => habit.id !== id);
+        this.set(this.keys.habits, filteredHabits);
+
+        // Also clean up completion and skip records
+        const completions = this.get(this.keys.habitCompletions) || {};
+        delete completions[id];
+        this.set(this.keys.habitCompletions, completions);
+
+        const skips = this.get(this.keys.habitSkips) || {};
+        delete skips[id];
+        this.set(this.keys.habitSkips, skips);
+
+        return true;
+    }
+
+    // Habit completion methods
+    getHabitCompletions(habitId) {
+        const allCompletions = this.get(this.keys.habitCompletions) || {};
+        return allCompletions[habitId] || [];
+    }
+
+    addHabitCompletion(habitId, completion) {
+        const allCompletions = this.get(this.keys.habitCompletions) || {};
+        if (!allCompletions[habitId]) {
+            allCompletions[habitId] = [];
+        }
+
+        completion.id = Date.now();
+        completion.timestamp = new Date().toISOString();
+        allCompletions[habitId].push(completion);
+
+        this.set(this.keys.habitCompletions, allCompletions);
+        return completion;
+    }
+
+    removeHabitCompletion(habitId, date) {
+        const allCompletions = this.get(this.keys.habitCompletions) || {};
+        if (allCompletions[habitId]) {
+            allCompletions[habitId] = allCompletions[habitId].filter(completion =>
+                new Date(completion.date).toDateString() !== date
+            );
+            this.set(this.keys.habitCompletions, allCompletions);
+        }
+        return true;
+    }
+
+    // Habit skip methods
+    getHabitSkips(habitId) {
+        const allSkips = this.get(this.keys.habitSkips) || {};
+        return allSkips[habitId] || [];
+    }
+
+    addHabitSkip(habitId, skip) {
+        const allSkips = this.get(this.keys.habitSkips) || {};
+        if (!allSkips[habitId]) {
+            allSkips[habitId] = [];
+        }
+
+        skip.id = Date.now();
+        skip.timestamp = new Date().toISOString();
+        allSkips[habitId].push(skip);
+
+        this.set(this.keys.habitSkips, allSkips);
+        return skip;
+    }
+
+    // Goals methods
+    getGoals() {
+        return this.get(this.keys.goals) || [];
+    }
+
+    addGoal(goal) {
+        const goals = this.getGoals();
+        goal.id = Date.now();
+        goal.createdAt = new Date().toISOString();
+        goal.active = goal.active !== false; // Default to true
+        goal.progress = 0;
+        goals.push(goal);
+        this.set(this.keys.goals, goals);
+        return goal;
+    }
+
+    updateGoal(id, updates) {
+        const goals = this.getGoals();
+        const index = goals.findIndex(goal => goal.id === id);
+        if (index !== -1) {
+            goals[index] = { ...goals[index], ...updates };
+            this.set(this.keys.goals, goals);
+            return goals[index];
+        }
+        return null;
+    }
+
+    deleteGoal(id) {
+        const goals = this.getGoals();
+        const filteredGoals = goals.filter(goal => goal.id !== id);
+        this.set(this.keys.goals, filteredGoals);
+        return true;
+    }
+
+    // Analytics methods for habits
+    getHabitCompletionRate(habitId, days = 30) {
+        const completions = this.getHabitCompletions(habitId);
+        const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+        const recentCompletions = completions.filter(completion =>
+            new Date(completion.date) >= startDate
+        );
+
+        return recentCompletions.length / days;
+    }
+
+    getOverallHabitStats() {
+        const habits = this.getHabits();
+        const activeHabits = habits.filter(h => h.active !== false);
+
+        let totalCompletions = 0;
+        let totalPossible = 0;
+
+        activeHabits.forEach(habit => {
+            const completions = this.getHabitCompletions(habit.id);
+            const daysSinceCreated = Math.ceil((Date.now() - new Date(habit.createdAt)) / (1000 * 60 * 60 * 24));
+
+            totalCompletions += completions.length;
+            totalPossible += Math.min(daysSinceCreated, 30); // Cap at 30 days for calculation
+        });
+
+        return {
+            totalHabits: activeHabits.length,
+            completionRate: totalPossible > 0 ? (totalCompletions / totalPossible) * 100 : 0,
+            totalCompletions,
+            averageStreak: this.getAverageHabitStreak()
+        };
+    }
+
+    getAverageHabitStreak() {
+        const habits = this.getHabits();
+        const activeHabits = habits.filter(h => h.active !== false);
+
+        if (activeHabits.length === 0) return 0;
+
+        const totalStreak = activeHabits.reduce((sum, habit) =>
+            sum + (habit.currentStreak || 0), 0
+        );
+
+        return Math.round(totalStreak / activeHabits.length);
+    }
+
     // Export data
     exportData() {
         return {
