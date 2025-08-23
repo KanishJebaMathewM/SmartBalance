@@ -56,10 +56,20 @@ class Charts {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
+        // Canvas size should already be set by calling function
+        // But set default if not set
+        if (!canvas.width || !canvas.height) {
+            const container = canvas.parentElement;
+            const containerWidth = container.clientWidth || 400;
+            const size = Math.min(containerWidth - 40, 400);
+            canvas.width = size;
+            canvas.height = size;
+        }
+
         const ctx = canvas.getContext('2d');
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
-        const radius = Math.min(centerX, centerY) - 20;
+        const radius = Math.min(centerX, centerY) - 40;
 
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -570,6 +580,12 @@ class Charts {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
+        // Set responsive canvas size
+        const container = canvas.parentElement;
+        const containerWidth = container.clientWidth || 600;
+        canvas.width = Math.min(containerWidth - 40, 600);
+        canvas.height = 300;
+
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -655,6 +671,13 @@ class Charts {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
+        // Set responsive canvas size for category charts
+        const container = canvas.parentElement;
+        const containerWidth = container.clientWidth || 400;
+        const size = Math.min(containerWidth - 40, 400);
+        canvas.width = size;
+        canvas.height = size;
+
         switch (chartType) {
             case 'pie':
                 this.createExpensePieChart(canvasId, expenses);
@@ -733,6 +756,12 @@ class Charts {
     createPaymentMethodChart(canvasId, expenses) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
+
+        // Set responsive canvas size
+        const container = canvas.parentElement;
+        const containerWidth = container.clientWidth || 600;
+        canvas.width = Math.min(containerWidth - 40, 600);
+        canvas.height = 300;
 
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
