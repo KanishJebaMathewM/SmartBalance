@@ -36,6 +36,9 @@ class WorkLifeBalanceApp {
 
         // Override old methods with enhanced versions
         this.overrideMethodsWithEnhancedVersions();
+
+        // Verify fitness functionality
+        this.verifyFitnessFunctionality();
     }
 
     overrideMethodsWithEnhancedVersions() {
@@ -3785,7 +3788,7 @@ class WorkLifeBalanceApp {
         const instructionsHTML = `
             <div class="exercise-info">
                 <div class="exercise-meta">
-                    <span class="exercise-duration">⏱️ ${exercise.duration}</span>
+                    <span class="exercise-duration">⏱�� ${exercise.duration}</span>
                     <span class="exercise-calories">🔥 ${exercise.calories} cal</span>
                 </div>
             </div>
@@ -4720,7 +4723,7 @@ class WorkLifeBalanceApp {
             breakfast: '🌅',
             lunch: '🌞',
             dinner: '🌙',
-            snack: '��'
+            snack: '🥨'
         };
         return icons[type] || '🍽️';
     }
