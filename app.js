@@ -195,6 +195,22 @@ class WorkLifeBalanceApp {
                     expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
                     if (expenseCheckbox.checked) {
                         this.updateExpenseCategory();
+                    } else {
+                        // Reset expense category display when unchecked
+                        const categoryDisplay = document.getElementById('selectedExpenseCategory');
+                        const changeBtn = document.getElementById('changeExpenseCategoryBtn');
+                        const expenseCategorySelect = document.getElementById('taskExpenseCategory');
+
+                        if (categoryDisplay) categoryDisplay.textContent = '-';
+                        if (changeBtn) changeBtn.style.display = 'none';
+                        if (expenseCategorySelect) {
+                            expenseCategorySelect.style.display = 'none';
+                            // Hide the container as well
+                            const expenseCategoryContainer = expenseCategorySelect.parentElement;
+                            if (expenseCategoryContainer) {
+                                expenseCategoryContainer.style.display = 'none';
+                            }
+                        }
                     }
                 });
             }
