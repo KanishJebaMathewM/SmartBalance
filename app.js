@@ -293,6 +293,37 @@ class WorkLifeBalanceApp {
         }
     }
 
+    fixExpenseCheckbox() {
+        const expenseCheckbox = document.getElementById('taskExpense');
+        const expenseDetails = document.getElementById('expenseTaskDetails');
+        const amountField = document.getElementById('taskAmount');
+
+        if (expenseCheckbox && expenseDetails) {
+            console.log('Setting up expense checkbox listener...');
+
+            // Add a fresh event listener that definitely works
+            expenseCheckbox.addEventListener('change', () => {
+                console.log('Expense checkbox clicked! Checked:', expenseCheckbox.checked);
+
+                if (expenseCheckbox.checked) {
+                    expenseDetails.style.display = 'block';
+                    if (amountField) amountField.required = true;
+                    this.updateExpenseCategory();
+                    console.log('Showing expense details');
+                } else {
+                    expenseDetails.style.display = 'none';
+                    if (amountField) {
+                        amountField.required = false;
+                        amountField.value = '';
+                    }
+                    console.log('Hiding expense details');
+                }
+            });
+        } else {
+            console.log('Could not find expense elements:', { expenseCheckbox, expenseDetails });
+        }
+    }
+
     initializeButtonHandlers() {
         // Exercise buttons
         document.querySelectorAll('.exercise-card').forEach(card => {
