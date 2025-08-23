@@ -4588,6 +4588,29 @@ class WorkLifeBalanceApp {
             window.storage.addExpense(expenseData);
         }
 
+        // Check if this is an edit or new meal
+        const editId = document.getElementById('mealForm').dataset.editId;
+
+        // Validate meal limits (skip for edits)
+        if (!editId) {
+            if (!this.validateMealLimit(mealData.date)) {
+                return;
+            }
+
+            if (!this.checkMealTypeConflict(mealData.date, mealData.type)) {
+                return;
+            }
+        } else {
+            // For edits, validate limits excluding the current meal
+            if (!this.validateMealLimit(mealData.date, editId)) {
+                return;
+            }
+
+            if (!this.checkMealTypeConflict(mealData.date, mealData.type, editId)) {
+                return;
+            }
+        }
+
         window.storage.addMeal(mealData);
         Utils.showNotification('Meal added successfully!', 'success');
 
