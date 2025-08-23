@@ -33,6 +33,23 @@ class WorkLifeBalanceApp {
                 this.updateDashboard();
             }
         }, 60000);
+
+        // Override old methods with enhanced versions
+        this.overrideMethodsWithEnhancedVersions();
+    }
+
+    overrideMethodsWithEnhancedVersions() {
+        // Override startExercise with enhanced version
+        this.startExercise = this.startExerciseEnhanced;
+
+        // Override completeExercise with enhanced version
+        this.completeExercise = this.completeExerciseEnhanced;
+
+        // Override loadFitnessData with enhanced version
+        this.loadFitnessData = this.loadFitnessDataEnhanced;
+
+        // Override updateFitnessStats with enhanced version
+        this.updateFitnessStats = this.updateFitnessStatsEnhanced;
     }
 
     initializeEventListeners() {
@@ -7612,7 +7629,7 @@ class WorkLifeBalanceApp {
         });
 
         const avgMood = moodScores.reduce((sum, score) => sum + score, 0) / moodScores.length;
-        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '😐' : '😓';
+        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '��' : '😓';
 
         return `
             <div class="summary-card">
