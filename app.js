@@ -2445,6 +2445,11 @@ class WorkLifeBalanceApp {
             if (modalId === 'expenseModal') {
                 this.resetExpenseForm();
             }
+
+            // Special handling for task modal
+            if (modalId === 'taskModal') {
+                this.resetTaskForm();
+            }
         }
     }
 
