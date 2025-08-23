@@ -168,7 +168,7 @@
                                     <option value="food">🍕 Food & Dining</option>
                                     <option value="bills">📧 Bills & Utilities</option>
                                     <option value="shopping">🛍️ Shopping</option>
-                                    <option value="travel">✈️ Travel & Transport</option>
+                                    <option value="travel">��️ Travel & Transport</option>
                                     <option value="entertainment">🎬 Entertainment</option>
                                     <option value="healthcare">🏥 Healthcare</option>
                                     <option value="education">📚 Education</option>
@@ -371,6 +371,39 @@
                 <!-- Insights Tab -->
                 <div id="insights-tab" class="tab-content">
                     <div class="insights-dashboard">
+                        <!-- Financial Health Score -->
+                        <div class="financial-health-section">
+                            <h3>🏥 Financial Health Score</h3>
+                            <div class="health-score-container">
+                                <div class="health-score-circle">
+                                    <div class="health-score-value" id="healthScoreValue">0</div>
+                                    <div class="health-score-label">out of 100</div>
+                                </div>
+                                <div class="health-breakdown" id="healthBreakdown">
+                                    <!-- Health score breakdown will be shown here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Income vs Expenses Comparison -->
+                        <div class="income-vs-expenses">
+                            <h3>💰 Income vs Expenses</h3>
+                            <div class="comparison-chart-container">
+                                <canvas id="incomeVsExpensesChart" width="600" height="300"></canvas>
+                            </div>
+                            <div class="comparison-summary" id="comparisonSummary">
+                                <!-- Income vs expenses summary will be shown here -->
+                            </div>
+                        </div>
+
+                        <!-- Category Analysis -->
+                        <div class="category-insights">
+                            <h3>📊 Category Insights</h3>
+                            <div class="category-analysis-grid" id="categoryAnalysisGrid">
+                                <!-- Category-wise analysis will be shown here -->
+                            </div>
+                        </div>
+
                         <div class="prediction-section">
                             <h3>🔮 Spending Predictions</h3>
                             <div class="prediction-cards">
@@ -1004,7 +1037,7 @@
                             </div>
 
                             <div class="correlation-card">
-                                <h4>💼 Productivity → 😌 Stress</h4>
+                                <h4>💼 Productivity → ��� Stress</h4>
                                 <div class="correlation-strength" id="productivityStressCorrelation">
                                     <div class="correlation-bar">
                                         <div class="correlation-fill" style="width: 0%"></div>
