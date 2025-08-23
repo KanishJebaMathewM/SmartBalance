@@ -297,6 +297,9 @@ class WorkLifeBalanceApp {
 
         // Enhanced expense form handlers
         this.initializeExpenseFormEnhancements();
+
+        // Export button handlers
+        this.initializeExportHandlers();
     }
 
     initializeFilterHandlers() {
