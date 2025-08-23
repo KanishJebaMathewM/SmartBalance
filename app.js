@@ -155,6 +155,7 @@ class WorkLifeBalanceApp {
         // Budget and savings goal buttons
         const setBudgetBtn = document.getElementById('setBudgetBtn');
         const setSavingsGoalBtn = document.getElementById('setSavingsGoalBtn');
+        const manageRecurringBtn = document.getElementById('manageRecurringBtn');
 
         if (setBudgetBtn) {
             setBudgetBtn.addEventListener('click', () => this.openModal('budgetModal'));
@@ -162,6 +163,10 @@ class WorkLifeBalanceApp {
 
         if (setSavingsGoalBtn) {
             setSavingsGoalBtn.addEventListener('click', () => this.openModal('savingsGoalModal'));
+        }
+
+        if (manageRecurringBtn) {
+            manageRecurringBtn.addEventListener('click', () => this.openModal('recurringModal'));
         }
 
         // Relief buttons
