@@ -192,8 +192,11 @@ class WorkLifeBalanceApp {
             const expenseDetails = document.getElementById('expenseTaskDetails');
             const amountField = document.getElementById('taskAmount');
             if (expenseCheckbox && expenseDetails) {
+                console.log('Expense checkbox handler attached:', { expenseCheckbox, expenseDetails });
                 expenseCheckbox.addEventListener('change', () => {
+                    console.log('Expense checkbox changed:', expenseCheckbox.checked);
                     expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
+                    console.log('Expense details display set to:', expenseDetails.style.display);
 
                     // Make amount field required when expense is checked
                     if (amountField) {
@@ -3695,7 +3698,7 @@ class WorkLifeBalanceApp {
         const viewToggleBtn = document.getElementById('viewToggleBtn');
         if (viewToggleBtn) {
             const isCalendarActive = this.currentExpenseTab === 'calendar';
-            viewToggleBtn.textContent = isCalendarActive ? '📊 Overview' : '📅 Calendar View';
+            viewToggleBtn.textContent = isCalendarActive ? '���� Overview' : '📅 Calendar View';
 
             // Add toggle behavior
             viewToggleBtn.onclick = () => {
