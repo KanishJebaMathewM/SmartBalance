@@ -95,8 +95,6 @@ class WorkLifeBalanceApp {
             'addMealBtn': 'mealModal',
             'moodCheckBtn': 'moodModal',
             'breathingBtn': 'breathingModal',
-            'addHabitBtn': 'habitModal',
-            'addGoalBtn': 'goalModal',
             'setIncomeBtn': 'incomeModal',
             'viewMealCalendarBtn': () => this.viewMealCalendar()
         };
