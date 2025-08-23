@@ -2066,6 +2066,196 @@ class WorkLifeBalanceApp {
             </div>
         `).join('');
     }
+
+    // Enhanced expense form functionality
+    initializeExpenseFormEnhancements() {
+        // Recurring expense toggle
+        const recurringCheckbox = document.getElementById('expenseRecurring');
+        const recurringOptions = document.getElementById('recurringOptions');
+
+        if (recurringCheckbox && recurringOptions) {
+            recurringCheckbox.addEventListener('change', () => {
+                recurringOptions.style.display = recurringCheckbox.checked ? 'block' : 'none';
+            });
+        }
+
+        // Shared expense toggle
+        const sharedCheckbox = document.getElementById('expenseShared');
+        const sharedOptions = document.getElementById('sharedOptions');
+
+        if (sharedCheckbox && sharedOptions) {
+            sharedCheckbox.addEventListener('change', () => {
+                sharedOptions.style.display = sharedCheckbox.checked ? 'block' : 'none';
+                if (sharedCheckbox.checked) {
+                    this.calculateShareAmount();
+                }
+            });
+        }
+
+        // Auto-calculate share amount
+        const expenseAmount = document.getElementById('expenseAmount');
+        if (expenseAmount) {
+            expenseAmount.addEventListener('input', () => {
+                this.calculateShareAmount();
+                this.showSmartInsights();
+            });
+        }
+
+        // Smart category suggestions
+        const expenseNotes = document.getElementById('expenseNotes');
+        if (expenseNotes) {
+            expenseNotes.addEventListener('input', Utils.debounce(() => {
+                this.suggestCategory(expenseNotes.value);
+                this.showDescriptionSuggestions(expenseNotes.value);
+            }, 300));
+        }
+
+        // Amount suggestions
+        const amountField = document.getElementById('expenseAmount');
+        if (amountField) {
+            amountField.addEventListener('focus', () => {
+                this.showAmountSuggestions();
+            });
+        }
+    }
+
+    calculateShareAmount() {
+        const totalAmount = parseFloat(document.getElementById('expenseAmount').value) || 0;
+        const sharedCheckbox = document.getElementById('expenseShared');
+        const shareAmountField = document.getElementById('shareAmount');
+
+        if (sharedCheckbox?.checked && shareAmountField && totalAmount > 0) {
+            // Assume 50-50 split by default
+            shareAmountField.value = (totalAmount / 2).toFixed(2);
+        }
+    }
+
+    suggestCategory(notes) {
+        if (!notes || notes.length < 3) {
+            this.hideCategorySuggestion();
+            return;
+        }
+
+        const categoryKeywords = {
+            food: ['restaurant', 'food', 'eat', 'lunch', 'dinner', 'breakfast', 'cafe', 'pizza', 'burger'],
+            bills: ['electricity', 'water', 'gas', 'internet', 'phone', 'rent', 'utility'],
+            shopping: ['amazon', 'flipkart', 'shopping', 'clothes', 'electronics'],
+            travel: ['uber', 'ola', 'taxi', 'bus', 'train', 'flight', 'petrol', 'fuel'],
+            entertainment: ['movie', 'cinema', 'netflix', 'spotify', 'game'],
+            healthcare: ['doctor', 'medicine', 'hospital', 'pharmacy', 'medical'],
+            education: ['book', 'course', 'tuition', 'school', 'college'],
+            fitness: ['gym', 'yoga', 'sports', 'fitness', 'workout'],
+            subscriptions: ['subscription', 'premium', 'pro', 'monthly'],
+            groceries: ['grocery', 'vegetables', 'fruits', 'supermarket', 'market']
+        };
+
+        const notesLower = notes.toLowerCase();
+        let suggestedCategory = null;
+        let maxMatches = 0;
+
+        Object.entries(categoryKeywords).forEach(([category, keywords]) => {
+            const matches = keywords.filter(keyword => notesLower.includes(keyword)).length;
+            if (matches > maxMatches) {
+                maxMatches = matches;
+                suggestedCategory = category;
+            }
+        });
+
+        if (suggestedCategory && maxMatches > 0) {
+            this.showCategorySuggestion(suggestedCategory);
+        } else {
+            this.hideCategorySuggestion();
+        }
+    }
+
+    showCategorySuggestion(category) {
+        const suggestionEl = document.getElementById('categorySuggestion');
+        if (suggestionEl) {
+            const categoryDisplayName = this.getCategoryDisplayName(category);
+            suggestionEl.innerHTML = `
+                <span>💡 Suggested category: <strong>${categoryDisplayName}</strong></span>
+                <button type="button" onclick="app.applyCategorySuggestion('${category}')" class="btn-link">Apply</button>
+            `;
+            suggestionEl.style.display = 'block';
+        }
+    }
+
+    hideCategorySuggestion() {
+        const suggestionEl = document.getElementById('categorySuggestion');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+    }
+
+    applyCategorySuggestion(category) {
+        document.getElementById('expenseCategory').value = category;
+        this.hideCategorySuggestion();
+    }
+
+    getCategoryIcon(category) {
+        const categoryIcons = {
+            'food': '🍕',
+            'bills': '📧',
+            'shopping': '🛍️',
+            'travel': '✈️',
+            'entertainment': '🎬',
+            'healthcare': '🏥',
+            'education': '📚',
+            'fitness': '💪',
+            'subscriptions': '📺',
+            'groceries': '🛒',
+            'clothing': '👕',
+            'other': '📦'
+        };
+        return categoryIcons[category] || '📦';
+    }
+
+    resetExpenseForm() {
+        const form = document.getElementById('expenseForm');
+        if (form) {
+            form.reset();
+            delete form.dataset.editId;
+
+            // Reset dynamic elements
+            const recurringOptions = document.getElementById('recurringOptions');
+            const sharedOptions = document.getElementById('sharedOptions');
+
+            if (recurringOptions) recurringOptions.style.display = 'none';
+            if (sharedOptions) sharedOptions.style.display = 'none';
+
+            this.hideCategorySuggestion();
+            this.hideForecast();
+
+            // Set default date to today
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+
+            // Reset modal title
+            document.getElementById('expenseModalTitle').textContent = 'Add New Expense';
+        }
+    }
+
+    learnFromExpense(expenseData) {
+        // Store patterns for smart suggestions
+        const patterns = JSON.parse(localStorage.getItem('expense_patterns') || '{}');
+
+        // Store category-description patterns
+        if (expenseData.notes) {
+            const key = `${expenseData.category}_descriptions`;
+            if (!patterns[key]) patterns[key] = [];
+            if (!patterns[key].includes(expenseData.notes)) {
+                patterns[key].push(expenseData.notes);
+                patterns[key] = patterns[key].slice(-10); // Keep only last 10
+            }
+        }
+
+        // Store category-amount patterns
+        const amountKey = `${expenseData.category}_amounts`;
+        if (!patterns[amountKey]) patterns[amountKey] = [];
+        patterns[amountKey].push(expenseData.amount);
+        patterns[amountKey] = patterns[amountKey].slice(-20); // Keep only last 20
+
+        localStorage.setItem('expense_patterns', JSON.stringify(patterns));
+    }
 }
 
 // Initialize the app when DOM is loaded
