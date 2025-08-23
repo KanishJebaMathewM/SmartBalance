@@ -3184,7 +3184,8 @@ class WorkLifeBalanceApp {
 
     // handleHabitSubmit removed - habit creation functionality no longer needed
 
-    handleGoalSubmit(e) {
+    // handleGoalSubmit removed - goal creation functionality no longer needed
+    handleGoalSubmitRemoved(e) {
         e.preventDefault();
 
         const goalData = {
@@ -6948,7 +6949,7 @@ class WorkLifeBalanceApp {
         const priorityActions = [
             {
                 category: 'fitness',
-                categoryIcon: '💪',
+                categoryIcon: '����',
                 title: 'Exercise Regularly',
                 description: 'Do at least 20 minutes of physical activity',
                 frequency: '3-4 times this week',
