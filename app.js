@@ -97,7 +97,8 @@ class WorkLifeBalanceApp {
             'breathingBtn': 'breathingModal',
             'addHabitBtn': 'habitModal',
             'addGoalBtn': 'goalModal',
-            'setIncomeBtn': 'incomeModal'
+            'setIncomeBtn': 'incomeModal',
+            'viewMealCalendarBtn': () => this.viewMealCalendar()
         };
 
         Object.entries(modalTriggers).forEach(([buttonId, modalId]) => {
