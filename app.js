@@ -58,6 +58,9 @@ class WorkLifeBalanceApp {
         // Expense tabs
         this.initializeExpenseTabHandlers();
 
+        // Habit tabs
+        this.initializeHabitTabHandlers();
+
         // Calendar handlers
         this.initializeCalendarHandlers();
     }
