@@ -1522,7 +1522,7 @@
                             </div>
 
                             <div class="correlation-card">
-                                <h4>😌 Mood → ��� Spending</h4>
+                                <h4>😌 Mood → 💰 Spending</h4>
                                 <div class="correlation-strength" id="moodSpendingCorrelation">
                                     <div class="correlation-bar">
                                         <div class="correlation-fill" style="width: 0%"></div>
@@ -1591,68 +1591,23 @@
                     </div>
                 </div>
 
-                <!-- Habit Goals Tab -->
-                <div id="habit-goals" class="tab-content">
-                    <div class="goals-dashboard">
-                        <h3>🎯 Your Goals & Milestones</h3>
-
-                        <div class="goals-grid">
-                            <div class="goal-card active-goal">
-                                <h4>30-Day Fitness Challenge</h4>
-                                <div class="goal-progress">
-                                    <div class="progress-circle">
-                                        <div class="progress-value" id="fitnessGoalProgress">0%</div>
-                                    </div>
-                                    <div class="goal-details">
-                                        <p>Exercise 25 days this month</p>
-                                        <span class="goal-status" id="fitnessGoalStatus">0/25 days completed</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="goal-card active-goal">
-                                <h4>Healthy Eating Streak</h4>
-                                <div class="goal-progress">
-                                    <div class="progress-circle">
-                                        <div class="progress-value" id="nutritionGoalProgress">0%</div>
-                                    </div>
-                                    <div class="goal-details">
-                                        <p>Cook at home 20 days this month</p>
-                                        <span class="goal-status" id="nutritionGoalStatus">0/20 days completed</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="goal-card active-goal">
-                                <h4>Productivity Boost</h4>
-                                <div class="goal-progress">
-                                    <div class="progress-circle">
-                                        <div class="progress-value" id="productivityGoalProgress">0%</div>
-                                    </div>
-                                    <div class="goal-details">
-                                        <p>Complete daily tasks 90% of the time</p>
-                                        <span class="goal-status" id="productivityGoalStatus">0% completion rate</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="goal-card active-goal">
-                                <h4>Stress Management</h4>
-                                <div class="goal-progress">
-                                    <div class="progress-circle">
-                                        <div class="progress-value" id="stressGoalProgress">0%</div>
-                                    </div>
-                                    <div class="goal-details">
-                                        <p>Practice mindfulness 15 days this month</p>
-                                        <span class="goal-status" id="stressGoalStatus">0/15 days completed</span>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Progress Analysis Tab -->
+                <div id="progress-analysis" class="tab-content">
+                    <div class="progress-overview">
+                        <h3>📈 Overall Progress Tracking</h3>
+                        <div class="progress-metrics" id="progressMetrics">
+                            <!-- Progress metrics will be displayed here -->
                         </div>
+                    </div>
 
-                        <div class="goal-actions">
-                            <button class="btn-primary" id="addGoalBtn">+ Add Custom Goal</button>
-                            <button class="btn-secondary" id="editGoalsBtn">✏️ Edit Goals</button>
+                    <div class="progress-trends">
+                        <h3>📊 Trend Analysis</h3>
+                        <div class="chart-container">
+                            <h4>Monthly Progress Trends</h4>
+                            <canvas id="progressTrendsChart" width="600" height="300"></canvas>
+                        </div>
+                        <div class="progress-insights" id="progressInsights">
+                            <!-- Progress insights will be shown here -->
                         </div>
                     </div>
                 </div>
