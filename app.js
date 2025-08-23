@@ -1550,6 +1550,29 @@ class WorkLifeBalanceApp {
         this.loadPantryItems();
         this.updateMealPlan();
         this.updateFoodStats();
+
+        // Load additional features if functions exist
+        if (typeof this.loadSavedMealPlan === 'function') {
+            this.loadSavedMealPlan();
+        }
+        if (typeof this.updateFoodAnalytics === 'function') {
+            this.updateFoodAnalytics();
+        }
+        if (typeof this.loadDailyFoodTracking === 'function') {
+            this.loadDailyFoodTracking();
+        }
+        if (typeof this.loadHomeVsHotelAnalysis === 'function') {
+            this.loadHomeVsHotelAnalysis();
+        }
+        if (typeof this.initializeInteractiveMealPlanner === 'function') {
+            this.initializeInteractiveMealPlanner();
+        }
+        if (typeof this.loadMealPlanner === 'function') {
+            this.loadMealPlanner();
+        }
+        if (typeof this.loadFoodAnalytics === 'function') {
+            this.loadFoodAnalytics();
+        }
     }
 
     loadPantryItems() {
