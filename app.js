@@ -124,6 +124,18 @@ class WorkLifeBalanceApp {
         if (foodForm) {
             foodForm.addEventListener('submit', (e) => this.handleFoodSubmit(e));
         }
+
+        // Habit form
+        const habitForm = document.getElementById('habitForm');
+        if (habitForm) {
+            habitForm.addEventListener('submit', (e) => this.handleHabitSubmit(e));
+        }
+
+        // Goal form
+        const goalForm = document.getElementById('goalForm');
+        if (goalForm) {
+            goalForm.addEventListener('submit', (e) => this.handleGoalSubmit(e));
+        }
     }
 
     initializeButtonHandlers() {
