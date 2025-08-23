@@ -1896,44 +1896,6 @@ class WorkLifeBalanceApp {
         });
     }
 
-    markWorkout() {
-        const today = new Date().toDateString();
-        const workouts = window.storage.getWorkouts();
-        
-        // Check if already worked out today
-        const alreadyWorkedOut = workouts.some(w => 
-            new Date(w.createdAt).toDateString() === today
-        );
-        
-        if (alreadyWorkedOut) {
-            Utils.showNotification('You already marked a workout today!', 'info');
-            return;
-        }
-        
-        window.storage.addWorkout({
-            type: 'general',
-            duration: 30,
-            calories: 200,
-            createdAt: new Date().toISOString()
-        });
-
-        Utils.showNotification('💪 Workout marked! Keep up the great work!', 'success');
-
-        // Check for new badges
-        const data = {
-            workouts: window.storage.getWorkouts(),
-            tasks: window.storage.getTasks(),
-            expenses: window.storage.getExpenses()
-        };
-        Utils.checkBadgeEligibility(data);
-
-        // Update fitness data and dashboard
-        if (this.currentSection === 'fitness') {
-            this.loadFitnessData();
-            this.updateFitnessStats();
-        }
-        this.updateDashboard();
-    }
 
     startExercise(exerciseType) {
         const exercise = Utils.getExerciseInstructions(exerciseType);
@@ -2371,7 +2333,7 @@ class WorkLifeBalanceApp {
             entertainment: '🎬',
             healthcare: '🏥',
             education: '📚',
-            other: '📦'
+            other: '����'
         };
         return icons[category] || '📦';
     }
@@ -5351,7 +5313,7 @@ class WorkLifeBalanceApp {
                         <p class="meal-name">${Utils.sanitizeInput(meal.name)}</p>
                         <div class="meal-details">
                             <span class="calories">${meal.calories} cal</span>
-                            <span class="cost">���${meal.source === 'home' ? (meal.ingredientCost || 0) : ((parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0))}</span>
+                            <span class="cost">₹${meal.source === 'home' ? (meal.ingredientCost || 0) : ((parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0))}</span>
                         </div>
                         <div class="meal-source-indicator ${meal.source}">
                             <span>${meal.source === 'home' ? '🏠' : '🏨'}</span>
@@ -8142,7 +8104,7 @@ class WorkLifeBalanceApp {
         const priorityActions = [
             {
                 category: 'fitness',
-                categoryIcon: '��������',
+                categoryIcon: '������',
                 title: 'Exercise Regularly',
                 description: 'Do at least 20 minutes of physical activity',
                 frequency: '3-4 times this week',
@@ -8593,7 +8555,7 @@ class WorkLifeBalanceApp {
         });
 
         const avgMood = moodScores.reduce((sum, score) => sum + score, 0) / moodScores.length;
-        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '��' : '😓';
+        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '����' : '😓';
 
         return `
             <div class="summary-card">
