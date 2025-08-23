@@ -1071,7 +1071,7 @@ class WorkLifeBalanceApp {
         // Load all analytics charts
         this.charts.createSpendingTrendChart('spendingTrendChart', expenses, 'month');
         this.charts.createCategoryAnalysisChart('categoryAnalysisChart', expenses, 'pie');
-        this.charts.createGrowthAnalysisChart('growthAnalysisChart', expenses);
+        this.charts.createPaymentMethodChart('paymentMethodChart', expenses);
         this.charts.createComparisonChart('comparisonChart', expenses, 'month-over-month');
 
         this.generateAnalyticsInsights(expenses);
