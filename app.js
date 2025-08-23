@@ -1144,10 +1144,10 @@ class WorkLifeBalanceApp {
         const expenses = window.storage.getExpenses();
 
         // Load all analytics charts
-        this.charts.createSpendingTrendChart('spendingTrendChart', expenses, 'month');
+        this.charts.createSpendingTrendChart('spendingTrendChart', expenses);
         this.charts.createCategoryAnalysisChart('categoryAnalysisChart', expenses, 'pie');
         this.charts.createPaymentMethodChart('paymentMethodChart', expenses);
-        this.charts.createComparisonChart('comparisonChart', expenses, 'month-over-month');
+        this.charts.createComparisonChart('comparisonChart', expenses);
 
         this.generateAnalyticsInsights(expenses);
     }
@@ -2303,22 +2303,7 @@ class WorkLifeBalanceApp {
             });
         });
 
-        // Period control handlers
-        const trendPeriodSelect = document.getElementById('trendPeriod');
-        if (trendPeriodSelect) {
-            trendPeriodSelect.addEventListener('change', (e) => {
-                const expenses = window.storage.getExpenses();
-                this.charts.createSpendingTrendChart('spendingTrendChart', expenses, e.target.value);
-            });
-        }
-
-        const comparisonTypeSelect = document.getElementById('comparisonType');
-        if (comparisonTypeSelect) {
-            comparisonTypeSelect.addEventListener('change', (e) => {
-                const expenses = window.storage.getExpenses();
-                this.charts.createComparisonChart('comparisonChart', expenses, e.target.value);
-            });
-        }
+        // Note: Period controls removed - charts now show fixed data visualization
 
         // Budget form handler
         const budgetForm = document.getElementById('budgetForm');
