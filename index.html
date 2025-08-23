@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work-Life Balance Companion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>💼 WLB Companion</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" data-section="dashboard" class="nav-link active">
+                    <span class="icon">🏠</span> Dashboard
+                </a></li>
+                <li><a href="#" data-section="tasks" class="nav-link">
+                    <span class="icon">📑</span> Tasks
+                </a></li>
+                <li><a href="#" data-section="expenses" class="nav-link">
+                    <span class="icon">💰</span> Expenses
+                </a></li>
+                <li><a href="#" data-section="food" class="nav-link">
+                    <span class="icon">🍲</span> Food & Nutrition
+                </a></li>
+                <li><a href="#" data-section="fitness" class="nav-link">
+                    <span class="icon">🏋️</span> Fitness
+                </a></li>
+                <li><a href="#" data-section="stress" class="nav-link">
+                    <span class="icon">😌</span> Stress & Mood
+                </a></li>
+                <li><a href="#" data-section="report" class="nav-link">
+                    <span class="icon">📊</span> Weekly Report
+                </a></li>
+            </ul>
+            <div class="theme-toggle">
+                <button id="darkModeToggle">🌙 Dark Mode</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h1 id="greeting">Hello there, here's your day at a glance.</h1>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="widget task-widget">
+                        <h3>📑 Tasks Today</h3>
+                        <div class="widget-content">
+                            <div class="stat-number" id="tasksCompleted">0</div>
+                            <div class="stat-label">Completed / <span id="totalTasks">0</span> Total</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="taskProgress"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget expense-widget">
+                        <h3>💰 Weekly Spending</h3>
+                        <div class="widget-content">
+                            <div class="stat-number" id="weeklyExpense">₹0</div>
+                            <div class="stat-label">This Week</div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget food-widget">
+                        <h3>🍲 Today's Meal</h3>
+                        <div class="widget-content">
+                            <div id="mealSuggestion">Healthy Oats Bowl</div>
+                            <div class="stat-label">Suggested</div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget fitness-widget">
+                        <h3>🏋️ Workout Streak</h3>
+                        <div class="widget-content">
+                            <div class="stat-number" id="workoutStreak">0</div>
+                            <div class="stat-label">Days 🔥</div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget stress-widget">
+                        <h3>😌 Stress Level</h3>
+                        <div class="widget-content">
+                            <div class="stress-emoji" id="currentStress">😐</div>
+                            <div class="stat-label">Today</div>
+                        </div>
+                    </div>
+                    
+                    <div class="widget summary-widget">
+                        <h3>📊 Weekly Summary</h3>
+                        <div class="widget-content">
+                            <p id="weeklySummary">You completed 80% of tasks, spent ₹4200, cooked 3 healthy meals, did 4 workouts, stress was high on 2 days.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Task Manager Section -->
+            <section id="tasks" class="section">
+                <div class="section-header">
+                    <h1>📑 Task Manager</h1>
+                    <button class="btn-primary" id="addTaskBtn">+ Add Task</button>
+                </div>
+                
+                <div class="task-stats">
+                    <div class="stat-card">
+                        <span id="taskStreak">0</span>
+                        <label>Day Streak</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="todayProgress">0%</span>
+                        <label>Today's Progress</label>
+                    </div>
+                </div>
+
+                <div class="task-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="today">Today</button>
+                    <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                </div>
+
+                <div class="task-list" id="taskList">
+                    <!-- Tasks will be dynamically added here -->
+                </div>
+
+                <!-- Add Task Modal -->
+                <div id="taskModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Add New Task</h2>
+                        <form id="taskForm">
+                            <input type="text" id="taskTitle" placeholder="Task title" required>
+                            <select id="taskCategory">
+                                <option value="work">Work</option>
+                                <option value="personal">Personal</option>
+                                <option value="reminder">Reminder</option>
+                            </select>
+                            <input type="date" id="taskDate">
+                            <label>
+                                <input type="checkbox" id="taskExpense"> Expense-related
+                            </label>
+                            <input type="number" id="taskAmount" placeholder="Amount (₹)" style="display:none;">
+                            <button type="submit" class="btn-primary">Add Task</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Expense Tracker Section -->
+            <section id="expenses" class="section">
+                <div class="section-header">
+                    <h1>💰 Expense Tracker</h1>
+                    <button class="btn-primary" id="addExpenseBtn">+ Add Expense</button>
+                </div>
+
+                <div class="expense-stats">
+                    <div class="stat-card">
+                        <span id="dailySpending">₹0</span>
+                        <label>Today</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="weeklySpending">₹0</span>
+                        <label>This Week</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="monthlySpending">₹0</span>
+                        <label>This Month</label>
+                    </div>
+                </div>
+
+                <div class="savings-goal">
+                    <h3>Savings Goal</h3>
+                    <div class="goal-progress">
+                        <span>This month's goal: ₹10,000 saved</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="savingsProgress"></div>
+                        </div>
+                        <span id="savingsAmount">Progress: ₹6,500</span>
+                    </div>
+                </div>
+
+                <div class="expense-chart">
+                    <canvas id="expenseChart" width="400" height="400"></canvas>
+                </div>
+
+                <div class="expense-list" id="expenseList">
+                    <!-- Expenses will be dynamically added here -->
+                </div>
+
+                <!-- Add Expense Modal -->
+                <div id="expenseModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Add New Expense</h2>
+                        <form id="expenseForm">
+                            <input type="number" id="expenseAmount" placeholder="Amount (₹)" required>
+                            <select id="expenseCategory">
+                                <option value="food">Food</option>
+                                <option value="bills">Bills</option>
+                                <option value="shopping">Shopping</option>
+                                <option value="travel">Travel</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <input type="text" id="expenseNotes" placeholder="Notes">
+                            <input type="date" id="expenseDate">
+                            <button type="submit" class="btn-primary">Add Expense</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Food & Nutrition Section -->
+            <section id="food" class="section">
+                <div class="section-header">
+                    <h1>🍲 Food & Nutrition Planner</h1>
+                    <button class="btn-primary" id="addFoodBtn">+ Add Food Item</button>
+                </div>
+
+                <div class="food-stats">
+                    <div class="stat-card">
+                        <span id="homeMeals">3</span>
+                        <label>Home Meals</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="moneySaved">₹450</span>
+                        <label>Money Saved</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="caloriesConsumed">1850</span>
+                        <label>Calories Today</label>
+                    </div>
+                </div>
+
+                <div class="meal-planner">
+                    <h3>Today's Meal Plan</h3>
+                    <div class="meal-grid">
+                        <div class="meal-card">
+                            <h4>Breakfast</h4>
+                            <p id="breakfastMeal">Oats with fruits</p>
+                            <span>250 cal • ₹30</span>
+                        </div>
+                        <div class="meal-card">
+                            <h4>Lunch</h4>
+                            <p id="lunchMeal">Rice with dal</p>
+                            <span>400 cal • ₹50</span>
+                        </div>
+                        <div class="meal-card">
+                            <h4>Dinner</h4>
+                            <p id="dinnerMeal">Chapati with vegetables</p>
+                            <span>350 cal • ₹40</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-card">
+                    <h3>Smart Choice Comparison</h3>
+                    <div class="comparison">
+                        <div class="option home-option">
+                            <h4>Home-cooked Meal</h4>
+                            <p>₹120 • 600 cal • Healthy</p>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="option delivery-option">
+                            <h4>Delivery Order</h4>
+                            <p>₹350 • 900 cal • High sodium</p>
+                        </div>
+                    </div>
+                    <p class="savings-highlight">💡 Save ₹230 and 300 calories by cooking at home!</p>
+                </div>
+
+                <div class="pantry-section">
+                    <h3>Your Pantry</h3>
+                    <div class="pantry-list" id="pantryList">
+                        <!-- Pantry items will be added here -->
+                    </div>
+                </div>
+
+                <!-- Add Food Modal -->
+                <div id="foodModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Add Food Item</h2>
+                        <form id="foodForm">
+                            <input type="text" id="foodName" placeholder="Food item name" required>
+                            <input type="number" id="foodQuantity" placeholder="Quantity" required>
+                            <input type="text" id="foodUnit" placeholder="Unit (kg, pieces, etc.)">
+                            <input type="date" id="foodExpiry" placeholder="Expiry date">
+                            <button type="submit" class="btn-primary">Add to Pantry</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Fitness Section -->
+            <section id="fitness" class="section">
+                <div class="section-header">
+                    <h1>🏋️ Fitness & Home Workouts</h1>
+                    <button class="btn-primary" id="markWorkoutBtn">✓ Mark Today's Workout</button>
+                </div>
+
+                <div class="fitness-stats">
+                    <div class="stat-card">
+                        <span id="fitnessStreak">0</span>
+                        <label>Day Streak 🔥</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="weeklyWorkouts">4/7</span>
+                        <label>This Week</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="totalWorkouts">25</span>
+                        <label>Total Workouts</label>
+                    </div>
+                </div>
+
+                <div class="workout-categories">
+                    <h3>Today's Recommended Exercises</h3>
+                    <div class="exercise-grid">
+                        <div class="exercise-card" data-exercise="desk-stretches">
+                            <h4>🪑 Desk Stretches</h4>
+                            <p>5-minute neck and shoulder relief</p>
+                            <button class="btn-secondary">Start Exercise</button>
+                        </div>
+                        <div class="exercise-card" data-exercise="eye-exercises">
+                            <h4>👁️ Eye Exercises</h4>
+                            <p>Reduce eye strain from screens</p>
+                            <button class="btn-secondary">Start Exercise</button>
+                        </div>
+                        <div class="exercise-card" data-exercise="posture-fix">
+                            <h4>🧍 Posture Fix</h4>
+                            <p>Improve sitting posture</p>
+                            <button class="btn-secondary">Start Exercise</button>
+                        </div>
+                        <div class="exercise-card" data-exercise="yoga">
+                            <h4>🧘 5-min Yoga</h4>
+                            <p>Quick relaxation routine</p>
+                            <button class="btn-secondary">Start Exercise</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="badges-section">
+                    <h3>Achievement Badges</h3>
+                    <div class="badges" id="badgesList">
+                        <div class="badge locked">
+                            <span>🏆</span>
+                            <p>First Workout</p>
+                        </div>
+                        <div class="badge locked">
+                            <span>🔥</span>
+                            <p>7-Day Streak</p>
+                        </div>
+                        <div class="badge locked">
+                            <span>👑</span>
+                            <p>Consistency King</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercise Modal -->
+                <div id="exerciseModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2 id="exerciseTitle">Exercise</h2>
+                        <div id="exerciseInstructions">
+                            <!-- Exercise instructions will be loaded here -->
+                        </div>
+                        <button class="btn-primary" id="completeExerciseBtn">Mark as Complete</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stress & Mood Section -->
+            <section id="stress" class="section">
+                <div class="section-header">
+                    <h1>😌 Stress & Mood Tracker</h1>
+                    <button class="btn-primary" id="moodCheckBtn">Check-in Today</button>
+                </div>
+
+                <div class="mood-checkin">
+                    <h3>How are you feeling today?</h3>
+                    <div class="mood-options">
+                        <button class="mood-btn" data-mood="very-happy">😃</button>
+                        <button class="mood-btn" data-mood="happy">🙂</button>
+                        <button class="mood-btn" data-mood="neutral">😐</button>
+                        <button class="mood-btn" data-mood="stressed">😓</button>
+                        <button class="mood-btn" data-mood="very-stressed">😭</button>
+                    </div>
+                </div>
+
+                <div class="mood-chart">
+                    <h3>Weekly Mood Trend</h3>
+                    <canvas id="moodChart" width="600" height="300"></canvas>
+                </div>
+
+                <div class="insights-section">
+                    <h3>🧠 Insights & Correlations</h3>
+                    <div class="insight-cards" id="insightCards">
+                        <div class="insight-card">
+                            <h4>💰 Spending Pattern</h4>
+                            <p>You tend to be more stressed on days with higher spending</p>
+                        </div>
+                        <div class="insight-card">
+                            <h4>🏋️ Workout Impact</h4>
+                            <p>Your mood is 30% better on workout days</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stress-relief">
+                    <h3>🧘 Stress Relief Suggestions</h3>
+                    <div class="relief-options">
+                        <button class="relief-btn" id="breathingBtn">🫁 Breathing Exercise</button>
+                        <button class="relief-btn" id="meditationBtn">🧘 5-min Meditation</button>
+                        <button class="relief-btn" id="stretchBtn">🤸 Stand & Stretch</button>
+                    </div>
+                </div>
+
+                <!-- Breathing Exercise Modal -->
+                <div id="breathingModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>🫁 Breathing Exercise</h2>
+                        <div class="breathing-circle" id="breathingCircle">
+                            <div class="circle"></div>
+                            <p id="breathingText">Click Start to begin</p>
+                        </div>
+                        <button class="btn-primary" id="startBreathingBtn">Start Exercise</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weekly Report Section -->
+            <section id="report" class="section">
+                <div class="section-header">
+                    <h1>📊 Weekly Report</h1>
+                    <button class="btn-secondary" id="exportBtn">📄 Export Report</button>
+                </div>
+
+                <div class="report-summary">
+                    <div class="summary-grid">
+                        <div class="summary-card tasks-summary">
+                            <h3>✅ Tasks Completed</h3>
+                            <div class="big-stat" id="reportTasksCompleted">85%</div>
+                            <p id="reportTasksDetail">17/20 tasks completed this week</p>
+                        </div>
+                        
+                        <div class="summary-card expense-summary">
+                            <h3>💰 Total Spending</h3>
+                            <div class="big-stat" id="reportTotalSpent">₹4,200</div>
+                            <p id="reportExpenseDetail">Top categories: Food, Bills, Shopping</p>
+                        </div>
+                        
+                        <div class="summary-card food-summary">
+                            <h3>🍲 Healthy Meals</h3>
+                            <div class="big-stat" id="reportHealthyMeals">5/7</div>
+                            <p id="reportFoodDetail">Cooked at home 5 days, saved ₹1,200</p>
+                        </div>
+                        
+                        <div class="summary-card fitness-summary">
+                            <h3>🏋️ Workout Days</h3>
+                            <div class="big-stat" id="reportWorkoutDays">4/7</div>
+                            <p id="reportFitnessDetail">Maintained 8-day streak</p>
+                        </div>
+                        
+                        <div class="summary-card stress-summary">
+                            <h3>😌 Stress Levels</h3>
+                            <div class="big-stat" id="reportStressLevel">Medium</div>
+                            <p id="reportStressDetail">High stress on 2 days, low on 3 days</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="personalized-advice">
+                    <h3>🎯 Personalized Advice</h3>
+                    <div class="advice-card" id="personalizedAdvice">
+                        <p>You spent too much on food delivery this week. Try cooking twice more at home next week to save ₹1,500 and reduce stress. Your workout consistency is great - keep it up!</p>
+                    </div>
+                </div>
+
+                <div class="weekly-trends">
+                    <h3>📈 Weekly Trends</h3>
+                    <canvas id="trendsChart" width="800" height="400"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="storage.js"></script>
+    <script src="utils.js"></script>
+    <script src="charts.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
