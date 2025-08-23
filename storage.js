@@ -359,6 +359,167 @@ class Storage {
         return 'very-stressed';
     }
 
+    // Enhanced expense analytics methods
+    getExpensesByCategory(timeframe = 'all') {
+        const expenses = this.getExpenses();
+        let filteredExpenses = expenses;
+
+        if (timeframe !== 'all') {
+            const now = new Date();
+            let startDate;
+
+            switch (timeframe) {
+                case 'week':
+                    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'month':
+                    startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    break;
+                case 'year':
+                    startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+                    break;
+                default:
+                    startDate = new Date(0);
+            }
+
+            filteredExpenses = expenses.filter(expense =>
+                new Date(expense.createdAt) >= startDate
+            );
+        }
+
+        const categoryTotals = {};
+        filteredExpenses.forEach(expense => {
+            const category = expense.category;
+            categoryTotals[category] = (categoryTotals[category] || 0) + parseFloat(expense.amount);
+        });
+
+        return categoryTotals;
+    }
+
+    getExpensesByPaymentMethod(timeframe = 'month') {
+        const expenses = this.getExpenses();
+        const now = new Date();
+        const startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        const recentExpenses = expenses.filter(expense =>
+            new Date(expense.createdAt) >= startDate
+        );
+
+        const paymentMethodTotals = {};
+        recentExpenses.forEach(expense => {
+            const method = expense.paymentMethod || 'cash';
+            paymentMethodTotals[method] = (paymentMethodTotals[method] || 0) + parseFloat(expense.amount);
+        });
+
+        return paymentMethodTotals;
+    }
+
+    getBudgetStatus() {
+        const settings = this.getSettings();
+        const budgets = settings.categoryBudgets || {};
+        const categoryExpenses = this.getExpensesByCategory('month');
+
+        const budgetStatus = {};
+        Object.keys(budgets).forEach(category => {
+            const budgetAmount = budgets[category];
+            const spentAmount = categoryExpenses[category] || 0;
+            const remaining = budgetAmount - spentAmount;
+            const percentage = (spentAmount / budgetAmount) * 100;
+
+            budgetStatus[category] = {
+                budget: budgetAmount,
+                spent: spentAmount,
+                remaining: Math.max(0, remaining),
+                overBudget: remaining < 0,
+                percentage: Math.min(percentage, 100)
+            };
+        });
+
+        return budgetStatus;
+    }
+
+    getSpendingTrends(months = 6) {
+        const expenses = this.getExpenses();
+        const trends = [];
+
+        for (let i = months - 1; i >= 0; i--) {
+            const date = new Date();
+            date.setMonth(date.getMonth() - i);
+            const year = date.getFullYear();
+            const month = date.getMonth();
+
+            const monthStart = new Date(year, month, 1);
+            const monthEnd = new Date(year, month + 1, 0);
+
+            const monthExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.createdAt);
+                return expenseDate >= monthStart && expenseDate <= monthEnd;
+            });
+
+            const total = monthExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+
+            trends.push({
+                month: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                total,
+                count: monthExpenses.length,
+                average: monthExpenses.length > 0 ? total / monthExpenses.length : 0
+            });
+        }
+
+        return trends;
+    }
+
+    getTopSpendingDays(limit = 10) {
+        const expenses = this.getExpenses();
+        const dailyTotals = {};
+
+        expenses.forEach(expense => {
+            const date = new Date(expense.createdAt).toDateString();
+            dailyTotals[date] = (dailyTotals[date] || 0) + parseFloat(expense.amount);
+        });
+
+        return Object.entries(dailyTotals)
+            .map(([date, total]) => ({ date, total }))
+            .sort((a, b) => b.total - a.total)
+            .slice(0, limit);
+    }
+
+    getExpenseForecast() {
+        const trends = this.getSpendingTrends(3);
+        if (trends.length < 2) {
+            return { nextMonth: 0, confidence: 0 };
+        }
+
+        // Simple linear trend calculation
+        const recentTotals = trends.map(t => t.total);
+        const avg = recentTotals.reduce((sum, val) => sum + val, 0) / recentTotals.length;
+
+        // Calculate trend direction
+        const firstHalf = recentTotals.slice(0, Math.floor(recentTotals.length / 2));
+        const secondHalf = recentTotals.slice(Math.floor(recentTotals.length / 2));
+
+        const firstAvg = firstHalf.reduce((sum, val) => sum + val, 0) / firstHalf.length;
+        const secondAvg = secondHalf.reduce((sum, val) => sum + val, 0) / secondHalf.length;
+
+        const trendFactor = secondAvg / firstAvg;
+        const forecast = avg * trendFactor;
+
+        // Calculate confidence based on consistency
+        const variance = recentTotals.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / recentTotals.length;
+        const stdDev = Math.sqrt(variance);
+        const confidence = Math.max(50, 100 - (stdDev / avg) * 100);
+
+        return {
+            nextMonth: Math.max(0, forecast),
+            confidence: Math.min(95, Math.round(confidence))
+        };
+    }
+
+    getRecurringExpenses() {
+        const expenses = this.getExpenses();
+        return expenses.filter(expense => expense.recurring === true);
+    }
+
     // Export data
     exportData() {
         return {
