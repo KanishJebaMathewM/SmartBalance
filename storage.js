@@ -52,18 +52,22 @@ class Storage {
                 { id: 7, name: 'Rava (Semolina)', quantity: 1, unit: 'kg', expiry: '2024-09-30', caloriesPer100g: 150 },
                 { id: 8, name: 'Idli Rice', quantity: 2, unit: 'kg', expiry: '2024-08-20', calories: 130 },
                 { id: 9, name: 'Fenugreek Seeds', quantity: 100, unit: 'g', expiry: '2024-12-31', calories: 8 },
-                { id: 10, name: 'Tamarind', quantity: 250, unit: 'g', expiry: '2024-11-15', calories: 25 },
+                { id: 10, name: 'Tamarind', quantity: 250, unit: 'g', expiry: '2024-11-15', caloriesPer100g: 25 },
 
                 // Flours and grains
-                { id: 11, name: 'Ragi Flour', quantity: 1, unit: 'kg', expiry: '2024-07-30', calories: 140 },
-                { id: 12, name: 'Besan (Gram Flour)', quantity: 500, unit: 'g', expiry: '2024-08-15', calories: 110 },
-                { id: 13, name: 'Oats', quantity: 1, unit: 'kg', expiry: '2024-09-10', calories: 150 },
+                { id: 11, name: 'Ragi Flour', quantity: 1, unit: 'kg', expiry: '2024-07-30', caloriesPer100g: 140 },
+                { id: 12, name: 'Besan (Gram Flour)', quantity: 500, unit: 'g', expiry: '2024-08-15', caloriesPer100g: 110 },
+                { id: 13, name: 'Oats', quantity: 1, unit: 'kg', expiry: '2024-09-10', caloriesPer100g: 150 },
 
                 // Spices and seasonings
-                { id: 14, name: 'Hing (Asafoetida)', quantity: 50, unit: 'g', expiry: '2025-06-01', calories: 2 },
-                { id: 15, name: 'Turmeric Powder', quantity: 200, unit: 'g', expiry: '2024-12-31', calories: 3 },
-                { id: 16, name: 'Red Chili Powder', quantity: 200, unit: 'g', expiry: '2024-11-30', calories: 5 }
+                { id: 14, name: 'Hing (Asafoetida)', quantity: 50, unit: 'g', expiry: '2025-06-01', caloriesPer100g: 2 },
+                { id: 15, name: 'Turmeric Powder', quantity: 200, unit: 'g', expiry: '2024-12-31', caloriesPer100g: 3 },
+                { id: 16, name: 'Red Chili Powder', quantity: 200, unit: 'g', expiry: '2024-11-30', caloriesPer100g: 5 }
             ]);
+        }
+
+        if (!this.get(this.keys.meals)) {
+            this.set(this.keys.meals, []);
         }
 
         if (!this.get(this.keys.workouts)) {
