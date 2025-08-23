@@ -55,6 +55,32 @@ class WorkLifeBalanceApp {
         this.updateFitnessStats = this.updateFitnessStatsEnhanced;
     }
 
+    verifyFitnessFunctionality() {
+        console.log('✅ Fitness functionality verification:');
+        console.log('✅ Enhanced startExercise method:', typeof this.startExercise === 'function');
+        console.log('✅ Enhanced completeExercise method:', typeof this.completeExercise === 'function');
+        console.log('✅ Enhanced loadFitnessData method:', typeof this.loadFitnessData === 'function');
+        console.log('✅ Enhanced updateFitnessStats method:', typeof this.updateFitnessStats === 'function');
+
+        // Check if DOM elements exist
+        const elements = [
+            'fitnessStreak',
+            'weeklyWorkouts',
+            'totalWorkouts',
+            'totalCaloriesBurnt',
+            'exerciseModal',
+            'completeExerciseBtn',
+            'skipExerciseBtn'
+        ];
+
+        elements.forEach(id => {
+            const element = document.getElementById(id);
+            console.log(`✅ Element #${id}:`, element ? 'Found' : 'Not found');
+        });
+
+        console.log('✅ Fitness functionality verification complete!');
+    }
+
     initializeEventListeners() {
         // Navigation
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -2492,7 +2518,7 @@ class WorkLifeBalanceApp {
             'subscriptions': '📺',
             'groceries': '🛒',
             'clothing': '👕',
-            'other': '📦'
+            'other': '��'
         };
         return categoryIcons[category] || '����';
     }
@@ -3788,7 +3814,7 @@ class WorkLifeBalanceApp {
         const instructionsHTML = `
             <div class="exercise-info">
                 <div class="exercise-meta">
-                    <span class="exercise-duration">⏱�� ${exercise.duration}</span>
+                    <span class="exercise-duration">⏱️ ${exercise.duration}</span>
                     <span class="exercise-calories">🔥 ${exercise.calories} cal</span>
                 </div>
             </div>
@@ -6372,7 +6398,7 @@ class WorkLifeBalanceApp {
         if (homeCookingRate >= 70) {
             insights.push('🍳 Excellent home cooking habits! Keep it up.');
         } else if (homeCookingRate >= 50) {
-            insights.push('🍲 Good balance of home cooking and dining out.');
+            insights.push('���� Good balance of home cooking and dining out.');
         } else {
             insights.push('🏠 Try cooking more meals at home for better health and savings.');
         }
