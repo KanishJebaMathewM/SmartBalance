@@ -3873,6 +3873,22 @@ class WorkLifeBalanceApp {
             }
         }
 
+        // Set up button handlers
+        const completeBtn = document.getElementById('completeExerciseBtn');
+        const skipBtn = document.getElementById('skipExerciseBtn');
+
+        if (completeBtn) {
+            completeBtn.onclick = () => {
+                this.completeExerciseEnhanced(exerciseType, exercise);
+            };
+        }
+
+        if (skipBtn) {
+            skipBtn.onclick = () => {
+                this.skipExercise(exerciseType, exercise);
+            };
+        }
+
         this.openModal('exerciseModal');
     }
 
