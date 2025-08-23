@@ -1110,6 +1110,50 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- Meal Calendar Modal -->
+                <div id="mealCalendarModal" class="modal">
+                    <div class="modal-content wide-modal">
+                        <span class="close">&times;</span>
+                        <h2>📅 Meal Calendar</h2>
+
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <button class="btn-small" onclick="app.navigateMealCalendar('prev')">‹</button>
+                                <h3 id="mealCalendarTitle">September 2024</h3>
+                                <button class="btn-small" onclick="app.navigateMealCalendar('next')">›</button>
+                            </div>
+
+                            <div class="meal-calendar" id="mealCalendar">
+                                <!-- Calendar will be rendered here -->
+                            </div>
+
+                            <div class="calendar-legend">
+                                <div class="legend-item">
+                                    <span class="meal-dot planned">•</span> Planned
+                                </div>
+                                <div class="legend-item">
+                                    <span class="meal-dot eaten">•</span> Eaten
+                                </div>
+                                <div class="legend-item">
+                                    <span class="meal-dot empty">•</span> Not planned
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="selected-date-info">
+                            <h4 id="selectedMealDate">Select a date to view meals</h4>
+                            <div class="selected-meals-list" id="selectedMealsList">
+                                <!-- Selected date meals will be displayed here -->
+                            </div>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="app.closeModal('mealCalendarModal')">Close</button>
+                            <button type="button" class="btn-primary" onclick="app.addCustomMeal()">Add Meal</button>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- Fitness Section -->
@@ -1380,7 +1424,7 @@
                     <h3>🧘 Stress Relief Suggestions</h3>
                     <div class="relief-options">
                         <button class="relief-btn" id="breathingBtn">🫁 Breathing Exercise</button>
-                        <button class="relief-btn" id="meditationBtn">🧘 5-min Meditation</button>
+                        <button class="relief-btn" id="meditationBtn">��� 5-min Meditation</button>
                         <button class="relief-btn" id="stretchBtn">🤸 Stand & Stretch</button>
                     </div>
                 </div>
