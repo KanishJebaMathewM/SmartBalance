@@ -1777,7 +1777,7 @@ class WorkLifeBalanceApp {
             }
             
             this.openModal('exerciseModal');
-            
+
             // Handle complete button
             const completeBtn = document.getElementById('completeExerciseBtn');
             if (completeBtn) {
@@ -1785,6 +1785,26 @@ class WorkLifeBalanceApp {
                     this.completeExercise(exerciseType, exercise);
                 };
             }
+
+            // Handle skip button
+            const skipBtn = document.getElementById('skipExerciseBtn');
+            if (skipBtn) {
+                skipBtn.onclick = () => {
+                    this.skipExercise(exerciseType, exercise);
+                };
+            }
+        }
+    }
+
+    skipExercise(exerciseType, exercise) {
+        Utils.showNotification(`Skipped ${exercise.title}. Try again later! 💪`, 'info');
+        this.closeModal('exerciseModal');
+
+        // Reset any running timers
+        if (this.exerciseTimer) {
+            clearInterval(this.exerciseTimer);
+            this.timerState = 'stopped';
+            this.timerRemaining = 0;
         }
     }
 
@@ -6691,7 +6711,7 @@ class WorkLifeBalanceApp {
 
         // Find top performing areas
         const areas = [
-            { name: 'Fitness', score: scores.fitness, icon: '💪' },
+            { name: 'Fitness', score: scores.fitness, icon: '���' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
             { name: 'Productivity', score: scores.productivity, icon: '💼' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
