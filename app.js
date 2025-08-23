@@ -5364,6 +5364,191 @@ class WorkLifeBalanceApp {
             }
         }
     }
+
+    viewMealCalendar() {
+        // Set current calendar date to today if not set
+        if (!this.currentCalendarDate) {
+            this.currentCalendarDate = new Date();
+        }
+
+        this.renderMealCalendar();
+        this.openModal('mealCalendarModal');
+    }
+
+    renderMealCalendar() {
+        const calendarEl = document.getElementById('mealCalendar');
+        if (!calendarEl) return;
+
+        const year = this.currentCalendarDate.getFullYear();
+        const month = this.currentCalendarDate.getMonth();
+
+        // Update calendar header
+        const calendarTitle = document.getElementById('mealCalendarTitle');
+        if (calendarTitle) {
+            calendarTitle.textContent = new Date(year, month).toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        // Get first day of month and last day
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const firstDayOfWeek = firstDay.getDay();
+        const daysInMonth = lastDay.getDate();
+
+        // Get meals for this month
+        const meals = window.storage.getMeals();
+        const monthMeals = meals.filter(meal => {
+            const mealDate = new Date(meal.date);
+            return mealDate.getFullYear() === year && mealDate.getMonth() === month;
+        });
+
+        // Group meals by date
+        const mealsByDate = {};
+        monthMeals.forEach(meal => {
+            const date = new Date(meal.date).getDate();
+            if (!mealsByDate[date]) {
+                mealsByDate[date] = [];
+            }
+            mealsByDate[date].push(meal);
+        });
+
+        let calendarHTML = `
+            <div class="calendar-header-row">
+                <div class="calendar-day-header">Sun</div>
+                <div class="calendar-day-header">Mon</div>
+                <div class="calendar-day-header">Tue</div>
+                <div class="calendar-day-header">Wed</div>
+                <div class="calendar-day-header">Thu</div>
+                <div class="calendar-day-header">Fri</div>
+                <div class="calendar-day-header">Sat</div>
+            </div>
+            <div class="calendar-grid">
+        `;
+
+        // Add empty cells for days before month starts
+        for (let i = 0; i < firstDayOfWeek; i++) {
+            const prevMonthDay = new Date(year, month, 0 - (firstDayOfWeek - 1 - i)).getDate();
+            calendarHTML += `<div class="calendar-day other-month"><div class="day-number">${prevMonthDay}</div></div>`;
+        }
+
+        // Add days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
+            const isSelected = this.selectedMealCalendarDate &&
+                this.selectedMealCalendarDate.getDate() === day &&
+                this.selectedMealCalendarDate.getMonth() === month &&
+                this.selectedMealCalendarDate.getFullYear() === year;
+
+            const dayMeals = mealsByDate[day] || [];
+            const mealTypes = ['breakfast', 'lunch', 'dinner'];
+            const plannedMeals = mealTypes.filter(type => dayMeals.some(m => m.type === type));
+            const eatenMeals = dayMeals.filter(m => m.status === 'eaten').length;
+
+            let mealDisplay = '';
+            if (dayMeals.length > 0) {
+                let statusClass = 'meal-partial';
+                if (eatenMeals === dayMeals.length) {
+                    statusClass = 'meal-complete';
+                } else if (plannedMeals.length === 3) {
+                    statusClass = 'meal-planned';
+                }
+
+                mealDisplay = `<div class="day-meal-indicator ${statusClass}">
+                    <div class="meal-dots">
+                        ${mealTypes.map(type => {
+                            const meal = dayMeals.find(m => m.type === type);
+                            if (meal) {
+                                return `<span class="meal-dot ${meal.status === 'eaten' ? 'eaten' : 'planned'}" title="${meal.name}">•</span>`;
+                            }
+                            return `<span class="meal-dot empty">•</span>`;
+                        }).join('')}
+                    </div>
+                </div>`;
+            }
+
+            calendarHTML += `
+                <div class="calendar-day meal-calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}"
+                     onclick="app.selectMealCalendarDate(${year}, ${month}, ${day})">
+                    <div class="day-number">${day}</div>
+                    ${mealDisplay}
+                </div>
+            `;
+        }
+
+        // Add empty cells for remaining days
+        const totalCells = Math.ceil((firstDayOfWeek + daysInMonth) / 7) * 7;
+        const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
+
+        for (let i = 1; i <= remainingCells; i++) {
+            calendarHTML += `<div class="calendar-day other-month"><div class="day-number">${i}</div></div>`;
+        }
+
+        calendarHTML += '</div>';
+        calendarEl.innerHTML = calendarHTML;
+    }
+
+    selectMealCalendarDate(year, month, day) {
+        this.selectedMealCalendarDate = new Date(year, month, day);
+        this.renderMealCalendar();
+        this.showSelectedDateMeals();
+    }
+
+    showSelectedDateMeals() {
+        if (!this.selectedMealCalendarDate) return;
+
+        const meals = window.storage.getMealsByDate(this.selectedMealCalendarDate);
+        const selectedDateEl = document.getElementById('selectedMealDate');
+        const selectedMealsList = document.getElementById('selectedMealsList');
+
+        if (selectedDateEl) {
+            selectedDateEl.textContent = this.selectedMealCalendarDate.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        if (selectedMealsList) {
+            if (meals.length === 0) {
+                selectedMealsList.innerHTML = `
+                    <div class="empty-state">
+                        <p>No meals planned for this date</p>
+                        <button class="btn-primary" onclick="app.addMealForDate('${this.selectedMealCalendarDate.toISOString().split('T')[0]}')">Plan Meals</button>
+                    </div>
+                `;
+            } else {
+                selectedMealsList.innerHTML = meals.map(meal => `
+                    <div class="meal-item">
+                        <div class="meal-info">
+                            <h4>${meal.type.charAt(0).toUpperCase() + meal.type.slice(1)}</h4>
+                            <p>${Utils.sanitizeInput(meal.name)}</p>
+                            <span class="meal-calories">${meal.calories} cal</span>
+                        </div>
+                        <div class="meal-status ${meal.status}">
+                            ${meal.status === 'eaten' ? '✅ Eaten' : '📅 Planned'}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+    }
+
+    addMealForDate(date) {
+        this.currentPlanDate = new Date(date);
+        this.closeModal('mealCalendarModal');
+        this.addCustomMeal();
+    }
+
+    navigateMealCalendar(direction) {
+        if (direction === 'prev') {
+            this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
+        } else {
+            this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
+        }
+        this.renderMealCalendar();
+    }
 }
 
 // Initialize the app when DOM is loaded
