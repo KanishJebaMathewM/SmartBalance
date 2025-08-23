@@ -58,6 +58,14 @@ class WorkLifeBalanceApp {
         // Expense tabs
         this.initializeExpenseTabHandlers();
 
+        // Calendar view toggle button
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        if (viewToggleBtn) {
+            viewToggleBtn.addEventListener('click', () => {
+                this.switchToCalendarView();
+            });
+        }
+
         // Habit tabs
         this.initializeHabitTabHandlers();
 
