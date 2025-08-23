@@ -731,7 +731,7 @@ class WorkLifeBalanceApp {
                 </div>
                 <div class="expense-amount">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
-                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
+                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑���</button>
                 </div>
             </div>
         `).join('');
@@ -1796,11 +1796,22 @@ class WorkLifeBalanceApp {
 
     // Enhanced Expense Tab Handlers
     initializeExpenseTabHandlers() {
-        document.querySelectorAll('.tab-btn').forEach(btn => {
+        // Expense tab switching
+        document.querySelectorAll('.expense-tabs .tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tab = e.target.dataset.tab;
                 if (tab) {
                     this.switchExpenseTab(tab);
+                }
+            });
+        });
+
+        // Recurring modal tab switching
+        document.querySelectorAll('.recurring-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabName = e.target.dataset.tab;
+                if (tabName) {
+                    this.switchRecurringTab(tabName);
                 }
             });
         });
