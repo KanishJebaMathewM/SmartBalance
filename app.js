@@ -3013,9 +3013,9 @@ class WorkLifeBalanceApp {
         }
     }
 
-    switchHabitTab(tabName) {
+    switchAnalysisTab(tabName) {
         // Update tab buttons
-        document.querySelectorAll('.habit-tabs .tab-btn').forEach(btn => {
+        document.querySelectorAll('.analysis-tabs .tab-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
@@ -3028,18 +3028,17 @@ class WorkLifeBalanceApp {
 
         // Load appropriate content
         switch (tabName) {
-            case 'daily-habits':
-                this.loadDailyHabits();
+            case 'overall-insights':
+                this.loadOverallInsights();
                 break;
-            case 'habit-correlations':
-                this.updateHabitCorrelations();
-                this.loadHabitImpactChart();
+            case 'behavior-patterns':
+                this.loadBehaviorPatterns();
                 break;
-            case 'habit-insights':
-                this.loadHabitInsights();
+            case 'recommendations':
+                this.loadRecommendations();
                 break;
-            case 'habit-goals':
-                this.loadHabitGoals();
+            case 'progress-analysis':
+                this.loadProgressAnalysis();
                 break;
         }
     }
@@ -3999,7 +3998,7 @@ class WorkLifeBalanceApp {
             breakfast: {
                 name: document.getElementById('breakfastMeal').textContent,
                 calories: parseInt(document.getElementById('breakfastCalories').textContent),
-                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('₹', ''))
+                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('���', ''))
             },
             lunch: {
                 name: document.getElementById('lunchMeal').textContent,
