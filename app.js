@@ -192,11 +192,8 @@ class WorkLifeBalanceApp {
             const expenseDetails = document.getElementById('expenseTaskDetails');
             const amountField = document.getElementById('taskAmount');
             if (expenseCheckbox && expenseDetails) {
-                console.log('Expense checkbox handler attached:', { expenseCheckbox, expenseDetails });
                 expenseCheckbox.addEventListener('change', () => {
-                    console.log('Expense checkbox changed:', expenseCheckbox.checked);
                     expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
-                    console.log('Expense details display set to:', expenseDetails.style.display);
 
                     // Make amount field required when expense is checked
                     if (amountField) {
@@ -803,7 +800,7 @@ class WorkLifeBalanceApp {
                 </div>
                 <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
-                    <button onclick="app.editExpense(${expense.id})" title="Edit">✏���</button>
+                    <button onclick="app.editExpense(${expense.id})" title="Edit">✏�����</button>
                     <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
                 </div>
             </div>
@@ -2646,7 +2643,6 @@ class WorkLifeBalanceApp {
     }
 
     resetTaskForm() {
-        console.log('resetTaskForm called');
         const form = document.getElementById('taskForm');
         if (form) {
             form.reset();
