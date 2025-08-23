@@ -3659,7 +3659,7 @@ class WorkLifeBalanceApp {
             viewToggleBtn.onclick = () => {
                 const newTab = this.currentExpenseTab === 'calendar' ? 'overview' : 'calendar';
                 this.switchExpenseTab(newTab);
-                viewToggleBtn.textContent = newTab === 'calendar' ? '��� Overview' : '📅 Calendar View';
+                viewToggleBtn.textContent = newTab === 'calendar' ? '���� Overview' : '📅 Calendar View';
             };
         }
     }
@@ -6667,13 +6667,16 @@ class WorkLifeBalanceApp {
     generateComprehensiveInsights(data) {
         const insights = {
             productivity: this.analyzeProductivity(data.tasks),
-            financial: this.analyzeFinancialHealth(),
+            financial: this.analyzeFinancialHealth(data.expenses),
             nutrition: this.analyzeNutrition(data.meals),
             fitness: this.analyzeFitness(data.workouts),
             wellbeing: this.analyzeWellbeing(data.moods)
         };
 
         this.displayComprehensiveInsights(insights);
+
+        // Generate additional cross-category correlations
+        this.generateCrossDataInsights(data);
     }
 
     analyzeProductivity(tasks) {
@@ -7588,7 +7591,7 @@ class WorkLifeBalanceApp {
 
         if (homeCookingRate < 0.5) {
             recommendations.push({
-                icon: '🍲',
+                icon: '��',
                 title: 'Cook More at Home',
                 description: 'Increase home cooking to save money and eat healthier. Start with 1-2 simple meals this week.',
                 priority: 'medium'
