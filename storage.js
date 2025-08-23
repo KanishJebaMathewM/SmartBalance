@@ -57,8 +57,27 @@ class Storage {
             this.set(this.keys.badges, {
                 firstWorkout: false,
                 sevenDayStreak: false,
-                consistencyKing: false
+                consistencyKing: false,
+                firstHabitCompletion: false,
+                habitStreak7: false,
+                habitStreak30: false
             });
+        }
+
+        if (!this.get(this.keys.habits)) {
+            this.set(this.keys.habits, []);
+        }
+
+        if (!this.get(this.keys.habitCompletions)) {
+            this.set(this.keys.habitCompletions, {});
+        }
+
+        if (!this.get(this.keys.habitSkips)) {
+            this.set(this.keys.habitSkips, {});
+        }
+
+        if (!this.get(this.keys.goals)) {
+            this.set(this.keys.goals, []);
         }
     }
 
