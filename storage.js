@@ -5,6 +5,7 @@ class Storage {
             tasks: 'wlb_tasks',
             expenses: 'wlb_expenses',
             foodItems: 'wlb_food_items',
+            meals: 'wlb_meals',
             workouts: 'wlb_workouts',
             moods: 'wlb_moods',
             settings: 'wlb_settings',
