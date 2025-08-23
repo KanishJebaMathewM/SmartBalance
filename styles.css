@@ -2777,9 +2777,28 @@ body.dark-mode {
 }
 
 /* Chart container responsiveness */
+.chart-container {
+    overflow: hidden;
+    position: relative;
+}
+
 .chart-container canvas {
     max-width: 100%;
     height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.chart-section {
+    overflow: hidden;
+    position: relative;
+}
+
+.chart-section canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 /* Interactive Meal Planner Styles */
