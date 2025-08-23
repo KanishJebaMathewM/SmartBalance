@@ -8808,7 +8808,10 @@ class WorkLifeBalanceApp {
             case 'stress':
                 return { moods: window.storage.getMoods() };
             case 'habits':
-                return { habits: window.storage.getHabits() };
+                return {
+                    insights: this.getReportData('month'),
+                    correlations: 'Based on cross-data analysis'
+                };
             case 'report':
                 return this.getReportData('month'); // Default to monthly for full report
             default:
