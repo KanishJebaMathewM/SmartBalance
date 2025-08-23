@@ -5405,17 +5405,7 @@ class WorkLifeBalanceApp {
     }
 
 
-    // Update the main loadFoodData to include interactive meal planner
-    loadFoodData() {
-        this.loadPantryItems();
-        this.updateMealPlan();
-        this.updateFoodStats();
-        this.loadSavedMealPlan();
-        this.updateFoodAnalytics();
-        this.loadDailyFoodTracking();
-        this.loadHomeVsHotelAnalysis();
-        this.initializeInteractiveMealPlanner();
-    }
+    // Update the main loadFoodData to include interactive meal planner (removed duplicate)
 
     // Update dashboard to show upcoming meal
     updateMealWidget() {
@@ -5660,13 +5650,7 @@ class WorkLifeBalanceApp {
         this.renderMealCalendar();
     }
 
-    // Missing section loading methods
-    loadFoodData() {
-        this.loadFoodStats();
-        this.loadMealPlanner();
-        this.loadPantryItems();
-        this.loadFoodAnalytics();
-    }
+    // Missing section loading methods (duplicate loadFoodData removed)
 
     loadFoodStats() {
         const stats = window.storage.getWeeklyMealStats();
