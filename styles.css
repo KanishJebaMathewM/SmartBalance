@@ -683,6 +683,59 @@ body.dark-mode {
     color: #dc2626;
 }
 
+/* Meal Status Options in Form */
+.meal-status-options {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.status-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    background: #f9fafb;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.status-option:hover {
+    background: #f3f4f6;
+    transform: translateY(-2px);
+}
+
+.status-option.active {
+    border-color: #3b82f6;
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.dark-mode .status-option {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.dark-mode .status-option:hover {
+    background: #4b5563;
+}
+
+.dark-mode .status-option.active {
+    border-color: #60a5fa;
+    background: #1e3a8a;
+    color: #93c5fd;
+}
+
+.status-option .icon {
+    font-size: 1.2rem;
+}
+
 .comparison-card {
     background: #ffffff;
     padding: 24px;
