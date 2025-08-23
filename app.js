@@ -6072,8 +6072,8 @@ class WorkLifeBalanceApp {
     }
 
     loadHabitsSection() {
-        this.loadDailyHabits();
-        this.updateHabitStats();
+        this.calculateLifeBalanceScore();
+        this.loadOverallInsights();
     }
 
     loadDailyHabits() {
@@ -6406,7 +6406,7 @@ class WorkLifeBalanceApp {
 
         return `
             <div class="summary-card overall-score">
-                <h3>🎯 Overall Score</h3>
+                <h3>��� Overall Score</h3>
                 <div class="big-stat">${overallScore}</div>
                 <p>Wellness Score</p>
                 <div class="score-breakdown">
