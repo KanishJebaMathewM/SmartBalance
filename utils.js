@@ -223,22 +223,84 @@ class Utils {
     static getMealSuggestions(availableItems = []) {
         const suggestions = {
             breakfast: [
-                'Oats with fruits and nuts',
-                'Upma with vegetables',
-                'Poha with peanuts',
-                'Smoothie bowl with berries'
+                // Traditional South Indian breakfast
+                'Crispy Dosa with Coconut Chutney and Sambar',
+                'Soft Idli with Sambar and Tomato Chutney',
+                'Fluffy Appam with Coconut Milk Curry',
+                'Steamed Puttu with Banana and Jaggery',
+                'Rava Upma with Curry Leaves and Mustard Seeds',
+                'Masala Dosa with Potato Filling',
+                'Medu Vada with Coconut Chutney',
+                'Uttapam with Onions and Tomatoes',
+                'Pongal with Ghee and Black Pepper',
+                'Adai with Avial',
+                'Pesarattu with Upma',
+                'Set Dosa with Kurma',
+
+                // Modern healthy options
+                'Oats Upma with South Indian Tempering',
+                'Ragi Dosa with Vegetable Sambar',
+                'Quinoa Pongal with Cashews',
+                'Millet Idli with Mint Chutney',
+                'Poha with Curry Leaves and Peanuts',
+                'Smoothie Bowl with Coconut and Mango'
             ],
             lunch: [
-                'Rice with dal and vegetables',
-                'Quinoa bowl with roasted vegetables',
-                'Khichdi with yogurt',
-                'Roti with sabzi and salad'
+                // Traditional South Indian lunch
+                'Steamed Rice with Sambar and Rasam',
+                'Curd Rice with Pickle and Papad',
+                'Bisi Bele Bath with Raita',
+                'Tomato Rice with Yogurt',
+                'Lemon Rice with Cashews and Curry Leaves',
+                'Tamarind Rice with Roasted Peanuts',
+                'Coconut Rice with Fried Gram',
+                'Vegetable Biryani with Raita',
+                'Puliyodarai with Pickle',
+                'Vangi Bath (Brinjal Rice)',
+                'Chitranna with Vegetables',
+                'Ghee Rice with Kurma',
+
+                // Curry combinations
+                'Rice with Avial and Thoran',
+                'Rice with Koottu and Olan',
+                'Rice with Mor Kuzhambu',
+                'Rice with Vegetable Korma',
+                'Rice with Dal Curry and Poriyal',
+                'Rice with Coconut Curry',
+
+                // Modern options
+                'Quinoa Bowl with South Indian Vegetables',
+                'Millet Rice with Sambar',
+                'Brown Rice with Rasam and Vegetables'
             ],
             dinner: [
-                'Chapati with dal and vegetables',
-                'Vegetable soup with whole grain bread',
-                'Grilled vegetables with quinoa',
-                'Light curry with brown rice'
+                // Light South Indian dinner
+                'Chapati with Vegetable Kurma',
+                'Appam with Coconut Stew',
+                'Pathiri with Vegetable Curry',
+                'Idiappam with Coconut Milk',
+                'Dosa with Vegetable Sagu',
+                'Uttapam with Coconut Chutney',
+                'Adai with Jaggery',
+                'Paniyaram with Sambar',
+                'Kozhukattai with Coconut',
+                'Puttu with Kadala Curry',
+
+                // Soup and light meals
+                'Rasam with Steamed Rice',
+                'Mor Kuzhambu with Rice',
+                'Vegetable Sambar with Idli',
+                'Coconut Milk Curry with Appam',
+                'Drumstick Leaves Soup with Ragi Roti',
+                'Tomato Rasam with Brown Rice',
+
+                // Healthy options
+                'Millet Dosa with Vegetable Curry',
+                'Ragi Puttu with Coconut',
+                'Oats Idli with Mint Chutney',
+                'Quinoa Upma with Vegetables',
+                'Brown Rice with Light Dal',
+                'Vegetable Soup with Ragi Roti'
             ]
         };
 
