@@ -1470,7 +1470,6 @@ class WorkLifeBalanceApp {
             paymentMethod: document.getElementById('expensePaymentMethod').value,
             priority: document.getElementById('expensePriority').value,
             recurring: document.getElementById('expenseRecurring').checked,
-            shared: document.getElementById('expenseShared').checked
         };
 
         // Add recurring options if applicable
@@ -1480,11 +1479,6 @@ class WorkLifeBalanceApp {
             expenseData.recurringReminder = parseInt(document.getElementById('recurringReminder').value);
         }
 
-        // Add shared options if applicable
-        if (expenseData.shared) {
-            expenseData.sharedWith = Utils.sanitizeInput(document.getElementById('sharedWith').value);
-            expenseData.shareAmount = parseFloat(document.getElementById('shareAmount').value);
-        }
 
         if (!Utils.validateAmount(expenseData.amount)) {
             Utils.showNotification('Please enter a valid amount', 'error');
@@ -1496,10 +1490,6 @@ class WorkLifeBalanceApp {
             return;
         }
 
-        if (expenseData.shared && !Utils.validateAmount(expenseData.shareAmount)) {
-            Utils.showNotification('Please enter a valid share amount', 'error');
-            return;
-        }
 
         if (isEdit) {
             window.storage.updateExpense(parseInt(isEdit), expenseData);
@@ -1960,7 +1950,7 @@ class WorkLifeBalanceApp {
             reportExpenseDetail.textContent = `Top category: ${topCategory}`;
         }
         if (reportHealthyMeals) reportHealthyMeals.textContent = '5/7'; // Mock data
-        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ₹1,200';
+        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ��1,200';
         if (reportWorkoutDays) reportWorkoutDays.textContent = `${weeklyWorkouts.length}/7`;
         if (reportFitnessDetail) {
             const streak = window.storage.getWorkoutStreak();
@@ -2332,24 +2322,11 @@ class WorkLifeBalanceApp {
             });
         }
 
-        // Shared expense toggle
-        const sharedCheckbox = document.getElementById('expenseShared');
-        const sharedOptions = document.getElementById('sharedOptions');
-
-        if (sharedCheckbox && sharedOptions) {
-            sharedCheckbox.addEventListener('change', () => {
-                sharedOptions.style.display = sharedCheckbox.checked ? 'block' : 'none';
-                if (sharedCheckbox.checked) {
-                    this.calculateShareAmount();
-                }
-            });
-        }
 
         // Auto-calculate share amount
         const expenseAmount = document.getElementById('expenseAmount');
         if (expenseAmount) {
             expenseAmount.addEventListener('input', () => {
-                this.calculateShareAmount();
                 this.showSmartInsights();
             });
         }
@@ -2372,16 +2349,6 @@ class WorkLifeBalanceApp {
         }
     }
 
-    calculateShareAmount() {
-        const totalAmount = parseFloat(document.getElementById('expenseAmount').value) || 0;
-        const sharedCheckbox = document.getElementById('expenseShared');
-        const shareAmountField = document.getElementById('shareAmount');
-
-        if (sharedCheckbox?.checked && shareAmountField && totalAmount > 0) {
-            // Assume 50-50 split by default
-            shareAmountField.value = (totalAmount / 2).toFixed(2);
-        }
-    }
 
     suggestCategory(notes) {
         if (!notes || notes.length < 3) {
