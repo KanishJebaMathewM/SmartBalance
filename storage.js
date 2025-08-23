@@ -1035,6 +1035,7 @@ class Storage {
             tasks: this.getTasks(),
             expenses: this.getExpenses(),
             foodItems: this.getFoodItems(),
+            meals: this.getMeals(),
             workouts: this.getWorkouts(),
             moods: this.getMoods(),
             settings: this.getSettings(),
