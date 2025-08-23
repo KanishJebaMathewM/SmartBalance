@@ -3659,7 +3659,7 @@ class WorkLifeBalanceApp {
             viewToggleBtn.onclick = () => {
                 const newTab = this.currentExpenseTab === 'calendar' ? 'overview' : 'calendar';
                 this.switchExpenseTab(newTab);
-                viewToggleBtn.textContent = newTab === 'calendar' ? '���� Overview' : '📅 Calendar View';
+                viewToggleBtn.textContent = newTab === 'calendar' ? '��� Overview' : '📅 Calendar View';
             };
         }
     }
@@ -3679,7 +3679,7 @@ class WorkLifeBalanceApp {
             'fitness': '💪',
             'subscriptions': '📺',
             'groceries': '��',
-            'clothing': '👕',
+            'clothing': '��',
             'healthcare': '🏥',
             'reminder': '⏰',
             'other': '📦'
@@ -6700,7 +6700,7 @@ class WorkLifeBalanceApp {
         };
     }
 
-    analyzeFinancialHealth() {
+    analyzeFinancialHealth(expenses = null) {
         const monthlyExpenses = window.storage.getMonthlyExpenses();
         const settings = window.storage.getSettings();
         const monthlyIncome = settings.monthlyIncome || 0;
@@ -6708,12 +6708,43 @@ class WorkLifeBalanceApp {
         const savingsRate = monthlyIncome > 0 ?
             ((monthlyIncome - monthlyExpenses) / monthlyIncome) * 100 : 0;
 
+        // Analyze expense patterns if data is provided
+        let additionalInsights = [];
+        if (expenses && expenses.length > 0) {
+            const last30DaysExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.createdAt);
+                const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+                return expenseDate >= thirtyDaysAgo;
+            });
+
+            // Analyze spending categories
+            const categoryTotals = {};
+            last30DaysExpenses.forEach(expense => {
+                categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + parseFloat(expense.amount);
+            });
+
+            const topCategory = Object.keys(categoryTotals).reduce((a, b) =>
+                categoryTotals[a] > categoryTotals[b] ? a : b, 'none'
+            );
+
+            if (topCategory !== 'none') {
+                additionalInsights.push(`Top spending: ${topCategory} (₹${categoryTotals[topCategory].toLocaleString()})`);
+            }
+
+            // Daily spending average
+            const avgDailySpending = last30DaysExpenses.length > 0 ?
+                last30DaysExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0) / 30 : 0;
+
+            additionalInsights.push(`Average daily spending: ₹${Math.round(avgDailySpending)}`);
+        }
+
         return {
             score: Math.min(Math.max(savingsRate, 0), 100),
             label: savingsRate >= 20 ? 'Excellent' : savingsRate >= 10 ? 'Good' : 'Needs Attention',
             insights: [
                 `₹${monthlyExpenses.toLocaleString()} monthly expenses`,
                 `${Math.round(savingsRate)}% savings rate`,
+                ...additionalInsights,
                 savingsRate >= 20 ? 'Great financial discipline!' : 'Consider reducing expenses'
             ]
         };
@@ -7591,7 +7622,7 @@ class WorkLifeBalanceApp {
 
         if (homeCookingRate < 0.5) {
             recommendations.push({
-                icon: '��',
+                icon: '🍲',
                 title: 'Cook More at Home',
                 description: 'Increase home cooking to save money and eat healthier. Start with 1-2 simple meals this week.',
                 priority: 'medium'
