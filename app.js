@@ -2632,7 +2632,7 @@ class WorkLifeBalanceApp {
             'healthcare': '🏥',
             'education': '📚',
             'fitness': '💪',
-            'subscriptions': '📺',
+            'subscriptions': '���',
             'groceries': '🛒',
             'clothing': '👕',
             'other': '��'
@@ -4134,33 +4134,6 @@ class WorkLifeBalanceApp {
         }
     }
 
-    markWorkout() {
-        const workout = {
-            type: 'general',
-            duration: '30 minutes',
-            calories: 200,
-            completedAt: new Date().toISOString()
-        };
-
-        window.storage.addWorkout(workout);
-
-        // Check for new badges
-        const data = {
-            workouts: window.storage.getWorkouts(),
-            tasks: window.storage.getTasks(),
-            expenses: window.storage.getExpenses()
-        };
-
-        Utils.checkBadgeEligibility(data);
-
-        Utils.showNotification('💪 Workout marked! Keep up the great work!', 'success');
-
-        if (this.currentSection === 'fitness') {
-            this.loadFitnessData();
-        }
-
-        this.updateDashboard();
-    }
 
     // Enhanced Food and Meal Plan Methods
     editMealSuggestion(mealType) {
