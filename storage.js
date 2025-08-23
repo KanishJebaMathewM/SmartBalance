@@ -259,7 +259,10 @@ class Storage {
             categoryBudgets: {},
             savingsGoalDescription: 'Build your emergency fund',
             currency: 'INR',
-            monthlyIncomeGoal: 50000,
+            monthlyIncome: 0,
+            incomeSource: 'salary',
+            incomeNotes: '',
+            incomeLastUpdated: null,
             expenseCategories: ['food', 'bills', 'shopping', 'travel', 'entertainment', 'healthcare', 'education', 'other']
         };
     }
