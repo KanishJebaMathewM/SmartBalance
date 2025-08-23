@@ -195,17 +195,6 @@ class WorkLifeBalanceApp {
             mealForm.addEventListener('submit', (e) => this.handleMealSubmit(e));
         }
 
-        // Habit form
-        const habitForm = document.getElementById('habitForm');
-        if (habitForm) {
-            habitForm.addEventListener('submit', (e) => this.handleHabitSubmit(e));
-        }
-
-        // Goal form
-        const goalForm = document.getElementById('goalForm');
-        if (goalForm) {
-            goalForm.addEventListener('submit', (e) => this.handleGoalSubmit(e));
-        }
 
         // Income form
         const incomeForm = document.getElementById('incomeForm');
@@ -2905,7 +2894,7 @@ class WorkLifeBalanceApp {
         const insight = correlation > 0.3 ?
             '�� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
-            '��� Completing tasks reduces your stress levels!' :
+            '����� Completing tasks reduces your stress levels!' :
             '📊 Keep tracking to understand your productivity-stress patterns';
 
         this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
