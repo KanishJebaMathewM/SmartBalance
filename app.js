@@ -76,6 +76,12 @@ class WorkLifeBalanceApp {
         // Habit tabs
         this.initializeHabitTabHandlers();
 
+        // Food tracking tabs
+        this.initializeFoodTrackingTabHandlers();
+
+        // Meal form handlers
+        this.initializeMealFormHandlers();
+
         // Calendar handlers
         this.initializeCalendarHandlers();
     }
@@ -500,7 +506,7 @@ class WorkLifeBalanceApp {
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button onclick="app.editTask(${task.id})" title="Edit">✏️</button>
+                    <button onclick="app.editTask(${task.id})" title="Edit">���️</button>
                     <button onclick="app.deleteTask(${task.id})" title="Delete">🗑️</button>
                 </div>
             </div>
@@ -2773,7 +2779,7 @@ class WorkLifeBalanceApp {
         const newStreak = this.calculateIndividualHabitStreak(habit);
         window.storage.updateHabit(habitId, { currentStreak: newStreak });
 
-        Utils.showNotification(`🎉 Habit completed! Streak: ${newStreak} days`, 'success');
+        Utils.showNotification(`���� Habit completed! Streak: ${newStreak} days`, 'success');
 
         // Check for badges
         this.checkHabitBadges(habit, newStreak);
@@ -2909,7 +2915,7 @@ class WorkLifeBalanceApp {
         const correlation = this.calculateTaskMoodCorrelation(tasks, moods);
         const percentage = Math.abs(correlation * 100);
         const insight = correlation > 0.3 ?
-            '📈 High productivity increases stress - consider work-life balance!' :
+            '�� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
             '��� Completing tasks reduces your stress levels!' :
             '📊 Keep tracking to understand your productivity-stress patterns';
