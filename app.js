@@ -3265,7 +3265,7 @@ class WorkLifeBalanceApp {
         }
 
         window.storage.addGoal(goalData);
-        Utils.showNotification('Goal created successfully! 🎯', 'success');
+        Utils.showNotification('Goal created successfully! ��', 'success');
 
         this.closeModal('goalModal');
         e.target.reset();
@@ -4432,6 +4432,482 @@ class WorkLifeBalanceApp {
         this.updateFoodStats();
         this.loadSavedMealPlan();
         this.updateFoodAnalytics();
+        this.loadDailyFoodTracking();
+        this.loadHomeVsHotelAnalysis();
+    }
+
+    // Food tracking tab handlers
+    initializeFoodTrackingTabHandlers() {
+        document.querySelectorAll('[data-tab^="today-food"], [data-tab^="yesterday-food"], [data-tab^="weekly-food"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tab = e.target.dataset.tab;
+                this.switchFoodTrackingTab(tab);
+
+                // Update active state
+                document.querySelectorAll('.food-tracking-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+            });
+        });
+    }
+
+    switchFoodTrackingTab(tabName) {
+        // Hide all food tracking tab content
+        document.querySelectorAll('#today-food, #yesterday-food, #weekly-food').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Show selected tab
+        const targetTab = document.getElementById(tabName);
+        if (targetTab) {
+            targetTab.classList.add('active');
+
+            // Load specific data for the tab
+            if (tabName === 'today-food') {
+                this.loadTodayMeals();
+            } else if (tabName === 'yesterday-food') {
+                this.loadYesterdayMeals();
+            } else if (tabName === 'weekly-food') {
+                this.loadWeeklyFoodAnalysis();
+            }
+        }
+    }
+
+    // Meal form handlers
+    initializeMealFormHandlers() {
+        // Source option handlers
+        const sourceOptions = document.querySelectorAll('.source-option');
+        sourceOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                // Remove active class from all options
+                sourceOptions.forEach(opt => opt.classList.remove('active'));
+
+                // Add active class to clicked option
+                e.currentTarget.classList.add('active');
+
+                const source = e.currentTarget.dataset.source;
+                this.handleMealSourceChange(source);
+            });
+        });
+
+        // Set today's date as default
+        const mealDateInput = document.getElementById('mealDate');
+        if (mealDateInput) {
+            mealDateInput.value = new Date().toISOString().split('T')[0];
+        }
+    }
+
+    handleMealSourceChange(source) {
+        const homeCookingDetails = document.getElementById('homeCookingDetails');
+        const hotelDetails = document.getElementById('hotelDetails');
+        const mealCostInput = document.getElementById('mealCost');
+
+        if (source === 'home') {
+            homeCookingDetails.style.display = 'block';
+            hotelDetails.style.display = 'none';
+            // Remove required attribute from hotel fields
+            mealCostInput.removeAttribute('required');
+        } else if (source === 'hotel') {
+            homeCookingDetails.style.display = 'none';
+            hotelDetails.style.display = 'block';
+            // Add required attribute to meal cost
+            mealCostInput.setAttribute('required', 'required');
+        }
+    }
+
+    handleMealSubmit(e) {
+        e.preventDefault();
+
+        const selectedSource = document.querySelector('.source-option.active');
+        if (!selectedSource) {
+            Utils.showNotification('Please select where you had this meal', 'error');
+            return;
+        }
+
+        const mealData = {
+            name: Utils.sanitizeInput(document.getElementById('mealName').value),
+            type: document.getElementById('mealType').value,
+            calories: parseInt(document.getElementById('mealCalories').value),
+            source: selectedSource.dataset.source,
+            date: document.getElementById('mealDate').value,
+            notes: Utils.sanitizeInput(document.getElementById('mealNotes').value)
+        };
+
+        if (!mealData.name || !mealData.type || !mealData.calories) {
+            Utils.showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+
+        if (mealData.source === 'home') {
+            mealData.ingredientCost = parseFloat(document.getElementById('ingredientCost').value) || 0;
+            mealData.cookingTime = parseInt(document.getElementById('cookingTime').value) || 0;
+        } else if (mealData.source === 'hotel') {
+            mealData.mealCost = parseFloat(document.getElementById('mealCost').value);
+            mealData.deliveryCharges = parseFloat(document.getElementById('deliveryCharges').value) || 0;
+            mealData.restaurantName = Utils.sanitizeInput(document.getElementById('restaurantName').value);
+
+            if (!mealData.mealCost) {
+                Utils.showNotification('Please enter the meal cost', 'error');
+                return;
+            }
+
+            // Add this meal cost as an expense if it's from hotel
+            const expenseData = {
+                amount: mealData.mealCost + mealData.deliveryCharges,
+                category: 'food',
+                notes: `${mealData.name}${mealData.restaurantName ? ' from ' + mealData.restaurantName : ''}`,
+                date: mealData.date,
+                paymentMethod: 'card',
+                priority: 'medium',
+                mealRelated: true
+            };
+
+            window.storage.addExpense(expenseData);
+        }
+
+        window.storage.addMeal(mealData);
+        Utils.showNotification('Meal added successfully!', 'success');
+
+        this.closeModal('mealModal');
+        this.resetMealForm();
+
+        if (this.currentSection === 'food') {
+            this.loadFoodData();
+        }
+        this.updateDashboard();
+    }
+
+    resetMealForm() {
+        const form = document.getElementById('mealForm');
+        if (form) {
+            form.reset();
+
+            // Reset source options
+            document.querySelectorAll('.source-option').forEach(opt => opt.classList.remove('active'));
+
+            // Hide cooking details
+            document.getElementById('homeCookingDetails').style.display = 'none';
+            document.getElementById('hotelDetails').style.display = 'none';
+
+            // Set today's date
+            document.getElementById('mealDate').value = new Date().toISOString().split('T')[0];
+        }
+    }
+
+    // Daily food tracking methods
+    loadDailyFoodTracking() {
+        this.loadTodayMeals();
+    }
+
+    loadTodayMeals() {
+        const todayMeals = window.storage.getTodayMeals();
+        this.updateDailySummary('today', todayMeals);
+        this.renderMealsList('todayMealsList', todayMeals);
+    }
+
+    loadYesterdayMeals() {
+        const yesterdayMeals = window.storage.getYesterdayMeals();
+        this.renderMealsList('yesterdayMealsList', yesterdayMeals);
+    }
+
+    loadWeeklyFoodAnalysis() {
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        this.renderWeeklyFoodAnalysis(weeklyStats);
+    }
+
+    updateDailySummary(day, meals) {
+        const homeMeals = meals.filter(meal => meal.source === 'home');
+        const hotelMeals = meals.filter(meal => meal.source === 'hotel');
+
+        const homeCalories = homeMeals.reduce((sum, meal) => sum + parseInt(meal.calories), 0);
+        const hotelCalories = hotelMeals.reduce((sum, meal) => sum + parseInt(meal.calories), 0);
+
+        const homeCost = homeMeals.reduce((sum, meal) => sum + (parseFloat(meal.ingredientCost) || 0), 0);
+        const hotelCost = hotelMeals.reduce((sum, meal) => sum + (parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0), 0);
+
+        // Update home cooking summary
+        const todayHomeMealsEl = document.getElementById(`${day}HomeMeals`);
+        const todayHomeCaloriesEl = document.getElementById(`${day}HomeCalories`);
+        const todayHomeCostEl = document.getElementById(`${day}HomeCost`);
+
+        if (todayHomeMealsEl) todayHomeMealsEl.textContent = homeMeals.length;
+        if (todayHomeCaloriesEl) todayHomeCaloriesEl.textContent = `${homeCalories} cal`;
+        if (todayHomeCostEl) todayHomeCostEl.textContent = Utils.formatCurrency(homeCost);
+
+        // Update hotel/delivery summary
+        const todayHotelMealsEl = document.getElementById(`${day}HotelMeals`);
+        const todayHotelCaloriesEl = document.getElementById(`${day}HotelCalories`);
+        const todayHotelCostEl = document.getElementById(`${day}HotelCost`);
+
+        if (todayHotelMealsEl) todayHotelMealsEl.textContent = hotelMeals.length;
+        if (todayHotelCaloriesEl) todayHotelCaloriesEl.textContent = `${hotelCalories} cal`;
+        if (todayHotelCostEl) todayHotelCostEl.textContent = Utils.formatCurrency(hotelCost);
+    }
+
+    renderMealsList(containerId, meals) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        if (meals.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <h3>No meals recorded</h3>
+                    <p>Add your first meal to start tracking!</p>
+                    <button class="btn-primary" onclick="app.openModal('mealModal')">Add Meal</button>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = meals.map(meal => `
+            <div class="meal-item">
+                <div class="meal-type-icon ${meal.type}">
+                    ${this.getMealTypeIcon(meal.type)}
+                </div>
+                <div class="meal-info">
+                    <div class="meal-name">${Utils.sanitizeInput(meal.name)}</div>
+                    <div class="meal-details">
+                        <span>${meal.calories} cal</span>
+                        <span>${Utils.formatDate(meal.date)}</span>
+                        ${meal.restaurantName ? `<span>${Utils.sanitizeInput(meal.restaurantName)}</span>` : ''}
+                    </div>
+                </div>
+                <div class="meal-source ${meal.source}">
+                    <span class="icon">${meal.source === 'home' ? '🏠' : '🏨'}</span>
+                    <span>${meal.source === 'home' ? 'Home' : 'Hotel'}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    getMealTypeIcon(type) {
+        const icons = {
+            breakfast: '🌅',
+            lunch: '🌞',
+            dinner: '🌙',
+            snack: '🥨'
+        };
+        return icons[type] || '🍽️';
+    }
+
+    renderWeeklyFoodAnalysis(stats) {
+        const container = document.getElementById('weeklyFoodAnalysis');
+        if (!container) return;
+
+        const moneySaved = Math.max(0, (stats.hotelMeals * 200) - stats.totalHomeCost);
+
+        container.innerHTML = `
+            <div class="weekly-summary-cards">
+                <div class="weekly-summary-card">
+                    <h4>Total Meals</h4>
+                    <div class="value">${stats.totalMeals}</div>
+                    <div class="label">This Week</div>
+                </div>
+                <div class="weekly-summary-card">
+                    <h4>Home Cooked</h4>
+                    <div class="value">${stats.homeMeals}</div>
+                    <div class="label">${Math.round((stats.homeMeals / Math.max(stats.totalMeals, 1)) * 100)}% of total</div>
+                </div>
+                <div class="weekly-summary-card">
+                    <h4>Hotel/Delivery</h4>
+                    <div class="value">${stats.hotelMeals}</div>
+                    <div class="label">${Math.round((stats.hotelMeals / Math.max(stats.totalMeals, 1)) * 100)}% of total</div>
+                </div>
+                <div class="weekly-summary-card">
+                    <h4>Total Calories</h4>
+                    <div class="value">${stats.totalCalories}</div>
+                    <div class="label">Avg: ${Math.round(stats.avgCaloriesPerDay)} per day</div>
+                </div>
+                <div class="weekly-summary-card">
+                    <h4>Money Saved</h4>
+                    <div class="value">${Utils.formatCurrency(moneySaved)}</div>
+                    <div class="label">By cooking at home</div>
+                </div>
+                <div class="weekly-summary-card">
+                    <h4>Total Spent</h4>
+                    <div class="value">${Utils.formatCurrency(stats.totalHomeCost + stats.totalHotelCost)}</div>
+                    <div class="label">On food this week</div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Home vs Hotel Analysis
+    loadHomeVsHotelAnalysis() {
+        this.createCookingFrequencyChart();
+        this.createCostComparisonChart();
+        this.generateComparisonInsights();
+    }
+
+    createCookingFrequencyChart() {
+        const canvas = document.getElementById('cookingFrequencyChart');
+        if (!canvas) return;
+
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        const ctx = canvas.getContext('2d');
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const chartData = [
+            { label: 'Home Cooked', value: weeklyStats.homeMeals, color: '#10b981' },
+            { label: 'Hotel/Delivery', value: weeklyStats.hotelMeals, color: '#f59e0b' }
+        ];
+
+        this.drawSimpleBarChart(ctx, chartData, canvas.width, canvas.height);
+    }
+
+    createCostComparisonChart() {
+        const canvas = document.getElementById('costComparisonChart');
+        if (!canvas) return;
+
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        const ctx = canvas.getContext('2d');
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const chartData = [
+            { label: 'Home Cost', value: weeklyStats.totalHomeCost, color: '#10b981' },
+            { label: 'Hotel Cost', value: weeklyStats.totalHotelCost, color: '#f59e0b' }
+        ];
+
+        this.drawSimpleBarChart(ctx, chartData, canvas.width, canvas.height, true);
+    }
+
+    drawSimpleBarChart(ctx, data, width, height, isCurrency = false) {
+        const padding = 40;
+        const chartWidth = width - 2 * padding;
+        const chartHeight = height - 2 * padding;
+        const barWidth = chartWidth / (data.length * 2);
+
+        const maxValue = Math.max(...data.map(d => d.value)) * 1.1;
+
+        // Draw bars
+        data.forEach((item, index) => {
+            const barHeight = (item.value / maxValue) * chartHeight;
+            const x = padding + index * (barWidth + barWidth);
+            const y = height - padding - barHeight;
+
+            // Draw bar
+            ctx.fillStyle = item.color;
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            // Draw label
+            ctx.fillStyle = '#374151';
+            ctx.font = '12px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(item.label, x + barWidth/2, height - 10);
+
+            // Draw value
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '10px Inter, sans-serif';
+            const valueText = isCurrency ? Utils.formatCurrency(item.value) : item.value.toString();
+            ctx.fillText(valueText, x + barWidth/2, y - 5);
+        });
+    }
+
+    generateComparisonInsights() {
+        const container = document.getElementById('comparisonInsights');
+        if (!container) return;
+
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        const homePercentage = Math.round((weeklyStats.homeMeals / Math.max(weeklyStats.totalMeals, 1)) * 100);
+        const avgHomeCost = weeklyStats.homeMeals > 0 ? weeklyStats.totalHomeCost / weeklyStats.homeMeals : 0;
+        const avgHotelCost = weeklyStats.hotelMeals > 0 ? weeklyStats.totalHotelCost / weeklyStats.hotelMeals : 0;
+
+        const insights = [];
+
+        if (homePercentage >= 70) {
+            insights.push({
+                icon: '🏠',
+                title: 'Excellent Home Cooking Habit',
+                description: `You cooked at home ${homePercentage}% of the time this week. This is great for both health and budget!`
+            });
+        } else if (homePercentage >= 50) {
+            insights.push({
+                icon: '⚖️',
+                title: 'Balanced Approach',
+                description: `You have a good balance with ${homePercentage}% home cooking. Consider increasing it for more savings.`
+            });
+        } else {
+            insights.push({
+                icon: '🏨',
+                title: 'Consider More Home Cooking',
+                description: `You ate out ${100 - homePercentage}% of the time. Try cooking more at home to save money and eat healthier.`
+            });
+        }
+
+        if (avgHomeCost > 0 && avgHotelCost > 0) {
+            const savings = avgHotelCost - avgHomeCost;
+            insights.push({
+                icon: '💰',
+                title: 'Cost Comparison',
+                description: `On average, home cooking saves you ${Utils.formatCurrency(savings)} per meal compared to ordering out.`
+            });
+        }
+
+        if (weeklyStats.totalCalories > 0) {
+            insights.push({
+                icon: '🔥',
+                title: 'Weekly Calorie Intake',
+                description: `You consumed ${weeklyStats.totalCalories} calories this week, averaging ${Math.round(weeklyStats.avgCaloriesPerDay)} per day.`
+            });
+        }
+
+        container.innerHTML = insights.map(insight => `
+            <div class="insight-card">
+                <div class="insight-icon">${insight.icon}</div>
+                <div class="insight-content">
+                    <h5>${insight.title}</h5>
+                    <p>${insight.description}</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Update food stats to include meal data
+    updateFoodStats() {
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        const todayMeals = window.storage.getTodayMeals();
+        const todayCalories = todayMeals.reduce((sum, meal) => sum + parseInt(meal.calories), 0);
+
+        const homeMealsEl = document.getElementById('homeMeals');
+        const hotelMealsEl = document.getElementById('hotelMeals');
+        const moneySavedEl = document.getElementById('moneySaved');
+        const caloriesConsumedEl = document.getElementById('caloriesConsumed');
+
+        if (homeMealsEl) homeMealsEl.textContent = weeklyStats.homeMeals;
+        if (hotelMealsEl) hotelMealsEl.textContent = weeklyStats.hotelMeals;
+        if (moneySavedEl) moneySavedEl.textContent = Utils.formatCurrency(weeklyStats.moneySaved);
+        if (caloriesConsumedEl) caloriesConsumedEl.textContent = todayCalories;
+    }
+
+    // Update food form handler for enhanced pantry items
+    handleFoodSubmit(e) {
+        e.preventDefault();
+
+        const foodData = {
+            name: Utils.sanitizeInput(document.getElementById('foodName').value),
+            quantity: parseFloat(document.getElementById('foodQuantity').value),
+            unit: document.getElementById('foodUnit').value,
+            caloriesPer100g: parseInt(document.getElementById('foodCaloriesPer100g').value),
+            expiry: document.getElementById('foodExpiry').value
+        };
+
+        if (!foodData.name || !foodData.quantity || !foodData.caloriesPer100g) {
+            Utils.showNotification('Please fill in all required fields', 'error');
+            return;
+        }
+
+        window.storage.addFoodItem(foodData);
+        Utils.showNotification('Food item added to pantry!', 'success');
+
+        this.closeModal('foodModal');
+        e.target.reset();
+
+        if (this.currentSection === 'food') {
+            this.loadFoodData();
+        }
     }
 }
 
