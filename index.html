@@ -146,7 +146,7 @@
                                 <option value="health">🏥 Health & Fitness</option>
                                 <option value="food">🍕 Food & Dining</option>
                                 <option value="bills">📧 Bills & Utilities</option>
-                                <option value="shopping">🛍��� Shopping</option>
+                                <option value="shopping">🛍️ Shopping</option>
                                 <option value="travel">✈️ Travel & Transport</option>
                                 <option value="entertainment">🎬 Entertainment</option>
                                 <option value="education">📚 Education</option>
@@ -727,23 +727,42 @@
                 </div>
 
                 <div class="meal-planner">
-                    <h3>Today's Meal Plan</h3>
+                    <h3>Today's South Indian Meal Plan</h3>
                     <div class="meal-grid">
                         <div class="meal-card">
+                            <div class="meal-emoji">🌅</div>
                             <h4>Breakfast</h4>
-                            <p id="breakfastMeal">Oats with fruits</p>
-                            <span>250 cal • ₹30</span>
+                            <p id="breakfastMeal">Crispy Dosa with Coconut Chutney</p>
+                            <div class="meal-details">
+                                <span class="calories" id="breakfastCalories">280 cal</span>
+                                <span class="cost" id="breakfastCost">₹35</span>
+                            </div>
+                            <button class="btn-edit-meal" onclick="app.editMealSuggestion('breakfast')">✏️ Edit</button>
                         </div>
                         <div class="meal-card">
+                            <div class="meal-emoji">🌞</div>
                             <h4>Lunch</h4>
-                            <p id="lunchMeal">Rice with dal</p>
-                            <span>400 cal • ₹50</span>
+                            <p id="lunchMeal">Steamed Rice with Sambar and Rasam</p>
+                            <div class="meal-details">
+                                <span class="calories" id="lunchCalories">420 cal</span>
+                                <span class="cost" id="lunchCost">₹55</span>
+                            </div>
+                            <button class="btn-edit-meal" onclick="app.editMealSuggestion('lunch')">✏️ Edit</button>
                         </div>
                         <div class="meal-card">
+                            <div class="meal-emoji">🌙</div>
                             <h4>Dinner</h4>
-                            <p id="dinnerMeal">Chapati with vegetables</p>
-                            <span>350 cal • ₹40</span>
+                            <p id="dinnerMeal">Appam with Coconut Stew</p>
+                            <div class="meal-details">
+                                <span class="calories" id="dinnerCalories">340 cal</span>
+                                <span class="cost" id="dinnerCost">₹45</span>
+                            </div>
+                            <button class="btn-edit-meal" onclick="app.editMealSuggestion('dinner')">✏️ Edit</button>
                         </div>
+                    </div>
+                    <div class="meal-actions">
+                        <button class="btn-secondary" onclick="app.regenerateMealPlan()">🔄 Regenerate Plan</button>
+                        <button class="btn-primary" onclick="app.saveMealPlan()">�� Save Plan</button>
                     </div>
                 </div>
 
@@ -1474,7 +1493,7 @@
                 </div>
 
                 <div class="weekly-trends">
-                    <h3>�� Weekly Trends</h3>
+                    <h3>��� Weekly Trends</h3>
                     <canvas id="trendsChart" width="800" height="400"></canvas>
                 </div>
             </section>
