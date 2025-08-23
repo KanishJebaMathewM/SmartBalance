@@ -115,6 +115,39 @@ class WorkLifeBalanceApp {
             if (expenseCheckbox && expenseDetails) {
                 expenseCheckbox.addEventListener('change', () => {
                     expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
+                    if (expenseCheckbox.checked) {
+                        this.updateExpenseCategory();
+                    }
+                });
+            }
+
+            // Handle task category changes to auto-update expense category
+            const taskCategorySelect = document.getElementById('taskCategory');
+            if (taskCategorySelect) {
+                taskCategorySelect.addEventListener('change', () => {
+                    this.updateExpenseCategory();
+                });
+            }
+
+            // Handle change expense category button
+            const changeExpenseCategoryBtn = document.getElementById('changeExpenseCategoryBtn');
+            const expenseCategorySelect = document.getElementById('taskExpenseCategory');
+            if (changeExpenseCategoryBtn && expenseCategorySelect) {
+                changeExpenseCategoryBtn.addEventListener('click', () => {
+                    expenseCategorySelect.style.display = 'block';
+                    changeExpenseCategoryBtn.style.display = 'none';
+                });
+
+                expenseCategorySelect.addEventListener('change', () => {
+                    if (expenseCategorySelect.value) {
+                        const selectedOption = expenseCategorySelect.querySelector(`option[value="${expenseCategorySelect.value}"]`);
+                        const categoryDisplay = document.getElementById('selectedExpenseCategory');
+                        if (categoryDisplay && selectedOption) {
+                            categoryDisplay.textContent = selectedOption.textContent;
+                        }
+                        expenseCategorySelect.style.display = 'none';
+                        changeExpenseCategoryBtn.style.display = 'inline';
+                    }
                 });
             }
         }
@@ -2820,7 +2853,7 @@ class WorkLifeBalanceApp {
             '💰 You tend to spend more when stressed - try stress management techniques!' :
             correlation < -0.3 ?
             '😌 Good mood leads to mindful spending!' :
-            '📊 No strong pattern detected yet - keep tracking';
+            '���� No strong pattern detected yet - keep tracking';
 
         this.updateCorrelationDisplay('moodSpendingCorrelation', percentage, insight);
     }
