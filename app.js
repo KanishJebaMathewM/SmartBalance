@@ -69,7 +69,9 @@ class WorkLifeBalanceApp {
             'addExpenseBtn': 'expenseModal',
             'addFoodBtn': 'foodModal',
             'moodCheckBtn': 'moodModal',
-            'breathingBtn': 'breathingModal'
+            'breathingBtn': 'breathingModal',
+            'addHabitBtn': 'habitModal',
+            'addGoalBtn': 'goalModal'
         };
 
         Object.entries(modalTriggers).forEach(([buttonId, modalId]) => {
