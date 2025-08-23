@@ -163,7 +163,11 @@
                             </div>
                             <div id="expenseTaskDetails" style="display:none;">
                                 <input type="number" id="taskAmount" placeholder="Expected amount (₹)" step="0.01">
-                                <select id="taskExpenseCategory">
+                                <div class="expense-category-info">
+                                    <label>Expense will be categorized as: <span id="selectedExpenseCategory">-</span></label>
+                                    <button type="button" class="btn-link" id="changeExpenseCategoryBtn" style="display:none;">Change</button>
+                                </div>
+                                <select id="taskExpenseCategory" style="display:none;">
                                     <option value="">Select expense category</option>
                                     <option value="food">🍕 Food & Dining</option>
                                     <option value="bills">📧 Bills & Utilities</option>
