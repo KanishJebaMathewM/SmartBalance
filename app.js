@@ -6242,6 +6242,469 @@ class WorkLifeBalanceApp {
         return Math.min(Math.round(averageMoodScore + trackingBonus), 100);
     }
 
+    // Overall Insights Tab
+    loadOverallInsights() {
+        this.loadFitnessPerformance();
+        this.loadNutritionPerformance();
+        this.loadProductivityPerformance();
+        this.loadFinancialPerformance();
+        this.loadWellnessPerformance();
+    }
+
+    loadFitnessPerformance() {
+        const container = document.getElementById('fitnessPerformance');
+        if (!container) return;
+
+        const workouts = window.storage.getWorkouts();
+        const workoutStreak = window.storage.getWorkoutStreak();
+        const weeklyWorkouts = workouts.filter(w =>
+            Utils.getDaysDifference(new Date(), new Date(w.createdAt)) <= 7
+        );
+
+        const insights = [
+            {
+                title: 'Workout Streak',
+                value: `${workoutStreak} days`,
+                status: workoutStreak >= 7 ? 'excellent' : workoutStreak >= 3 ? 'good' : 'needs-improvement',
+                description: workoutStreak >= 7 ? 'Excellent consistency!' :
+                           workoutStreak >= 3 ? 'Good momentum, keep it up!' : 'Try to exercise more regularly'
+            },
+            {
+                title: 'Weekly Activity',
+                value: `${weeklyWorkouts.length}/7 days`,
+                status: weeklyWorkouts.length >= 5 ? 'excellent' : weeklyWorkouts.length >= 3 ? 'good' : 'needs-improvement',
+                description: weeklyWorkouts.length >= 5 ? 'Very active week!' :
+                           weeklyWorkouts.length >= 3 ? 'Decent activity level' : 'Increase weekly activity'
+            }
+        ];
+
+        container.innerHTML = insights.map(insight => `
+            <div class="performance-metric ${insight.status}">
+                <div class="metric-header">
+                    <h4>${insight.title}</h4>
+                    <span class="metric-value">${insight.value}</span>
+                </div>
+                <p class="metric-description">${insight.description}</p>
+            </div>
+        `).join('');
+    }
+
+    loadNutritionPerformance() {
+        const container = document.getElementById('nutritionPerformance');
+        if (!container) return;
+
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        const homeCookingPercentage = weeklyStats.totalMeals > 0 ?
+            Math.round((weeklyStats.homeMeals / weeklyStats.totalMeals) * 100) : 0;
+
+        const insights = [
+            {
+                title: 'Home Cooking',
+                value: `${homeCookingPercentage}%`,
+                status: homeCookingPercentage >= 70 ? 'excellent' : homeCookingPercentage >= 50 ? 'good' : 'needs-improvement',
+                description: homeCookingPercentage >= 70 ? 'Great home cooking habits!' :
+                           homeCookingPercentage >= 50 ? 'Good balance with cooking' : 'Try cooking at home more often'
+            },
+            {
+                title: 'Money Saved',
+                value: Utils.formatCurrency(weeklyStats.moneySaved),
+                status: weeklyStats.moneySaved >= 1000 ? 'excellent' : weeklyStats.moneySaved >= 500 ? 'good' : 'fair',
+                description: `Estimated savings from home cooking this week`
+            }
+        ];
+
+        container.innerHTML = insights.map(insight => `
+            <div class="performance-metric ${insight.status}">
+                <div class="metric-header">
+                    <h4>${insight.title}</h4>
+                    <span class="metric-value">${insight.value}</span>
+                </div>
+                <p class="metric-description">${insight.description}</p>
+            </div>
+        `).join('');
+    }
+
+    loadProductivityPerformance() {
+        const container = document.getElementById('productivityPerformance');
+        if (!container) return;
+
+        const tasks = window.storage.getTasks();
+        const weeklyTasks = tasks.filter(t =>
+            Utils.getDaysDifference(new Date(), new Date(t.createdAt)) <= 7
+        );
+        const completedWeekly = weeklyTasks.filter(t => t.completed);
+        const completionRate = weeklyTasks.length > 0 ?
+            Math.round((completedWeekly.length / weeklyTasks.length) * 100) : 0;
+
+        const insights = [
+            {
+                title: 'Task Completion',
+                value: `${completionRate}%`,
+                status: completionRate >= 80 ? 'excellent' : completionRate >= 60 ? 'good' : 'needs-improvement',
+                description: completionRate >= 80 ? 'Excellent productivity!' :
+                           completionRate >= 60 ? 'Good task management' : 'Focus on completing more tasks'
+            },
+            {
+                title: 'Weekly Tasks',
+                value: `${completedWeekly.length}/${weeklyTasks.length}`,
+                status: completedWeekly.length >= 10 ? 'excellent' : completedWeekly.length >= 5 ? 'good' : 'fair',
+                description: `Tasks completed this week`
+            }
+        ];
+
+        container.innerHTML = insights.map(insight => `
+            <div class="performance-metric ${insight.status}">
+                <div class="metric-header">
+                    <h4>${insight.title}</h4>
+                    <span class="metric-value">${insight.value}</span>
+                </div>
+                <p class="metric-description">${insight.description}</p>
+            </div>
+        `).join('');
+    }
+
+    loadFinancialPerformance() {
+        const container = document.getElementById('financialPerformance');
+        if (!container) return;
+
+        const analysis = window.storage.getSavingsAnalysis();
+        const weeklyExpenses = window.storage.getWeeklyExpenses();
+
+        const insights = [
+            {
+                title: 'Savings Rate',
+                value: `${analysis.savingsRate}%`,
+                status: analysis.savingsRate >= 20 ? 'excellent' : analysis.savingsRate >= 10 ? 'good' : 'needs-improvement',
+                description: analysis.savingsRate >= 20 ? 'Excellent saving habits!' :
+                           analysis.savingsRate >= 10 ? 'Good savings discipline' : 'Try to save more of your income'
+            },
+            {
+                title: 'Weekly Spending',
+                value: Utils.formatCurrency(weeklyExpenses),
+                status: weeklyExpenses <= 3000 ? 'excellent' : weeklyExpenses <= 5000 ? 'good' : 'needs-improvement',
+                description: `Total expenses this week`
+            }
+        ];
+
+        container.innerHTML = insights.map(insight => `
+            <div class="performance-metric ${insight.status}">
+                <div class="metric-header">
+                    <h4>${insight.title}</h4>
+                    <span class="metric-value">${insight.value}</span>
+                </div>
+                <p class="metric-description">${insight.description}</p>
+            </div>
+        `).join('');
+    }
+
+    loadWellnessPerformance() {
+        const container = document.getElementById('wellnessPerformance');
+        if (!container) return;
+
+        const moods = window.storage.getMoods();
+        const weeklyMoods = moods.filter(m =>
+            Utils.getDaysDifference(new Date(), new Date(m.date)) <= 7
+        );
+
+        const averageMood = window.storage.getWeeklyMoodAverage();
+        const stressedDays = weeklyMoods.filter(m =>
+            ['stressed', 'very-stressed'].includes(m.mood)
+        ).length;
+
+        const insights = [
+            {
+                title: 'Mood Trend',
+                value: Utils.getMoodEmoji(averageMood),
+                status: ['very-happy', 'happy'].includes(averageMood) ? 'excellent' :
+                       averageMood === 'neutral' ? 'good' : 'needs-improvement',
+                description: `Your average mood this week: ${averageMood.replace('-', ' ')}`
+            },
+            {
+                title: 'Stress Management',
+                value: `${7 - stressedDays}/7 good days`,
+                status: stressedDays <= 1 ? 'excellent' : stressedDays <= 3 ? 'good' : 'needs-improvement',
+                description: stressedDays <= 1 ? 'Great stress management!' :
+                           stressedDays <= 3 ? 'Manageable stress levels' : 'Focus on stress reduction'
+            }
+        ];
+
+        container.innerHTML = insights.map(insight => `
+            <div class="performance-metric ${insight.status}">
+                <div class="metric-header">
+                    <h4>${insight.title}</h4>
+                    <span class="metric-value">${insight.value}</span>
+                </div>
+                <p class="metric-description">${insight.description}</p>
+            </div>
+        `).join('');
+    }
+
+    // Behavior Patterns Tab
+    loadBehaviorPatterns() {
+        this.updateBehaviorCorrelations();
+        this.loadPatternCharts();
+    }
+
+    updateBehaviorCorrelations() {
+        this.calculateFitnessStressCorrelation();
+        this.calculateNutritionProductivityCorrelation();
+        this.calculateMoodSpendingCorrelation();
+        this.calculateProductivityStressCorrelation();
+    }
+
+    calculateFitnessStressCorrelation() {
+        const workouts = window.storage.getWorkouts();
+        const moods = window.storage.getMoods();
+
+        // Simple correlation calculation
+        let correlation = 0;
+        let insight = "Track more data to see patterns";
+
+        if (workouts.length >= 5 && moods.length >= 5) {
+            // Calculate how often good mood follows workout days
+            const workoutDays = new Set(workouts.map(w =>
+                new Date(w.createdAt).toDateString()
+            ));
+
+            const goodMoodDays = moods.filter(m =>
+                ['very-happy', 'happy'].includes(m.mood)
+            ).map(m => new Date(m.date).toDateString());
+
+            const overlapDays = goodMoodDays.filter(day => workoutDays.has(day));
+            correlation = workoutDays.size > 0 ? (overlapDays.length / workoutDays.size) * 100 : 0;
+
+            if (correlation >= 70) {
+                insight = "Strong positive correlation! Exercise significantly improves your mood.";
+            } else if (correlation >= 40) {
+                insight = "Moderate correlation. Exercise tends to improve your mood.";
+            } else {
+                insight = "Weak correlation. Other factors may influence your mood more.";
+            }
+        }
+
+        this.updateCorrelationCard('fitnessStressCorrelation', 'fitnessStressInsight', correlation, insight);
+    }
+
+    calculateNutritionProductivityCorrelation() {
+        const meals = window.storage.getMeals();
+        const tasks = window.storage.getTasks();
+
+        let correlation = 0;
+        let insight = "Track more data to see patterns";
+
+        if (meals.length >= 10 && tasks.length >= 10) {
+            // Calculate productivity on home cooking days vs delivery days
+            const homeCookingDays = new Set(meals.filter(m => m.source === 'home')
+                .map(m => new Date(m.date).toDateString()));
+
+            const deliveryDays = new Set(meals.filter(m => m.source === 'hotel')
+                .map(m => new Date(m.date).toDateString()));
+
+            const homeCookingProductivity = this.calculateAverageTaskCompletion(tasks, homeCookingDays);
+            const deliveryProductivity = this.calculateAverageTaskCompletion(tasks, deliveryDays);
+
+            if (homeCookingProductivity > deliveryProductivity) {
+                correlation = Math.min(((homeCookingProductivity - deliveryProductivity) / homeCookingProductivity) * 100, 100);
+                insight = `Home cooking days show ${Math.round(correlation)}% better productivity!`;
+            } else {
+                correlation = 0;
+                insight = "No significant correlation found between cooking habits and productivity.";
+            }
+        }
+
+        this.updateCorrelationCard('nutritionProductivityCorrelation', 'nutritionProductivityInsight', correlation, insight);
+    }
+
+    calculateMoodSpendingCorrelation() {
+        const moods = window.storage.getMoods();
+        const expenses = window.storage.getExpenses();
+
+        let correlation = 0;
+        let insight = "Track more data to see patterns";
+
+        if (moods.length >= 7 && expenses.length >= 10) {
+            const stressedDays = new Set(moods.filter(m =>
+                ['stressed', 'very-stressed'].includes(m.mood)
+            ).map(m => new Date(m.date).toDateString()));
+
+            const happyDays = new Set(moods.filter(m =>
+                ['very-happy', 'happy'].includes(m.mood)
+            ).map(m => new Date(m.date).toDateString()));
+
+            const stressedDaySpending = this.calculateAverageSpending(expenses, stressedDays);
+            const happyDaySpending = this.calculateAverageSpending(expenses, happyDays);
+
+            if (stressedDaySpending > happyDaySpending) {
+                correlation = Math.min(((stressedDaySpending - happyDaySpending) / stressedDaySpending) * 100, 100);
+                insight = `You spend ${Math.round(correlation)}% more on stressed days. Consider stress management techniques.`;
+            } else {
+                correlation = 0;
+                insight = "Your spending doesn't significantly correlate with mood.";
+            }
+        }
+
+        this.updateCorrelationCard('moodSpendingCorrelation', 'moodSpendingInsight', correlation, insight);
+    }
+
+    calculateProductivityStressCorrelation() {
+        const tasks = window.storage.getTasks();
+        const moods = window.storage.getMoods();
+
+        let correlation = 0;
+        let insight = "Track more data to see patterns";
+
+        if (tasks.length >= 10 && moods.length >= 7) {
+            // Calculate stress levels on high vs low productivity days
+            const highProductivityDays = this.getHighProductivityDays(tasks);
+            const lowProductivityDays = this.getLowProductivityDays(tasks);
+
+            const highProdStress = this.calculateAverageStress(moods, highProductivityDays);
+            const lowProdStress = this.calculateAverageStress(moods, lowProductivityDays);
+
+            if (lowProdStress > highProdStress) {
+                correlation = Math.min(((lowProdStress - highProdStress) / lowProdStress) * 100, 100);
+                insight = `Higher productivity correlates with ${Math.round(correlation)}% lower stress levels.`;
+            } else {
+                correlation = 0;
+                insight = "No significant correlation between productivity and stress levels.";
+            }
+        }
+
+        this.updateCorrelationCard('productivityStressCorrelation', 'productivityStressInsight', correlation, insight);
+    }
+
+    updateCorrelationCard(correlationId, insightId, percentage, insight) {
+        const correlationEl = document.getElementById(correlationId);
+        const insightEl = document.getElementById(insightId);
+
+        if (correlationEl) {
+            const fillEl = correlationEl.querySelector('.correlation-fill');
+            const valueEl = correlationEl.querySelector('.correlation-value');
+
+            if (fillEl) fillEl.style.width = `${percentage}%`;
+            if (valueEl) valueEl.textContent = `${Math.round(percentage)}% correlation`;
+        }
+
+        if (insightEl) {
+            insightEl.textContent = insight;
+        }
+    }
+
+    // Helper functions for correlation calculations
+    calculateAverageTaskCompletion(tasks, daySet) {
+        if (daySet.size === 0) return 0;
+
+        let totalCompletion = 0;
+        daySet.forEach(day => {
+            const dayTasks = tasks.filter(t =>
+                new Date(t.createdAt).toDateString() === day
+            );
+            const completed = dayTasks.filter(t => t.completed).length;
+            const completion = dayTasks.length > 0 ? completed / dayTasks.length : 0;
+            totalCompletion += completion;
+        });
+
+        return totalCompletion / daySet.size;
+    }
+
+    calculateAverageSpending(expenses, daySet) {
+        if (daySet.size === 0) return 0;
+
+        let totalSpending = 0;
+        let daysWithSpending = 0;
+
+        daySet.forEach(day => {
+            const dayExpenses = expenses.filter(e =>
+                new Date(e.createdAt).toDateString() === day
+            );
+            if (dayExpenses.length > 0) {
+                const dayTotal = dayExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+                totalSpending += dayTotal;
+                daysWithSpending++;
+            }
+        });
+
+        return daysWithSpending > 0 ? totalSpending / daysWithSpending : 0;
+    }
+
+    getHighProductivityDays(tasks) {
+        const dailyCompletions = {};
+
+        tasks.forEach(task => {
+            const day = new Date(task.createdAt).toDateString();
+            if (!dailyCompletions[day]) {
+                dailyCompletions[day] = { total: 0, completed: 0 };
+            }
+            dailyCompletions[day].total++;
+            if (task.completed) dailyCompletions[day].completed++;
+        });
+
+        return new Set(Object.keys(dailyCompletions).filter(day => {
+            const completion = dailyCompletions[day];
+            return completion.total >= 3 && (completion.completed / completion.total) >= 0.8;
+        }));
+    }
+
+    getLowProductivityDays(tasks) {
+        const dailyCompletions = {};
+
+        tasks.forEach(task => {
+            const day = new Date(task.createdAt).toDateString();
+            if (!dailyCompletions[day]) {
+                dailyCompletions[day] = { total: 0, completed: 0 };
+            }
+            dailyCompletions[day].total++;
+            if (task.completed) dailyCompletions[day].completed++;
+        });
+
+        return new Set(Object.keys(dailyCompletions).filter(day => {
+            const completion = dailyCompletions[day];
+            return completion.total >= 2 && (completion.completed / completion.total) <= 0.4;
+        }));
+    }
+
+    calculateAverageStress(moods, daySet) {
+        if (daySet.size === 0) return 0;
+
+        const stressValues = {
+            'very-happy': 1,
+            'happy': 2,
+            'neutral': 3,
+            'stressed': 4,
+            'very-stressed': 5
+        };
+
+        let totalStress = 0;
+        let moodCount = 0;
+
+        daySet.forEach(day => {
+            const dayMoods = moods.filter(m =>
+                new Date(m.date).toDateString() === day
+            );
+            dayMoods.forEach(mood => {
+                totalStress += stressValues[mood.mood] || 3;
+                moodCount++;
+            });
+        });
+
+        return moodCount > 0 ? totalStress / moodCount : 3;
+    }
+
+    loadPatternCharts() {
+        // This would load the mood vs activity and weekly patterns charts
+        // For now, placeholder implementation
+        const moodActivityCanvas = document.getElementById('moodActivityChart');
+        const weeklyPatternsCanvas = document.getElementById('weeklyPatternsChart');
+
+        if (moodActivityCanvas && this.charts) {
+            // this.charts.createMoodActivityChart('moodActivityChart');
+        }
+
+        if (weeklyPatternsCanvas && this.charts) {
+            // this.charts.createWeeklyPatternsChart('weeklyPatternsChart');
+        }
+    }
+
     loadDailyHabits() {
         const habits = window.storage.getHabits();
         this.renderHabitsByCategory(habits);
@@ -6427,7 +6890,7 @@ class WorkLifeBalanceApp {
 
         return `
             <div class="report-summary">
-                <h2>📊 ${periodLabel} Report Summary</h2>
+                <h2>��� ${periodLabel} Report Summary</h2>
                 <div class="summary-grid">
                     ${this.generateTaskSummary(data.tasks)}
                     ${this.generateExpenseSummary(data.expenses)}
