@@ -108,7 +108,11 @@
             <section id="tasks" class="section">
                 <div class="section-header">
                     <h1>📑 Task Manager</h1>
-                    <button class="btn-primary" id="addTaskBtn">+ Add Task</button>
+                    <div class="header-actions">
+                        <button class="btn-secondary export-btn" data-section="tasks" data-format="csv">📊 Export CSV</button>
+                        <button class="btn-secondary export-btn" data-section="tasks" data-format="json">📄 Export JSON</button>
+                        <button class="btn-primary" id="addTaskBtn">+ Add Task</button>
+                    </div>
                 </div>
                 
                 <div class="task-stats">
@@ -1385,7 +1389,7 @@
                 </div>
 
                 <div class="stress-relief">
-                    <h3>��� Stress Relief Suggestions</h3>
+                    <h3>����� Stress Relief Suggestions</h3>
                     <div class="relief-options">
                         <button class="relief-btn" id="breathingBtn">🫁 Breathing Exercise</button>
                         <button class="relief-btn" id="meditationBtn">��� 5-min Meditation</button>
