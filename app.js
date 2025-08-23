@@ -2343,7 +2343,7 @@ class WorkLifeBalanceApp {
             shopping: '🛍️',
             travel: '✈���',
             entertainment: '🎬',
-            healthcare: '🏥',
+            healthcare: '����',
             education: '📚',
             other: '����'
         };
@@ -3742,15 +3742,27 @@ class WorkLifeBalanceApp {
         this.closeModal('taskModal');
         e.target.reset();
 
-        // Reset the expense task details
-        document.getElementById('expenseTaskDetails').style.display = 'none';
+        // Reset the expense task details and form state
+        const expenseTaskDetails = document.getElementById('expenseTaskDetails');
+        const expenseCheckbox = document.getElementById('taskExpense');
+        const amountField = document.getElementById('taskAmount');
+
+        if (expenseTaskDetails) expenseTaskDetails.style.display = 'none';
+        if (expenseCheckbox) expenseCheckbox.checked = false;
+        if (amountField) {
+            amountField.required = false;
+            amountField.value = '';
+        }
+
         document.getElementById('selectedExpenseCategory').textContent = '-';
         const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-        expenseCategorySelect.style.display = 'none';
-        // Hide the container as well
-        const expenseCategoryContainer = expenseCategorySelect.parentElement;
-        if (expenseCategoryContainer) {
-            expenseCategoryContainer.style.display = 'none';
+        if (expenseCategorySelect) {
+            expenseCategorySelect.style.display = 'none';
+            // Hide the container as well
+            const expenseCategoryContainer = expenseCategorySelect.parentElement;
+            if (expenseCategoryContainer) {
+                expenseCategoryContainer.style.display = 'none';
+            }
         }
         document.getElementById('changeExpenseCategoryBtn').style.display = 'none';
 
