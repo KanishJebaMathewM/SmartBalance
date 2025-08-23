@@ -3628,6 +3628,310 @@ class WorkLifeBalanceApp {
             }
         }
     }
+
+    // Exercise Timer Methods
+    startExerciseTimer() {
+        if (this.timerState === 'stopped' || this.timerState === 'paused') {
+            this.timerState = 'running';
+
+            // Update button states
+            document.getElementById('startTimerBtn').style.display = 'none';
+            document.getElementById('pauseTimerBtn').style.display = 'inline-block';
+            document.getElementById('resetTimerBtn').style.display = 'inline-block';
+
+            // Start the countdown
+            this.exerciseTimer = setInterval(() => {
+                this.timerRemaining--;
+                this.updateTimerDisplay();
+
+                if (this.timerRemaining <= 0) {
+                    this.completeTimerExercise();
+                }
+            }, 1000);
+
+            Utils.showNotification('Exercise timer started!', 'success');
+        }
+    }
+
+    pauseExerciseTimer() {
+        if (this.timerState === 'running') {
+            this.timerState = 'paused';
+            clearInterval(this.exerciseTimer);
+
+            // Update button states
+            document.getElementById('startTimerBtn').style.display = 'inline-block';
+            document.getElementById('startTimerBtn').textContent = 'Resume';
+            document.getElementById('pauseTimerBtn').style.display = 'none';
+
+            Utils.showNotification('Timer paused', 'info');
+        }
+    }
+
+    resetExerciseTimer() {
+        this.timerState = 'stopped';
+        clearInterval(this.exerciseTimer);
+
+        this.timerRemaining = this.timerDuration;
+        this.updateTimerDisplay();
+
+        // Reset button states
+        document.getElementById('startTimerBtn').style.display = 'inline-block';
+        document.getElementById('startTimerBtn').textContent = 'Start Timer';
+        document.getElementById('pauseTimerBtn').style.display = 'none';
+        document.getElementById('resetTimerBtn').style.display = 'none';
+
+        Utils.showNotification('Timer reset', 'info');
+    }
+
+    updateTimerDisplay() {
+        const minutes = Math.floor(this.timerRemaining / 60);
+        const seconds = this.timerRemaining % 60;
+        const displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        const timerDisplay = document.getElementById('timerDisplay');
+        if (timerDisplay) {
+            timerDisplay.textContent = displayTime;
+        }
+
+        // Update progress bar
+        const progressFill = document.getElementById('timerProgressFill');
+        if (progressFill) {
+            const progressPercentage = ((this.timerDuration - this.timerRemaining) / this.timerDuration) * 100;
+            progressFill.style.width = `${progressPercentage}%`;
+        }
+
+        // Change color when time is running out
+        if (this.timerRemaining <= 30 && this.timerRemaining > 10) {
+            timerDisplay?.classList.add('timer-warning');
+        } else if (this.timerRemaining <= 10) {
+            timerDisplay?.classList.add('timer-danger');
+        } else {
+            timerDisplay?.classList.remove('timer-warning', 'timer-danger');
+        }
+    }
+
+    completeTimerExercise() {
+        this.timerState = 'stopped';
+        clearInterval(this.exerciseTimer);
+
+        // Show completion notification
+        Utils.showNotification('🎉 Exercise completed! Great job!', 'success', 5000);
+
+        // Auto-complete the exercise
+        if (this.currentExerciseType) {
+            const exercise = Utils.getExerciseInstructions(this.currentExerciseType);
+            this.completeExercise(this.currentExerciseType, exercise);
+        }
+
+        // Close modal after a short delay
+        setTimeout(() => {
+            this.closeModal('exerciseModal');
+        }, 2000);
+    }
+
+    parseDurationToSeconds(duration) {
+        // Parse duration string like "5 minutes", "3 minutes", "2 minutes" to seconds
+        const match = duration.match(/(\d+)\s+(minute|minutes|min)/i);
+        if (match) {
+            return parseInt(match[1]) * 60;
+        }
+
+        // Default to 5 minutes if can't parse
+        return 300;
+    }
+
+    // Enhanced startExercise method with timer support
+    startExercise(exerciseType) {
+        const exercise = Utils.getExerciseInstructions(exerciseType);
+        if (!exercise) return;
+
+        this.currentExerciseType = exerciseType;
+
+        // Update modal content
+        document.getElementById('exerciseTitle').textContent = exercise.title;
+
+        // Create instructions HTML
+        const instructionsHTML = `
+            <div class="exercise-info">
+                <div class="exercise-meta">
+                    <span class="exercise-duration">⏱️ ${exercise.duration}</span>
+                    <span class="exercise-calories">🔥 ${exercise.calories} cal</span>
+                </div>
+            </div>
+            <div class="exercise-instructions">
+                <h4>Instructions:</h4>
+                <ol>
+                    ${exercise.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+                </ol>
+            </div>
+        `;
+
+        document.getElementById('exerciseInstructions').innerHTML = instructionsHTML;
+
+        // Show timer section if exercise has duration and it's not breathing exercise
+        const timerSection = document.getElementById('exerciseTimerSection');
+        if (exercise.duration && exerciseType !== 'breathing') {
+            // Parse duration to seconds
+            this.timerDuration = this.parseDurationToSeconds(exercise.duration);
+            this.timerRemaining = this.timerDuration;
+
+            // Show timer section
+            timerSection.style.display = 'block';
+            this.updateTimerDisplay();
+
+            // Reset timer controls
+            this.resetExerciseTimer();
+        } else {
+            timerSection.style.display = 'none';
+        }
+
+        // Special handling for breathing exercise
+        if (exerciseType === 'breathing') {
+            const completeBtn = document.getElementById('completeExerciseBtn');
+            completeBtn.style.display = 'none';
+
+            // Add breathing exercise start button
+            const actionsDiv = document.querySelector('.exercise-modal-actions');
+            let breathingBtn = document.getElementById('startBreathingExerciseBtn');
+            if (!breathingBtn) {
+                breathingBtn = document.createElement('button');
+                breathingBtn.id = 'startBreathingExerciseBtn';
+                breathingBtn.className = 'btn-primary';
+                breathingBtn.textContent = 'Start Breathing Exercise';
+                breathingBtn.addEventListener('click', () => {
+                    this.closeModal('exerciseModal');
+                    this.openModal('breathingModal');
+                });
+                actionsDiv.insertBefore(breathingBtn, actionsDiv.firstChild);
+            }
+            breathingBtn.style.display = 'inline-block';
+        } else {
+            document.getElementById('completeExerciseBtn').style.display = 'inline-block';
+            const breathingBtn = document.getElementById('startBreathingExerciseBtn');
+            if (breathingBtn) {
+                breathingBtn.style.display = 'none';
+            }
+        }
+
+        this.openModal('exerciseModal');
+    }
+
+    // Enhanced completeExercise method
+    completeExercise(exerciseType, exercise) {
+        // Stop timer if running
+        if (this.timerState === 'running') {
+            this.resetExerciseTimer();
+        }
+
+        // Mark workout
+        const workout = {
+            type: exerciseType,
+            duration: exercise ? exercise.duration : '5 minutes',
+            calories: exercise ? exercise.calories : 15,
+            completedAt: new Date().toISOString()
+        };
+
+        window.storage.addWorkout(workout);
+
+        // Check for badges
+        const data = {
+            workouts: window.storage.getWorkouts(),
+            tasks: window.storage.getTasks(),
+            expenses: window.storage.getExpenses()
+        };
+
+        Utils.checkBadgeEligibility(data);
+
+        Utils.showNotification('✅ Exercise completed! Keep up the great work!', 'success');
+
+        this.closeModal('exerciseModal');
+
+        // Update fitness data if on fitness section
+        if (this.currentSection === 'fitness') {
+            this.loadFitnessData();
+        }
+
+        this.updateDashboard();
+    }
+
+    // Load fitness data and update badges
+    loadFitnessData() {
+        this.updateFitnessStats();
+        this.updateBadges();
+    }
+
+    updateFitnessStats() {
+        const workouts = window.storage.getWorkouts();
+        const streak = window.storage.getWorkoutStreak();
+
+        // Update streak display
+        const fitnessStreakEl = document.getElementById('fitnessStreak');
+        if (fitnessStreakEl) {
+            Utils.animateNumber(fitnessStreakEl, 0, streak);
+        }
+
+        // Update weekly workouts
+        const thisWeek = workouts.filter(w => Utils.isThisWeek(w.createdAt));
+        const weeklyWorkoutsEl = document.getElementById('weeklyWorkouts');
+        if (weeklyWorkoutsEl) {
+            weeklyWorkoutsEl.textContent = `${thisWeek.length}/7`;
+        }
+
+        // Update total workouts
+        const totalWorkoutsEl = document.getElementById('totalWorkouts');
+        if (totalWorkoutsEl) {
+            Utils.animateNumber(totalWorkoutsEl, 0, workouts.length);
+        }
+    }
+
+    updateBadges() {
+        const badges = window.storage.getBadges();
+        const badgesList = document.getElementById('badgesList');
+
+        if (!badgesList) return;
+
+        const badgeElements = badgesList.querySelectorAll('.badge');
+        badgeElements.forEach((badge, index) => {
+            const badgeNames = ['firstWorkout', 'sevenDayStreak', 'consistencyKing'];
+            const badgeName = badgeNames[index];
+
+            if (badges[badgeName]) {
+                badge.classList.remove('locked');
+                badge.classList.add('unlocked');
+            } else {
+                badge.classList.add('locked');
+                badge.classList.remove('unlocked');
+            }
+        });
+    }
+
+    markWorkout() {
+        const workout = {
+            type: 'general',
+            duration: '30 minutes',
+            calories: 200,
+            completedAt: new Date().toISOString()
+        };
+
+        window.storage.addWorkout(workout);
+
+        // Check for new badges
+        const data = {
+            workouts: window.storage.getWorkouts(),
+            tasks: window.storage.getTasks(),
+            expenses: window.storage.getExpenses()
+        };
+
+        Utils.checkBadgeEligibility(data);
+
+        Utils.showNotification('💪 Workout marked! Keep up the great work!', 'success');
+
+        if (this.currentSection === 'fitness') {
+            this.loadFitnessData();
+        }
+
+        this.updateDashboard();
+    }
 }
 
 // Initialize the app when DOM is loaded
