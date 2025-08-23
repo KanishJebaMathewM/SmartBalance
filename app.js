@@ -2657,7 +2657,13 @@ class WorkLifeBalanceApp {
                 // Trigger change event to ensure UI updates properly
                 expenseCheckbox.dispatchEvent(new Event('change'));
             }
+
+            // Ensure expense details are hidden and amount field is properly reset
+            if (expenseDetails) {
+                expenseDetails.style.display = 'none';
+            }
             if (amountField) {
+                amountField.required = false;
                 amountField.value = '';
             }
 
@@ -6030,7 +6036,7 @@ class WorkLifeBalanceApp {
                             <span class="meal-calories">${meal.calories} cal</span>
                         </div>
                         <div class="meal-status ${meal.status}">
-                            ${meal.status === 'eaten' ? '✅ Eaten' : '���� Planned'}
+                            ${meal.status === 'eaten' ? '✅ Eaten' : '📅 Planned'}
                         </div>
                     </div>
                 `).join('');
@@ -7355,7 +7361,7 @@ class WorkLifeBalanceApp {
         );
 
         if (recentWorkouts.length >= 4) {
-            insights.push('���� Great workout consistency this week!');
+            insights.push('💪 Great workout consistency this week!');
         } else if (recentWorkouts.length >= 2) {
             insights.push('🏃 Decent activity level. Try to add one more workout.');
         } else {
@@ -8285,7 +8291,7 @@ class WorkLifeBalanceApp {
                 title: 'Productivity Progress',
                 current: currentScores.productivity,
                 previous: previousScores.productivity,
-                icon: '���'
+                icon: '����'
             },
             {
                 title: 'Financial Progress',
