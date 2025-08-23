@@ -218,6 +218,11 @@ class WorkLifeBalanceApp {
                                 expenseCategoryContainer.style.display = 'none';
                             }
                         }
+
+                        // Clear amount field value when expense checkbox is unchecked
+                        if (amountField) {
+                            amountField.value = '';
+                        }
                     }
                 });
             }
@@ -8008,7 +8013,7 @@ class WorkLifeBalanceApp {
         const weeklySpending = window.storage.getWeeklyExpenses();
         if (weeklySpending > 5000) {
             recommendations.push({
-                icon: '����',
+                icon: '💰',
                 title: 'Monitor Weekly Spending',
                 description: `Your weekly spending of ${Utils.formatCurrency(weeklySpending)} is quite high. Consider reviewing your expenses.`,
                 priority: 'medium',
@@ -8211,7 +8216,7 @@ class WorkLifeBalanceApp {
                 title: 'Nutrition Progress',
                 current: currentScores.nutrition,
                 previous: previousScores.nutrition,
-                icon: '�����'
+                icon: '����'
             },
             {
                 title: 'Productivity Progress',
