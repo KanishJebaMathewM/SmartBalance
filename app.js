@@ -3107,6 +3107,302 @@ class WorkLifeBalanceApp {
             this.loadHabitsSection();
         }
     }
+
+    // Income tracking methods
+    handleIncomeSubmit(e) {
+        e.preventDefault();
+
+        const incomeData = {
+            amount: parseFloat(document.getElementById('monthlyIncomeAmount').value),
+            source: document.getElementById('incomeSource').value,
+            notes: Utils.sanitizeInput(document.getElementById('incomeNotes').value)
+        };
+
+        if (!Utils.validateAmount(incomeData.amount)) {
+            Utils.showNotification('Please enter a valid income amount', 'error');
+            return;
+        }
+
+        // Save income to settings
+        const settings = window.storage.getSettings();
+        settings.monthlyIncome = incomeData.amount;
+        settings.incomeSource = incomeData.source;
+        settings.incomeNotes = incomeData.notes;
+        settings.incomeLastUpdated = new Date().toISOString();
+
+        window.storage.updateSettings(settings);
+        Utils.showNotification('Monthly income updated successfully!', 'success');
+
+        this.closeModal('incomeModal');
+        e.target.reset();
+
+        // Update expense overview if we're on expenses page
+        if (this.currentSection === 'expenses') {
+            this.loadExpenseSection();
+        }
+        this.updateDashboard();
+    }
+
+    updateIncomeOverview(monthlyExpenses = 0) {
+        const settings = window.storage.getSettings();
+        const monthlyIncome = settings.monthlyIncome || 0;
+        const monthlySavings = Math.max(0, monthlyIncome - monthlyExpenses);
+        const savingsPercentage = monthlyIncome > 0 ? Math.round((monthlySavings / monthlyIncome) * 100) : 0;
+
+        // Update income display elements
+        const incomeDisplayEl = document.getElementById('monthlyIncomeDisplay');
+        const monthlySpendingTotalEl = document.getElementById('monthlySpendingTotal');
+        const monthlySavingsAmountEl = document.getElementById('monthlySavingsAmount');
+        const savingsPercentageEl = document.getElementById('savingsPercentage');
+
+        if (incomeDisplayEl) {
+            incomeDisplayEl.textContent = Utils.formatCurrency(monthlyIncome);
+        }
+        if (monthlySpendingTotalEl) {
+            monthlySpendingTotalEl.textContent = Utils.formatCurrency(monthlyExpenses);
+        }
+        if (monthlySavingsAmountEl) {
+            monthlySavingsAmountEl.textContent = Utils.formatCurrency(monthlySavings);
+        }
+        if (savingsPercentageEl) {
+            savingsPercentageEl.textContent = `${savingsPercentage}%`;
+        }
+    }
+
+    generateFinancialInsights(monthlyExpenses, allExpenses) {
+        // Create or update financial insights section if it doesn't exist
+        const overviewTab = document.getElementById('overview-tab');
+        if (!overviewTab) return;
+
+        let insightsSection = document.querySelector('.financial-insights');
+        if (!insightsSection) {
+            insightsSection = document.createElement('div');
+            insightsSection.className = 'financial-insights';
+            insightsSection.innerHTML = '<h3>💡 Financial Insights</h3><div class="insights-grid" id="financialInsightsGrid"></div>';
+
+            // Insert after income tracker
+            const incomeTracker = document.querySelector('.income-tracker');
+            if (incomeTracker && incomeTracker.nextSibling) {
+                overviewTab.insertBefore(insightsSection, incomeTracker.nextSibling);
+            } else {
+                overviewTab.appendChild(insightsSection);
+            }
+        }
+
+        const insightsGrid = document.getElementById('financialInsightsGrid');
+        if (!insightsGrid) return;
+
+        const settings = window.storage.getSettings();
+        const monthlyIncome = settings.monthlyIncome || 0;
+        const insights = [];
+
+        // Income vs Expenses insight
+        if (monthlyIncome > 0) {
+            const savingsRate = ((monthlyIncome - monthlyExpenses) / monthlyIncome) * 100;
+            let insightType = 'success';
+            let message = '';
+
+            if (savingsRate >= 20) {
+                message = `Excellent! You're saving ${savingsRate.toFixed(1)}% of your income.`;
+                insightType = 'success';
+            } else if (savingsRate >= 10) {
+                message = `Good progress! You're saving ${savingsRate.toFixed(1)}% of your income.`;
+                insightType = 'success';
+            } else if (savingsRate >= 0) {
+                message = `Consider increasing savings. Currently saving ${savingsRate.toFixed(1)}%.`;
+                insightType = 'warning';
+            } else {
+                message = `Warning: You're spending more than you earn by ${Utils.formatCurrency(Math.abs(monthlyIncome - monthlyExpenses))}.`;
+                insightType = 'danger';
+            }
+
+            insights.push({
+                title: 'Savings Rate',
+                value: `${savingsRate.toFixed(1)}%`,
+                description: message,
+                type: insightType
+            });
+        }
+
+        // Top spending category
+        const categoryTotals = {};
+        allExpenses.forEach(expense => {
+            categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + parseFloat(expense.amount);
+        });
+
+        const topCategory = Object.keys(categoryTotals).reduce((a, b) =>
+            categoryTotals[a] > categoryTotals[b] ? a : b, 'none'
+        );
+
+        if (topCategory !== 'none') {
+            const percentage = ((categoryTotals[topCategory] / monthlyExpenses) * 100).toFixed(1);
+            insights.push({
+                title: 'Top Category',
+                value: this.getCategoryDisplayName(topCategory),
+                description: `${percentage}% of spending (${Utils.formatCurrency(categoryTotals[topCategory])})`,
+                type: 'info'
+            });
+        }
+
+        // Spending trend
+        const lastMonthExpenses = this.getLastMonthExpenses();
+        if (lastMonthExpenses > 0) {
+            const change = monthlyExpenses - lastMonthExpenses;
+            const changePercent = ((change / lastMonthExpenses) * 100).toFixed(1);
+            let insightType = change > 0 ? 'warning' : 'success';
+
+            insights.push({
+                title: 'Monthly Trend',
+                value: `${change > 0 ? '+' : ''}${changePercent}%`,
+                description: `${change > 0 ? 'Increased' : 'Decreased'} by ${Utils.formatCurrency(Math.abs(change))} vs last month`,
+                type: insightType
+            });
+        }
+
+        // Render insights
+        insightsGrid.innerHTML = insights.map(insight => `
+            <div class="insight-item ${insight.type}">
+                <div class="insight-title">${insight.title}</div>
+                <div class="insight-value">${insight.value}</div>
+                <div class="insight-description">${insight.description}</div>
+            </div>
+        `).join('');
+    }
+
+    getLastMonthExpenses() {
+        const expenses = window.storage.getExpenses();
+        const now = new Date();
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+
+        return expenses.filter(expense => {
+            const expenseDate = new Date(expense.createdAt);
+            return expenseDate >= lastMonthStart && expenseDate <= lastMonthEnd;
+        }).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+    }
+
+    // Enhanced task and expense category methods
+    getCategoryIcon(category) {
+        const icons = {
+            'work': '💼',
+            'personal': '👤',
+            'health': '🏥',
+            'food': '🍕',
+            'bills': '📧',
+            'shopping': '🛍️',
+            'travel': '✈️',
+            'entertainment': '🎬',
+            'education': '📚',
+            'fitness': '💪',
+            'subscriptions': '📺',
+            'groceries': '🛒',
+            'clothing': '👕',
+            'healthcare': '🏥',
+            'reminder': '⏰',
+            'other': '📦'
+        };
+        return icons[category] || '📦';
+    }
+
+    getCategoryDisplayName(category) {
+        const names = {
+            'work': 'Work',
+            'personal': 'Personal',
+            'health': 'Health & Fitness',
+            'food': 'Food & Dining',
+            'bills': 'Bills & Utilities',
+            'shopping': 'Shopping',
+            'travel': 'Travel & Transport',
+            'entertainment': 'Entertainment',
+            'education': 'Education',
+            'fitness': 'Fitness & Sports',
+            'subscriptions': 'Subscriptions',
+            'groceries': 'Groceries',
+            'clothing': 'Clothing',
+            'healthcare': 'Healthcare',
+            'reminder': 'Reminder',
+            'other': 'Other'
+        };
+        return names[category] || 'Other';
+    }
+
+    // Enhanced task submit with better expense integration
+    handleTaskSubmitEnhanced(e) {
+        e.preventDefault();
+
+        const taskData = {
+            title: Utils.sanitizeInput(document.getElementById('taskTitle').value),
+            category: document.getElementById('taskCategory').value,
+            date: document.getElementById('taskDate').value,
+            expenseRelated: document.getElementById('taskExpense').checked,
+            amount: document.getElementById('taskAmount').value,
+            expenseCategory: document.getElementById('taskExpenseCategory').value
+        };
+
+        if (!taskData.title) {
+            Utils.showNotification('Please enter a task title', 'error');
+            return;
+        }
+
+        if (taskData.expenseRelated) {
+            if (!taskData.amount || parseFloat(taskData.amount) <= 0) {
+                Utils.showNotification('Please enter a valid expense amount', 'error');
+                return;
+            }
+            if (!taskData.expenseCategory) {
+                Utils.showNotification('Please select an expense category', 'error');
+                return;
+            }
+        }
+
+        window.storage.addTask(taskData);
+        Utils.showNotification('Task added successfully!', 'success');
+
+        this.closeModal('taskModal');
+        e.target.reset();
+        document.getElementById('expenseTaskDetails').style.display = 'none';
+
+        if (this.currentSection === 'tasks') {
+            this.loadTasks();
+        }
+        this.updateDashboard();
+    }
+
+    // Enhanced task toggle with better expense handling
+    toggleTaskEnhanced(taskId) {
+        const task = window.storage.getTasks().find(t => t.id === taskId);
+        if (task) {
+            const updatedTask = window.storage.updateTask(taskId, {
+                completed: !task.completed,
+                updatedAt: new Date().toISOString()
+            });
+
+            if (updatedTask.completed) {
+                Utils.showNotification('Task completed! 🎉', 'success');
+
+                // Add expense if task is expense-related
+                if (updatedTask.expenseRelated && updatedTask.amount) {
+                    const expenseData = {
+                        amount: parseFloat(updatedTask.amount),
+                        category: updatedTask.expenseCategory || 'other',
+                        notes: `From completed task: ${updatedTask.title}`,
+                        date: new Date().toISOString().split('T')[0],
+                        paymentMethod: 'cash',
+                        priority: 'medium',
+                        source: 'task'
+                    };
+
+                    window.storage.addExpense(expenseData);
+                    Utils.showNotification(`Expense added: ${Utils.formatCurrency(updatedTask.amount)} to ${this.getCategoryDisplayName(updatedTask.expenseCategory)}`, 'info', 4000);
+                }
+            }
+
+            this.updateDashboard();
+            if (this.currentSection === 'tasks') {
+                this.loadTasks();
+            }
+        }
+    }
 }
 
 // Initialize the app when DOM is loaded
