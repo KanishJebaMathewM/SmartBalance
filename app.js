@@ -4971,8 +4971,6 @@ class WorkLifeBalanceApp {
         // Load current meal plan
         this.loadMealPlan();
 
-        // Load upcoming meals
-        this.loadUpcomingMeals();
     }
 
     initializeMealSelectionModal() {
