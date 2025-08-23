@@ -1241,14 +1241,32 @@ class WorkLifeBalanceApp {
     handleExpenseSubmit(e) {
         e.preventDefault();
 
+        const form = e.target;
+        const isEdit = form.dataset.editId;
+
         const expenseData = {
             amount: parseFloat(document.getElementById('expenseAmount').value),
             category: document.getElementById('expenseCategory').value,
             notes: Utils.sanitizeInput(document.getElementById('expenseNotes').value),
             date: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0],
             paymentMethod: document.getElementById('expensePaymentMethod').value,
-            recurring: document.getElementById('expenseRecurring').checked
+            priority: document.getElementById('expensePriority').value,
+            recurring: document.getElementById('expenseRecurring').checked,
+            shared: document.getElementById('expenseShared').checked
         };
+
+        // Add recurring options if applicable
+        if (expenseData.recurring) {
+            expenseData.recurringFrequency = document.getElementById('recurringFrequency').value;
+            expenseData.recurringEndDate = document.getElementById('recurringEndDate').value;
+            expenseData.recurringReminder = parseInt(document.getElementById('recurringReminder').value);
+        }
+
+        // Add shared options if applicable
+        if (expenseData.shared) {
+            expenseData.sharedWith = Utils.sanitizeInput(document.getElementById('sharedWith').value);
+            expenseData.shareAmount = parseFloat(document.getElementById('shareAmount').value);
+        }
 
         if (!Utils.validateAmount(expenseData.amount)) {
             Utils.showNotification('Please enter a valid amount', 'error');
@@ -1260,11 +1278,25 @@ class WorkLifeBalanceApp {
             return;
         }
 
-        window.storage.addExpense(expenseData);
-        Utils.showNotification('Expense added successfully!', 'success');
+        if (expenseData.shared && !Utils.validateAmount(expenseData.shareAmount)) {
+            Utils.showNotification('Please enter a valid share amount', 'error');
+            return;
+        }
+
+        if (isEdit) {
+            window.storage.updateExpense(parseInt(isEdit), expenseData);
+            Utils.showNotification('Expense updated successfully!', 'success');
+            delete form.dataset.editId;
+        } else {
+            window.storage.addExpense(expenseData);
+            Utils.showNotification('Expense added successfully!', 'success');
+
+            // Learn from this expense for smart suggestions
+            this.learnFromExpense(expenseData);
+        }
 
         this.closeModal('expenseModal');
-        e.target.reset();
+        this.resetExpenseForm();
 
         if (this.currentSection === 'expenses') {
             this.loadExpenseSection();
@@ -1342,7 +1374,7 @@ class WorkLifeBalanceApp {
                     <div class="pantry-expiry">Expires: ${Utils.formatDate(item.expiry)}</div>
                 </div>
                 <div class="pantry-actions">
-                    <button onclick="app.deleteFoodItem(${item.id})" title="Delete">🗑️</button>
+                    <button onclick="app.deleteFoodItem(${item.id})" title="Delete">���️</button>
                 </div>
             </div>
         `).join('');
