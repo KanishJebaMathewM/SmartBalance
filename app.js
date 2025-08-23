@@ -109,12 +109,12 @@ class WorkLifeBalanceApp {
         if (taskForm) {
             taskForm.addEventListener('submit', (e) => this.handleTaskSubmit(e));
             
-            // Show/hide expense amount field
+            // Show/hide expense task details
             const expenseCheckbox = document.getElementById('taskExpense');
-            const amountField = document.getElementById('taskAmount');
-            if (expenseCheckbox && amountField) {
+            const expenseDetails = document.getElementById('expenseTaskDetails');
+            if (expenseCheckbox && expenseDetails) {
                 expenseCheckbox.addEventListener('change', () => {
-                    amountField.style.display = expenseCheckbox.checked ? 'block' : 'none';
+                    expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
                 });
             }
         }
@@ -516,7 +516,7 @@ class WorkLifeBalanceApp {
             });
             
             if (updatedTask.completed) {
-                Utils.showNotification('Task completed! ���', 'success');
+                Utils.showNotification('Task completed! 🎉', 'success');
                 
                 // Add expense if task is expense-related
                 if (updatedTask.expenseRelated && updatedTask.amount) {
