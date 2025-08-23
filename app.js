@@ -3946,6 +3946,182 @@ class WorkLifeBalanceApp {
 
         this.updateDashboard();
     }
+
+    // Enhanced Food and Meal Plan Methods
+    editMealSuggestion(mealType) {
+        const suggestions = Utils.getMealSuggestions();
+        const currentMeal = document.getElementById(`${mealType}Meal`).textContent;
+
+        // Create a simple prompt for now - could be enhanced with a modal
+        const newMeal = prompt(`Edit ${mealType} meal:`, currentMeal);
+        if (newMeal && newMeal.trim()) {
+            document.getElementById(`${mealType}Meal`).textContent = newMeal.trim();
+
+            // Calculate and update calories
+            const calories = Utils.calculateCalories(newMeal);
+            document.getElementById(`${mealType}Calories`).textContent = `${calories} cal`;
+
+            // Estimate cost (simple calculation)
+            const cost = this.estimateMealCost(newMeal);
+            document.getElementById(`${mealType}Cost`).textContent = `₹${cost}`;
+
+            Utils.showNotification(`${mealType} meal updated!`, 'success');
+
+            // Save to localStorage for persistence
+            this.saveMealToStorage(mealType, newMeal, calories, cost);
+        }
+    }
+
+    regenerateMealPlan() {
+        const suggestions = Utils.getMealSuggestions();
+
+        // Update breakfast
+        document.getElementById('breakfastMeal').textContent = suggestions.breakfast;
+        const breakfastCalories = Utils.calculateCalories(suggestions.breakfast);
+        document.getElementById('breakfastCalories').textContent = `${breakfastCalories} cal`;
+        document.getElementById('breakfastCost').textContent = `₹${this.estimateMealCost(suggestions.breakfast)}`;
+
+        // Update lunch
+        document.getElementById('lunchMeal').textContent = suggestions.lunch;
+        const lunchCalories = Utils.calculateCalories(suggestions.lunch);
+        document.getElementById('lunchCalories').textContent = `${lunchCalories} cal`;
+        document.getElementById('lunchCost').textContent = `₹${this.estimateMealCost(suggestions.lunch)}`;
+
+        // Update dinner
+        document.getElementById('dinnerMeal').textContent = suggestions.dinner;
+        const dinnerCalories = Utils.calculateCalories(suggestions.dinner);
+        document.getElementById('dinnerCalories').textContent = `${dinnerCalories} cal`;
+        document.getElementById('dinnerCost').textContent = `₹${this.estimateMealCost(suggestions.dinner)}`;
+
+        Utils.showNotification('🍽️ New meal plan generated!', 'success');
+
+        // Save all meals to storage
+        this.saveMealToStorage('breakfast', suggestions.breakfast, breakfastCalories, this.estimateMealCost(suggestions.breakfast));
+        this.saveMealToStorage('lunch', suggestions.lunch, lunchCalories, this.estimateMealCost(suggestions.lunch));
+        this.saveMealToStorage('dinner', suggestions.dinner, dinnerCalories, this.estimateMealCost(suggestions.dinner));
+
+        // Update dashboard
+        this.updateDashboard();
+    }
+
+    saveMealPlan() {
+        const mealPlan = {
+            date: new Date().toDateString(),
+            breakfast: {
+                name: document.getElementById('breakfastMeal').textContent,
+                calories: parseInt(document.getElementById('breakfastCalories').textContent),
+                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('₹', ''))
+            },
+            lunch: {
+                name: document.getElementById('lunchMeal').textContent,
+                calories: parseInt(document.getElementById('lunchCalories').textContent),
+                cost: parseInt(document.getElementById('lunchCost').textContent.replace('₹', ''))
+            },
+            dinner: {
+                name: document.getElementById('dinnerMeal').textContent,
+                calories: parseInt(document.getElementById('dinnerCalories').textContent),
+                cost: parseInt(document.getElementById('dinnerCost').textContent.replace('₹', ''))
+            }
+        };
+
+        // Save to localStorage
+        let savedMealPlans = JSON.parse(localStorage.getItem('meal_plans') || '[]');
+
+        // Remove existing plan for today if any
+        savedMealPlans = savedMealPlans.filter(plan => plan.date !== mealPlan.date);
+
+        // Add new plan
+        savedMealPlans.push(mealPlan);
+
+        // Keep only last 30 days
+        savedMealPlans = savedMealPlans.slice(-30);
+
+        localStorage.setItem('meal_plans', JSON.stringify(savedMealPlans));
+
+        Utils.showNotification('📋 Meal plan saved!', 'success');
+    }
+
+    saveMealToStorage(mealType, mealName, calories, cost) {
+        const mealData = {
+            name: mealName,
+            calories: calories,
+            cost: cost,
+            date: new Date().toDateString(),
+            type: mealType
+        };
+
+        let savedMeals = JSON.parse(localStorage.getItem('daily_meals') || '[]');
+
+        // Remove existing meal of same type for today
+        savedMeals = savedMeals.filter(meal =>
+            !(meal.date === mealData.date && meal.type === mealType)
+        );
+
+        // Add new meal
+        savedMeals.push(mealData);
+
+        // Keep only last 30 days
+        savedMeals = savedMeals.slice(-90); // 3 meals * 30 days
+
+        localStorage.setItem('daily_meals', JSON.stringify(savedMeals));
+    }
+
+    estimateMealCost(mealName) {
+        // Simple cost estimation based on ingredients
+        const mealLower = mealName.toLowerCase();
+        let baseCost = 30; // Base cost
+
+        // Adjust cost based on ingredients
+        if (mealLower.includes('dosa') || mealLower.includes('idli')) {
+            baseCost = 25;
+        } else if (mealLower.includes('biryani') || mealLower.includes('special')) {
+            baseCost = 60;
+        } else if (mealLower.includes('rice') && mealLower.includes('sambar')) {
+            baseCost = 45;
+        } else if (mealLower.includes('appam') || mealLower.includes('puttu')) {
+            baseCost = 35;
+        } else if (mealLower.includes('upma') || mealLower.includes('pongal')) {
+            baseCost = 30;
+        }
+
+        // Add cost for accompaniments
+        if (mealLower.includes('chutney')) baseCost += 10;
+        if (mealLower.includes('sambar')) baseCost += 15;
+        if (mealLower.includes('rasam')) baseCost += 10;
+        if (mealLower.includes('curry')) baseCost += 20;
+        if (mealLower.includes('coconut')) baseCost += 15;
+
+        return baseCost;
+    }
+
+    // Enhanced loadFoodData method to load saved meal plans
+    loadFoodData() {
+        this.loadPantryItems();
+        this.updateMealPlan();
+        this.updateFoodStats();
+        this.loadSavedMealPlan();
+    }
+
+    loadSavedMealPlan() {
+        const today = new Date().toDateString();
+        const savedMeals = JSON.parse(localStorage.getItem('daily_meals') || '[]');
+        const todayMeals = savedMeals.filter(meal => meal.date === today);
+
+        if (todayMeals.length > 0) {
+            todayMeals.forEach(meal => {
+                const mealEl = document.getElementById(`${meal.type}Meal`);
+                const caloriesEl = document.getElementById(`${meal.type}Calories`);
+                const costEl = document.getElementById(`${meal.type}Cost`);
+
+                if (mealEl) mealEl.textContent = meal.name;
+                if (caloriesEl) caloriesEl.textContent = `${meal.calories} cal`;
+                if (costEl) costEl.textContent = `₹${meal.cost}`;
+            });
+        } else {
+            // Generate new meal plan if none saved for today
+            this.regenerateMealPlan();
+        }
+    }
 }
 
 // Initialize the app when DOM is loaded
