@@ -5180,6 +5180,15 @@ class WorkLifeBalanceApp {
             mealData.deliveryCharges = parseFloat(document.getElementById('deliveryEstimate').value) || 0;
         }
 
+        // Validate meal limits
+        if (!this.validateMealLimit(mealData.date)) {
+            return;
+        }
+
+        if (!this.checkMealTypeConflict(mealData.date, mealData.type)) {
+            return;
+        }
+
         // Add to storage
         window.storage.addMeal(mealData);
 
