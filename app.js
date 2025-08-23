@@ -417,7 +417,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ' • 💰 Expense-related' : ''}
+                        ${task.expenseRelated ? ' • ���� Expense-related' : ''}
                     </div>
                 </div>
                 <div class="task-actions">
@@ -1918,6 +1918,19 @@ class WorkLifeBalanceApp {
         if (savingsGoalForm) {
             savingsGoalForm.addEventListener('submit', (e) => this.handleSavingsGoalSubmit(e));
         }
+    }
+
+    // Habit Tab Handlers
+    initializeHabitTabHandlers() {
+        // Habit tab switching
+        document.querySelectorAll('.habit-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tabName = e.target.dataset.tab;
+                if (tabName) {
+                    this.switchHabitTab(tabName);
+                }
+            });
+        });
     }
 
     // Calendar Event Handlers
