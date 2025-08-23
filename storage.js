@@ -120,9 +120,26 @@ class Storage {
         const expenses = this.getExpenses();
         expense.id = Date.now();
         expense.createdAt = new Date().toISOString();
+
+        // Set default values for new fields
+        expense.paymentMethod = expense.paymentMethod || 'cash';
+        expense.recurring = expense.recurring || false;
+        expense.tags = expense.tags || [];
+
+        // If it's a recurring expense, we might want to create future instances
+        if (expense.recurring && expense.recurringFrequency) {
+            this.createRecurringExpenseInstances(expense);
+        }
+
         expenses.push(expense);
         this.set(this.keys.expenses, expenses);
         return expense;
+    }
+
+    createRecurringExpenseInstances(baseExpense) {
+        // This could be expanded to create future recurring expense instances
+        // For now, we'll just mark it as recurring
+        baseExpense.isRecurringTemplate = true;
     }
 
     updateExpense(id, updates) {
