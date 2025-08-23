@@ -854,71 +854,137 @@ class Charts {
         });
     }
 
-    // Comparison Chart (Month-over-month, Week-over-week, etc.)
-    createComparisonChart(canvasId, expenses, comparisonType = 'month-over-month') {
+    // Weekly Spending Pattern Radar Chart
+    createComparisonChart(canvasId, expenses) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
+
+        // Set responsive canvas size
+        const container = canvas.parentElement;
+        const containerWidth = container.clientWidth || 600;
+        canvas.width = Math.min(containerWidth - 40, 400);
+        canvas.height = 300;
 
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const padding = 60;
-        const chartWidth = canvas.width - 2 * padding;
-        const chartHeight = canvas.height - 2 * padding;
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) - 60;
 
-        let comparisonData = [];
-
-        switch (comparisonType) {
-            case 'month-over-month':
-                comparisonData = this.getMonthOverMonthData(expenses);
-                break;
-            case 'week-over-week':
-                comparisonData = this.getWeekOverWeekData(expenses);
-                break;
-            case 'year-over-year':
-                comparisonData = this.getYearOverYearData(expenses);
-                break;
-        }
-
-        if (comparisonData.length === 0) {
-            this.drawEmptyChart(ctx, canvas, 'No comparison data available');
+        if (expenses.length === 0) {
+            this.drawEmptyChart(ctx, canvas, 'No spending data available');
             return;
         }
 
-        const maxValue = Math.max(...comparisonData.flatMap(d => [d.current, d.previous]), 100);
+        // Group expenses by day of week
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayData = new Array(7).fill(0);
 
-        // Draw axes
-        this.drawAxes(ctx, padding, chartWidth, chartHeight);
-
-        // Draw grouped bars
-        const groupWidth = chartWidth / comparisonData.length;
-        const barWidth = groupWidth * 0.35;
-        const barSpacing = groupWidth * 0.1;
-
-        comparisonData.forEach((data, index) => {
-            const groupX = padding + (index * groupWidth);
-
-            // Current period bar
-            const currentHeight = (data.current / maxValue) * chartHeight;
-            const currentY = padding + chartHeight - currentHeight;
-            ctx.fillStyle = this.colors.primary;
-            ctx.fillRect(groupX + barSpacing, currentY, barWidth, currentHeight);
-
-            // Previous period bar
-            const previousHeight = (data.previous / maxValue) * chartHeight;
-            const previousY = padding + chartHeight - previousHeight;
-            ctx.fillStyle = this.colors.gray;
-            ctx.fillRect(groupX + barSpacing + barWidth + 5, previousY, barWidth, previousHeight);
-
-            // Labels
-            ctx.fillStyle = '#374151';
-            ctx.font = '10px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(data.label, groupX + groupWidth / 2, padding + chartHeight + 20);
+        expenses.forEach(expense => {
+            const day = new Date(expense.createdAt).getDay();
+            dayData[day] += parseFloat(expense.amount);
         });
 
-        // Legend
-        this.drawSimpleLegend(ctx, ['Current', 'Previous'], [this.colors.primary, this.colors.gray], 20, 20);
+        const maxAmount = Math.max(...dayData, 100);
+
+        // Draw radar grid (concentric circles)
+        const levels = 5;
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+
+        for (let i = 1; i <= levels; i++) {
+            const gridRadius = (radius * i) / levels;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, gridRadius, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+
+        // Draw radar axes (spokes)
+        for (let i = 0; i < 7; i++) {
+            const angle = (i * 2 * Math.PI) / 7 - Math.PI / 2;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            // Draw day labels
+            const labelX = centerX + Math.cos(angle) * (radius + 25);
+            const labelY = centerY + Math.sin(angle) * (radius + 25);
+
+            ctx.fillStyle = '#374151';
+            ctx.font = '11px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(dayNames[i], labelX, labelY);
+        }
+
+        // Draw spending data polygon
+        ctx.strokeStyle = this.colors.primary;
+        ctx.fillStyle = this.colors.primary + '40';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+
+        for (let i = 0; i < 7; i++) {
+            const value = dayData[i];
+            const normalizedValue = (value / maxAmount) * radius;
+            const angle = (i * 2 * Math.PI) / 7 - Math.PI / 2;
+            const x = centerX + Math.cos(angle) * normalizedValue;
+            const y = centerY + Math.sin(angle) * normalizedValue;
+
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Draw data points
+        for (let i = 0; i < 7; i++) {
+            const value = dayData[i];
+            const normalizedValue = (value / maxAmount) * radius;
+            const angle = (i * 2 * Math.PI) / 7 - Math.PI / 2;
+            const x = centerX + Math.cos(angle) * normalizedValue;
+            const y = centerY + Math.sin(angle) * normalizedValue;
+
+            ctx.fillStyle = this.colors.primary;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Draw value labels for non-zero amounts
+            if (value > 0) {
+                ctx.fillStyle = '#374151';
+                ctx.font = '9px Arial';
+                ctx.textAlign = 'center';
+                const labelDistance = Math.min(normalizedValue + 15, radius - 10);
+                const labelX = centerX + Math.cos(angle) * labelDistance;
+                const labelY = centerY + Math.sin(angle) * labelDistance;
+                ctx.fillText(Utils.formatCurrency(value), labelX, labelY);
+            }
+        }
+
+        // Draw grid level labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '9px Arial';
+        ctx.textAlign = 'center';
+        for (let i = 1; i <= levels; i++) {
+            const gridRadius = (radius * i) / levels;
+            const value = (maxAmount * i) / levels;
+            ctx.fillText(Utils.formatCurrency(value), centerX + gridRadius + 5, centerY - 5);
+        }
+
+        // Draw title
+        ctx.fillStyle = '#111827';
+        ctx.font = 'bold 12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Spending by Day of Week', centerX, 20);
     }
 
     // Habit Impact Chart
