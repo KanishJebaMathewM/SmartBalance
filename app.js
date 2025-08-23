@@ -1626,7 +1626,7 @@ class WorkLifeBalanceApp {
                     <div class="pantry-expiry">Expires: ${Utils.formatDate(item.expiry)}</div>
                 </div>
                 <div class="pantry-actions">
-                    <button onclick="app.deleteFoodItem(${item.id})" title="Delete">���️</button>
+                    <button onclick="app.deleteFoodItem(${item.id})" title="Delete">������</button>
                 </div>
             </div>
         `).join('');
@@ -3772,7 +3772,7 @@ class WorkLifeBalanceApp {
     }
 
     // Enhanced startExercise method with timer support
-    startExercise(exerciseType) {
+    startExerciseEnhanced(exerciseType) {
         const exercise = Utils.getExerciseInstructions(exerciseType);
         if (!exercise) return;
 
@@ -4855,7 +4855,7 @@ class WorkLifeBalanceApp {
 
         if (homePercentage >= 70) {
             insights.push({
-                icon: '🏠',
+                icon: '���',
                 title: 'Excellent Home Cooking Habit',
                 description: `You cooked at home ${homePercentage}% of the time this week. This is great for both health and budget!`
             });
