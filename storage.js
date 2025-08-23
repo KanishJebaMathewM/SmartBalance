@@ -8,7 +8,11 @@ class Storage {
             workouts: 'wlb_workouts',
             moods: 'wlb_moods',
             settings: 'wlb_settings',
-            badges: 'wlb_badges'
+            badges: 'wlb_badges',
+            habits: 'wlb_habits',
+            habitCompletions: 'wlb_habit_completions',
+            habitSkips: 'wlb_habit_skips',
+            goals: 'wlb_goals'
         };
         
         this.initializeData();
