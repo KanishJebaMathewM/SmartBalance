@@ -3180,15 +3180,7 @@ class WorkLifeBalanceApp {
         }
     }
 
-    openHabitModal(category = '') {
-        const modal = document.getElementById('habitModal');
-        if (modal) {
-            if (category) {
-                document.getElementById('habitCategory').value = category;
-            }
-            this.openModal('habitModal');
-        }
-    }
+    // openHabitModal removed - habit creation functionality no longer needed
 
     handleHabitSubmit(e) {
         e.preventDefault();
