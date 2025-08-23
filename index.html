@@ -157,60 +157,299 @@
             <section id="expenses" class="section">
                 <div class="section-header">
                     <h1>💰 Expense Tracker</h1>
-                    <button class="btn-primary" id="addExpenseBtn">+ Add Expense</button>
-                </div>
-
-                <div class="expense-stats">
-                    <div class="stat-card">
-                        <span id="dailySpending">₹0</span>
-                        <label>Today</label>
-                    </div>
-                    <div class="stat-card">
-                        <span id="weeklySpending">₹0</span>
-                        <label>This Week</label>
-                    </div>
-                    <div class="stat-card">
-                        <span id="monthlySpending">₹0</span>
-                        <label>This Month</label>
+                    <div class="header-actions">
+                        <button class="btn-secondary" id="viewToggleBtn">📅 Calendar View</button>
+                        <button class="btn-primary" id="addExpenseBtn">+ Add Expense</button>
                     </div>
                 </div>
 
-                <div class="savings-goal">
-                    <h3>Savings Goal</h3>
-                    <div class="goal-progress">
-                        <span>This month's goal: ₹10,000 saved</span>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="savingsProgress"></div>
+                <!-- Tab Navigation -->
+                <div class="expense-tabs">
+                    <button class="tab-btn active" data-tab="overview">📊 Overview</button>
+                    <button class="tab-btn" data-tab="calendar">📅 Calendar</button>
+                    <button class="tab-btn" data-tab="analytics">📈 Analytics</button>
+                    <button class="tab-btn" data-tab="insights">🧠 Insights</button>
+                </div>
+
+                <!-- Overview Tab -->
+                <div id="overview-tab" class="tab-content active">
+                    <div class="expense-stats">
+                        <div class="stat-card">
+                            <span id="dailySpending">₹0</span>
+                            <label>Today</label>
                         </div>
-                        <span id="savingsAmount">Progress: ₹6,500</span>
+                        <div class="stat-card">
+                            <span id="weeklySpending">₹0</span>
+                            <label>This Week</label>
+                        </div>
+                        <div class="stat-card">
+                            <span id="monthlySpending">₹0</span>
+                            <label>This Month</label>
+                        </div>
+                        <div class="stat-card">
+                            <span id="averageDaily">₹0</span>
+                            <label>Daily Average</label>
+                        </div>
+                    </div>
+
+                    <div class="expense-overview-grid">
+                        <div class="savings-goal">
+                            <h3>💰 Savings Goal</h3>
+                            <div class="goal-progress">
+                                <span>This month's goal: ₹<span id="savingsGoalAmount">10,000</span> saved</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="savingsProgress"></div>
+                                </div>
+                                <span id="savingsAmount">Progress: ₹6,500</span>
+                            </div>
+                            <button class="btn-link" id="setSavingsGoalBtn">Set Goal</button>
+                        </div>
+
+                        <div class="budget-tracker">
+                            <h3>📋 Budget Tracker</h3>
+                            <div class="budget-categories" id="budgetCategories">
+                                <!-- Budget items will be added dynamically -->
+                            </div>
+                            <button class="btn-link" id="setBudgetBtn">Set Budget</button>
+                        </div>
+                    </div>
+
+                    <div class="quick-charts">
+                        <div class="chart-container">
+                            <h3>Category Distribution</h3>
+                            <canvas id="expenseChart" width="400" height="400"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Weekly Trend</h3>
+                            <canvas id="weeklyTrendChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="recent-expenses">
+                        <h3>Recent Expenses</h3>
+                        <div class="expense-list" id="expenseList">
+                            <!-- Recent expenses will be dynamically added here -->
+                        </div>
                     </div>
                 </div>
 
-                <div class="expense-chart">
-                    <canvas id="expenseChart" width="400" height="400"></canvas>
+                <!-- Calendar Tab -->
+                <div id="calendar-tab" class="tab-content">
+                    <div class="calendar-header">
+                        <button class="btn-icon" id="prevMonthBtn">‹</button>
+                        <h2 id="currentMonthYear">January 2024</h2>
+                        <button class="btn-icon" id="nextMonthBtn">›</button>
+                        <div class="calendar-legend">
+                            <span class="legend-item"><span class="color-dot low"></span> Low (< ₹500)</span>
+                            <span class="legend-item"><span class="color-dot medium"></span> Medium (₹500-1500)</span>
+                            <span class="legend-item"><span class="color-dot high"></span> High (> ₹1500)</span>
+                        </div>
+                    </div>
+
+                    <div class="expense-calendar" id="expenseCalendar">
+                        <!-- Calendar will be dynamically generated -->
+                    </div>
+
+                    <div class="selected-date-expenses" id="selectedDateExpenses">
+                        <h3 id="selectedDateTitle">Select a date to view expenses</h3>
+                        <div class="date-expense-list" id="dateExpenseList">
+                            <!-- Date-specific expenses will be shown here -->
+                        </div>
+                    </div>
                 </div>
 
-                <div class="expense-list" id="expenseList">
-                    <!-- Expenses will be dynamically added here -->
+                <!-- Analytics Tab -->
+                <div id="analytics-tab" class="tab-content">
+                    <div class="analytics-grid">
+                        <div class="chart-section">
+                            <h3>📊 Spending Trends</h3>
+                            <div class="chart-controls">
+                                <select id="trendPeriod">
+                                    <option value="week">Last 7 Days</option>
+                                    <option value="month" selected>Last 30 Days</option>
+                                    <option value="3months">Last 3 Months</option>
+                                    <option value="year">Last Year</option>
+                                </select>
+                            </div>
+                            <canvas id="spendingTrendChart" width="600" height="300"></canvas>
+                        </div>
+
+                        <div class="chart-section">
+                            <h3>🎯 Category Analysis</h3>
+                            <div class="chart-controls">
+                                <button class="btn-small active" data-chart="pie">Pie Chart</button>
+                                <button class="btn-small" data-chart="bar">Bar Chart</button>
+                                <button class="btn-small" data-chart="doughnut">Doughnut</button>
+                            </div>
+                            <canvas id="categoryAnalysisChart" width="400" height="400"></canvas>
+                        </div>
+
+                        <div class="chart-section">
+                            <h3>📈 Growth Analysis</h3>
+                            <canvas id="growthAnalysisChart" width="600" height="300"></canvas>
+                        </div>
+
+                        <div class="chart-section">
+                            <h3>🔄 Comparison Analysis</h3>
+                            <div class="comparison-controls">
+                                <select id="comparisonType">
+                                    <option value="month-over-month">Month over Month</option>
+                                    <option value="week-over-week">Week over Week</option>
+                                    <option value="year-over-year">Year over Year</option>
+                                </select>
+                            </div>
+                            <canvas id="comparisonChart" width="600" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-summary">
+                        <h3>🎯 Key Insights</h3>
+                        <div class="insights-grid" id="analyticsInsights">
+                            <!-- Analytics insights will be generated here -->
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Add Expense Modal -->
+                <!-- Insights Tab -->
+                <div id="insights-tab" class="tab-content">
+                    <div class="insights-dashboard">
+                        <div class="prediction-section">
+                            <h3>🔮 Spending Predictions</h3>
+                            <div class="prediction-cards">
+                                <div class="prediction-card">
+                                    <h4>Next Week</h4>
+                                    <div class="prediction-amount" id="nextWeekPrediction">₹0</div>
+                                    <div class="prediction-confidence">Confidence: <span id="weekConfidence">85%</span></div>
+                                </div>
+                                <div class="prediction-card">
+                                    <h4>Next Month</h4>
+                                    <div class="prediction-amount" id="nextMonthPrediction">₹0</div>
+                                    <div class="prediction-confidence">Confidence: <span id="monthConfidence">78%</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="patterns-section">
+                            <h3>🧩 Spending Patterns</h3>
+                            <div class="pattern-analysis" id="patternAnalysis">
+                                <!-- Pattern analysis will be generated here -->
+                            </div>
+                        </div>
+
+                        <div class="recommendations-section">
+                            <h3>💡 Smart Recommendations</h3>
+                            <div class="recommendations-list" id="recommendationsList">
+                                <!-- Recommendations will be generated here -->
+                            </div>
+                        </div>
+
+                        <div class="goals-section">
+                            <h3>🎯 Financial Goals</h3>
+                            <div class="goals-list" id="goalsList">
+                                <!-- Financial goals tracking will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Add Expense Modal -->
                 <div id="expenseModal" class="modal">
                     <div class="modal-content">
                         <span class="close">&times;</span>
-                        <h2>Add New Expense</h2>
+                        <h2 id="expenseModalTitle">Add New Expense</h2>
                         <form id="expenseForm">
-                            <input type="number" id="expenseAmount" placeholder="Amount (₹)" required>
-                            <select id="expenseCategory">
-                                <option value="food">Food</option>
-                                <option value="bills">Bills</option>
-                                <option value="shopping">Shopping</option>
-                                <option value="travel">Travel</option>
-                                <option value="other">Other</option>
-                            </select>
-                            <input type="text" id="expenseNotes" placeholder="Notes">
-                            <input type="date" id="expenseDate">
-                            <button type="submit" class="btn-primary">Add Expense</button>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expenseAmount">Amount (₹)</label>
+                                    <input type="number" id="expenseAmount" placeholder="0.00" required step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="expenseDate">Date</label>
+                                    <input type="date" id="expenseDate" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="expenseCategory">Category</label>
+                                <select id="expenseCategory" required>
+                                    <option value="">Select Category</option>
+                                    <option value="food">🍕 Food & Dining</option>
+                                    <option value="bills">📧 Bills & Utilities</option>
+                                    <option value="shopping">🛍️ Shopping</option>
+                                    <option value="travel">✈️ Travel & Transport</option>
+                                    <option value="entertainment">🎬 Entertainment</option>
+                                    <option value="healthcare">🏥 Healthcare</option>
+                                    <option value="education">📚 Education</option>
+                                    <option value="other">📦 Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="expenseNotes">Description</label>
+                                <input type="text" id="expenseNotes" placeholder="What was this expense for?">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="expensePaymentMethod">Payment Method</label>
+                                <select id="expensePaymentMethod">
+                                    <option value="cash">💵 Cash</option>
+                                    <option value="card">💳 Card</option>
+                                    <option value="upi">📱 UPI</option>
+                                    <option value="bank">🏦 Bank Transfer</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="expenseRecurring">
+                                    <span class="checkmark"></span>
+                                    This is a recurring expense
+                                </label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="app.closeModal('expenseModal')">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Expense</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Budget Setting Modal -->
+                <div id="budgetModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Set Monthly Budget</h2>
+                        <form id="budgetForm">
+                            <div class="budget-categories-form" id="budgetCategoriesForm">
+                                <!-- Budget categories will be generated here -->
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="app.closeModal('budgetModal')">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Budget</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Savings Goal Modal -->
+                <div id="savingsGoalModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Set Savings Goal</h2>
+                        <form id="savingsGoalForm">
+                            <div class="form-group">
+                                <label for="goalAmount">Monthly Savings Goal (₹)</label>
+                                <input type="number" id="goalAmount" placeholder="10000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="goalDescription">Goal Description</label>
+                                <input type="text" id="goalDescription" placeholder="Emergency fund, vacation, etc.">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="app.closeModal('savingsGoalModal')">Cancel</button>
+                                <button type="submit" class="btn-primary">Set Goal</button>
+                            </div>
                         </form>
                     </div>
                 </div>
