@@ -6,7 +6,10 @@ class WorkLifeBalanceApp {
         this.charts = new Charts();
         this.breathingInterval = null;
         this.breathingState = 'stopped';
-        
+        this.currentExpenseTab = 'overview';
+        this.currentCalendarDate = new Date();
+        this.selectedCalendarDate = null;
+
         this.init();
     }
 
@@ -48,9 +51,15 @@ class WorkLifeBalanceApp {
         
         // Button actions
         this.initializeButtonHandlers();
-        
+
         // Filter buttons
         this.initializeFilterHandlers();
+
+        // Expense tabs
+        this.initializeExpenseTabHandlers();
+
+        // Calendar handlers
+        this.initializeCalendarHandlers();
     }
 
     initializeModalControls() {
@@ -143,6 +152,18 @@ class WorkLifeBalanceApp {
             });
         });
 
+        // Budget and savings goal buttons
+        const setBudgetBtn = document.getElementById('setBudgetBtn');
+        const setSavingsGoalBtn = document.getElementById('setSavingsGoalBtn');
+
+        if (setBudgetBtn) {
+            setBudgetBtn.addEventListener('click', () => this.openModal('budgetModal'));
+        }
+
+        if (setSavingsGoalBtn) {
+            setSavingsGoalBtn.addEventListener('click', () => this.openModal('savingsGoalModal'));
+        }
+
         // Relief buttons
         const reliefButtons = {
             'breathingBtn': () => this.openModal('breathingModal'),
@@ -216,8 +237,7 @@ class WorkLifeBalanceApp {
                 this.loadTasks();
                 break;
             case 'expenses':
-                this.loadExpenses();
-                this.loadExpenseChart();
+                this.loadExpenseSection();
                 break;
             case 'food':
                 this.loadFoodData();
@@ -529,10 +549,159 @@ class WorkLifeBalanceApp {
         }
     }
 
-    loadExpenses() {
-        const expenses = window.storage.getExpenses();
-        this.renderExpenses(expenses);
+    // Enhanced expense loading
+    loadExpenseSection() {
+        this.loadExpenseTabs();
         this.updateExpenseStats();
+        this.loadCurrentExpenseTab();
+    }
+
+    loadExpenseTabs() {
+        // Initialize tab content based on current tab
+        switch (this.currentExpenseTab) {
+            case 'overview':
+                this.loadOverviewTab();
+                break;
+            case 'calendar':
+                this.loadCalendarTab();
+                break;
+            case 'analytics':
+                this.loadAnalyticsTab();
+                break;
+            case 'insights':
+                this.loadInsightsTab();
+                break;
+        }
+    }
+
+    loadCurrentExpenseTab() {
+        // Show current tab content
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        const currentTab = document.getElementById(`${this.currentExpenseTab}-tab`);
+        if (currentTab) {
+            currentTab.classList.add('active');
+        }
+
+        // Update tab buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        const activeBtn = document.querySelector(`[data-tab="${this.currentExpenseTab}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+        }
+    }
+
+    loadOverviewTab() {
+        const expenses = window.storage.getExpenses();
+        this.renderRecentExpenses(expenses.slice(0, 10)); // Show only recent 10
+        this.loadQuickCharts();
+        this.loadBudgetTracker();
+    }
+
+    renderRecentExpenses(expenses) {
+        const expenseList = document.getElementById('expenseList');
+        if (!expenseList) return;
+
+        if (expenses.length === 0) {
+            expenseList.innerHTML = `
+                <div class="empty-state">
+                    <h3>No expenses yet</h3>
+                    <p>Start tracking your expenses!</p>
+                    <button class="btn-primary" onclick="app.openModal('expenseModal')">Add Expense</button>
+                </div>
+            `;
+            return;
+        }
+
+        // Sort by date (newest first)
+        const sortedExpenses = expenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        expenseList.innerHTML = sortedExpenses.map(expense => `
+            <div class="expense-item" data-expense-id="${expense.id}">
+                <div class="expense-category-icon" style="background: ${this.charts.getCategoryColor(expense.category)}20; color: ${this.charts.getCategoryColor(expense.category)}">
+                    ${this.getCategoryIcon(expense.category)}
+                </div>
+                <div class="expense-info">
+                    <div class="expense-title">${this.getCategoryDisplayName(expense.category)}</div>
+                    <div class="expense-description">${Utils.sanitizeInput(expense.notes || 'No description')}</div>
+                    <div class="expense-date">${Utils.formatDate(expense.createdAt)}</div>
+                </div>
+                <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
+                <div class="expense-actions">
+                    <button onclick="app.editExpense(${expense.id})" title="Edit">✏️</button>
+                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    loadQuickCharts() {
+        const expenses = window.storage.getExpenses();
+
+        // Load pie chart
+        this.charts.createExpensePieChart('expenseChart', expenses);
+
+        // Load weekly trend chart
+        this.charts.createWeeklyTrendChart('weeklyTrendChart', expenses);
+    }
+
+    loadBudgetTracker() {
+        const budgetCategories = document.getElementById('budgetCategories');
+        if (!budgetCategories) return;
+
+        const settings = window.storage.getSettings();
+        const budgets = settings.categoryBudgets || {};
+        const expenses = window.storage.getExpenses();
+
+        // Calculate current month expenses by category
+        const thisMonth = new Date();
+        const monthStart = new Date(thisMonth.getFullYear(), thisMonth.getMonth(), 1);
+        const monthEnd = new Date(thisMonth.getFullYear(), thisMonth.getMonth() + 1, 0);
+
+        const monthlyExpensesByCategory = {};
+        expenses.forEach(expense => {
+            const expenseDate = new Date(expense.createdAt);
+            if (expenseDate >= monthStart && expenseDate <= monthEnd) {
+                const category = expense.category;
+                monthlyExpensesByCategory[category] = (monthlyExpensesByCategory[category] || 0) + parseFloat(expense.amount);
+            }
+        });
+
+        const categories = Object.keys(budgets);
+        if (categories.length === 0) {
+            budgetCategories.innerHTML = `
+                <div class="empty-state">
+                    <p>No budget set. <button class="btn-link" onclick="app.openModal('budgetModal')">Set your budget</button></p>
+                </div>
+            `;
+            return;
+        }
+
+        budgetCategories.innerHTML = categories.map(category => {
+            const budgetAmount = budgets[category];
+            const spentAmount = monthlyExpensesByCategory[category] || 0;
+            const percentage = Math.min((spentAmount / budgetAmount) * 100, 100);
+            const isOverBudget = spentAmount > budgetAmount;
+
+            return `
+                <div class="budget-item">
+                    <div class="budget-category">${this.getCategoryDisplayName(category)}</div>
+                    <div class="budget-progress">
+                        <div class="budget-bar">
+                            <div class="budget-fill ${isOverBudget ? 'over-budget' : ''}" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                    <div class="budget-amount ${isOverBudget ? 'over-budget' : ''}">
+                        ${Utils.formatCurrency(spentAmount)} / ${Utils.formatCurrency(budgetAmount)}
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     renderExpenses(expenses) {
@@ -571,27 +740,40 @@ class WorkLifeBalanceApp {
     updateExpenseStats() {
         const expenses = window.storage.getExpenses();
         const today = new Date();
-        
+
         // Daily expenses
-        const dailyExpenses = expenses.filter(expense => 
+        const dailyExpenses = expenses.filter(expense =>
             Utils.isToday(expense.createdAt)
         ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
-        
+
         // Weekly expenses
         const weeklyExpenses = window.storage.getWeeklyExpenses();
-        
+
         // Monthly expenses
         const monthlyExpenses = window.storage.getMonthlyExpenses();
-        
+
+        // Average daily expenses (last 30 days)
+        const last30Days = expenses.filter(expense => {
+            const expenseDate = new Date(expense.createdAt);
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            return expenseDate >= thirtyDaysAgo;
+        });
+
+        const totalLast30Days = last30Days.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+        const averageDaily = totalLast30Days / 30;
+
         // Update UI
         const dailySpendingEl = document.getElementById('dailySpending');
         const weeklySpendingEl = document.getElementById('weeklySpending');
         const monthlySpendingEl = document.getElementById('monthlySpending');
-        
+        const averageDailyEl = document.getElementById('averageDaily');
+
         if (dailySpendingEl) dailySpendingEl.textContent = Utils.formatCurrency(dailyExpenses);
         if (weeklySpendingEl) weeklySpendingEl.textContent = Utils.formatCurrency(weeklyExpenses);
         if (monthlySpendingEl) monthlySpendingEl.textContent = Utils.formatCurrency(monthlyExpenses);
-        
+        if (averageDailyEl) averageDailyEl.textContent = Utils.formatCurrency(averageDaily);
+
         // Update savings progress
         this.updateSavingsProgress(monthlyExpenses);
     }
@@ -619,30 +801,465 @@ class WorkLifeBalanceApp {
         this.charts.createExpensePieChart('expenseChart', expenses);
     }
 
+    // Calendar Tab Methods
+    loadCalendarTab() {
+        this.updateCalendarHeader();
+        this.renderExpenseCalendar();
+    }
+
+    updateCalendarHeader() {
+        const currentMonthYearEl = document.getElementById('currentMonthYear');
+        if (currentMonthYearEl) {
+            currentMonthYearEl.textContent = this.currentCalendarDate.toLocaleDateString('en-US', {
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+    }
+
+    renderExpenseCalendar() {
+        const calendarEl = document.getElementById('expenseCalendar');
+        if (!calendarEl) return;
+
+        const year = this.currentCalendarDate.getFullYear();
+        const month = this.currentCalendarDate.getMonth();
+
+        // Get first day of month and last day
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const firstDayOfWeek = firstDay.getDay();
+        const daysInMonth = lastDay.getDate();
+
+        // Get expenses for this month
+        const expenses = window.storage.getExpenses();
+        const monthExpenses = expenses.filter(expense => {
+            const expenseDate = new Date(expense.createdAt);
+            return expenseDate.getFullYear() === year && expenseDate.getMonth() === month;
+        });
+
+        // Group expenses by date
+        const expensesByDate = {};
+        monthExpenses.forEach(expense => {
+            const date = new Date(expense.createdAt).getDate();
+            if (!expensesByDate[date]) {
+                expensesByDate[date] = [];
+            }
+            expensesByDate[date].push(expense);
+        });
+
+        let calendarHTML = `
+            <div class="calendar-header-row">
+                <div class="calendar-day-header">Sun</div>
+                <div class="calendar-day-header">Mon</div>
+                <div class="calendar-day-header">Tue</div>
+                <div class="calendar-day-header">Wed</div>
+                <div class="calendar-day-header">Thu</div>
+                <div class="calendar-day-header">Fri</div>
+                <div class="calendar-day-header">Sat</div>
+            </div>
+            <div class="calendar-grid">
+        `;
+
+        // Add empty cells for days before month starts
+        for (let i = 0; i < firstDayOfWeek; i++) {
+            const prevMonthDay = new Date(year, month, 0 - (firstDayOfWeek - 1 - i)).getDate();
+            calendarHTML += `<div class="calendar-day other-month"><div class="day-number">${prevMonthDay}</div></div>`;
+        }
+
+        // Add days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const isToday = new Date().toDateString() === new Date(year, month, day).toDateString();
+            const isSelected = this.selectedCalendarDate &&
+                this.selectedCalendarDate.getDate() === day &&
+                this.selectedCalendarDate.getMonth() === month &&
+                this.selectedCalendarDate.getFullYear() === year;
+
+            const dayExpenses = expensesByDate[day] || [];
+            const totalAmount = dayExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+            let expenseClass = '';
+            let expenseDisplay = '';
+
+            if (totalAmount > 0) {
+                if (totalAmount < 500) {
+                    expenseClass = 'expense-low';
+                } else if (totalAmount <= 1500) {
+                    expenseClass = 'expense-medium';
+                } else {
+                    expenseClass = 'expense-high';
+                }
+                expenseDisplay = `<div class="day-expense-amount ${expenseClass}">${Utils.formatCurrency(totalAmount)}</div>`;
+            }
+
+            calendarHTML += `
+                <div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}"
+                     onclick="app.selectCalendarDate(${year}, ${month}, ${day})">
+                    <div class="day-number">${day}</div>
+                    ${expenseDisplay}
+                </div>
+            `;
+        }
+
+        // Add empty cells for remaining days
+        const totalCells = Math.ceil((firstDayOfWeek + daysInMonth) / 7) * 7;
+        const remainingCells = totalCells - (firstDayOfWeek + daysInMonth);
+
+        for (let i = 1; i <= remainingCells; i++) {
+            calendarHTML += `<div class="calendar-day other-month"><div class="day-number">${i}</div></div>`;
+        }
+
+        calendarHTML += '</div>';
+        calendarEl.innerHTML = calendarHTML;
+    }
+
+    selectCalendarDate(year, month, day) {
+        this.selectedCalendarDate = new Date(year, month, day);
+        this.renderExpenseCalendar();
+        this.showSelectedDateExpenses();
+    }
+
+    showSelectedDateExpenses() {
+        if (!this.selectedCalendarDate) return;
+
+        const selectedDateTitle = document.getElementById('selectedDateTitle');
+        const dateExpenseList = document.getElementById('dateExpenseList');
+
+        if (!selectedDateTitle || !dateExpenseList) return;
+
+        const dateStr = this.selectedCalendarDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        selectedDateTitle.textContent = `Expenses for ${dateStr}`;
+
+        const expenses = window.storage.getExpenses();
+        const selectedDateStr = this.selectedCalendarDate.toDateString();
+        const dayExpenses = expenses.filter(expense =>
+            new Date(expense.createdAt).toDateString() === selectedDateStr
+        );
+
+        if (dayExpenses.length === 0) {
+            dateExpenseList.innerHTML = `
+                <div class="empty-state">
+                    <p>No expenses on this date</p>
+                    <button class="btn-primary" onclick="app.addExpenseForDate('${this.selectedCalendarDate.toISOString()}')">Add Expense</button>
+                </div>
+            `;
+            return;
+        }
+
+        const totalAmount = dayExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        dateExpenseList.innerHTML = `
+            <div class="date-summary">
+                <h4>Total: ${Utils.formatCurrency(totalAmount)}</h4>
+            </div>
+            ${dayExpenses.map(expense => `
+                <div class="date-expense-item">
+                    <div class="expense-category-icon" style="background: ${this.charts.getCategoryColor(expense.category)}">
+                        ${this.getCategoryIcon(expense.category)}
+                    </div>
+                    <div class="expense-details">
+                        <div class="expense-title">${this.getCategoryDisplayName(expense.category)}</div>
+                        <div class="expense-description">${Utils.sanitizeInput(expense.notes || 'No description')}</div>
+                    </div>
+                    <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
+                </div>
+            `).join('')}
+        `;
+    }
+
+    // Analytics Tab Methods
+    loadAnalyticsTab() {
+        const expenses = window.storage.getExpenses();
+
+        // Load all analytics charts
+        this.charts.createSpendingTrendChart('spendingTrendChart', expenses, 'month');
+        this.charts.createCategoryAnalysisChart('categoryAnalysisChart', expenses, 'pie');
+        this.charts.createGrowthAnalysisChart('growthAnalysisChart', expenses);
+        this.charts.createComparisonChart('comparisonChart', expenses, 'month-over-month');
+
+        this.generateAnalyticsInsights(expenses);
+    }
+
+    generateAnalyticsInsights(expenses) {
+        const insightsContainer = document.getElementById('analyticsInsights');
+        if (!insightsContainer) return;
+
+        const insights = this.calculateExpenseInsights(expenses);
+
+        insightsContainer.innerHTML = insights.map(insight => `
+            <div class="insight-item">
+                <div class="insight-title">${insight.title}</div>
+                <div class="insight-value">${insight.value}</div>
+                <div class="insight-description">${insight.description}</div>
+            </div>
+        `).join('');
+    }
+
+    calculateExpenseInsights(expenses) {
+        const insights = [];
+
+        // Highest spending category
+        const categoryTotals = {};
+        expenses.forEach(expense => {
+            categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + parseFloat(expense.amount);
+        });
+
+        const topCategory = Object.keys(categoryTotals).reduce((a, b) =>
+            categoryTotals[a] > categoryTotals[b] ? a : b, 'none'
+        );
+
+        if (topCategory !== 'none') {
+            insights.push({
+                title: 'Top Spending Category',
+                value: this.getCategoryDisplayName(topCategory),
+                description: `${Utils.formatCurrency(categoryTotals[topCategory])} total`
+            });
+        }
+
+        // Average transaction amount
+        const avgTransaction = expenses.length > 0 ?
+            expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0) / expenses.length : 0;
+
+        insights.push({
+            title: 'Average Transaction',
+            value: Utils.formatCurrency(avgTransaction),
+            description: `Based on ${expenses.length} transactions`
+        });
+
+        // Most expensive day
+        const dailyTotals = {};
+        expenses.forEach(expense => {
+            const date = new Date(expense.createdAt).toDateString();
+            dailyTotals[date] = (dailyTotals[date] || 0) + parseFloat(expense.amount);
+        });
+
+        const maxDay = Object.keys(dailyTotals).reduce((a, b) =>
+            dailyTotals[a] > dailyTotals[b] ? a : b, null
+        );
+
+        if (maxDay) {
+            insights.push({
+                title: 'Highest Spending Day',
+                value: Utils.formatCurrency(dailyTotals[maxDay]),
+                description: new Date(maxDay).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                })
+            });
+        }
+
+        return insights;
+    }
+
+    // Insights Tab Methods
+    loadInsightsTab() {
+        const expenses = window.storage.getExpenses();
+
+        this.generateSpendingPredictions(expenses);
+        this.generateSpendingPatterns(expenses);
+        this.generateSmartRecommendations(expenses);
+        this.loadFinancialGoals();
+    }
+
+    generateSpendingPredictions(expenses) {
+        const predictions = this.calculateSpendingPredictions(expenses);
+
+        const nextWeekEl = document.getElementById('nextWeekPrediction');
+        const nextMonthEl = document.getElementById('nextMonthPrediction');
+        const weekConfidenceEl = document.getElementById('weekConfidence');
+        const monthConfidenceEl = document.getElementById('monthConfidence');
+
+        if (nextWeekEl) nextWeekEl.textContent = Utils.formatCurrency(predictions.nextWeek.amount);
+        if (nextMonthEl) nextMonthEl.textContent = Utils.formatCurrency(predictions.nextMonth.amount);
+        if (weekConfidenceEl) weekConfidenceEl.textContent = `${predictions.nextWeek.confidence}%`;
+        if (monthConfidenceEl) monthConfidenceEl.textContent = `${predictions.nextMonth.confidence}%`;
+    }
+
+    calculateSpendingPredictions(expenses) {
+        // Simple moving average prediction
+        const last4Weeks = this.charts.getWeeklyData(expenses, 4);
+        const last3Months = this.charts.getMonthlyData(expenses, 3);
+
+        const weeklyAvg = last4Weeks.length > 0 ?
+            last4Weeks.reduce((sum, week) => sum + week.amount, 0) / last4Weeks.length : 0;
+
+        const monthlyAvg = last3Months.length > 0 ?
+            last3Months.reduce((sum, month) => sum + month.amount, 0) / last3Months.length : 0;
+
+        return {
+            nextWeek: {
+                amount: weeklyAvg,
+                confidence: Math.max(60, 100 - (last4Weeks.length < 4 ? 20 : 0))
+            },
+            nextMonth: {
+                amount: monthlyAvg,
+                confidence: Math.max(50, 100 - (last3Months.length < 3 ? 30 : 0))
+            }
+        };
+    }
+
+    generateSpendingPatterns(expenses) {
+        const patterns = this.analyzeSpendingPatterns(expenses);
+        const patternAnalysisEl = document.getElementById('patternAnalysis');
+
+        if (!patternAnalysisEl) return;
+
+        patternAnalysisEl.innerHTML = patterns.map(pattern => `
+            <div class="pattern-item">
+                <div class="pattern-title">${pattern.title}</div>
+                <div class="pattern-description">${pattern.description}</div>
+            </div>
+        `).join('');
+    }
+
+    analyzeSpendingPatterns(expenses) {
+        const patterns = [];
+
+        // Day of week analysis
+        const dayTotals = {};
+        expenses.forEach(expense => {
+            const day = new Date(expense.createdAt).toLocaleDateString('en-US', { weekday: 'long' });
+            dayTotals[day] = (dayTotals[day] || 0) + parseFloat(expense.amount);
+        });
+
+        const topDay = Object.keys(dayTotals).reduce((a, b) =>
+            dayTotals[a] > dayTotals[b] ? a : b, null
+        );
+
+        if (topDay) {
+            patterns.push({
+                title: 'Weekly Spending Pattern',
+                description: `You tend to spend most on ${topDay}s (${Utils.formatCurrency(dayTotals[topDay])} average)`
+            });
+        }
+
+        // Category frequency
+        const categoryCount = {};
+        expenses.forEach(expense => {
+            categoryCount[expense.category] = (categoryCount[expense.category] || 0) + 1;
+        });
+
+        const topCategory = Object.keys(categoryCount).reduce((a, b) =>
+            categoryCount[a] > categoryCount[b] ? a : b, null
+        );
+
+        if (topCategory) {
+            patterns.push({
+                title: 'Most Frequent Category',
+                description: `${this.getCategoryDisplayName(topCategory)} appears in ${categoryCount[topCategory]} transactions`
+            });
+        }
+
+        return patterns;
+    }
+
+    generateSmartRecommendations(expenses) {
+        const recommendations = this.generateRecommendations(expenses);
+        const recommendationsEl = document.getElementById('recommendationsList');
+
+        if (!recommendationsEl) return;
+
+        recommendationsEl.innerHTML = recommendations.map(rec => `
+            <div class="recommendation-item">
+                <div class="recommendation-title">${rec.title}</div>
+                <div class="recommendation-description">${rec.description}</div>
+            </div>
+        `).join('');
+    }
+
+    generateRecommendations(expenses) {
+        const recommendations = [];
+
+        // High food spending
+        const foodExpenses = expenses.filter(exp => exp.category === 'food')
+            .reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        const totalExpenses = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        if (foodExpenses > totalExpenses * 0.4) {
+            recommendations.push({
+                title: 'Reduce Food Delivery',
+                description: 'You\'re spending a lot on food. Try cooking at home more often to save money.'
+            });
+        }
+
+        // Budget recommendations
+        const monthlySpending = window.storage.getMonthlyExpenses();
+        if (monthlySpending > 15000) {
+            recommendations.push({
+                title: 'Set Monthly Budget',
+                description: 'Consider setting category budgets to better control your spending.'
+            });
+        }
+
+        // Emergency fund
+        recommendations.push({
+            title: 'Build Emergency Fund',
+            description: 'Aim to save 3-6 months of expenses for financial security.'
+        });
+
+        return recommendations;
+    }
+
+    loadFinancialGoals() {
+        const goalsEl = document.getElementById('goalsList');
+        if (!goalsEl) return;
+
+        const settings = window.storage.getSettings();
+        const savingsGoal = settings.savingsGoal || 10000;
+        const monthlyExpenses = window.storage.getMonthlyExpenses();
+        const saved = Math.max(0, savingsGoal - monthlyExpenses);
+        const progress = Math.min((saved / savingsGoal) * 100, 100);
+
+        goalsEl.innerHTML = `
+            <div class="goal-item">
+                <div class="goal-title">Monthly Savings Goal</div>
+                <div class="goal-progress-bar">
+                    <div class="goal-progress-fill" style="width: ${progress}%"></div>
+                </div>
+                <div class="goal-amount">
+                    <span class="goal-current">${Utils.formatCurrency(saved)}</span>
+                    <span class="goal-target">/ ${Utils.formatCurrency(savingsGoal)}</span>
+                </div>
+            </div>
+        `;
+    }
+
     handleExpenseSubmit(e) {
         e.preventDefault();
-        
+
         const expenseData = {
             amount: parseFloat(document.getElementById('expenseAmount').value),
             category: document.getElementById('expenseCategory').value,
             notes: Utils.sanitizeInput(document.getElementById('expenseNotes').value),
-            date: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0]
+            date: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0],
+            paymentMethod: document.getElementById('expensePaymentMethod').value,
+            recurring: document.getElementById('expenseRecurring').checked
         };
-        
+
         if (!Utils.validateAmount(expenseData.amount)) {
             Utils.showNotification('Please enter a valid amount', 'error');
             return;
         }
-        
+
+        if (!expenseData.category) {
+            Utils.showNotification('Please select a category', 'error');
+            return;
+        }
+
         window.storage.addExpense(expenseData);
         Utils.showNotification('Expense added successfully!', 'success');
-        
+
         this.closeModal('expenseModal');
         e.target.reset();
-        
+
         if (this.currentSection === 'expenses') {
-            this.loadExpenses();
-            this.loadExpenseChart();
+            this.loadExpenseSection();
         }
         this.updateDashboard();
     }
@@ -651,13 +1268,39 @@ class WorkLifeBalanceApp {
         if (confirm('Are you sure you want to delete this expense?')) {
             window.storage.deleteExpense(expenseId);
             Utils.showNotification('Expense deleted', 'info');
-            
+
             if (this.currentSection === 'expenses') {
-                this.loadExpenses();
-                this.loadExpenseChart();
+                this.loadExpenseSection();
             }
             this.updateDashboard();
         }
+    }
+
+    editExpense(expenseId) {
+        const expense = window.storage.getExpenses().find(exp => exp.id === expenseId);
+        if (!expense) return;
+
+        // Populate modal with expense data
+        document.getElementById('expenseAmount').value = expense.amount;
+        document.getElementById('expenseCategory').value = expense.category;
+        document.getElementById('expenseNotes').value = expense.notes || '';
+        document.getElementById('expenseDate').value = expense.date || expense.createdAt.split('T')[0];
+        document.getElementById('expensePaymentMethod').value = expense.paymentMethod || 'cash';
+        document.getElementById('expenseRecurring').checked = expense.recurring || false;
+
+        // Change modal title
+        document.getElementById('expenseModalTitle').textContent = 'Edit Expense';
+
+        // Store expense ID for update
+        document.getElementById('expenseForm').dataset.editId = expenseId;
+
+        this.openModal('expenseModal');
+    }
+
+    addExpenseForDate(dateStr) {
+        const date = new Date(dateStr);
+        document.getElementById('expenseDate').value = date.toISOString().split('T')[0];
+        this.openModal('expenseModal');
     }
 
     loadFoodData() {
