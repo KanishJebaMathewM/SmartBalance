@@ -2837,7 +2837,7 @@ class WorkLifeBalanceApp {
         const correlation = this.calculateCorrelation(workouts, moods, 'workout', 'stress');
         const percentage = Math.abs(correlation * 100);
         const insight = correlation > 0.3 ?
-            '💪 Working out significantly improves your mood!' :
+            '��� Working out significantly improves your mood!' :
             correlation < -0.3 ?
             '😰 High workout intensity might be causing stress' :
             '�� Moderate correlation - keep tracking for better insights';
@@ -7176,31 +7176,7 @@ class WorkLifeBalanceApp {
 
     // Old habit tracking functions removed - now using insights and analysis approach
 
-    updateTodayHabitChecklist(habits) {
-        const container = document.getElementById('todayHabitChecklist');
-        if (!container) return;
-
-        const today = new Date().toDateString();
-        const todayCompletions = new Set();
-
-        habits.forEach(habit => {
-            const completions = window.storage.getHabitCompletions(habit.id);
-            const todayCompletion = completions.find(c =>
-                new Date(c.date).toDateString() === today
-            );
-            if (todayCompletion) {
-                todayCompletions.add(habit.id);
-            }
-        });
-
-        container.innerHTML = habits.filter(h => h.active !== false).map(habit => `
-            <div class="habit-checklist-item ${todayCompletions.has(habit.id) ? 'completed' : ''}">
-                <input type="checkbox" ${todayCompletions.has(habit.id) ? 'checked' : ''}
-                       onchange="app.toggleHabitCompletion(${habit.id}, this.checked)">
-                <span>${habit.name}</span>
-            </div>
-        `).join('');
-    }
+    // updateTodayHabitChecklist removed - replaced with insights analysis
 
     updateHabitStats() {
         const habits = window.storage.getHabits();
