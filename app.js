@@ -2853,7 +2853,7 @@ class WorkLifeBalanceApp {
             '💰 You tend to spend more when stressed - try stress management techniques!' :
             correlation < -0.3 ?
             '😌 Good mood leads to mindful spending!' :
-            '���� No strong pattern detected yet - keep tracking';
+            '📊 No strong pattern detected yet - keep tracking';
 
         this.updateCorrelationDisplay('moodSpendingCorrelation', percentage, insight);
     }
@@ -3401,6 +3401,50 @@ class WorkLifeBalanceApp {
             const expenseDate = new Date(expense.createdAt);
             return expenseDate >= lastMonthStart && expenseDate <= lastMonthEnd;
         }).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+    }
+
+    // Update expense category based on task category
+    updateExpenseCategory() {
+        const taskCategorySelect = document.getElementById('taskCategory');
+        const expenseCategorySelect = document.getElementById('taskExpenseCategory');
+        const categoryDisplay = document.getElementById('selectedExpenseCategory');
+        const changeBtn = document.getElementById('changeExpenseCategoryBtn');
+
+        if (!taskCategorySelect || !expenseCategorySelect || !categoryDisplay) return;
+
+        const taskCategory = taskCategorySelect.value;
+        const categoryMapping = {
+            'food': 'food',
+            'health': 'healthcare',
+            'bills': 'bills',
+            'shopping': 'shopping',
+            'travel': 'travel',
+            'entertainment': 'entertainment',
+            'education': 'education',
+            'work': 'other',
+            'personal': 'other',
+            'reminder': 'other',
+            'other': 'other'
+        };
+
+        const mappedCategory = categoryMapping[taskCategory] || 'other';
+
+        // Set the expense category automatically
+        expenseCategorySelect.value = mappedCategory;
+
+        // Update the display
+        const selectedOption = expenseCategorySelect.querySelector(`option[value="${mappedCategory}"]`);
+        if (selectedOption) {
+            categoryDisplay.textContent = selectedOption.textContent;
+        }
+
+        // Show/hide change button appropriately
+        if (changeBtn) {
+            changeBtn.style.display = 'inline';
+        }
+
+        // Hide the select dropdown initially
+        expenseCategorySelect.style.display = 'none';
     }
 
     // Enhanced task and expense category methods
