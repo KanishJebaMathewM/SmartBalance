@@ -194,6 +194,9 @@ class WorkLifeBalanceApp {
         if (exportBtn) {
             exportBtn.addEventListener('click', () => this.exportReport());
         }
+
+        // Enhanced expense form handlers
+        this.initializeExpenseFormEnhancements();
     }
 
     initializeFilterHandlers() {
