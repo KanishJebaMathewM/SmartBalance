@@ -466,6 +466,654 @@ class Charts {
             }
         });
     }
+
+    // Enhanced Weekly Trend Chart
+    createWeeklyTrendChart(canvasId, expenses) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 40;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+
+        // Get last 7 days data
+        const last7Days = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            last7Days.push(date);
+        }
+
+        const dailyData = last7Days.map(date => {
+            const dateStr = date.toDateString();
+            const dayExpenses = expenses.filter(expense =>
+                new Date(expense.createdAt).toDateString() === dateStr
+            ).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+            return {
+                date,
+                amount: dayExpenses,
+                day: date.toLocaleDateString('en-US', { weekday: 'short' })
+            };
+        });
+
+        const maxAmount = Math.max(...dailyData.map(d => d.amount), 100);
+
+        // Draw axes
+        this.drawAxes(ctx, padding, chartWidth, chartHeight);
+
+        // Draw trend line with gradient
+        const gradient = this.createGradient(ctx, this.colors.primary + '40', this.colors.primary + '10');
+
+        ctx.strokeStyle = this.colors.primary;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+
+        const xStep = chartWidth / (dailyData.length - 1);
+
+        // Draw line
+        dailyData.forEach((day, index) => {
+            const x = padding + (index * xStep);
+            const y = padding + chartHeight - (day.amount / maxAmount * chartHeight);
+
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+
+        ctx.stroke();
+
+        // Fill area under curve
+        ctx.lineTo(padding + chartWidth, padding + chartHeight);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Draw points
+        dailyData.forEach((day, index) => {
+            const x = padding + (index * xStep);
+            const y = padding + chartHeight - (day.amount / maxAmount * chartHeight);
+
+            ctx.fillStyle = this.colors.primary;
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Amount labels
+            if (day.amount > 0) {
+                ctx.fillStyle = '#374151';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`₹${Math.round(day.amount)}`, x, y - 10);
+            }
+        });
+
+        // X-axis labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+
+        dailyData.forEach((day, index) => {
+            const x = padding + (index * xStep);
+            ctx.fillText(day.day, x, padding + chartHeight + 20);
+        });
+    }
+
+    // Spending Trend Chart with multiple periods
+    createSpendingTrendChart(canvasId, expenses, period = 'month') {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 60;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+
+        let periodData = [];
+
+        switch (period) {
+            case 'week':
+                periodData = this.getWeeklyData(expenses, 7);
+                break;
+            case 'month':
+                periodData = this.getDailyData(expenses, 30);
+                break;
+            case '3months':
+                periodData = this.getWeeklyData(expenses, 12);
+                break;
+            case 'year':
+                periodData = this.getMonthlyData(expenses, 12);
+                break;
+        }
+
+        if (periodData.length === 0) {
+            this.drawEmptyChart(ctx, canvas, 'No data available');
+            return;
+        }
+
+        const maxAmount = Math.max(...periodData.map(d => d.amount), 100);
+
+        // Draw axes
+        this.drawAxes(ctx, padding, chartWidth, chartHeight);
+
+        // Draw grid lines
+        this.drawGridLines(ctx, padding, chartWidth, chartHeight, 5);
+
+        // Draw area chart
+        const gradient = this.createGradient(ctx, this.colors.primary + '40', this.colors.primary + '10');
+
+        ctx.beginPath();
+        periodData.forEach((data, index) => {
+            const x = padding + (index / (periodData.length - 1)) * chartWidth;
+            const y = padding + chartHeight - (data.amount / maxAmount * chartHeight);
+
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+
+        // Complete the area
+        const lastX = padding + chartWidth;
+        ctx.lineTo(lastX, padding + chartHeight);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        // Draw line
+        ctx.strokeStyle = this.colors.primary;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        periodData.forEach((data, index) => {
+            const x = padding + (index / (periodData.length - 1)) * chartWidth;
+            const y = padding + chartHeight - (data.amount / maxAmount * chartHeight);
+
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        ctx.stroke();
+
+        // Draw labels
+        this.drawPeriodLabels(ctx, periodData, padding, chartWidth, chartHeight, period);
+    }
+
+    // Category Analysis Charts (Pie, Bar, Doughnut)
+    createCategoryAnalysisChart(canvasId, expenses, chartType = 'pie') {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        switch (chartType) {
+            case 'pie':
+                this.createExpensePieChart(canvasId, expenses);
+                break;
+            case 'bar':
+                this.createExpenseBarChart(canvasId, expenses);
+                break;
+            case 'doughnut':
+                this.createDoughnutChart(canvasId, expenses);
+                break;
+        }
+    }
+
+    // Doughnut Chart
+    createDoughnutChart(canvasId, expenses) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const outerRadius = Math.min(centerX, centerY) - 40;
+        const innerRadius = outerRadius * 0.6;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Group expenses by category
+        const categoryTotals = {};
+        expenses.forEach(expense => {
+            const category = expense.category;
+            categoryTotals[category] = (categoryTotals[category] || 0) + parseFloat(expense.amount);
+        });
+
+        const categories = Object.keys(categoryTotals);
+        if (categories.length === 0) {
+            this.drawEmptyChart(ctx, canvas, 'No expense data');
+            return;
+        }
+
+        const total = Object.values(categoryTotals).reduce((sum, val) => sum + val, 0);
+        let currentAngle = -Math.PI / 2;
+
+        categories.forEach((category, index) => {
+            const value = categoryTotals[category];
+            const sliceAngle = (value / total) * 2 * Math.PI;
+
+            // Draw doughnut slice
+            ctx.fillStyle = this.getCategoryColor(category);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, outerRadius, currentAngle, currentAngle + sliceAngle);
+            ctx.arc(centerX, centerY, innerRadius, currentAngle + sliceAngle, currentAngle, true);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw slice border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            currentAngle += sliceAngle;
+        });
+
+        // Draw center text
+        ctx.fillStyle = '#374151';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Total', centerX, centerY - 10);
+        ctx.font = 'bold 20px Arial';
+        ctx.fillText(Utils.formatCurrency(total), centerX, centerY + 15);
+
+        // Draw legend
+        this.drawLegend(ctx, categories, categories.map(cat => this.getCategoryColor(cat)), canvas.width - 150, 40);
+    }
+
+    // Growth Analysis Chart
+    createGrowthAnalysisChart(canvasId, expenses) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 60;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+
+        // Get monthly growth data
+        const monthlyData = this.getMonthlyGrowthData(expenses);
+
+        if (monthlyData.length < 2) {
+            this.drawEmptyChart(ctx, canvas, 'Need at least 2 months of data');
+            return;
+        }
+
+        const values = monthlyData.map(d => d.growth);
+        const maxValue = Math.max(...values.map(Math.abs), 10);
+
+        // Draw axes
+        this.drawAxes(ctx, padding, chartWidth, chartHeight);
+
+        // Draw zero line
+        const zeroY = padding + chartHeight / 2;
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding, zeroY);
+        ctx.lineTo(padding + chartWidth, zeroY);
+        ctx.stroke();
+
+        // Draw bars
+        const barWidth = chartWidth / monthlyData.length * 0.8;
+        const barSpacing = chartWidth / monthlyData.length * 0.2;
+
+        monthlyData.forEach((data, index) => {
+            const x = padding + (index * (barWidth + barSpacing)) + barSpacing / 2;
+            const barHeight = Math.abs(data.growth) / maxValue * (chartHeight / 2);
+
+            let y, color;
+            if (data.growth >= 0) {
+                y = zeroY - barHeight;
+                color = this.colors.error; // Red for increase in spending
+            } else {
+                y = zeroY;
+                color = this.colors.success; // Green for decrease in spending
+            }
+
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, barWidth, barHeight);
+
+            // Month label
+            ctx.fillStyle = '#374151';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(data.month, x + barWidth / 2, padding + chartHeight + 20);
+
+            // Growth percentage
+            ctx.fillStyle = color;
+            ctx.font = 'bold 10px Arial';
+            const percentage = `${data.growth > 0 ? '+' : ''}${data.growth.toFixed(1)}%`;
+            ctx.fillText(percentage, x + barWidth / 2, y + (data.growth >= 0 ? -5 : barHeight + 15));
+        });
+    }
+
+    // Comparison Chart (Month-over-month, Week-over-week, etc.)
+    createComparisonChart(canvasId, expenses, comparisonType = 'month-over-month') {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const padding = 60;
+        const chartWidth = canvas.width - 2 * padding;
+        const chartHeight = canvas.height - 2 * padding;
+
+        let comparisonData = [];
+
+        switch (comparisonType) {
+            case 'month-over-month':
+                comparisonData = this.getMonthOverMonthData(expenses);
+                break;
+            case 'week-over-week':
+                comparisonData = this.getWeekOverWeekData(expenses);
+                break;
+            case 'year-over-year':
+                comparisonData = this.getYearOverYearData(expenses);
+                break;
+        }
+
+        if (comparisonData.length === 0) {
+            this.drawEmptyChart(ctx, canvas, 'No comparison data available');
+            return;
+        }
+
+        const maxValue = Math.max(...comparisonData.flatMap(d => [d.current, d.previous]), 100);
+
+        // Draw axes
+        this.drawAxes(ctx, padding, chartWidth, chartHeight);
+
+        // Draw grouped bars
+        const groupWidth = chartWidth / comparisonData.length;
+        const barWidth = groupWidth * 0.35;
+        const barSpacing = groupWidth * 0.1;
+
+        comparisonData.forEach((data, index) => {
+            const groupX = padding + (index * groupWidth);
+
+            // Current period bar
+            const currentHeight = (data.current / maxValue) * chartHeight;
+            const currentY = padding + chartHeight - currentHeight;
+            ctx.fillStyle = this.colors.primary;
+            ctx.fillRect(groupX + barSpacing, currentY, barWidth, currentHeight);
+
+            // Previous period bar
+            const previousHeight = (data.previous / maxValue) * chartHeight;
+            const previousY = padding + chartHeight - previousHeight;
+            ctx.fillStyle = this.colors.gray;
+            ctx.fillRect(groupX + barSpacing + barWidth + 5, previousY, barWidth, previousHeight);
+
+            // Labels
+            ctx.fillStyle = '#374151';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(data.label, groupX + groupWidth / 2, padding + chartHeight + 20);
+        });
+
+        // Legend
+        this.drawSimpleLegend(ctx, ['Current', 'Previous'], [this.colors.primary, this.colors.gray], 20, 20);
+    }
+
+    // Helper methods for data processing
+    getWeeklyData(expenses, weeks) {
+        const data = [];
+        for (let i = weeks - 1; i >= 0; i--) {
+            const weekStart = new Date();
+            weekStart.setDate(weekStart.getDate() - (i * 7));
+            weekStart.setHours(0, 0, 0, 0);
+
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekEnd.getDate() + 6);
+            weekEnd.setHours(23, 59, 59, 999);
+
+            const weekExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.createdAt);
+                return expenseDate >= weekStart && expenseDate <= weekEnd;
+            });
+
+            const amount = weekExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+            data.push({
+                period: `Week ${i + 1}`,
+                amount,
+                date: weekStart
+            });
+        }
+        return data;
+    }
+
+    getDailyData(expenses, days) {
+        const data = [];
+        for (let i = days - 1; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            date.setHours(0, 0, 0, 0);
+
+            const dayEnd = new Date(date);
+            dayEnd.setHours(23, 59, 59, 999);
+
+            const dayExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.createdAt);
+                return expenseDate >= date && expenseDate <= dayEnd;
+            });
+
+            const amount = dayExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+            data.push({
+                period: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                amount,
+                date
+            });
+        }
+        return data;
+    }
+
+    getMonthlyData(expenses, months) {
+        const data = [];
+        for (let i = months - 1; i >= 0; i--) {
+            const date = new Date();
+            date.setMonth(date.getMonth() - i);
+            date.setDate(1);
+            date.setHours(0, 0, 0, 0);
+
+            const monthEnd = new Date(date);
+            monthEnd.setMonth(monthEnd.getMonth() + 1);
+            monthEnd.setDate(0);
+            monthEnd.setHours(23, 59, 59, 999);
+
+            const monthExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.createdAt);
+                return expenseDate >= date && expenseDate <= monthEnd;
+            });
+
+            const amount = monthExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+            data.push({
+                period: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                amount,
+                date
+            });
+        }
+        return data;
+    }
+
+    getMonthlyGrowthData(expenses) {
+        const monthlyData = this.getMonthlyData(expenses, 6);
+        const growthData = [];
+
+        for (let i = 1; i < monthlyData.length; i++) {
+            const current = monthlyData[i].amount;
+            const previous = monthlyData[i - 1].amount;
+            const growth = previous > 0 ? ((current - previous) / previous) * 100 : 0;
+
+            growthData.push({
+                month: monthlyData[i].period,
+                growth,
+                current,
+                previous
+            });
+        }
+
+        return growthData;
+    }
+
+    getMonthOverMonthData(expenses) {
+        const thisMonth = new Date();
+        thisMonth.setDate(1);
+
+        const lastMonth = new Date(thisMonth);
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+
+        const thisMonthEnd = new Date(thisMonth);
+        thisMonthEnd.setMonth(thisMonthEnd.getMonth() + 1);
+        thisMonthEnd.setDate(0);
+
+        const lastMonthEnd = new Date(lastMonth);
+        lastMonthEnd.setMonth(lastMonthEnd.getMonth() + 1);
+        lastMonthEnd.setDate(0);
+
+        const thisMonthExpenses = expenses.filter(expense => {
+            const date = new Date(expense.createdAt);
+            return date >= thisMonth && date <= thisMonthEnd;
+        }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        const lastMonthExpenses = expenses.filter(expense => {
+            const date = new Date(expense.createdAt);
+            return date >= lastMonth && date <= lastMonthEnd;
+        }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        return [{
+            label: 'This vs Last Month',
+            current: thisMonthExpenses,
+            previous: lastMonthExpenses
+        }];
+    }
+
+    getWeekOverWeekData(expenses) {
+        const thisWeek = new Date();
+        thisWeek.setDate(thisWeek.getDate() - thisWeek.getDay());
+
+        const lastWeek = new Date(thisWeek);
+        lastWeek.setDate(lastWeek.getDate() - 7);
+
+        const thisWeekEnd = new Date(thisWeek);
+        thisWeekEnd.setDate(thisWeekEnd.getDate() + 6);
+
+        const lastWeekEnd = new Date(lastWeek);
+        lastWeekEnd.setDate(lastWeekEnd.getDate() + 6);
+
+        const thisWeekExpenses = expenses.filter(expense => {
+            const date = new Date(expense.createdAt);
+            return date >= thisWeek && date <= thisWeekEnd;
+        }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        const lastWeekExpenses = expenses.filter(expense => {
+            const date = new Date(expense.createdAt);
+            return date >= lastWeek && date <= lastWeekEnd;
+        }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        return [{
+            label: 'This vs Last Week',
+            current: thisWeekExpenses,
+            previous: lastWeekExpenses
+        }];
+    }
+
+    getYearOverYearData(expenses) {
+        const thisYear = new Date().getFullYear();
+        const lastYear = thisYear - 1;
+
+        const thisYearExpenses = expenses.filter(expense => {
+            return new Date(expense.createdAt).getFullYear() === thisYear;
+        }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        const lastYearExpenses = expenses.filter(expense => {
+            return new Date(expense.createdAt).getFullYear() === lastYear;
+        }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        return [{
+            label: `${thisYear} vs ${lastYear}`,
+            current: thisYearExpenses,
+            previous: lastYearExpenses
+        }];
+    }
+
+    // Helper drawing methods
+    drawAxes(ctx, padding, chartWidth, chartHeight) {
+        ctx.strokeStyle = '#e5e7eb';
+        ctx.lineWidth = 1;
+
+        // Y-axis
+        ctx.beginPath();
+        ctx.moveTo(padding, padding);
+        ctx.lineTo(padding, padding + chartHeight);
+        ctx.stroke();
+
+        // X-axis
+        ctx.beginPath();
+        ctx.moveTo(padding, padding + chartHeight);
+        ctx.lineTo(padding + chartWidth, padding + chartHeight);
+        ctx.stroke();
+    }
+
+    drawGridLines(ctx, padding, chartWidth, chartHeight, lineCount) {
+        ctx.strokeStyle = '#f3f4f6';
+        ctx.lineWidth = 1;
+
+        for (let i = 1; i <= lineCount; i++) {
+            const y = padding + (i * chartHeight / (lineCount + 1));
+            ctx.beginPath();
+            ctx.moveTo(padding, y);
+            ctx.lineTo(padding + chartWidth, y);
+            ctx.stroke();
+        }
+    }
+
+    drawEmptyChart(ctx, canvas, message) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+    }
+
+    drawPeriodLabels(ctx, data, padding, chartWidth, chartHeight, period) {
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'center';
+
+        const labelCount = Math.min(data.length, 8); // Limit labels to avoid crowding
+        const step = Math.floor(data.length / labelCount);
+
+        for (let i = 0; i < data.length; i += step) {
+            const x = padding + (i / (data.length - 1)) * chartWidth;
+            ctx.fillText(data[i].period, x, padding + chartHeight + 20);
+        }
+    }
+
+    drawSimpleLegend(ctx, labels, colors, x, y) {
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'left';
+
+        labels.forEach((label, index) => {
+            const legendY = y + (index * 20);
+
+            // Color box
+            ctx.fillStyle = colors[index];
+            ctx.fillRect(x, legendY - 10, 15, 15);
+
+            // Label text
+            ctx.fillStyle = '#374151';
+            ctx.fillText(label, x + 25, legendY);
+        });
+    }
 }
 
 // Make Charts available globally
