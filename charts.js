@@ -729,8 +729,8 @@ class Charts {
         this.drawLegend(ctx, categories, categories.map(cat => this.getCategoryColor(cat)), canvas.width - 150, 40);
     }
 
-    // Growth Analysis Chart
-    createGrowthAnalysisChart(canvasId, expenses) {
+    // Payment Method Analysis Chart
+    createPaymentMethodChart(canvasId, expenses) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
@@ -741,60 +741,56 @@ class Charts {
         const chartWidth = canvas.width - 2 * padding;
         const chartHeight = canvas.height - 2 * padding;
 
-        // Get monthly growth data
-        const monthlyData = this.getMonthlyGrowthData(expenses);
+        // Get payment method data
+        const paymentData = this.getPaymentMethodData(expenses);
 
-        if (monthlyData.length < 2) {
-            this.drawEmptyChart(ctx, canvas, 'Need at least 2 months of data');
+        if (paymentData.length === 0) {
+            this.drawEmptyChart(ctx, canvas, 'No payment method data available');
             return;
         }
 
-        const values = monthlyData.map(d => d.growth);
-        const maxValue = Math.max(...values.map(Math.abs), 10);
+        const maxValue = Math.max(...paymentData.map(d => d.amount));
 
         // Draw axes
         this.drawAxes(ctx, padding, chartWidth, chartHeight);
 
-        // Draw zero line
-        const zeroY = padding + chartHeight / 2;
-        ctx.strokeStyle = '#e5e7eb';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(padding, zeroY);
-        ctx.lineTo(padding + chartWidth, zeroY);
-        ctx.stroke();
-
         // Draw bars
-        const barWidth = chartWidth / monthlyData.length * 0.8;
-        const barSpacing = chartWidth / monthlyData.length * 0.2;
+        const barWidth = chartWidth / paymentData.length * 0.7;
+        const barSpacing = chartWidth / paymentData.length * 0.3;
 
-        monthlyData.forEach((data, index) => {
+        const methodColors = {
+            cash: '#10b981',     // Green
+            card: '#3b82f6',     // Blue
+            upi: '#f59e0b',      // Orange
+            bank: '#8b5cf6',     // Purple
+            wallet: '#ec4899'    // Pink
+        };
+
+        paymentData.forEach((data, index) => {
             const x = padding + (index * (barWidth + barSpacing)) + barSpacing / 2;
-            const barHeight = Math.abs(data.growth) / maxValue * (chartHeight / 2);
+            const barHeight = (data.amount / maxValue) * chartHeight;
+            const y = padding + chartHeight - barHeight;
 
-            let y, color;
-            if (data.growth >= 0) {
-                y = zeroY - barHeight;
-                color = this.colors.error; // Red for increase in spending
-            } else {
-                y = zeroY;
-                color = this.colors.success; // Green for decrease in spending
-            }
-
+            const color = methodColors[data.method] || '#6b7280';
             ctx.fillStyle = color;
             ctx.fillRect(x, y, barWidth, barHeight);
 
-            // Month label
+            // Method label
             ctx.fillStyle = '#374151';
-            ctx.font = '10px Arial';
+            ctx.font = '12px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText(data.month, x + barWidth / 2, padding + chartHeight + 20);
+            ctx.fillText(data.displayName, x + barWidth / 2, padding + chartHeight + 20);
 
-            // Growth percentage
+            // Amount and percentage
             ctx.fillStyle = color;
             ctx.font = 'bold 10px Arial';
-            const percentage = `${data.growth > 0 ? '+' : ''}${data.growth.toFixed(1)}%`;
-            ctx.fillText(percentage, x + barWidth / 2, y + (data.growth >= 0 ? -5 : barHeight + 15));
+            ctx.fillText(`₹${data.amount.toLocaleString()}`, x + barWidth / 2, y - 15);
+            ctx.fillText(`${data.percentage}%`, x + barWidth / 2, y - 5);
+
+            // Transaction count
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '9px Arial';
+            ctx.fillText(`${data.count} txns`, x + barWidth / 2, padding + chartHeight + 35);
         });
     }
 
@@ -1216,24 +1212,45 @@ class Charts {
         return data;
     }
 
-    getMonthlyGrowthData(expenses) {
-        const monthlyData = this.getMonthlyData(expenses, 6);
-        const growthData = [];
+    getPaymentMethodData(expenses) {
+        const methodTotals = {};
+        const methodCounts = {};
+        const methodNames = {
+            cash: '💵 Cash',
+            card: '💳 Card',
+            upi: '📱 UPI',
+            bank: '🏦 Bank Transfer',
+            wallet: '📱 Wallet'
+        };
 
-        for (let i = 1; i < monthlyData.length; i++) {
-            const current = monthlyData[i].amount;
-            const previous = monthlyData[i - 1].amount;
-            const growth = previous > 0 ? ((current - previous) / previous) * 100 : 0;
+        let totalAmount = 0;
 
-            growthData.push({
-                month: monthlyData[i].period,
-                growth,
-                current,
-                previous
-            });
-        }
+        // Group expenses by payment method
+        expenses.forEach(expense => {
+            const method = expense.paymentMethod || 'cash';
+            const amount = parseFloat(expense.amount) || 0;
 
-        return growthData;
+            methodTotals[method] = (methodTotals[method] || 0) + amount;
+            methodCounts[method] = (methodCounts[method] || 0) + 1;
+            totalAmount += amount;
+        });
+
+        // Convert to array and calculate percentages
+        const paymentData = Object.keys(methodTotals).map(method => {
+            const amount = methodTotals[method];
+            const percentage = totalAmount > 0 ? ((amount / totalAmount) * 100).toFixed(1) : 0;
+
+            return {
+                method,
+                displayName: methodNames[method] || method,
+                amount,
+                count: methodCounts[method],
+                percentage: parseFloat(percentage)
+            };
+        });
+
+        // Sort by amount (highest first)
+        return paymentData.sort((a, b) => b.amount - a.amount);
     }
 
     getMonthOverMonthData(expenses) {
