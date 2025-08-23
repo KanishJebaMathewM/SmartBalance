@@ -84,6 +84,9 @@ class WorkLifeBalanceApp {
 
         // Calendar handlers
         this.initializeCalendarHandlers();
+
+        // Habit tab handlers
+        this.initializeHabitTabHandlers();
     }
 
     initializeModalControls() {
@@ -6090,6 +6093,32 @@ class WorkLifeBalanceApp {
         if (selectedBtn) {
             selectedBtn.classList.add('active');
         }
+
+        // Load content for the selected tab
+        switch (tabName) {
+            case 'overall-insights':
+                this.loadOverallInsights();
+                break;
+            case 'behavior-patterns':
+                this.loadBehaviorPatterns();
+                break;
+            case 'recommendations':
+                this.loadRecommendations();
+                break;
+            case 'progress-analysis':
+                this.loadProgressAnalysis();
+                break;
+        }
+    }
+
+    initializeHabitTabHandlers() {
+        // Add click handlers for habit tabs
+        document.querySelectorAll('#habits .tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                this.showHabitTab(tabName);
+            });
+        });
     }
 
     // Life Balance Score Calculation
