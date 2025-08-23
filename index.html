@@ -1166,7 +1166,7 @@
                             <button class="btn-secondary">Start Exercise</button>
                         </div>
                         <div class="exercise-card" data-exercise="posture-fix">
-                            <h4>��� Posture Fix</h4>
+                            <h4>����� Posture Fix</h4>
                             <p>Improve sitting posture</p>
                             <button class="btn-secondary">Start Exercise</button>
                         </div>
@@ -1260,7 +1260,7 @@
                             <small>Track calories for 7 days</small>
                         </div>
                         <div class="badge locked" data-badge="homeCookChampion">
-                            <span>👨‍🍳</span>
+                            <span>👨‍��</span>
                             <p>Home Cook Champion</p>
                             <small>Cook at home 15 days</small>
                         </div>
@@ -1360,7 +1360,7 @@
             <!-- Stress & Mood Section -->
             <section id="stress" class="section">
                 <div class="section-header">
-                    <h1>😌 Stress & Mood Tracker</h1>
+                    <h1>���� Stress & Mood Tracker</h1>
                     <div class="header-actions">
                         <button class="btn-secondary export-btn" data-section="stress" data-format="csv">📊 Export CSV</button>
                         <button class="btn-secondary export-btn" data-section="stress" data-format="json">📄 Export JSON</button>
@@ -1492,11 +1492,11 @@
                     </div>
                 </div>
 
-                <!-- Habit Correlations Tab -->
-                <div id="habit-correlations" class="tab-content">
-                    <div class="correlations-dashboard">
-                        <h3>🔗 How Your Habits Connect</h3>
-                        <p class="correlation-intro">Discover patterns and connections between your different life areas.</p>
+                <!-- Behavior Patterns Tab -->
+                <div id="behavior-patterns" class="tab-content">
+                    <div class="patterns-analysis">
+                        <h3>🧠 Smart Behavioral Connections</h3>
+                        <p class="correlation-intro">Discover how your different life areas influence each other based on your data.</p>
 
                         <div class="correlation-grid">
                             <div class="correlation-card">
@@ -1544,9 +1544,16 @@
                             </div>
                         </div>
 
-                        <div class="habit-impact-chart">
-                            <h3>📈 Habit Impact Over Time</h3>
-                            <canvas id="habitImpactChart" width="800" height="300"></canvas>
+                        <div class="patterns-charts">
+                            <h3>📊 Life Pattern Analysis</h3>
+                            <div class="chart-container">
+                                <h4>Mood vs Activity Correlation</h4>
+                                <canvas id="moodActivityChart" width="600" height="300"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h4>Weekly Performance Patterns</h4>
+                                <canvas id="weeklyPatternsChart" width="600" height="300"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
