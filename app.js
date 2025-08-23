@@ -514,33 +514,7 @@ class WorkLifeBalanceApp {
     }
 
     toggleTask(taskId) {
-        const task = window.storage.getTasks().find(t => t.id === taskId);
-        if (task) {
-            const updatedTask = window.storage.updateTask(taskId, {
-                completed: !task.completed,
-                updatedAt: new Date().toISOString()
-            });
-            
-            if (updatedTask.completed) {
-                Utils.showNotification('Task completed! 🎉', 'success');
-                
-                // Add expense if task is expense-related
-                if (updatedTask.expenseRelated && updatedTask.amount) {
-                    window.storage.addExpense({
-                        amount: updatedTask.amount,
-                        category: 'other',
-                        notes: `From task: ${updatedTask.title}`,
-                        date: new Date().toISOString().split('T')[0]
-                    });
-                    Utils.showNotification('Expense added automatically!', 'info');
-                }
-            }
-            
-            this.updateDashboard();
-            if (this.currentSection === 'tasks') {
-                this.loadTasks();
-            }
-        }
+        this.toggleTaskEnhanced(taskId);
     }
 
     handleTaskSubmit(e) {
@@ -2671,7 +2645,7 @@ class WorkLifeBalanceApp {
             '💪 Working out significantly improves your mood!' :
             correlation < -0.3 ?
             '😰 High workout intensity might be causing stress' :
-            '📊 Moderate correlation - keep tracking for better insights';
+            '�� Moderate correlation - keep tracking for better insights';
 
         this.updateCorrelationDisplay('fitnessStressCorrelation', percentage, insight);
     }
