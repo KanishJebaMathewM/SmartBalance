@@ -1495,6 +1495,369 @@ body.dark-mode {
     color: #fbbf24;
 }
 
+/* Enhanced Meal Management Styles */
+.meal-history-section {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    margin-bottom: 24px;
+}
+
+.dark-mode .meal-history-section {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.meal-history-section h4 {
+    color: #111827;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.dark-mode .meal-history-section h4 {
+    color: #f9fafb;
+}
+
+.meal-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.meal-history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.meal-history-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .meal-history-item {
+    border-color: #4b5563;
+}
+
+.meal-history-item.planned {
+    border-left: 4px solid #f59e0b;
+    background: #fef3c7;
+}
+
+.meal-history-item.eaten {
+    border-left: 4px solid #10b981;
+    background: #f0fdf4;
+}
+
+.dark-mode .meal-history-item.planned {
+    background: #451a03;
+}
+
+.dark-mode .meal-history-item.eaten {
+    background: #064e3b;
+}
+
+.meal-info {
+    flex: 1;
+}
+
+.meal-name {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+    font-size: 1rem;
+}
+
+.dark-mode .meal-name {
+    color: #f9fafb;
+}
+
+.meal-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.meal-meta span {
+    font-size: 0.8rem;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.dark-mode .meal-meta span {
+    color: #9ca3af;
+    background: #4b5563;
+}
+
+.meal-status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 0 12px;
+}
+
+.meal-status-badge.planned {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.meal-status-badge.eaten {
+    background: #dcfdf7;
+    color: #059669;
+}
+
+.dark-mode .meal-status-badge.planned {
+    background: #451a03;
+    color: #fbbf24;
+}
+
+.dark-mode .meal-status-badge.eaten {
+    background: #064e3b;
+    color: #34d399;
+}
+
+.meal-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-success {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.btn-success:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* Enhanced Empty States */
+.empty-state-large {
+    text-align: center;
+    padding: 48px 24px;
+    background: #f9fafb;
+    border-radius: 16px;
+    border: 2px dashed #d1d5db;
+    margin: 24px 0;
+}
+
+.dark-mode .empty-state-large {
+    background: #374151;
+    border-color: #6b7280;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+}
+
+.empty-state-large h3 {
+    color: #111827;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.dark-mode .empty-state-large h3 {
+    color: #f9fafb;
+}
+
+.empty-state-large p {
+    color: #6b7280;
+    margin-bottom: 24px;
+    font-size: 1rem;
+}
+
+.dark-mode .empty-state-large p {
+    color: #9ca3af;
+}
+
+.habit-suggestions {
+    margin: 24px 0;
+}
+
+.habit-suggestions h4 {
+    color: #374151;
+    margin-bottom: 16px;
+    font-size: 1rem;
+}
+
+.dark-mode .habit-suggestions h4 {
+    color: #d1d5db;
+}
+
+.suggested-habits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.habit-suggestion-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+.habit-suggestion-btn:hover {
+    background: #f3f4f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .habit-suggestion-btn {
+    background: #4b5563;
+    border-color: #6b7280;
+    color: #f9fafb;
+}
+
+.dark-mode .habit-suggestion-btn:hover {
+    background: #6b7280;
+}
+
+.habit-icon {
+    font-size: 1.2rem;
+}
+
+/* Performance Metrics Enhancement */
+.performance-metric {
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 16px;
+    transition: all 0.2s ease;
+}
+
+.performance-metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .performance-metric {
+    border-color: #4b5563;
+}
+
+.performance-metric.excellent {
+    background: #f0fdf4;
+    border-color: #10b981;
+}
+
+.performance-metric.good {
+    background: #f0f9ff;
+    border-color: #3b82f6;
+}
+
+.performance-metric.needs-improvement {
+    background: #fef3c7;
+    border-color: #f59e0b;
+}
+
+.dark-mode .performance-metric.excellent {
+    background: #064e3b;
+}
+
+.dark-mode .performance-metric.good {
+    background: #1e3a8a;
+}
+
+.dark-mode .performance-metric.needs-improvement {
+    background: #92400e;
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.metric-header h4 {
+    margin: 0;
+    font-weight: 600;
+    color: #111827;
+    font-size: 0.9rem;
+}
+
+.dark-mode .metric-header h4 {
+    color: #f9fafb;
+}
+
+.metric-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #059669;
+}
+
+.performance-metric.good .metric-value {
+    color: #2563eb;
+}
+
+.performance-metric.needs-improvement .metric-value {
+    color: #d97706;
+}
+
+.metric-description {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.dark-mode .metric-description {
+    color: #9ca3af;
+}
+
+.metric-insights {
+    margin-top: 8px;
+}
+
+.metric-insights p {
+    margin: 4px 0;
+    font-size: 0.8rem;
+    color: #374151;
+}
+
+.dark-mode .metric-insights p {
+    color: #d1d5db;
+}
+
 /* Export buttons */
 .header-actions {
     display: flex;
