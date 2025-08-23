@@ -3515,10 +3515,7 @@ class WorkLifeBalanceApp {
                 Utils.showNotification('Please enter a valid expense amount', 'error');
                 return;
             }
-            if (!taskData.expenseCategory) {
-                Utils.showNotification('Please select an expense category', 'error');
-                return;
-            }
+            // Expense category is automatically assigned, so we don't need to validate it separately
         }
 
         window.storage.addTask(taskData);
@@ -3526,7 +3523,12 @@ class WorkLifeBalanceApp {
 
         this.closeModal('taskModal');
         e.target.reset();
+
+        // Reset the expense task details
         document.getElementById('expenseTaskDetails').style.display = 'none';
+        document.getElementById('selectedExpenseCategory').textContent = '-';
+        document.getElementById('taskExpenseCategory').style.display = 'none';
+        document.getElementById('changeExpenseCategoryBtn').style.display = 'none';
 
         if (this.currentSection === 'tasks') {
             this.loadTasks();
