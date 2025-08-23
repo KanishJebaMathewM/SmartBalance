@@ -712,7 +712,7 @@ class WorkLifeBalanceApp {
                 </div>
                 <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
-                    <button onclick="app.editExpense(${expense.id})" title="Edit">✏️</button>
+                    <button onclick="app.editExpense(${expense.id})" title="Edit">✏���</button>
                     <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
                 </div>
             </div>
@@ -6291,6 +6291,72 @@ class WorkLifeBalanceApp {
     loadOverallInsights() {
         this.populatePerformanceMetrics();
         this.generateBehaviorInsights();
+    }
+
+    generateBehaviorInsights() {
+        // This function generates behavioral insights for the overall insights tab
+        // It complements the performance metrics with behavioral patterns
+        const data = {
+            tasks: window.storage.getTasks(),
+            expenses: window.storage.getExpenses(),
+            workouts: window.storage.getWorkouts(),
+            moods: window.storage.getMoods(),
+            meals: window.storage.getMeals()
+        };
+
+        const insights = [];
+
+        // Task completion patterns
+        const completionRate = data.tasks.length > 0 ?
+            (data.tasks.filter(t => t.completed).length / data.tasks.length) * 100 : 0;
+
+        if (completionRate >= 80) {
+            insights.push('🎯 Excellent task completion rate! You\'re very productive.');
+        } else if (completionRate >= 60) {
+            insights.push('📈 Good task progress. Try to improve completion consistency.');
+        } else {
+            insights.push('📝 Focus on completing more tasks to boost productivity.');
+        }
+
+        // Workout consistency
+        const recentWorkouts = data.workouts.filter(w =>
+            new Date(w.createdAt) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        );
+
+        if (recentWorkouts.length >= 4) {
+            insights.push('💪 Great workout consistency this week!');
+        } else if (recentWorkouts.length >= 2) {
+            insights.push('🏃 Decent activity level. Try to add one more workout.');
+        } else {
+            insights.push('🏋️ Consider adding more physical activity to your routine.');
+        }
+
+        // Home cooking patterns
+        const weeklyStats = window.storage.getWeeklyMealStats();
+        const homeCookingRate = weeklyStats.totalMeals > 0 ?
+            (weeklyStats.homeMeals / weeklyStats.totalMeals) * 100 : 0;
+
+        if (homeCookingRate >= 70) {
+            insights.push('🍳 Excellent home cooking habits! Keep it up.');
+        } else if (homeCookingRate >= 50) {
+            insights.push('🍲 Good balance of home cooking and dining out.');
+        } else {
+            insights.push('🏠 Try cooking more meals at home for better health and savings.');
+        }
+
+        // Mood tracking
+        if (data.moods.length >= 7) {
+            insights.push('😌 Great job tracking your mood consistently!');
+        } else if (data.moods.length > 0) {
+            insights.push('📊 Keep tracking your mood to identify patterns.');
+        } else {
+            insights.push('😊 Start tracking your daily mood to gain insights.');
+        }
+
+        // Display insights (this could be enhanced to show in a specific UI section)
+        console.log('Behavior Insights:', insights);
+
+        return insights;
     }
 
     populatePerformanceMetrics() {
