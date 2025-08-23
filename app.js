@@ -101,10 +101,14 @@ class WorkLifeBalanceApp {
             'viewMealCalendarBtn': () => this.viewMealCalendar()
         };
 
-        Object.entries(modalTriggers).forEach(([buttonId, modalId]) => {
+        Object.entries(modalTriggers).forEach(([buttonId, modalIdOrFunction]) => {
             const button = document.getElementById(buttonId);
             if (button) {
-                button.addEventListener('click', () => this.openModal(modalId));
+                if (typeof modalIdOrFunction === 'function') {
+                    button.addEventListener('click', modalIdOrFunction);
+                } else {
+                    button.addEventListener('click', () => this.openModal(modalIdOrFunction));
+                }
             }
         });
 
@@ -2154,7 +2158,7 @@ class WorkLifeBalanceApp {
             food: '🍕',
             bills: '📧',
             shopping: '🛍️',
-            travel: '✈️',
+            travel: '✈���',
             entertainment: '🎬',
             healthcare: '🏥',
             education: '📚',
@@ -5025,7 +5029,7 @@ class WorkLifeBalanceApp {
         const mealTypeInfo = {
             breakfast: { emoji: '🌅', name: 'Breakfast', defaultTime: '8:00 AM' },
             lunch: { emoji: '🌞', name: 'Lunch', defaultTime: '1:00 PM' },
-            dinner: { emoji: '🌙', name: 'Dinner', defaultTime: '7:00 PM' }
+            dinner: { emoji: '��', name: 'Dinner', defaultTime: '7:00 PM' }
         };
 
         let gridHTML = '';
