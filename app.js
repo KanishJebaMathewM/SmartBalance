@@ -282,12 +282,6 @@ class WorkLifeBalanceApp {
     }
 
     initializeButtonHandlers() {
-        // Mark workout button
-        const markWorkoutBtn = document.getElementById('markWorkoutBtn');
-        if (markWorkoutBtn) {
-            markWorkoutBtn.addEventListener('click', () => this.markWorkout());
-        }
-
         // Exercise buttons
         document.querySelectorAll('.exercise-card').forEach(card => {
             const button = card.querySelector('.btn-secondary');
@@ -5357,7 +5351,7 @@ class WorkLifeBalanceApp {
                         <p class="meal-name">${Utils.sanitizeInput(meal.name)}</p>
                         <div class="meal-details">
                             <span class="calories">${meal.calories} cal</span>
-                            <span class="cost">₹${meal.source === 'home' ? (meal.ingredientCost || 0) : ((parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0))}</span>
+                            <span class="cost">���${meal.source === 'home' ? (meal.ingredientCost || 0) : ((parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0))}</span>
                         </div>
                         <div class="meal-source-indicator ${meal.source}">
                             <span>${meal.source === 'home' ? '🏠' : '🏨'}</span>
@@ -8148,7 +8142,7 @@ class WorkLifeBalanceApp {
         const priorityActions = [
             {
                 category: 'fitness',
-                categoryIcon: '������',
+                categoryIcon: '��������',
                 title: 'Exercise Regularly',
                 description: 'Do at least 20 minutes of physical activity',
                 frequency: '3-4 times this week',
