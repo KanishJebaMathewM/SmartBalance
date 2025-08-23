@@ -723,6 +723,189 @@ class Storage {
         return Math.round(totalStreak / activeHabits.length);
     }
 
+    // Enhanced financial analysis methods
+    getSavingsAnalysis() {
+        const settings = this.getSettings();
+        const monthlyIncome = settings.monthlyIncome || 0;
+        const monthlyExpenses = this.getMonthlyExpenses();
+        const monthlySavings = Math.max(0, monthlyIncome - monthlyExpenses);
+        const savingsRate = monthlyIncome > 0 ? (monthlySavings / monthlyIncome) * 100 : 0;
+
+        // Calculate projected annual savings
+        const projectedAnnualSavings = monthlySavings * 12;
+
+        // Calculate emergency fund coverage (how many months of expenses saved)
+        const emergencyFundCoverage = monthlyExpenses > 0 ? monthlySavings / monthlyExpenses : 0;
+
+        // Financial health score (0-100)
+        let healthScore = 0;
+        if (savingsRate >= 20) healthScore += 40;
+        else if (savingsRate >= 10) healthScore += 25;
+        else if (savingsRate >= 5) healthScore += 15;
+
+        if (emergencyFundCoverage >= 6) healthScore += 30;
+        else if (emergencyFundCoverage >= 3) healthScore += 20;
+        else if (emergencyFundCoverage >= 1) healthScore += 10;
+
+        if (monthlyIncome > monthlyExpenses) healthScore += 20;
+        else if (monthlyIncome === monthlyExpenses) healthScore += 10;
+
+        if (monthlyExpenses > 0 && monthlyIncome > 0) healthScore += 10;
+
+        return {
+            monthlyIncome,
+            monthlyExpenses,
+            monthlySavings,
+            savingsRate: Math.round(savingsRate * 100) / 100,
+            projectedAnnualSavings,
+            emergencyFundCoverage: Math.round(emergencyFundCoverage * 10) / 10,
+            healthScore: Math.min(100, Math.max(0, healthScore)),
+            recommendations: this.generateSavingsRecommendations(savingsRate, emergencyFundCoverage, monthlyIncome, monthlyExpenses)
+        };
+    }
+
+    generateSavingsRecommendations(savingsRate, emergencyFundCoverage, income, expenses) {
+        const recommendations = [];
+
+        if (savingsRate < 10) {
+            recommendations.push({
+                type: 'critical',
+                title: 'Increase Savings Rate',
+                description: 'Aim to save at least 10-20% of your income. Consider reducing non-essential expenses.'
+            });
+        }
+
+        if (emergencyFundCoverage < 3) {
+            recommendations.push({
+                type: 'warning',
+                title: 'Build Emergency Fund',
+                description: 'Build an emergency fund covering 3-6 months of expenses for financial security.'
+            });
+        }
+
+        if (income > 0 && expenses > income) {
+            recommendations.push({
+                type: 'critical',
+                title: 'Reduce Expenses',
+                description: 'You\'re spending more than you earn. Review and cut unnecessary expenses immediately.'
+            });
+        }
+
+        if (recommendations.length === 0) {
+            recommendations.push({
+                type: 'success',
+                title: 'Great Financial Health!',
+                description: 'You\'re doing well with your finances. Consider investing your savings for long-term growth.'
+            });
+        }
+
+        return recommendations;
+    }
+
+    getCategoryWiseAnalysis(timeframe = 'month') {
+        const expenses = this.getExpenses();
+        const categoryTotals = this.getExpensesByCategory(timeframe);
+        const totalExpenses = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
+
+        const analysis = {};
+        Object.entries(categoryTotals).forEach(([category, amount]) => {
+            const percentage = totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0;
+            const averageTransaction = expenses.filter(e => e.category === category)
+                .reduce((sum, e, _, arr) => sum + parseFloat(e.amount) / arr.length, 0);
+
+            analysis[category] = {
+                total: amount,
+                percentage: Math.round(percentage * 100) / 100,
+                averageTransaction: Math.round(averageTransaction * 100) / 100,
+                recommendation: this.getCategoryRecommendation(category, percentage)
+            };
+        });
+
+        return analysis;
+    }
+
+    getCategoryRecommendation(category, percentage) {
+        const thresholds = {
+            food: { high: 40, medium: 25 },
+            entertainment: { high: 15, medium: 10 },
+            shopping: { high: 20, medium: 15 },
+            bills: { high: 35, medium: 25 },
+            travel: { high: 15, medium: 10 }
+        };
+
+        const threshold = thresholds[category];
+        if (!threshold) return null;
+
+        if (percentage > threshold.high) {
+            return {
+                type: 'warning',
+                message: `High spending in ${category}. Consider reducing expenses in this category.`
+            };
+        } else if (percentage > threshold.medium) {
+            return {
+                type: 'info',
+                message: `Moderate spending in ${category}. Monitor this category.`
+            };
+        } else {
+            return {
+                type: 'success',
+                message: `Good control over ${category} expenses.`
+            };
+        }
+    }
+
+    getSpendingInsights() {
+        const expenses = this.getExpenses();
+        const insights = [];
+
+        // Day of week analysis
+        const daySpending = {};
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        expenses.forEach(expense => {
+            const day = days[new Date(expense.createdAt).getDay()];
+            daySpending[day] = (daySpending[day] || 0) + parseFloat(expense.amount);
+        });
+
+        const highestSpendingDay = Object.entries(daySpending)
+            .sort(([,a], [,b]) => b - a)[0];
+
+        if (highestSpendingDay) {
+            insights.push({
+                type: 'info',
+                title: 'Spending Pattern',
+                description: `You tend to spend most on ${highestSpendingDay[0]}s`,
+                value: highestSpendingDay[1]
+            });
+        }
+
+        // Payment method analysis
+        const paymentMethods = this.getExpensesByPaymentMethod();
+        const topPaymentMethod = Object.entries(paymentMethods)
+            .sort(([,a], [,b]) => b - a)[0];
+
+        if (topPaymentMethod) {
+            insights.push({
+                type: 'info',
+                title: 'Preferred Payment',
+                description: `Most expenses paid via ${topPaymentMethod[0]}`,
+                value: topPaymentMethod[1]
+            });
+        }
+
+        // Expense frequency
+        const avgDailyTransactions = expenses.length / 30; // last 30 days
+        if (avgDailyTransactions > 5) {
+            insights.push({
+                type: 'warning',
+                title: 'High Transaction Frequency',
+                description: 'Consider consolidating small purchases to better track spending'
+            });
+        }
+
+        return insights;
+    }
+
     // Export data
     exportData() {
         return {
