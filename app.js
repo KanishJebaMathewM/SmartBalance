@@ -8107,6 +8107,20 @@ class WorkLifeBalanceApp {
                 return window.storage.exportData();
         }
     }
+
+    initializeExportHandlers() {
+        // Set up event listeners for all export buttons
+        document.querySelectorAll('.export-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const section = e.target.dataset.section;
+                const format = e.target.dataset.format;
+
+                if (section && format) {
+                    this.exportSectionData(section, format);
+                }
+            });
+        });
+    }
 }
 
 // Initialize the app when DOM is loaded
