@@ -572,7 +572,7 @@ class WorkLifeBalanceApp {
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button onclick="app.editTask(${task.id})" title="Edit">���️</button>
+                    <button onclick="app.editTask(${task.id})" title="Edit">����️</button>
                     <button onclick="app.deleteTask(${task.id})" title="Delete">🗑️</button>
                 </div>
             </div>
@@ -4692,11 +4692,15 @@ class WorkLifeBalanceApp {
             return;
         }
 
+        const selectedStatus = document.querySelector('.status-option.active');
+        const mealStatus = selectedStatus ? selectedStatus.dataset.status : 'eaten';
+
         const mealData = {
             name: Utils.sanitizeInput(document.getElementById('mealName').value),
             type: document.getElementById('mealType').value,
             calories: parseInt(document.getElementById('mealCalories').value),
             source: selectedSource.dataset.source,
+            status: mealStatus,
             date: document.getElementById('mealDate').value,
             notes: Utils.sanitizeInput(document.getElementById('mealNotes').value)
         };
@@ -7663,7 +7667,7 @@ class WorkLifeBalanceApp {
                 title: 'Nutrition Progress',
                 current: currentScores.nutrition,
                 previous: previousScores.nutrition,
-                icon: '🍲'
+                icon: '����'
             },
             {
                 title: 'Productivity Progress',
