@@ -3896,6 +3896,16 @@ class WorkLifeBalanceApp {
         if (totalWorkoutsEl) {
             Utils.animateNumber(totalWorkoutsEl, 0, workouts.length);
         }
+
+        // Calculate and update total calories burnt
+        const totalCalories = workouts.reduce((total, workout) => {
+            return total + (parseInt(workout.calories) || 0);
+        }, 0);
+
+        const totalCaloriesBurntEl = document.getElementById('totalCaloriesBurnt');
+        if (totalCaloriesBurntEl) {
+            Utils.animateNumber(totalCaloriesBurntEl, 0, totalCalories);
+        }
     }
 
     updateBadges() {
@@ -6891,7 +6901,7 @@ class WorkLifeBalanceApp {
         const areas = [
             { name: 'Fitness', score: scores.fitness, icon: '���' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
-            { name: 'Productivity', score: scores.productivity, icon: '💼' },
+            { name: 'Productivity', score: scores.productivity, icon: '����' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
             { name: 'Wellness', score: scores.wellness, icon: '😌' }
         ];
