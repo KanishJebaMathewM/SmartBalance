@@ -5246,30 +5246,97 @@ class WorkLifeBalanceApp {
     getNextMealType() {
         const now = new Date();
         const hour = now.getHours();
+        const minute = now.getMinutes();
         const todayMeals = window.storage.getTodayMeals();
         const mealTypes = ['breakfast', 'lunch', 'dinner'];
 
         // Check which meals are already planned/eaten today
         const plannedMealTypes = todayMeals.map(meal => meal.type);
+        const eatenMealTypes = todayMeals.filter(meal => meal.status === 'eaten').map(meal => meal.type);
 
-        // Time-based meal suggestions
-        if (hour < 11 && !plannedMealTypes.includes('breakfast')) {
+        // Smart time-based meal suggestions with more precise timing
+        const timeInMinutes = hour * 60 + minute;
+
+        // Breakfast window: 6:00 AM - 11:00 AM
+        if (timeInMinutes >= 360 && timeInMinutes < 660 && !plannedMealTypes.includes('breakfast')) {
             return 'breakfast';
-        } else if (hour < 16 && !plannedMealTypes.includes('lunch')) {
+        }
+
+        // Lunch window: 11:00 AM - 4:00 PM
+        if (timeInMinutes >= 660 && timeInMinutes < 960 && !plannedMealTypes.includes('lunch')) {
             return 'lunch';
-        } else if (hour < 22 && !plannedMealTypes.includes('dinner')) {
+        }
+
+        // Dinner window: 4:00 PM - 10:00 PM
+        if (timeInMinutes >= 960 && timeInMinutes < 1320 && !plannedMealTypes.includes('dinner')) {
             return 'dinner';
         }
 
-        // Fallback: suggest the first unplanned meal
+        // Late night or early morning logic
+        if (timeInMinutes >= 1320 || timeInMinutes < 360) {
+            // Very late: suggest dinner if not eaten, otherwise tomorrow's breakfast
+            if (!eatenMealTypes.includes('dinner')) {
+                return 'dinner';
+            }
+            return 'breakfast'; // For tomorrow
+        }
+
+        // Fallback logic: suggest the next unplanned meal in order
         for (const mealType of mealTypes) {
             if (!plannedMealTypes.includes(mealType)) {
                 return mealType;
             }
         }
 
-        // If all meals are planned, suggest next day's breakfast
+        // Priority fallback: suggest unEATEN meals first
+        for (const mealType of mealTypes) {
+            if (!eatenMealTypes.includes(mealType)) {
+                return mealType;
+            }
+        }
+
+        // If all meals are planned and eaten, suggest next day's breakfast
         return 'breakfast';
+    }
+
+    getSmartMealSuggestion() {
+        const nextMealType = this.getNextMealType();
+        const now = new Date();
+        const hour = now.getHours();
+
+        // Get contextual message based on time and meal type
+        let contextMessage = '';
+
+        if (nextMealType === 'breakfast') {
+            if (hour < 6) {
+                contextMessage = 'Plan tomorrow\'s breakfast';
+            } else if (hour < 10) {
+                contextMessage = 'Time for breakfast';
+            } else {
+                contextMessage = 'Late breakfast option';
+            }
+        } else if (nextMealType === 'lunch') {
+            if (hour < 11) {
+                contextMessage = 'Plan ahead for lunch';
+            } else if (hour < 14) {
+                contextMessage = 'Perfect time for lunch';
+            } else {
+                contextMessage = 'Late lunch option';
+            }
+        } else if (nextMealType === 'dinner') {
+            if (hour < 17) {
+                contextMessage = 'Plan tonight\'s dinner';
+            } else if (hour < 20) {
+                contextMessage = 'Dinner time';
+            } else {
+                contextMessage = 'Late dinner option';
+            }
+        }
+
+        return {
+            mealType: nextMealType,
+            context: contextMessage
+        };
     }
 
     regenerateMealPlan() {
