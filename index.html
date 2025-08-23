@@ -538,6 +538,43 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- Recurring Expenses Management Modal -->
+                <div id="recurringModal" class="modal">
+                    <div class="modal-content wide-modal">
+                        <span class="close">&times;</span>
+                        <h2>🔄 Manage Recurring Expenses</h2>
+
+                        <div class="recurring-tabs">
+                            <button class="tab-btn active" data-tab="active-recurring">Active</button>
+                            <button class="tab-btn" data-tab="paused-recurring">Paused</button>
+                            <button class="tab-btn" data-tab="upcoming-recurring">Upcoming</button>
+                        </div>
+
+                        <div id="active-recurring" class="tab-content active">
+                            <div class="recurring-expenses-grid" id="activeRecurringGrid">
+                                <!-- Active recurring expenses will be displayed here -->
+                            </div>
+                        </div>
+
+                        <div id="paused-recurring" class="tab-content">
+                            <div class="recurring-expenses-grid" id="pausedRecurringGrid">
+                                <!-- Paused recurring expenses will be displayed here -->
+                            </div>
+                        </div>
+
+                        <div id="upcoming-recurring" class="tab-content">
+                            <div class="upcoming-expenses-list" id="upcomingRecurringList">
+                                <!-- Upcoming recurring expenses will be displayed here -->
+                            </div>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="app.closeModal('recurringModal')">Close</button>
+                            <button type="button" class="btn-primary" onclick="app.openModal('expenseModal')">Add Recurring</button>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- Food & Nutrition Section -->
