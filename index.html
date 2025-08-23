@@ -72,7 +72,7 @@
                     </div>
                     
                     <div class="widget food-widget">
-                        <h3>🍲 Today's Meal</h3>
+                        <h3>���� Today's Meal</h3>
                         <div class="widget-content">
                             <div id="mealSuggestion">Healthy Oats Bowl</div>
                             <div class="stat-label">Suggested</div>
@@ -1361,7 +1361,11 @@
             <section id="stress" class="section">
                 <div class="section-header">
                     <h1>😌 Stress & Mood Tracker</h1>
-                    <button class="btn-primary" id="moodCheckBtn">Check-in Today</button>
+                    <div class="header-actions">
+                        <button class="btn-secondary export-btn" data-section="stress" data-format="csv">📊 Export CSV</button>
+                        <button class="btn-secondary export-btn" data-section="stress" data-format="json">📄 Export JSON</button>
+                        <button class="btn-primary" id="moodCheckBtn">Check-in Today</button>
+                    </div>
                 </div>
 
                 <div class="mood-checkin">
