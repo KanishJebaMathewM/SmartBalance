@@ -620,6 +620,69 @@ body.dark-mode {
     color: #9ca3af;
 }
 
+/* Meal Card Actions */
+.meal-card .meal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    justify-content: center;
+}
+
+.meal-card.planned {
+    border-left: 4px solid #f59e0b;
+}
+
+.meal-card.eaten {
+    border-left: 4px solid #10b981;
+    opacity: 0.8;
+}
+
+.meal-status {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.meal-status.planned {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.meal-status.eaten {
+    background: #dcfdf7;
+    color: #059669;
+}
+
+.dark-mode .meal-status.planned {
+    background: #451a03;
+    color: #fbbf24;
+}
+
+.dark-mode .meal-status.eaten {
+    background: #064e3b;
+    color: #34d399;
+}
+
+.meal-source-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+}
+
+.meal-source-indicator.home {
+    color: #059669;
+}
+
+.meal-source-indicator.hotel {
+    color: #dc2626;
+}
+
 .comparison-card {
     background: #ffffff;
     padding: 24px;
