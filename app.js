@@ -3182,35 +3182,7 @@ class WorkLifeBalanceApp {
 
     // openHabitModal removed - habit creation functionality no longer needed
 
-    handleHabitSubmit(e) {
-        e.preventDefault();
-
-        const habitData = {
-            name: Utils.sanitizeInput(document.getElementById('habitName').value),
-            category: document.getElementById('habitCategory').value,
-            frequency: document.getElementById('habitFrequency').value,
-            target: Utils.sanitizeInput(document.getElementById('habitTarget').value),
-            reminder: document.getElementById('habitReminder').value,
-            notifications: document.getElementById('habitNotifications').checked,
-            active: true,
-            currentStreak: 0
-        };
-
-        if (!habitData.name || !habitData.category) {
-            Utils.showNotification('Please fill in all required fields', 'error');
-            return;
-        }
-
-        window.storage.addHabit(habitData);
-        Utils.showNotification('Habit added successfully! 🎯', 'success');
-
-        this.closeModal('habitModal');
-        e.target.reset();
-
-        if (this.currentSection === 'habits') {
-            this.loadHabitsSection();
-        }
-    }
+    // handleHabitSubmit removed - habit creation functionality no longer needed
 
     handleGoalSubmit(e) {
         e.preventDefault();
