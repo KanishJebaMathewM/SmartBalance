@@ -1625,6 +1625,105 @@ class WorkLifeBalanceApp {
         if (typeof this.loadFoodAnalytics === 'function') {
             this.loadFoodAnalytics();
         }
+
+        // Load meal history and management
+        this.loadMealHistory();
+    }
+
+    // Enhanced meal management methods
+    markMealAsEaten(mealId) {
+        if (confirm('Mark this meal as eaten?')) {
+            window.storage.updateMeal(mealId, { status: 'eaten' });
+            Utils.showNotification('Meal marked as eaten!', 'success');
+
+            if (this.currentSection === 'food') {
+                this.loadFoodData();
+            }
+            this.updateDashboard();
+        }
+    }
+
+    deleteMeal(mealId) {
+        if (confirm('Are you sure you want to delete this meal?')) {
+            window.storage.deleteMeal(mealId);
+            Utils.showNotification('Meal deleted', 'info');
+
+            if (this.currentSection === 'food') {
+                this.loadFoodData();
+            }
+            this.updateDashboard();
+        }
+    }
+
+    loadMealHistory() {
+        const mealsContainer = document.getElementById('mealHistoryContainer');
+        if (!mealsContainer) {
+            // If container doesn't exist, create it or add to existing food section
+            this.addMealHistoryToFoodSection();
+            return;
+        }
+
+        const meals = window.storage.getMeals();
+        const last7DaysMeals = meals.filter(meal => {
+            const mealDate = new Date(meal.date);
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            return mealDate >= weekAgo;
+        }).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (last7DaysMeals.length === 0) {
+            mealsContainer.innerHTML = `
+                <div class="empty-state">
+                    <p>No recent meals found</p>
+                    <button class="btn-primary" onclick="app.openModal('mealModal')">Add Your First Meal</button>
+                </div>
+            `;
+            return;
+        }
+
+        mealsContainer.innerHTML = `
+            <h4>Recent Meals (Last 7 Days)</h4>
+            <div class="meal-history-list">
+                ${last7DaysMeals.map(meal => `
+                    <div class="meal-history-item ${meal.status || 'eaten'}">
+                        <div class="meal-info">
+                            <div class="meal-name">${Utils.sanitizeInput(meal.name)}</div>
+                            <div class="meal-meta">
+                                <span class="meal-type">${meal.type}</span>
+                                <span class="meal-calories">${meal.calories} cal</span>
+                                <span class="meal-source">${meal.source === 'home' ? '🏠 Home' : '🏨 Hotel'}</span>
+                                <span class="meal-date">${Utils.formatDate(meal.date)}</span>
+                            </div>
+                        </div>
+                        <div class="meal-status-badge ${meal.status || 'eaten'}">
+                            ${(meal.status === 'planned') ? '📅 Planned' : '✅ Eaten'}
+                        </div>
+                        <div class="meal-actions">
+                            ${(meal.status === 'planned') ?
+                                `<button class="btn-small btn-success" onclick="app.markMealAsEaten(${meal.id})">Mark Eaten</button>` : ''
+                            }
+                            <button class="btn-small btn-danger" onclick="app.deleteMeal(${meal.id})">Delete</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    addMealHistoryToFoodSection() {
+        // Add meal history section to the food analytics
+        const foodInsightsList = document.getElementById('foodInsightsList');
+        if (foodInsightsList) {
+            const mealHistorySection = document.createElement('div');
+            mealHistorySection.className = 'meal-history-section';
+            mealHistorySection.innerHTML = `
+                <h4>📋 Recent Meals</h4>
+                <div id="mealHistoryContainer"></div>
+            `;
+            foodInsightsList.parentNode.insertBefore(mealHistorySection, foodInsightsList.nextSibling);
+
+            // Now load the history
+            this.loadMealHistory();
+        }
     }
 
     loadPantryItems() {
@@ -4765,7 +4864,7 @@ class WorkLifeBalanceApp {
             breakfast: '🌅',
             lunch: '🌞',
             dinner: '🌙',
-            snack: '🥨'
+            snack: '���'
         };
         return icons[type] || '🍽️';
     }
@@ -5452,7 +5551,7 @@ class WorkLifeBalanceApp {
                     ${suggestion.calories} cal • ₹${suggestion.estimatedHomeCost}
                 </div>
                 <div class="suggestion-actions">
-                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">✓ Accept</button>
+                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">�� Accept</button>
                     <button class="btn-secondary btn-small" onclick="app.selectSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">Customize</button>
                 </div>
             </div>
