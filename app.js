@@ -544,32 +544,7 @@ class WorkLifeBalanceApp {
     }
 
     handleTaskSubmit(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(e.target);
-        const taskData = {
-            title: Utils.sanitizeInput(document.getElementById('taskTitle').value),
-            category: document.getElementById('taskCategory').value,
-            date: document.getElementById('taskDate').value,
-            expenseRelated: document.getElementById('taskExpense').checked,
-            amount: document.getElementById('taskAmount').value
-        };
-        
-        if (!taskData.title) {
-            Utils.showNotification('Please enter a task title', 'error');
-            return;
-        }
-        
-        window.storage.addTask(taskData);
-        Utils.showNotification('Task added successfully!', 'success');
-        
-        this.closeModal('taskModal');
-        e.target.reset();
-        
-        if (this.currentSection === 'tasks') {
-            this.loadTasks();
-        }
-        this.updateDashboard();
+        this.handleTaskSubmitEnhanced(e);
     }
 
     deleteTask(taskId) {
