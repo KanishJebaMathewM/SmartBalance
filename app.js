@@ -8669,6 +8669,73 @@ class WorkLifeBalanceApp {
             });
         });
     }
+
+    // Helper function to check if food is South Indian
+    isSouthIndianFood(foodName) {
+        const southIndianFoods = [
+            'dosa', 'idli', 'sambar', 'rasam', 'vada', 'upma', 'pongal', 'uttapam',
+            'coconut chutney', 'tomato rice', 'lemon rice', 'curd rice', 'tamarind rice',
+            'appam', 'pathiri', 'puttu', 'kozhukattai', 'adhirasam', 'payasam',
+            'avial', 'olan', 'thoran', 'pachadi', 'koottu', 'mor kuzhambu',
+            'biryani', 'puliyodarai', 'bisi bele bath', 'chitranna', 'medu vada',
+            'rava upma', 'semiya upma', 'coconut', 'curry leaves', 'mustard seeds'
+        ];
+        return southIndianFoods.some(food =>
+            foodName.toLowerCase().includes(food.toLowerCase())
+        );
+    }
+
+    // Helper function to calculate percentage change
+    calculatePercentageChange(current, previous) {
+        if (previous === 0) return current > 0 ? 100 : 0;
+        return Math.round(((current - previous) / previous) * 100);
+    }
+
+    // Helper function to get last 7 days calorie data
+    getLast7DaysCalorieData(meals) {
+        const data = [];
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toDateString();
+
+            const dayMeals = meals.filter(meal =>
+                new Date(meal.date).toDateString() === dateStr
+            );
+
+            const dayCalories = dayMeals.reduce((sum, meal) => sum + (meal.calories || 0), 0);
+
+            data.push({
+                day: dayNames[date.getDay()],
+                calories: dayCalories,
+                date: dateStr
+            });
+        }
+
+        return data;
+    }
+
+    // Helper function to get meal cost comparison data
+    getMealCostComparisonData(meals) {
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const recentMeals = meals.filter(meal => new Date(meal.date) >= weekAgo);
+
+        const homeMeals = recentMeals.filter(meal => meal.source === 'home');
+        const hotelMeals = recentMeals.filter(meal => meal.source === 'hotel');
+
+        const homeCost = homeMeals.length > 0 ?
+            homeMeals.reduce((sum, meal) => sum + (meal.ingredientCost || 0), 0) / homeMeals.length : 0;
+
+        const hotelCost = hotelMeals.length > 0 ?
+            hotelMeals.reduce((sum, meal) => sum + ((meal.mealCost || 0) + (meal.deliveryCharges || 0)), 0) / hotelMeals.length : 0;
+
+        return {
+            homeCost: Math.round(homeCost),
+            hotelCost: Math.round(hotelCost)
+        };
+    }
 }
 
 // Initialize the app when DOM is loaded
