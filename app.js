@@ -4852,7 +4852,7 @@ class WorkLifeBalanceApp {
                     </div>
                 </div>
                 <div class="meal-source ${meal.source}">
-                    <span class="icon">${meal.source === 'home' ? '🏠' : '🏨'}</span>
+                    <span class="icon">${meal.source === 'home' ? '���' : '🏨'}</span>
                     <span>${meal.source === 'home' ? 'Home' : 'Hotel'}</span>
                 </div>
             </div>
@@ -4864,7 +4864,7 @@ class WorkLifeBalanceApp {
             breakfast: '🌅',
             lunch: '🌞',
             dinner: '🌙',
-            snack: '���'
+            snack: '🥨'
         };
         return icons[type] || '🍽️';
     }
@@ -5551,7 +5551,7 @@ class WorkLifeBalanceApp {
                     ${suggestion.calories} cal • ₹${suggestion.estimatedHomeCost}
                 </div>
                 <div class="suggestion-actions">
-                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">�� Accept</button>
+                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">✓ Accept</button>
                     <button class="btn-secondary btn-small" onclick="app.selectSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">Customize</button>
                 </div>
             </div>
@@ -6465,6 +6465,228 @@ class WorkLifeBalanceApp {
     loadOverallInsights() {
         this.populatePerformanceMetrics();
         this.generateBehaviorInsights();
+        this.loadEnhancedHabitsAnalytics();
+    }
+
+    loadEnhancedHabitsAnalytics() {
+        const habits = window.storage.getHabits();
+        const tasks = window.storage.getTasks();
+        const workouts = window.storage.getWorkouts();
+        const meals = window.storage.getMeals();
+        const moods = window.storage.getMoods();
+
+        if (habits.length === 0) {
+            this.displayEmptyHabitsState();
+            return;
+        }
+
+        this.generateComprehensiveInsights({
+            habits, tasks, workouts, meals, moods
+        });
+    }
+
+    displayEmptyHabitsState() {
+        const insightsContainer = document.getElementById('overall-insights');
+        if (insightsContainer) {
+            insightsContainer.innerHTML = `
+                <div class="empty-state-large">
+                    <div class="empty-icon">🎯</div>
+                    <h3>Start Your Habit Journey</h3>
+                    <p>Track your daily habits to get meaningful insights about your lifestyle patterns.</p>
+                    <div class="habit-suggestions">
+                        <h4>Popular Habits to Start:</h4>
+                        <div class="suggested-habits">
+                            <button class="habit-suggestion-btn" onclick="app.addSuggestedHabit('Morning Exercise', 'fitness')">
+                                <span class="habit-icon">🏃</span>
+                                <span>Morning Exercise</span>
+                            </button>
+                            <button class="habit-suggestion-btn" onclick="app.addSuggestedHabit('Daily Reading', 'education')">
+                                <span class="habit-icon">📚</span>
+                                <span>Daily Reading</span>
+                            </button>
+                            <button class="habit-suggestion-btn" onclick="app.addSuggestedHabit('Meditation', 'wellness')">
+                                <span class="habit-icon">🧘</span>
+                                <span>Meditation</span>
+                            </button>
+                            <button class="habit-suggestion-btn" onclick="app.addSuggestedHabit('Drink Water', 'health')">
+                                <span class="habit-icon">💧</span>
+                                <span>Drink 8 Glasses Water</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="app.openModal('habitModal')">Add Your First Habit</button>
+                </div>
+            `;
+        }
+    }
+
+    addSuggestedHabit(name, category) {
+        const habit = {
+            name: name,
+            category: category,
+            frequency: 'daily',
+            target: '1 time',
+            active: true
+        };
+
+        window.storage.addHabit(habit);
+        Utils.showNotification(`${name} habit added!`, 'success');
+        this.loadHabitsSection();
+    }
+
+    generateComprehensiveInsights(data) {
+        const insights = {
+            productivity: this.analyzeProductivity(data.tasks),
+            financial: this.analyzeFinancialHealth(),
+            nutrition: this.analyzeNutrition(data.meals),
+            fitness: this.analyzeFitness(data.workouts),
+            wellbeing: this.analyzeWellbeing(data.moods)
+        };
+
+        this.displayComprehensiveInsights(insights);
+    }
+
+    analyzeProductivity(tasks) {
+        const last30Days = tasks.filter(task => {
+            const taskDate = new Date(task.createdAt);
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            return taskDate >= thirtyDaysAgo;
+        });
+
+        const completionRate = last30Days.length > 0 ?
+            (last30Days.filter(t => t.completed).length / last30Days.length) * 100 : 0;
+
+        return {
+            score: Math.round(completionRate),
+            label: completionRate >= 80 ? 'Excellent' : completionRate >= 60 ? 'Good' : 'Needs Improvement',
+            insights: [
+                `${last30Days.length} tasks created in last 30 days`,
+                `${Math.round(completionRate)}% completion rate`,
+                completionRate >= 80 ? 'Outstanding task management!' : 'Room for improvement in task completion'
+            ]
+        };
+    }
+
+    analyzeFinancialHealth() {
+        const monthlyExpenses = window.storage.getMonthlyExpenses();
+        const settings = window.storage.getSettings();
+        const monthlyIncome = settings.monthlyIncome || 0;
+
+        const savingsRate = monthlyIncome > 0 ?
+            ((monthlyIncome - monthlyExpenses) / monthlyIncome) * 100 : 0;
+
+        return {
+            score: Math.min(Math.max(savingsRate, 0), 100),
+            label: savingsRate >= 20 ? 'Excellent' : savingsRate >= 10 ? 'Good' : 'Needs Attention',
+            insights: [
+                `₹${monthlyExpenses.toLocaleString()} monthly expenses`,
+                `${Math.round(savingsRate)}% savings rate`,
+                savingsRate >= 20 ? 'Great financial discipline!' : 'Consider reducing expenses'
+            ]
+        };
+    }
+
+    analyzeNutrition(meals) {
+        const last30DaysMeals = meals.filter(meal => {
+            const mealDate = new Date(meal.date);
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            return mealDate >= thirtyDaysAgo;
+        });
+
+        const homeCookingRate = last30DaysMeals.length > 0 ?
+            (last30DaysMeals.filter(m => m.source === 'home').length / last30DaysMeals.length) * 100 : 0;
+
+        return {
+            score: Math.round(homeCookingRate),
+            label: homeCookingRate >= 70 ? 'Excellent' : homeCookingRate >= 50 ? 'Good' : 'Needs Improvement',
+            insights: [
+                `${last30DaysMeals.length} meals tracked in 30 days`,
+                `${Math.round(homeCookingRate)}% home cooking rate`,
+                homeCookingRate >= 70 ? 'Excellent nutrition habits!' : 'Try cooking more at home'
+            ]
+        };
+    }
+
+    analyzeFitness(workouts) {
+        const last30DaysWorkouts = workouts.filter(workout => {
+            const workoutDate = new Date(workout.createdAt);
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            return workoutDate >= thirtyDaysAgo;
+        });
+
+        const workoutsPerWeek = (last30DaysWorkouts.length / 4.3); // 30 days ≈ 4.3 weeks
+        const fitnessScore = Math.min(workoutsPerWeek * 20, 100); // 5 workouts/week = 100%
+
+        return {
+            score: Math.round(fitnessScore),
+            label: fitnessScore >= 80 ? 'Excellent' : fitnessScore >= 60 ? 'Good' : 'Needs Improvement',
+            insights: [
+                `${last30DaysWorkouts.length} workouts in last 30 days`,
+                `${Math.round(workoutsPerWeek)} workouts per week average`,
+                fitnessScore >= 80 ? 'Outstanding fitness routine!' : 'Try to be more active'
+            ]
+        };
+    }
+
+    analyzeWellbeing(moods) {
+        const last30DaysMoods = moods.filter(mood => {
+            const moodDate = new Date(mood.date);
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            return moodDate >= thirtyDaysAgo;
+        });
+
+        if (last30DaysMoods.length === 0) {
+            return {
+                score: 50,
+                label: 'No Data',
+                insights: ['Start tracking your mood for insights']
+            };
+        }
+
+        const moodScores = last30DaysMoods.map(m => {
+            const scores = { 'very-happy': 100, 'happy': 80, 'neutral': 60, 'stressed': 40, 'very-stressed': 20 };
+            return scores[m.mood] || 60;
+        });
+
+        const avgMoodScore = moodScores.reduce((sum, score) => sum + score, 0) / moodScores.length;
+
+        return {
+            score: Math.round(avgMoodScore),
+            label: avgMoodScore >= 80 ? 'Excellent' : avgMoodScore >= 60 ? 'Good' : 'Needs Attention',
+            insights: [
+                `${last30DaysMoods.length} mood check-ins in 30 days`,
+                `${Math.round(avgMoodScore)}% average wellbeing score`,
+                avgMoodScore >= 80 ? 'Great mental health!' : 'Consider stress management techniques'
+            ]
+        };
+    }
+
+    displayComprehensiveInsights(insights) {
+        const containers = {
+            productivity: document.getElementById('productivityPerformance'),
+            financial: document.getElementById('financialPerformance'),
+            nutrition: document.getElementById('nutritionPerformance'),
+            fitness: document.getElementById('fitnessPerformance'),
+            wellbeing: document.getElementById('wellnessPerformance')
+        };
+
+        Object.entries(insights).forEach(([category, data]) => {
+            const container = containers[category];
+            if (container) {
+                container.innerHTML = `
+                    <div class="performance-metric ${data.label.toLowerCase().replace(' ', '-')}">
+                        <div class="metric-header">
+                            <h4>${category.charAt(0).toUpperCase() + category.slice(1)} Score</h4>
+                            <div class="metric-value">${data.score}%</div>
+                        </div>
+                        <div class="metric-label">${data.label}</div>
+                        <div class="metric-insights">
+                            ${data.insights.map(insight => `<p class="metric-description">${insight}</p>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        });
     }
 
     generateBehaviorInsights() {
