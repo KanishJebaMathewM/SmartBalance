@@ -3455,6 +3455,31 @@ class WorkLifeBalanceApp {
         expenseCategorySelect.style.display = 'none';
     }
 
+    // Calendar view switching
+    switchToCalendarView() {
+        // Switch to expenses section if not already there
+        if (this.currentSection !== 'expenses') {
+            this.showSection('expenses');
+        }
+
+        // Switch to calendar tab
+        this.switchExpenseTab('calendar');
+
+        // Update the button text to indicate current view
+        const viewToggleBtn = document.getElementById('viewToggleBtn');
+        if (viewToggleBtn) {
+            const isCalendarActive = this.currentExpenseTab === 'calendar';
+            viewToggleBtn.textContent = isCalendarActive ? '📊 Overview' : '📅 Calendar View';
+
+            // Add toggle behavior
+            viewToggleBtn.onclick = () => {
+                const newTab = this.currentExpenseTab === 'calendar' ? 'overview' : 'calendar';
+                this.switchExpenseTab(newTab);
+                viewToggleBtn.textContent = newTab === 'calendar' ? '📊 Overview' : '📅 Calendar View';
+            };
+        }
+    }
+
     // Enhanced task and expense category methods
     getCategoryIcon(category) {
         const icons = {
