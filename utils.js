@@ -794,6 +794,138 @@ class Utils {
             }
         }
 
+        // TOUGHER ACHIEVEMENT BADGES
+
+        // Iron Will badge (30-day workout streak)
+        if (!badges.ironWill && workoutStreak >= 30) {
+            newBadges.ironWill = true;
+            badgesEarned.push('🛡️ Iron Will');
+        }
+
+        // Marathon Warrior badge (complete 100 workouts total)
+        if (!badges.marathonWarrior && data.workouts && data.workouts.length >= 100) {
+            newBadges.marathonWarrior = true;
+            badgesEarned.push('🏃‍♂️ Marathon Warrior');
+        }
+
+        // Fitness Zealot badge (work out every day for 60 days)
+        if (!badges.zealot && workoutStreak >= 60) {
+            newBadges.zealot = true;
+            badgesEarned.push('⚡ Fitness Zealot');
+        }
+
+        // Master Chef badge (cook at home 90% of meals for 30 days)
+        if (!badges.masterChef) {
+            const homeCookingRate = this.getHomeCookingRate(expenses, 30);
+            if (homeCookingRate >= 90) {
+                newBadges.masterChef = true;
+                badgesEarned.push('👑 Master Chef');
+            }
+        }
+
+        // Frugality King badge (save 50% of income for 3 months)
+        if (!badges.frugalityKing) {
+            const savingsRate = this.getLongTermSavingsRate(expenses, 90);
+            if (savingsRate >= 50) {
+                newBadges.frugalityKing = true;
+                badgesEarned.push('💎 Frugality King');
+            }
+        }
+
+        // Budget Ninja badge (stay under budget in ALL categories for 6 months)
+        if (!badges.budgetNinja) {
+            const budgetCompliance = this.getBudgetCompliance(expenses, 180);
+            if (budgetCompliance >= 100) {
+                newBadges.budgetNinja = true;
+                badgesEarned.push('🥷 Budget Ninja');
+            }
+        }
+
+        // Task Terminator badge (complete 500 tasks total)
+        if (!badges.taskTerminator && tasks) {
+            const completedTasks = tasks.filter(t => t.completed);
+            if (completedTasks.length >= 500) {
+                newBadges.taskTerminator = true;
+                badgesEarned.push('🤖 Task Terminator');
+            }
+        }
+
+        // Perfectionist badge (100% task completion for 30 days straight)
+        if (!badges.perfectionist && tasks) {
+            const perfectStreak = this.getPerfectTaskStreak(tasks);
+            if (perfectStreak >= 30) {
+                newBadges.perfectionist = true;
+                badgesEarned.push('💯 Perfectionist');
+            }
+        }
+
+        // Zen Master badge (log mood daily for 100 days straight)
+        if (!badges.zenMaster && data.moods) {
+            const moodStreak = this.getMoodStreak(data.moods);
+            if (moodStreak >= 100) {
+                newBadges.zenMaster = true;
+                badgesEarned.push('☯️ Zen Master');
+            }
+        }
+
+        // Stress Slayer badge (complete 50 stress relief sessions)
+        if (!badges.stressSlayer && data.workouts) {
+            const stressReliefWorkouts = data.workouts.filter(w =>
+                ['breathing', 'yoga', 'meditation'].includes(w.type)
+            );
+            if (stressReliefWorkouts.length >= 50) {
+                newBadges.stressSlayer = true;
+                badgesEarned.push('🗡️ Stress Slayer');
+            }
+        }
+
+        // Ultra Consistent badge (use app daily for 6 months straight)
+        if (!badges.ultraConsistent) {
+            const appUsageStreak = this.getAppUsageStreak();
+            if (appUsageStreak >= 180) {
+                newBadges.ultraConsistent = true;
+                badgesEarned.push('⭐ Ultra Consistent');
+            }
+        }
+
+        // Lifestyle Master badge (maintain all habits for 365 days)
+        if (!badges.lifestyleMaster) {
+            const allHabitsStreak = this.getAllHabitsStreak(data);
+            if (allHabitsStreak >= 365) {
+                newBadges.lifestyleMaster = true;
+                badgesEarned.push('🌟 Lifestyle Master');
+            }
+        }
+
+        // Data Genius badge (track every meal, expense, and workout for 90 days)
+        if (!badges.dataGenius) {
+            const dataTrackingStreak = this.getDataTrackingStreak(data);
+            if (dataTrackingStreak >= 90) {
+                newBadges.dataGenius = true;
+                badgesEarned.push('🧠 Data Genius');
+            }
+        }
+
+        // Financial Guru badge (achieve positive cash flow for 12 months)
+        if (!badges.financialGuru) {
+            const positiveCashFlowMonths = this.getPositiveCashFlowMonths(expenses);
+            if (positiveCashFlowMonths >= 12) {
+                newBadges.financialGuru = true;
+                badgesEarned.push('💰 Financial Guru');
+            }
+        }
+
+        // Epic Transformation badge (complete all other achievements)
+        if (!badges.epicTransformation) {
+            const totalBadges = Object.keys(newBadges).length;
+            const earnedBadges = Object.values(newBadges).filter(Boolean).length;
+            // Check if all badges except this one are earned (subtract 1 for epicTransformation itself)
+            if (earnedBadges >= totalBadges - 1) {
+                newBadges.epicTransformation = true;
+                badgesEarned.push('🦋 Epic Transformation');
+            }
+        }
+
         // Update badges if any new ones earned
         if (badgesEarned.length > 0) {
             window.storage.updateBadges(newBadges);
