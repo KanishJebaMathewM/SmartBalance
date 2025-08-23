@@ -146,11 +146,14 @@ class WorkLifeBalanceApp {
                 });
             }
 
-            // Handle task category changes to auto-update expense category
+            // Handle task category changes to auto-update expense category (only if expense is checked)
             const taskCategorySelect = document.getElementById('taskCategory');
             if (taskCategorySelect) {
                 taskCategorySelect.addEventListener('change', () => {
-                    this.updateExpenseCategory();
+                    const expenseCheckbox = document.getElementById('taskExpense');
+                    if (expenseCheckbox && expenseCheckbox.checked) {
+                        this.updateExpenseCategory();
+                    }
                 });
             }
 
@@ -1760,7 +1763,7 @@ class WorkLifeBalanceApp {
             date: new Date().toISOString()
         });
         
-        Utils.showNotification(`${exercise.title} completed! ���`, 'success');
+        Utils.showNotification(`${exercise.title} completed! ����`, 'success');
         this.closeModal('exerciseModal');
         
         if (this.currentSection === 'fitness') {
