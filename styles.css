@@ -4119,6 +4119,223 @@ select[id="expensePriority"] option[value="essential"] {
     color: #d1d5db;
 }
 
+/* Exercise Timer Styles */
+.exercise-timer-section {
+    margin: 20px 0;
+    padding: 24px;
+    background: #f8fafc;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.dark-mode .exercise-timer-section {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.timer-circle {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.timer-display {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 auto 8px auto;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.timer-display.timer-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    animation: pulse-warning 1s infinite;
+}
+
+.timer-display.timer-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    animation: pulse-danger 0.5s infinite;
+}
+
+@keyframes pulse-warning {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes pulse-danger {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.timer-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.dark-mode .timer-label {
+    color: #9ca3af;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.timer-controls button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.timer-controls .btn-secondary {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.timer-controls .btn-secondary:hover {
+    background: #d1d5db;
+    transform: translateY(-1px);
+}
+
+.dark-mode .timer-controls .btn-secondary {
+    background: #4b5563;
+    color: #f9fafb;
+}
+
+.dark-mode .timer-controls .btn-secondary:hover {
+    background: #6b7280;
+}
+
+.timer-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 16px;
+}
+
+.dark-mode .timer-progress-bar {
+    background: #374151;
+}
+
+.timer-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.exercise-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+    flex-wrap: wrap;
+}
+
+.exercise-info {
+    margin-bottom: 20px;
+}
+
+.exercise-meta {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.exercise-duration,
+.exercise-calories {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dark-mode .exercise-duration,
+.dark-mode .exercise-calories {
+    background: #1e3a8a;
+    color: #bfdbfe;
+}
+
+.exercise-instructions {
+    text-align: left;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.exercise-instructions h4 {
+    color: #111827;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.dark-mode .exercise-instructions h4 {
+    color: #f9fafb;
+}
+
+.exercise-instructions ol {
+    padding-left: 20px;
+}
+
+.exercise-instructions li {
+    margin-bottom: 8px;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.dark-mode .exercise-instructions li {
+    color: #d1d5db;
+}
+
+/* Responsive timer styles */
+@media (max-width: 480px) {
+    .timer-display {
+        width: 100px;
+        height: 100px;
+        font-size: 1.25rem;
+    }
+
+    .timer-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .timer-controls button {
+        min-width: 120px;
+    }
+
+    .exercise-meta {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
 .insight-value {
     font-size: 1.5rem;
     font-weight: 700;
