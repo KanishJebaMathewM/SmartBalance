@@ -4059,13 +4059,7 @@ class WorkLifeBalanceApp {
         return baseCost;
     }
 
-    // Enhanced loadFoodData method to load saved meal plans
-    loadFoodData() {
-        this.loadPantryItems();
-        this.updateMealPlan();
-        this.updateFoodStats();
-        this.loadSavedMealPlan();
-    }
+    // Enhanced loadFoodData method to load saved meal plans (removed duplicate)
 
     loadSavedMealPlan() {
         const today = new Date().toDateString();
@@ -4377,16 +4371,7 @@ class WorkLifeBalanceApp {
         return insights.slice(0, 3); // Show only top 3 insights
     }
 
-    // Enhanced loadFoodData to include analytics
-    loadFoodData() {
-        this.loadPantryItems();
-        this.updateMealPlan();
-        this.updateFoodStats();
-        this.loadSavedMealPlan();
-        this.updateFoodAnalytics();
-        this.loadDailyFoodTracking();
-        this.loadHomeVsHotelAnalysis();
-    }
+    // Enhanced loadFoodData to include analytics (removed duplicate)
 
     // Food tracking tab handlers
     initializeFoodTrackingTabHandlers() {
