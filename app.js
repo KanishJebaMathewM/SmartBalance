@@ -3891,7 +3891,7 @@ class WorkLifeBalanceApp {
         this.updateBadges();
     }
 
-    updateFitnessStats() {
+    updateFitnessStatsEnhanced() {
         const workouts = window.storage.getWorkouts();
         const streak = window.storage.getWorkoutStreak();
 
@@ -4367,7 +4367,7 @@ class WorkLifeBalanceApp {
             ctx.fillStyle = '#374151';
             ctx.font = '14px Inter, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText(`₹${item.value}`, x + barWidth/2, y - 10);
+            ctx.fillText(`���${item.value}`, x + barWidth/2, y - 10);
 
             // Draw category label
             ctx.fillText(item.label, x + barWidth/2, height - 20);
@@ -6182,7 +6182,7 @@ class WorkLifeBalanceApp {
         if (breakdownElement) {
             breakdownElement.innerHTML = `
                 <div class="balance-breakdown-item">
-                    <span class="breakdown-label">💪 Fitness</span>
+                    <span class="breakdown-label">���� Fitness</span>
                     <span class="breakdown-value ${this.getScoreClass(fitnessScore)}">${fitnessScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
