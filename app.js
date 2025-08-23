@@ -925,14 +925,14 @@ class WorkLifeBalanceApp {
         // Get expenses for this month
         const expenses = window.storage.getExpenses();
         const monthExpenses = expenses.filter(expense => {
-            const expenseDate = new Date(expense.createdAt);
+            const expenseDate = new Date(expense.date || expense.createdAt);
             return expenseDate.getFullYear() === year && expenseDate.getMonth() === month;
         });
 
         // Group expenses by date
         const expensesByDate = {};
         monthExpenses.forEach(expense => {
-            const date = new Date(expense.createdAt).getDate();
+            const date = new Date(expense.date || expense.createdAt).getDate();
             if (!expensesByDate[date]) {
                 expensesByDate[date] = [];
             }
@@ -1030,7 +1030,7 @@ class WorkLifeBalanceApp {
         const expenses = window.storage.getExpenses();
         const selectedDateStr = this.selectedCalendarDate.toDateString();
         const dayExpenses = expenses.filter(expense =>
-            new Date(expense.createdAt).toDateString() === selectedDateStr
+            new Date(expense.date || expense.createdAt).toDateString() === selectedDateStr
         );
 
         if (dayExpenses.length === 0) {
