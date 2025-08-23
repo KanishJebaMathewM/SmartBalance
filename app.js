@@ -3616,7 +3616,6 @@ class WorkLifeBalanceApp {
                         notes: `From completed task: ${updatedTask.title}`,
                         date: new Date().toISOString().split('T')[0],
                         paymentMethod: 'cash',
-                        priority: 'medium',
                         source: 'task'
                     };
 
