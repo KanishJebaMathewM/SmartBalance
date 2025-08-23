@@ -5035,11 +5035,12 @@ class WorkLifeBalanceApp {
         const mealPlanGrid = document.getElementById('mealPlanGrid');
         if (!mealPlanGrid) return;
 
-        const mealTypes = ['breakfast', 'lunch', 'dinner'];
+        const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
         const mealTypeInfo = {
             breakfast: { emoji: '🌅', name: 'Breakfast', defaultTime: '8:00 AM' },
             lunch: { emoji: '🌞', name: 'Lunch', defaultTime: '1:00 PM' },
-            dinner: { emoji: '��', name: 'Dinner', defaultTime: '7:00 PM' }
+            snack: { emoji: '🍎', name: 'Snack', defaultTime: '4:00 PM' },
+            dinner: { emoji: '🌙', name: 'Dinner', defaultTime: '7:00 PM' }
         };
 
         let gridHTML = '';
@@ -5106,6 +5107,14 @@ class WorkLifeBalanceApp {
                 { name: 'Vegetable Biryani', calories: 380, estimatedHomeCost: 45, estimatedHotelCost: 150 },
                 { name: 'Rasam Rice with Papad', calories: 290, estimatedHomeCost: 25, estimatedHotelCost: 100 },
                 { name: 'Lemon Rice with Curry', calories: 340, estimatedHomeCost: 35, estimatedHotelCost: 120 }
+            ],
+            snack: [
+                { name: 'Mixed Fruit Bowl', calories: 150, estimatedHomeCost: 25, estimatedHotelCost: 80 },
+                { name: 'Roasted Chana', calories: 120, estimatedHomeCost: 10, estimatedHotelCost: 40 },
+                { name: 'Coconut Water & Banana', calories: 100, estimatedHomeCost: 15, estimatedHotelCost: 50 },
+                { name: 'Masala Tea with Biscuits', calories: 90, estimatedHomeCost: 8, estimatedHotelCost: 30 },
+                { name: 'Sprouts Chaat', calories: 180, estimatedHomeCost: 20, estimatedHotelCost: 60 },
+                { name: 'Buttermilk with Murukku', calories: 140, estimatedHomeCost: 12, estimatedHotelCost: 45 }
             ],
             dinner: [
                 { name: 'Appam with Coconut Stew', calories: 340, estimatedHomeCost: 45, estimatedHotelCost: 160 },
