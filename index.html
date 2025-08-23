@@ -148,7 +148,7 @@
                             <input type="text" id="taskTitle" placeholder="Task title" required>
                             <select id="taskCategory">
                                 <option value="work">💼 Work</option>
-                                <option value="personal">���� Personal</option>
+                                <option value="personal">👤 Personal</option>
                                 <option value="health">🏥 Health & Fitness</option>
                                 <option value="food">🍕 Food & Dining</option>
                                 <option value="bills">📧 Bills & Utilities</option>
@@ -353,7 +353,7 @@
                         </div>
 
                         <div class="chart-section">
-                            <h3>���� Payment Method Analysis</h3>
+                            <h3>💳 Payment Method Analysis</h3>
                             <canvas id="paymentMethodChart"></canvas>
                         </div>
 
@@ -1452,10 +1452,10 @@
             <!-- Insights & Analysis Section -->
             <section id="habits" class="section">
                 <div class="section-header">
-                    <h1>🧠 Life Analytics</h1>
+                    <h1>🎯 Insights & Life Analysis</h1>
                     <div class="header-actions">
-                        <button class="btn-secondary" id="refreshAnalysisBtn">🔄 Refresh Score</button>
-                        <button class="btn-secondary export-btn" data-section="habits" data-format="json">📊 Export Report</button>
+                        <button class="btn-secondary export-btn" data-section="habits" data-format="csv">📊 Export CSV</button>
+                        <button class="btn-secondary export-btn" data-section="habits" data-format="json">📄 Export JSON</button>
                     </div>
                 </div>
 
@@ -1472,65 +1472,119 @@
                     </div>
                 </div>
 
-                <!-- Score Explanation -->
-                <div class="score-explanation">
-                    <h3>📋 How Your Score is Calculated</h3>
-                    <p>Your Life Balance Score is calculated from five key areas of your life, based on the data you've been tracking:</p>
+                <!-- Analysis Tabs -->
+                <div class="analysis-tabs">
+                    <button class="tab-btn active" data-tab="overall-insights">📊 Overall Insights</button>
+                    <button class="tab-btn" data-tab="behavior-patterns">🔗 Behavior Patterns</button>
+                    <button class="tab-btn" data-tab="recommendations">💡 Recommendations</button>
+                    <button class="tab-btn" data-tab="progress-analysis">📈 Progress Analysis</button>
+                </div>
 
-                    <div class="score-components">
-                        <div class="component-card">
-                            <div class="component-icon">💪</div>
-                            <div class="component-info">
-                                <h4>Fitness</h4>
-                                <p>Workout consistency and exercise frequency</p>
+                <!-- Overall Insights Tab -->
+                <div id="overall-insights" class="tab-content active">
+                    <div class="insights-grid">
+                        <div class="insight-section">
+                            <h3>💪 Fitness & Wellness Performance</h3>
+                            <div class="performance-metrics" id="fitnessPerformance">
+                                <!-- Fitness analysis will be displayed here -->
                             </div>
                         </div>
 
-                        <div class="component-card">
-                            <div class="component-icon">🍲</div>
-                            <div class="component-info">
-                                <h4>Nutrition</h4>
-                                <p>Home cooking habits and meal planning</p>
+                        <div class="insight-section">
+                            <h3>🍲 Nutrition & Lifestyle Patterns</h3>
+                            <div class="performance-metrics" id="nutritionPerformance">
+                                <!-- Nutrition analysis will be displayed here -->
                             </div>
                         </div>
 
-                        <div class="component-card">
-                            <div class="component-icon">💼</div>
-                            <div class="component-info">
-                                <h4>Productivity</h4>
-                                <p>Task completion rates and goal achievement</p>
+                        <div class="insight-section">
+                            <h3>💼 Productivity & Task Management</h3>
+                            <div class="performance-metrics" id="productivityPerformance">
+                                <!-- Productivity analysis will be displayed here -->
                             </div>
                         </div>
 
-                        <div class="component-card">
-                            <div class="component-icon">💰</div>
-                            <div class="component-info">
-                                <h4>Financial</h4>
-                                <p>Expense management and savings rate</p>
+                        <div class="insight-section">
+                            <h3>💰 Financial Health & Spending</h3>
+                            <div class="performance-metrics" id="financialPerformance">
+                                <!-- Financial analysis will be displayed here -->
                             </div>
                         </div>
 
-                        <div class="component-card">
-                            <div class="component-icon">😌</div>
-                            <div class="component-info">
-                                <h4>Wellness</h4>
-                                <p>Stress levels and mood patterns</p>
+                        <div class="insight-section">
+                            <h3>😌 Mental Health & Stress Management</h3>
+                            <div class="performance-metrics" id="wellnessPerformance">
+                                <!-- Wellness analysis will be displayed here -->
                             </div>
                         </div>
-                    </div>
-
-                    <div class="score-tips">
-                        <h4>💡 Tips for Improvement</h4>
-                        <ul>
-                            <li>Focus on improving the areas with lower scores for the biggest impact</li>
-                            <li>Small consistent changes in each area compound over time</li>
-                            <li>Your score updates automatically as you track more activities</li>
-                            <li>Aim for balance rather than perfection in any single area</li>
-                        </ul>
                     </div>
                 </div>
 
+                <!-- Behavior Patterns Tab -->
+                <div id="behavior-patterns" class="tab-content">
+                    <div class="patterns-analysis">
+                        <h3>🧠 Smart Behavioral Connections</h3>
+                        <p class="correlation-intro">Discover how your different life areas influence each other based on your data.</p>
 
+                        <div class="correlation-grid">
+                            <div class="correlation-card">
+                                <h4>💪 Fitness → 😌 Mood</h4>
+                                <div class="correlation-strength" id="fitnessStressCorrelation">
+                                    <div class="correlation-bar">
+                                        <div class="correlation-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="correlation-value">0% correlation</span>
+                                </div>
+                                <p class="correlation-insight" id="fitnessStressInsight">Track more data to see patterns</p>
+                            </div>
+
+                            <div class="correlation-card">
+                                <h4>🍲 Nutrition → 💼 Productivity</h4>
+                                <div class="correlation-strength" id="nutritionProductivityCorrelation">
+                                    <div class="correlation-bar">
+                                        <div class="correlation-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="correlation-value">0% correlation</span>
+                                </div>
+                                <p class="correlation-insight" id="nutritionProductivityInsight">Track more data to see patterns</p>
+                            </div>
+
+                            <div class="correlation-card">
+                                <h4>😌 Mood → 💰 Spending</h4>
+                                <div class="correlation-strength" id="moodSpendingCorrelation">
+                                    <div class="correlation-bar">
+                                        <div class="correlation-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="correlation-value">0% correlation</span>
+                                </div>
+                                <p class="correlation-insight" id="moodSpendingInsight">Track more data to see patterns</p>
+                            </div>
+
+                            <div class="correlation-card">
+                                <h4>💼 Productivity → 😌 Stress</h4>
+                                <div class="correlation-strength" id="productivityStressCorrelation">
+                                    <div class="correlation-bar">
+                                        <div class="correlation-fill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="correlation-value">0% correlation</span>
+                                </div>
+                                <p class="correlation-insight" id="productivityStressInsight">Track more data to see patterns</p>
+                            </div>
+                        </div>
+
+                        <div class="patterns-charts">
+                            <h3>📊 Life Pattern Analysis</h3>
+                            <div class="chart-container">
+                                <h4>Mood vs Activity Correlation</h4>
+                                <canvas id="moodActivityChart" width="600" height="300"></canvas>
+                            </div>
+                            <div class="chart-container">
+                                <h4>Weekly Performance Patterns</h4>
+                                <canvas id="weeklyPatternsChart" width="600" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Recommendations Tab -->
                 <div id="recommendations" class="tab-content">
@@ -1597,7 +1651,7 @@
 
                 <!-- Comprehensive Report Download Section -->
                 <div class="comprehensive-download">
-                    <h3>�� Comprehensive Analysis Report</h3>
+                    <h3>📋 Comprehensive Analysis Report</h3>
                     <p>Download a complete analysis including trends, correlations, insights, and recommendations.</p>
                     <div class="download-options">
                         <button class="btn-primary" onclick="app.downloadComprehensiveReport('json')">📊 Download Full Report (JSON)</button>
