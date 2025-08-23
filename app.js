@@ -2096,12 +2096,12 @@ class WorkLifeBalanceApp {
 
     // Habit Tab Handlers
     initializeHabitTabHandlers() {
-        // Habit tab switching
-        document.querySelectorAll('.habit-tabs .tab-btn').forEach(btn => {
+        // Analysis tab switching
+        document.querySelectorAll('.analysis-tabs .tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const tabName = e.target.dataset.tab;
                 if (tabName) {
-                    this.switchHabitTab(tabName);
+                    this.switchAnalysisTab(tabName);
                 }
             });
         });
