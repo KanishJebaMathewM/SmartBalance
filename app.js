@@ -5496,49 +5496,6 @@ class WorkLifeBalanceApp {
         document.getElementById('mealDate').value = this.currentPlanDate.toISOString().split('T')[0];
     }
 
-    loadUpcomingMeals() {
-        const upcomingMealsList = document.getElementById('upcomingMealsList');
-        if (!upcomingMealsList) return;
-
-        const meals = window.storage.getMeals();
-        const now = new Date();
-        const upcomingMeals = meals.filter(meal => {
-            const mealDate = new Date(meal.date);
-            return mealDate >= now && meal.status === 'planned';
-        }).sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 5);
-
-        if (upcomingMeals.length === 0) {
-            upcomingMealsList.innerHTML = `
-                <div class="empty-state">
-                    <p>No upcoming meals planned</p>
-                    <button class="btn-primary" onclick="app.addCustomMeal()">Plan Your Next Meal</button>
-                </div>
-            `;
-            return;
-        }
-
-        upcomingMealsList.innerHTML = upcomingMeals.map(meal => {
-            const mealDate = new Date(meal.date);
-            const isToday = mealDate.toDateString() === now.toDateString();
-            const isTomorrow = mealDate.toDateString() === new Date(now.getTime() + 24 * 60 * 60 * 1000).toDateString();
-
-            let dateDisplay = mealDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            if (isToday) dateDisplay = 'Today';
-            else if (isTomorrow) dateDisplay = 'Tomorrow';
-
-            return `
-                <div class="upcoming-meal-item">
-                    <div class="upcoming-meal-info">
-                        <div class="upcoming-meal-name">${Utils.sanitizeInput(meal.name)}</div>
-                        <div class="upcoming-meal-details">
-                            ${meal.type.charAt(0).toUpperCase() + meal.type.slice(1)} • ${meal.calories} cal • ${meal.source === 'home' ? '🏠 Home' : '🏨 Hotel'}
-                        </div>
-                    </div>
-                    <div class="upcoming-meal-time">${dateDisplay}</div>
-                </div>
-            `;
-        }).join('');
-    }
 
     // Update the main loadFoodData to include interactive meal planner
     loadFoodData() {
