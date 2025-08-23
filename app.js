@@ -2413,7 +2413,7 @@ class WorkLifeBalanceApp {
 
     getCategoryIcon(category) {
         const categoryIcons = {
-            'food': '����',
+            'food': '🍕',
             'bills': '📧',
             'shopping': '🛍️',
             'travel': '✈️',
@@ -5187,7 +5187,6 @@ class WorkLifeBalanceApp {
                 notes: `${mealData.name} (${mealData.type})`,
                 date: mealData.date,
                 paymentMethod: 'card',
-                priority: 'medium',
                 mealRelated: true
             };
             window.storage.addExpense(expenseData);
