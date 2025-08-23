@@ -6076,6 +6076,172 @@ class WorkLifeBalanceApp {
         this.loadOverallInsights();
     }
 
+    // Life Balance Score Calculation
+    calculateLifeBalanceScore() {
+        const tasks = window.storage.getTasks();
+        const expenses = window.storage.getExpenses();
+        const workouts = window.storage.getWorkouts();
+        const moods = window.storage.getMoods();
+        const meals = window.storage.getMeals();
+
+        // Calculate individual scores
+        const fitnessScore = this.calculateFitnessScore(workouts);
+        const nutritionScore = this.calculateNutritionScore(meals);
+        const productivityScore = this.calculateProductivityScore(tasks);
+        const financialScore = this.calculateFinancialScore(expenses);
+        const wellnessScore = this.calculateWellnessScore(moods);
+
+        // Calculate overall life balance score
+        const lifeBalanceScore = Math.round(
+            (fitnessScore + nutritionScore + productivityScore + financialScore + wellnessScore) / 5
+        );
+
+        // Update UI
+        const scoreElement = document.getElementById('lifeBalanceScore');
+        const breakdownElement = document.getElementById('balanceBreakdown');
+
+        if (scoreElement) {
+            scoreElement.textContent = lifeBalanceScore;
+        }
+
+        if (breakdownElement) {
+            breakdownElement.innerHTML = `
+                <div class="balance-breakdown-item">
+                    <span class="breakdown-label">💪 Fitness</span>
+                    <span class="breakdown-value ${this.getScoreClass(fitnessScore)}">${fitnessScore}/100</span>
+                </div>
+                <div class="balance-breakdown-item">
+                    <span class="breakdown-label">🍲 Nutrition</span>
+                    <span class="breakdown-value ${this.getScoreClass(nutritionScore)}">${nutritionScore}/100</span>
+                </div>
+                <div class="balance-breakdown-item">
+                    <span class="breakdown-label">💼 Productivity</span>
+                    <span class="breakdown-value ${this.getScoreClass(productivityScore)}">${productivityScore}/100</span>
+                </div>
+                <div class="balance-breakdown-item">
+                    <span class="breakdown-label">💰 Financial</span>
+                    <span class="breakdown-value ${this.getScoreClass(financialScore)}">${financialScore}/100</span>
+                </div>
+                <div class="balance-breakdown-item">
+                    <span class="breakdown-label">😌 Wellness</span>
+                    <span class="breakdown-value ${this.getScoreClass(wellnessScore)}">${wellnessScore}/100</span>
+                </div>
+            `;
+        }
+
+        return {
+            overall: lifeBalanceScore,
+            fitness: fitnessScore,
+            nutrition: nutritionScore,
+            productivity: productivityScore,
+            financial: financialScore,
+            wellness: wellnessScore
+        };
+    }
+
+    getScoreClass(score) {
+        if (score >= 80) return 'excellent';
+        if (score >= 60) return 'good';
+        if (score >= 40) return 'fair';
+        return 'poor';
+    }
+
+    calculateFitnessScore(workouts) {
+        const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const recentWorkouts = workouts.filter(w => new Date(w.createdAt) >= last30Days);
+
+        // Base score on workout frequency (target: 20 workouts in 30 days)
+        const targetWorkouts = 20;
+        const workoutScore = Math.min((recentWorkouts.length / targetWorkouts) * 100, 100);
+
+        // Bonus for consistency (working out regularly)
+        const workoutStreak = window.storage.getWorkoutStreak();
+        const consistencyBonus = Math.min(workoutStreak * 2, 20);
+
+        return Math.min(Math.round(workoutScore + consistencyBonus), 100);
+    }
+
+    calculateNutritionScore(meals) {
+        const weeklyStats = window.storage.getWeeklyMealStats();
+
+        // Base score on home cooking percentage (target: 70% home meals)
+        const homeCookingTarget = 0.7;
+        const homeCookingRatio = weeklyStats.totalMeals > 0 ?
+            weeklyStats.homeMeals / weeklyStats.totalMeals : 0;
+        const homeCookingScore = (homeCookingRatio / homeCookingTarget) * 80;
+
+        // Bonus for variety and calorie management
+        const varietyBonus = Math.min(weeklyStats.totalMeals * 2, 20);
+
+        return Math.min(Math.round(homeCookingScore + varietyBonus), 100);
+    }
+
+    calculateProductivityScore(tasks) {
+        const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const recentTasks = tasks.filter(t => new Date(t.createdAt) >= last30Days);
+        const completedTasks = recentTasks.filter(t => t.completed);
+
+        // Base score on completion rate (target: 80% completion)
+        const completionRate = recentTasks.length > 0 ?
+            completedTasks.length / recentTasks.length : 0;
+        const completionScore = (completionRate / 0.8) * 80;
+
+        // Bonus for consistency
+        const taskStreak = this.calculateTaskStreak();
+        const consistencyBonus = Math.min(taskStreak, 20);
+
+        return Math.min(Math.round(completionScore + consistencyBonus), 100);
+    }
+
+    calculateFinancialScore(expenses) {
+        const analysis = window.storage.getSavingsAnalysis();
+
+        // Base score on savings rate
+        let savingsScore = 0;
+        if (analysis.savingsRate >= 20) savingsScore = 80;
+        else if (analysis.savingsRate >= 10) savingsScore = 60;
+        else if (analysis.savingsRate >= 5) savingsScore = 40;
+        else savingsScore = 20;
+
+        // Bonus for budget adherence
+        const budgetStatus = window.storage.getBudgetStatus();
+        const budgetCategories = Object.keys(budgetStatus);
+        if (budgetCategories.length > 0) {
+            const withinBudget = budgetCategories.filter(cat => !budgetStatus[cat].overBudget);
+            const budgetBonus = (withinBudget.length / budgetCategories.length) * 20;
+            savingsScore += budgetBonus;
+        }
+
+        return Math.min(Math.round(savingsScore), 100);
+    }
+
+    calculateWellnessScore(moods) {
+        const last30Days = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        const recentMoods = moods.filter(m => new Date(m.date) >= last30Days);
+
+        if (recentMoods.length === 0) return 50; // Neutral score if no data
+
+        // Calculate average mood score
+        const moodValues = {
+            'very-happy': 100,
+            'happy': 80,
+            'neutral': 60,
+            'stressed': 40,
+            'very-stressed': 20
+        };
+
+        const totalMoodScore = recentMoods.reduce((sum, mood) =>
+            sum + (moodValues[mood.mood] || 60), 0
+        );
+
+        const averageMoodScore = totalMoodScore / recentMoods.length;
+
+        // Bonus for mood tracking consistency
+        const trackingBonus = Math.min(recentMoods.length * 2, 20);
+
+        return Math.min(Math.round(averageMoodScore + trackingBonus), 100);
+    }
+
     loadDailyHabits() {
         const habits = window.storage.getHabits();
         this.renderHabitsByCategory(habits);
@@ -6406,7 +6572,7 @@ class WorkLifeBalanceApp {
 
         return `
             <div class="summary-card overall-score">
-                <h3>��� Overall Score</h3>
+                <h3>🎯 Overall Score</h3>
                 <div class="big-stat">${overallScore}</div>
                 <p>Wellness Score</p>
                 <div class="score-breakdown">
