@@ -1166,7 +1166,7 @@
                             <button class="btn-secondary">Start Exercise</button>
                         </div>
                         <div class="exercise-card" data-exercise="posture-fix">
-                            <h4>�� Posture Fix</h4>
+                            <h4>��� Posture Fix</h4>
                             <p>Improve sitting posture</p>
                             <button class="btn-secondary">Start Exercise</button>
                         </div>
@@ -1782,6 +1782,16 @@
                 <div class="section-header">
                     <h1>📊 Report Generator</h1>
                     <!-- Period selector and export buttons will be added dynamically -->
+                </div>
+
+                <!-- Comprehensive Report Download Section -->
+                <div class="comprehensive-download">
+                    <h3>📋 Comprehensive Analysis Report</h3>
+                    <p>Download a complete analysis including trends, correlations, insights, and recommendations.</p>
+                    <div class="download-options">
+                        <button class="btn-primary" onclick="app.downloadComprehensiveReport('json')">📊 Download Full Report (JSON)</button>
+                        <button class="btn-secondary" onclick="app.downloadComprehensiveReport('csv')">📈 Download Summary (CSV)</button>
+                    </div>
                 </div>
 
                 <div class="report-summary">
