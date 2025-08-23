@@ -1918,15 +1918,18 @@ class WorkLifeBalanceApp {
         
         window.storage.addWorkout({
             type: 'general',
-            duration: 0,
-            date: new Date().toISOString()
+            duration: 30,
+            calories: 200,
+            createdAt: new Date().toISOString()
         });
-        
-        Utils.showNotification('Workout marked! Keep it up! 💪', 'success');
-        
+
+        Utils.showNotification('💪 Workout marked! Keep up the great work!', 'success');
+
         // Check for new badges
         const data = {
-            workouts: window.storage.getWorkouts()
+            workouts: window.storage.getWorkouts(),
+            tasks: window.storage.getTasks(),
+            expenses: window.storage.getExpenses()
         };
         Utils.checkBadgeEligibility(data);
         
@@ -5727,7 +5730,7 @@ class WorkLifeBalanceApp {
                     ${suggestion.calories} cal • ₹${suggestion.estimatedHomeCost}
                 </div>
                 <div class="suggestion-actions">
-                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">✓ Accept</button>
+                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">��� Accept</button>
                     <button class="btn-secondary btn-small" onclick="app.selectSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">Customize</button>
                 </div>
             </div>
@@ -8143,7 +8146,7 @@ class WorkLifeBalanceApp {
         const priorityActions = [
             {
                 category: 'fitness',
-                categoryIcon: '����',
+                categoryIcon: '������',
                 title: 'Exercise Regularly',
                 description: 'Do at least 20 minutes of physical activity',
                 frequency: '3-4 times this week',
@@ -8484,7 +8487,7 @@ class WorkLifeBalanceApp {
 
             <div class="report-details">
                 <div class="report-section">
-                    <h3>📈 Trends & Analytics</h3>
+                    <h3>�� Trends & Analytics</h3>
                     <div class="chart-container">
                         <canvas id="reportTrendsChart" width="600" height="300"></canvas>
                     </div>
