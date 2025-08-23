@@ -417,6 +417,7 @@ class WorkLifeBalanceApp {
                 break;
             case 'habits':
                 this.loadHabitsSection();
+                this.updateHelpDisplay(); // Initialize help navigation
                 break;
             case 'report':
                 this.generateWeeklyReport();
@@ -3110,7 +3111,7 @@ class WorkLifeBalanceApp {
         const insight = correlation > 0.3 ?
             '�� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
-            '������ Completing tasks reduces your stress levels!' :
+            '����� Completing tasks reduces your stress levels!' :
             '📊 Keep tracking to understand your productivity-stress patterns';
 
         this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
