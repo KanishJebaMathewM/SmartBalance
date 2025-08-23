@@ -758,8 +758,14 @@ class WorkLifeBalanceApp {
         if (monthlySpendingEl) monthlySpendingEl.textContent = Utils.formatCurrency(monthlyExpenses);
         if (averageDailyEl) averageDailyEl.textContent = Utils.formatCurrency(averageDaily);
 
+        // Update income overview
+        this.updateIncomeOverview(monthlyExpenses);
+
         // Update savings progress
         this.updateSavingsProgress(monthlyExpenses);
+
+        // Generate financial insights
+        this.generateFinancialInsights(monthlyExpenses, expenses);
     }
 
     updateSavingsProgress(monthlyExpenses) {
