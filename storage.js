@@ -39,9 +39,29 @@ class Storage {
 
         if (!this.get(this.keys.foodItems)) {
             this.set(this.keys.foodItems, [
-                { id: 1, name: 'Oats', quantity: 2, unit: 'kg', expiry: '2024-06-30' },
-                { id: 2, name: 'Rice', quantity: 5, unit: 'kg', expiry: '2024-07-15' },
-                { id: 3, name: 'Dal', quantity: 1, unit: 'kg', expiry: '2024-08-01' }
+                // Staples
+                { id: 1, name: 'Basmati Rice', quantity: 5, unit: 'kg', expiry: '2024-08-30', calories: 130 },
+                { id: 2, name: 'Toor Dal (Arhar)', quantity: 1, unit: 'kg', expiry: '2024-10-15', calories: 120 },
+                { id: 3, name: 'Urad Dal', quantity: 500, unit: 'g', expiry: '2024-09-20', calories: 115 },
+
+                // South Indian essentials
+                { id: 4, name: 'Coconut (Fresh)', quantity: 3, unit: 'pieces', expiry: '2024-06-10', calories: 160 },
+                { id: 5, name: 'Curry Leaves', quantity: 100, unit: 'g', expiry: '2024-06-15', calories: 10 },
+                { id: 6, name: 'Mustard Seeds', quantity: 200, unit: 'g', expiry: '2025-01-01', calories: 5 },
+                { id: 7, name: 'Rava (Semolina)', quantity: 1, unit: 'kg', expiry: '2024-09-30', calories: 150 },
+                { id: 8, name: 'Idli Rice', quantity: 2, unit: 'kg', expiry: '2024-08-20', calories: 130 },
+                { id: 9, name: 'Fenugreek Seeds', quantity: 100, unit: 'g', expiry: '2024-12-31', calories: 8 },
+                { id: 10, name: 'Tamarind', quantity: 250, unit: 'g', expiry: '2024-11-15', calories: 25 },
+
+                // Flours and grains
+                { id: 11, name: 'Ragi Flour', quantity: 1, unit: 'kg', expiry: '2024-07-30', calories: 140 },
+                { id: 12, name: 'Besan (Gram Flour)', quantity: 500, unit: 'g', expiry: '2024-08-15', calories: 110 },
+                { id: 13, name: 'Oats', quantity: 1, unit: 'kg', expiry: '2024-09-10', calories: 150 },
+
+                // Spices and seasonings
+                { id: 14, name: 'Hing (Asafoetida)', quantity: 50, unit: 'g', expiry: '2025-06-01', calories: 2 },
+                { id: 15, name: 'Turmeric Powder', quantity: 200, unit: 'g', expiry: '2024-12-31', calories: 3 },
+                { id: 16, name: 'Red Chili Powder', quantity: 200, unit: 'g', expiry: '2024-11-30', calories: 5 }
             ]);
         }
 
