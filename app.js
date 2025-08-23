@@ -2642,6 +2642,46 @@ class WorkLifeBalanceApp {
         }
     }
 
+    resetTaskForm() {
+        const form = document.getElementById('taskForm');
+        if (form) {
+            form.reset();
+
+            // Reset expense-related elements
+            const expenseCheckbox = document.getElementById('taskExpense');
+            const expenseDetails = document.getElementById('expenseTaskDetails');
+            const amountField = document.getElementById('taskAmount');
+
+            if (expenseCheckbox) expenseCheckbox.checked = false;
+            if (expenseDetails) expenseDetails.style.display = 'none';
+            if (amountField) {
+                amountField.required = false;
+                amountField.value = '';
+            }
+
+            // Reset expense category elements
+            const categoryDisplay = document.getElementById('selectedExpenseCategory');
+            const changeBtn = document.getElementById('changeExpenseCategoryBtn');
+            const expenseCategorySelect = document.getElementById('taskExpenseCategory');
+
+            if (categoryDisplay) categoryDisplay.textContent = '-';
+            if (changeBtn) changeBtn.style.display = 'none';
+            if (expenseCategorySelect) {
+                expenseCategorySelect.style.display = 'none';
+                const expenseCategoryContainer = expenseCategorySelect.parentElement;
+                if (expenseCategoryContainer) {
+                    expenseCategoryContainer.style.display = 'none';
+                }
+            }
+
+            // Set default date to today
+            const taskDate = document.getElementById('taskDate');
+            if (taskDate) {
+                taskDate.value = new Date().toISOString().split('T')[0];
+            }
+        }
+    }
+
     learnFromExpense(expenseData) {
         // Store patterns for smart suggestions
         const patterns = JSON.parse(localStorage.getItem('expense_patterns') || '{}');
