@@ -886,7 +886,7 @@
                             <p>7-Day Streak</p>
                         </div>
                         <div class="badge locked">
-                            <span>👑</span>
+                            <span>����</span>
                             <p>Consistency King</p>
                         </div>
                     </div>
@@ -897,10 +897,31 @@
                     <div class="modal-content">
                         <span class="close">&times;</span>
                         <h2 id="exerciseTitle">Exercise</h2>
+
+                        <!-- Timer Section -->
+                        <div class="exercise-timer-section" id="exerciseTimerSection" style="display: none;">
+                            <div class="timer-circle">
+                                <div class="timer-display" id="timerDisplay">00:00</div>
+                                <div class="timer-label">Time Remaining</div>
+                            </div>
+                            <div class="timer-controls">
+                                <button class="btn-secondary" id="startTimerBtn">Start Timer</button>
+                                <button class="btn-secondary" id="pauseTimerBtn" style="display: none;">Pause</button>
+                                <button class="btn-secondary" id="resetTimerBtn" style="display: none;">Reset</button>
+                            </div>
+                            <div class="timer-progress-bar">
+                                <div class="timer-progress-fill" id="timerProgressFill"></div>
+                            </div>
+                        </div>
+
                         <div id="exerciseInstructions">
                             <!-- Exercise instructions will be loaded here -->
                         </div>
-                        <button class="btn-primary" id="completeExerciseBtn">Mark as Complete</button>
+
+                        <div class="exercise-modal-actions">
+                            <button class="btn-primary" id="completeExerciseBtn">Mark as Complete</button>
+                            <button class="btn-secondary" id="skipExerciseBtn">Skip Exercise</button>
+                        </div>
                     </div>
                 </div>
             </section>
