@@ -6289,11 +6289,64 @@ class WorkLifeBalanceApp {
 
     // Overall Insights Tab
     loadOverallInsights() {
-        this.loadFitnessPerformance();
-        this.loadNutritionPerformance();
-        this.loadProductivityPerformance();
-        this.loadFinancialPerformance();
-        this.loadWellnessPerformance();
+        this.populatePerformanceMetrics();
+        this.generateBehaviorInsights();
+    }
+
+    populatePerformanceMetrics() {
+        // Get data for analysis
+        const tasks = window.storage.getTasks();
+        const expenses = window.storage.getExpenses();
+        const workouts = window.storage.getWorkouts();
+        const moods = window.storage.getMoods();
+        const meals = window.storage.getMeals();
+
+        // Calculate metrics for each area
+        const fitnessMetrics = this.calculateFitnessInsights(workouts);
+        const nutritionMetrics = this.calculateNutritionInsights(meals);
+        const productivityMetrics = this.calculateProductivityInsights(tasks);
+        const financialMetrics = this.calculateFinancialInsights(expenses);
+        const wellnessMetrics = this.calculateWellnessInsights(moods);
+
+        // Populate each section
+        this.populateSection('fitnessPerformance', fitnessMetrics);
+        this.populateSection('nutritionPerformance', nutritionMetrics);
+        this.populateSection('productivityPerformance', productivityMetrics);
+        this.populateSection('financialPerformance', financialMetrics);
+        this.populateSection('wellnessPerformance', wellnessMetrics);
+    }
+
+    populateSection(sectionId, metrics) {
+        const section = document.getElementById(sectionId);
+        if (!section) return;
+
+        section.innerHTML = `
+            <div class="performance-summary">
+                <div class="performance-score ${metrics.scoreClass}">
+                    <span class="score-value">${metrics.score}</span>
+                    <span class="score-label">/100</span>
+                </div>
+                <div class="performance-trend ${metrics.trendClass}">
+                    ${metrics.trend}
+                </div>
+            </div>
+            <div class="performance-details">
+                ${metrics.details.map(detail => `
+                    <div class="detail-item">
+                        <span class="detail-label">${detail.label}</span>
+                        <span class="detail-value">${detail.value}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="performance-insights">
+                ${metrics.insights.map(insight => `
+                    <div class="insight-item ${insight.type}">
+                        <span class="insight-icon">${insight.icon}</span>
+                        <span class="insight-text">${insight.text}</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
     }
 
     loadFitnessPerformance() {
@@ -6954,7 +7007,7 @@ class WorkLifeBalanceApp {
         const incompleteTasks = tasks.filter(t => !t.completed).length;
         if (incompleteTasks > 10) {
             recommendations.push({
-                icon: '📋',
+                icon: '��',
                 title: 'Manage Task Backlog',
                 description: `You have ${incompleteTasks} incomplete tasks. Consider prioritizing or breaking them into smaller steps.`,
                 priority: 'high'
