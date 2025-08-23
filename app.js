@@ -142,6 +142,12 @@ class WorkLifeBalanceApp {
         if (goalForm) {
             goalForm.addEventListener('submit', (e) => this.handleGoalSubmit(e));
         }
+
+        // Income form
+        const incomeForm = document.getElementById('incomeForm');
+        if (incomeForm) {
+            incomeForm.addEventListener('submit', (e) => this.handleIncomeSubmit(e));
+        }
     }
 
     initializeButtonHandlers() {
