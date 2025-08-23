@@ -575,8 +575,8 @@ class Charts {
         });
     }
 
-    // Spending Trend Chart with multiple periods
-    createSpendingTrendChart(canvasId, expenses, period = 'month') {
+    // Expense Distribution Bubble Chart
+    createSpendingTrendChart(canvasId, expenses) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
@@ -593,77 +593,108 @@ class Charts {
         const chartWidth = canvas.width - 2 * padding;
         const chartHeight = canvas.height - 2 * padding;
 
-        let periodData = [];
-
-        switch (period) {
-            case 'week':
-                periodData = this.getWeeklyData(expenses, 7);
-                break;
-            case 'month':
-                periodData = this.getDailyData(expenses, 30);
-                break;
-            case '3months':
-                periodData = this.getWeeklyData(expenses, 12);
-                break;
-            case 'year':
-                periodData = this.getMonthlyData(expenses, 12);
-                break;
-        }
-
-        if (periodData.length === 0) {
-            this.drawEmptyChart(ctx, canvas, 'No data available');
+        if (expenses.length === 0) {
+            this.drawEmptyChart(ctx, canvas, 'No expense data available');
             return;
         }
 
-        const maxAmount = Math.max(...periodData.map(d => d.amount), 100);
+        // Group expenses by category and calculate bubble data
+        const categoryData = {};
+        expenses.forEach(expense => {
+            const category = expense.category;
+            if (!categoryData[category]) {
+                categoryData[category] = {
+                    totalAmount: 0,
+                    count: 0,
+                    transactions: []
+                };
+            }
+            categoryData[category].totalAmount += parseFloat(expense.amount);
+            categoryData[category].count += 1;
+            categoryData[category].transactions.push(expense);
+        });
+
+        const bubbleData = Object.keys(categoryData).map(category => {
+            const data = categoryData[category];
+            return {
+                category,
+                x: data.count, // Number of transactions (frequency)
+                y: data.totalAmount, // Total amount spent
+                size: data.totalAmount / 50, // Bubble size based on amount
+                color: this.getCategoryColor(category)
+            };
+        });
+
+        const maxX = Math.max(...bubbleData.map(d => d.x), 1);
+        const maxY = Math.max(...bubbleData.map(d => d.y), 100);
 
         // Draw axes
         this.drawAxes(ctx, padding, chartWidth, chartHeight);
 
         // Draw grid lines
-        this.drawGridLines(ctx, padding, chartWidth, chartHeight, 5);
+        this.drawGridLines(ctx, padding, chartWidth, chartHeight, 4);
 
-        // Draw area chart
-        const gradient = this.createGradient(ctx, this.colors.primary + '40', this.colors.primary + '10');
+        // Draw bubbles
+        bubbleData.forEach(bubble => {
+            const x = padding + (bubble.x / maxX) * chartWidth;
+            const y = padding + chartHeight - (bubble.y / maxY) * chartHeight;
+            const radius = Math.max(Math.min(bubble.size, 40), 8);
 
-        ctx.beginPath();
-        periodData.forEach((data, index) => {
-            const x = padding + (index / (periodData.length - 1)) * chartWidth;
-            const y = padding + chartHeight - (data.amount / maxAmount * chartHeight);
+            // Draw bubble
+            ctx.fillStyle = bubble.color + '80';
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fill();
 
-            if (index === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
+            // Draw bubble border
+            ctx.strokeStyle = bubble.color;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw category label
+            ctx.fillStyle = '#374151';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(bubble.category, x, y + radius + 15);
+
+            // Draw amount label inside bubble if large enough
+            if (radius > 15) {
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 9px Arial';
+                ctx.fillText(Utils.formatCurrency(bubble.y), x, y - 3);
+                ctx.font = '8px Arial';
+                ctx.fillText(`${bubble.x} txns`, x, y + 8);
             }
         });
 
-        // Complete the area
-        const lastX = padding + chartWidth;
-        ctx.lineTo(lastX, padding + chartHeight);
-        ctx.lineTo(padding, padding + chartHeight);
-        ctx.closePath();
-        ctx.fillStyle = gradient;
-        ctx.fill();
+        // Draw axis labels
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Number of Transactions', canvas.width / 2, canvas.height - 10);
 
-        // Draw line
-        ctx.strokeStyle = this.colors.primary;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        periodData.forEach((data, index) => {
-            const x = padding + (index / (periodData.length - 1)) * chartWidth;
-            const y = padding + chartHeight - (data.amount / maxAmount * chartHeight);
+        ctx.save();
+        ctx.translate(15, canvas.height / 2);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText('Total Amount Spent', 0, 0);
+        ctx.restore();
 
-            if (index === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        });
-        ctx.stroke();
+        // Draw Y-axis labels
+        ctx.textAlign = 'right';
+        ctx.font = '10px Arial';
+        for (let i = 0; i <= 4; i++) {
+            const y = padding + (i * chartHeight / 4);
+            const value = maxY - (i * maxY / 4);
+            ctx.fillText(Utils.formatCurrency(value), padding - 10, y + 5);
+        }
 
-        // Draw labels
-        this.drawPeriodLabels(ctx, periodData, padding, chartWidth, chartHeight, period);
+        // Draw X-axis labels
+        ctx.textAlign = 'center';
+        for (let i = 0; i <= 4; i++) {
+            const x = padding + (i * chartWidth / 4);
+            const value = Math.round(i * maxX / 4);
+            ctx.fillText(value.toString(), x, padding + chartHeight + 20);
+        }
     }
 
     // Category Analysis Charts (Pie, Bar, Doughnut)
