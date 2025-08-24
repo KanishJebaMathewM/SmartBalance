@@ -764,6 +764,9 @@ class WorkLifeBalanceApp {
             case 'insights':
                 this.loadInsightsTab();
                 break;
+            case 'reports':
+                this.loadReportsTab();
+                break;
         }
     }
 
@@ -4268,7 +4271,7 @@ class WorkLifeBalanceApp {
             breakfast: {
                 name: document.getElementById('breakfastMeal').textContent,
                 calories: parseInt(document.getElementById('breakfastCalories').textContent),
-                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('���', ''))
+                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('�����', ''))
             },
             lunch: {
                 name: document.getElementById('lunchMeal').textContent,
