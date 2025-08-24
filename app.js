@@ -304,28 +304,6 @@ class WorkLifeBalanceApp {
         }
     }
 
-    fixExpenseCheckbox() {
-        const expenseCheckbox = document.getElementById('taskExpense');
-        const expenseDetails = document.getElementById('expenseTaskDetails');
-        const amountField = document.getElementById('taskAmount');
-
-        if (expenseCheckbox && expenseDetails) {
-            // Add a fresh event listener that definitely works
-            expenseCheckbox.addEventListener('change', () => {
-                if (expenseCheckbox.checked) {
-                    expenseDetails.style.display = 'block';
-                    if (amountField) amountField.required = true;
-                    this.updateExpenseCategory();
-                } else {
-                    expenseDetails.style.display = 'none';
-                    if (amountField) {
-                        amountField.required = false;
-                        amountField.value = '';
-                    }
-                }
-            });
-        }
-    }
 
     initializeButtonHandlers() {
         // Exercise buttons
