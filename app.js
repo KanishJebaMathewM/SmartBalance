@@ -2507,7 +2507,7 @@ class WorkLifeBalanceApp {
             entertainment: '🎬',
             healthcare: '����',
             education: '📚',
-            other: '����'
+            other: '������'
         };
         return icons[category] || '📦';
     }
@@ -2766,7 +2766,7 @@ class WorkLifeBalanceApp {
             'subscriptions': '����',
             'groceries': '🛒',
             'clothing': '👕',
-            'other': '��'
+            'other': '���'
         };
         return categoryIcons[category] || '����';
     }
@@ -3300,7 +3300,7 @@ class WorkLifeBalanceApp {
         const insight = correlation > 0.3 ?
             '�� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
-            '����� Completing tasks reduces your stress levels!' :
+            '������ Completing tasks reduces your stress levels!' :
             '📊 Keep tracking to understand your productivity-stress patterns';
 
         this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
@@ -8082,7 +8082,7 @@ class WorkLifeBalanceApp {
             { name: 'Fitness', score: scores.fitness, icon: '���' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
             { name: 'Productivity', score: scores.productivity, icon: '����' },
-            { name: 'Financial', score: scores.financial, icon: '���' },
+            { name: 'Financial', score: scores.financial, icon: '💰' },
             { name: 'Wellness', score: scores.wellness, icon: '��' }
         ];
 
@@ -8859,7 +8859,7 @@ class WorkLifeBalanceApp {
         // Task recommendations
         const taskCompletion = data.tasks.length > 0 ? (data.tasks.filter(t => t.completed).length / data.tasks.length) * 100 : 0;
         if (taskCompletion < 70) {
-            recommendations.push('���� Focus on completing more tasks for better productivity');
+            recommendations.push('������ Focus on completing more tasks for better productivity');
         }
 
         // Fitness recommendations
@@ -9863,7 +9863,7 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '✈️ Travel & Transport',
+            'travel': '��️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '📚 Education',
@@ -10418,7 +10418,8 @@ class WorkLifeBalanceApp {
 
         // Add expense data
         expenses.forEach(expense => {
-            const dateKey = new Date(expense.createdAt).toISOString().split('T')[0];
+            // Use actual expense date, fallback to creation date for backward compatibility
+            const dateKey = new Date(expense.date || expense.createdAt).toISOString().split('T')[0];
             if (dailyMap[dateKey]) {
                 dailyMap[dateKey].amount += parseFloat(expense.amount);
                 dailyMap[dateKey].transactions += 1;
@@ -10432,7 +10433,8 @@ class WorkLifeBalanceApp {
         const weeklyMap = {};
 
         expenses.forEach(expense => {
-            const expenseDate = new Date(expense.createdAt);
+            // Use actual expense date, fallback to creation date for backward compatibility
+            const expenseDate = new Date(expense.date || expense.createdAt);
             const weekStart = new Date(expenseDate);
             weekStart.setDate(expenseDate.getDate() - expenseDate.getDay()); // Start of week (Sunday)
 
@@ -10466,7 +10468,8 @@ class WorkLifeBalanceApp {
 
         const now = new Date();
         const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const monthlyExpenses = allExpenses.filter(exp => new Date(exp.createdAt) >= thisMonth);
+        // Use actual expense date, fallback to creation date for backward compatibility
+        const monthlyExpenses = allExpenses.filter(exp => new Date(exp.date || exp.createdAt) >= thisMonth);
 
         const categorySpending = {};
         monthlyExpenses.forEach(expense => {
