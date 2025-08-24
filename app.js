@@ -2001,7 +2001,7 @@ class WorkLifeBalanceApp {
             date: new Date().toISOString()
         });
         
-        Utils.showNotification(`${exercise.title} completed! ����`, 'success');
+        Utils.showNotification(`${exercise.title} completed! �����`, 'success');
         this.closeModal('exerciseModal');
         
         if (this.currentSection === 'fitness') {
@@ -4271,7 +4271,7 @@ class WorkLifeBalanceApp {
             breakfast: {
                 name: document.getElementById('breakfastMeal').textContent,
                 calories: parseInt(document.getElementById('breakfastCalories').textContent),
-                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('�����', ''))
+                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('���', ''))
             },
             lunch: {
                 name: document.getElementById('lunchMeal').textContent,
@@ -9303,6 +9303,525 @@ class WorkLifeBalanceApp {
             nextBtn.disabled = this.currentHelpPage === this.totalHelpPages;
             nextBtn.style.opacity = this.currentHelpPage === this.totalHelpPages ? '0.5' : '1';
         }
+    }
+
+    // Reports Tab Methods
+    loadReportsTab() {
+        this.generateOverallExpenseReport();
+    }
+
+    generateOverallExpenseReport() {
+        const expenses = window.storage.getExpenses();
+        const reportData = this.calculateReportData(expenses);
+
+        // Update report generation time
+        const reportGeneratedTime = document.getElementById('reportGeneratedTime');
+        if (reportGeneratedTime) {
+            reportGeneratedTime.textContent = new Date().toLocaleString();
+        }
+
+        // Update total records
+        const reportTotalRecords = document.getElementById('reportTotalRecords');
+        if (reportTotalRecords) {
+            reportTotalRecords.textContent = expenses.length.toLocaleString();
+        }
+
+        // Generate all report sections
+        this.populateSummaryStats(reportData);
+        this.populateCategoryBreakdown(reportData.categoryData);
+        this.populatePaymentMethodAnalysis(reportData.paymentMethodData);
+        this.populateMonthlyTrends(reportData.monthlyData);
+        this.populateTopExpenses(reportData.topExpenses);
+        this.populateRecentTransactions(reportData.recentTransactions);
+        this.populateBudgetPerformance(reportData.budgetData);
+    }
+
+    calculateReportData(expenses) {
+        const now = new Date();
+        const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+
+        // Basic statistics
+        const totalExpenses = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+        const totalTransactions = expenses.length;
+        const largestExpense = expenses.length > 0 ? Math.max(...expenses.map(exp => parseFloat(exp.amount))) : 0;
+
+        // Calculate daily average (only count days with expenses)
+        const uniqueDates = [...new Set(expenses.map(exp => new Date(exp.createdAt).toDateString()))];
+        const avgDaily = uniqueDates.length > 0 ? totalExpenses / uniqueDates.length : 0;
+
+        // This month and last month expenses
+        const thisMonthExpenses = expenses.filter(exp => new Date(exp.createdAt) >= thisMonth)
+            .reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+        const lastMonthExpenses = expenses.filter(exp => {
+            const expDate = new Date(exp.createdAt);
+            return expDate >= lastMonth && expDate <= lastMonthEnd;
+        }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        // Category data
+        const categoryData = this.calculateCategoryData(expenses, totalExpenses);
+
+        // Payment method data
+        const paymentMethodData = this.calculatePaymentMethodData(expenses, totalExpenses);
+
+        // Monthly trends
+        const monthlyData = this.calculateMonthlyData(expenses);
+
+        // Top expenses (largest 10)
+        const topExpenses = expenses
+            .sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount))
+            .slice(0, 10);
+
+        // Recent transactions (last 20)
+        const recentTransactions = expenses
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 20);
+
+        // Budget data (if budgets are set)
+        const budgetData = this.calculateBudgetData(expenses);
+
+        return {
+            totalExpenses,
+            totalTransactions,
+            largestExpense,
+            avgDaily,
+            thisMonthExpenses,
+            lastMonthExpenses,
+            categoryData,
+            paymentMethodData,
+            monthlyData,
+            topExpenses,
+            recentTransactions,
+            budgetData
+        };
+    }
+
+    calculateCategoryData(expenses, totalExpenses) {
+        const categoryMap = {};
+
+        expenses.forEach(expense => {
+            const category = expense.category || 'other';
+            if (!categoryMap[category]) {
+                categoryMap[category] = {
+                    amount: 0,
+                    transactions: 0,
+                    name: this.getCategoryDisplayName(category)
+                };
+            }
+            categoryMap[category].amount += parseFloat(expense.amount);
+            categoryMap[category].transactions += 1;
+        });
+
+        return Object.entries(categoryMap)
+            .map(([key, data]) => ({
+                category: key,
+                name: data.name,
+                amount: data.amount,
+                transactions: data.transactions,
+                percentage: totalExpenses > 0 ? (data.amount / totalExpenses * 100) : 0,
+                avgPerTransaction: data.transactions > 0 ? data.amount / data.transactions : 0
+            }))
+            .sort((a, b) => b.amount - a.amount);
+    }
+
+    calculatePaymentMethodData(expenses, totalExpenses) {
+        const paymentMap = {};
+
+        expenses.forEach(expense => {
+            const method = expense.paymentMethod || 'cash';
+            if (!paymentMap[method]) {
+                paymentMap[method] = {
+                    amount: 0,
+                    transactions: 0,
+                    name: this.getPaymentMethodDisplayName(method)
+                };
+            }
+            paymentMap[method].amount += parseFloat(expense.amount);
+            paymentMap[method].transactions += 1;
+        });
+
+        return Object.entries(paymentMap)
+            .map(([key, data]) => ({
+                method: key,
+                name: data.name,
+                amount: data.amount,
+                transactions: data.transactions,
+                percentage: totalExpenses > 0 ? (data.amount / totalExpenses * 100) : 0,
+                avgPerTransaction: data.transactions > 0 ? data.amount / data.transactions : 0
+            }))
+            .sort((a, b) => b.amount - a.amount);
+    }
+
+    calculateMonthlyData(expenses) {
+        const monthlyMap = {};
+
+        expenses.forEach(expense => {
+            const date = new Date(expense.createdAt);
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            const monthName = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+
+            if (!monthlyMap[monthKey]) {
+                monthlyMap[monthKey] = {
+                    amount: 0,
+                    transactions: 0,
+                    name: monthName,
+                    year: date.getFullYear(),
+                    month: date.getMonth()
+                };
+            }
+            monthlyMap[monthKey].amount += parseFloat(expense.amount);
+            monthlyMap[monthKey].transactions += 1;
+        });
+
+        const monthlyArray = Object.entries(monthlyMap)
+            .map(([key, data]) => {
+                const daysInMonth = new Date(data.year, data.month + 1, 0).getDate();
+                return {
+                    monthKey: key,
+                    name: data.name,
+                    amount: data.amount,
+                    transactions: data.transactions,
+                    dailyAverage: data.amount / daysInMonth
+                };
+            })
+            .sort((a, b) => b.monthKey.localeCompare(a.monthKey));
+
+        // Calculate change from previous month
+        for (let i = 0; i < monthlyArray.length; i++) {
+            if (i < monthlyArray.length - 1) {
+                const current = monthlyArray[i].amount;
+                const previous = monthlyArray[i + 1].amount;
+                monthlyArray[i].changeFromPrevious = previous > 0 ? ((current - previous) / previous * 100) : 0;
+            } else {
+                monthlyArray[i].changeFromPrevious = 0;
+            }
+        }
+
+        return monthlyArray;
+    }
+
+    calculateBudgetData(expenses) {
+        const settings = window.storage.getSettings();
+        const budgets = settings.categoryBudgets || {};
+
+        if (Object.keys(budgets).length === 0) {
+            return null;
+        }
+
+        const now = new Date();
+        const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const monthlyExpenses = expenses.filter(exp => new Date(exp.createdAt) >= thisMonth);
+
+        const categorySpending = {};
+        monthlyExpenses.forEach(expense => {
+            const category = expense.category || 'other';
+            categorySpending[category] = (categorySpending[category] || 0) + parseFloat(expense.amount);
+        });
+
+        return Object.entries(budgets).map(([category, budgetAmount]) => {
+            const spent = categorySpending[category] || 0;
+            const remaining = budgetAmount - spent;
+            const progress = budgetAmount > 0 ? (spent / budgetAmount * 100) : 0;
+            let status = 'good';
+
+            if (progress >= 100) status = 'over';
+            else if (progress >= 80) status = 'warning';
+
+            return {
+                category,
+                name: this.getCategoryDisplayName(category),
+                budget: budgetAmount,
+                spent,
+                remaining,
+                progress,
+                status
+            };
+        });
+    }
+
+    populateSummaryStats(reportData) {
+        const elements = {
+            'reportTotalExpenses': Utils.formatCurrency(reportData.totalExpenses),
+            'reportAvgDaily': Utils.formatCurrency(reportData.avgDaily),
+            'reportTotalTransactions': reportData.totalTransactions.toLocaleString(),
+            'reportLargestExpense': Utils.formatCurrency(reportData.largestExpense),
+            'reportThisMonth': Utils.formatCurrency(reportData.thisMonthExpenses),
+            'reportLastMonth': Utils.formatCurrency(reportData.lastMonthExpenses)
+        };
+
+        Object.entries(elements).forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        });
+    }
+
+    populateCategoryBreakdown(categoryData) {
+        const tbody = document.getElementById('categoryBreakdownBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = categoryData.map(item => `
+            <tr>
+                <td>
+                    <span style="display: inline-flex; align-items: center; gap: 8px;">
+                        ${this.getCategoryIcon(item.category)}
+                        ${item.name}
+                    </span>
+                </td>
+                <td>${Utils.formatCurrency(item.amount)}</td>
+                <td>${item.transactions}</td>
+                <td>${item.percentage.toFixed(1)}%</td>
+                <td>${Utils.formatCurrency(item.avgPerTransaction)}</td>
+            </tr>
+        `).join('');
+    }
+
+    populatePaymentMethodAnalysis(paymentMethodData) {
+        const tbody = document.getElementById('paymentMethodBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = paymentMethodData.map(item => `
+            <tr>
+                <td>${item.name}</td>
+                <td>${Utils.formatCurrency(item.amount)}</td>
+                <td>${item.transactions}</td>
+                <td>${item.percentage.toFixed(1)}%</td>
+                <td>${Utils.formatCurrency(item.avgPerTransaction)}</td>
+            </tr>
+        `).join('');
+    }
+
+    populateMonthlyTrends(monthlyData) {
+        const tbody = document.getElementById('monthlyTrendsBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = monthlyData.map(item => {
+            const changeClass = item.changeFromPrevious > 0 ? 'positive' : item.changeFromPrevious < 0 ? 'negative' : 'neutral';
+            const changeSymbol = item.changeFromPrevious > 0 ? '+' : '';
+
+            return `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${Utils.formatCurrency(item.amount)}</td>
+                    <td>${item.transactions}</td>
+                    <td>${Utils.formatCurrency(item.dailyAverage)}</td>
+                    <td class="${changeClass}">
+                        ${changeSymbol}${item.changeFromPrevious.toFixed(1)}%
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    populateTopExpenses(topExpenses) {
+        const tbody = document.getElementById('topExpensesBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = topExpenses.map(expense => `
+            <tr>
+                <td>${Utils.formatDate(expense.createdAt)}</td>
+                <td>${Utils.sanitizeInput(expense.notes || 'No description')}</td>
+                <td>
+                    <span style="display: inline-flex; align-items: center; gap: 8px;">
+                        ${this.getCategoryIcon(expense.category)}
+                        ${this.getCategoryDisplayName(expense.category)}
+                    </span>
+                </td>
+                <td>${this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash')}</td>
+                <td>${Utils.formatCurrency(expense.amount)}</td>
+            </tr>
+        `).join('');
+    }
+
+    populateRecentTransactions(recentTransactions) {
+        const tbody = document.getElementById('recentTransactionsBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = recentTransactions.map(expense => `
+            <tr>
+                <td>${Utils.formatDate(expense.createdAt)}</td>
+                <td>${Utils.sanitizeInput(expense.notes || 'No description')}</td>
+                <td>
+                    <span style="display: inline-flex; align-items: center; gap: 8px;">
+                        ${this.getCategoryIcon(expense.category)}
+                        ${this.getCategoryDisplayName(expense.category)}
+                    </span>
+                </td>
+                <td>${this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash')}</td>
+                <td>${Utils.formatCurrency(expense.amount)}</td>
+            </tr>
+        `).join('');
+    }
+
+    populateBudgetPerformance(budgetData) {
+        const budgetSection = document.getElementById('budgetSection');
+        const tbody = document.getElementById('budgetPerformanceBody');
+
+        if (!budgetData || budgetData.length === 0) {
+            if (budgetSection) budgetSection.style.display = 'none';
+            return;
+        }
+
+        if (budgetSection) budgetSection.style.display = 'block';
+        if (!tbody) return;
+
+        tbody.innerHTML = budgetData.map(item => {
+            const progressWidth = Math.min(item.progress, 100);
+            const statusClass = item.status;
+            const statusText = item.status === 'over' ? 'Over Budget' :
+                             item.status === 'warning' ? 'Warning' : 'On Track';
+
+            return `
+                <tr>
+                    <td>
+                        <span style="display: inline-flex; align-items: center; gap: 8px;">
+                            ${this.getCategoryIcon(item.category)}
+                            ${item.name}
+                        </span>
+                    </td>
+                    <td>${Utils.formatCurrency(item.budget)}</td>
+                    <td>${Utils.formatCurrency(item.spent)}</td>
+                    <td class="${item.remaining < 0 ? 'negative' : 'positive'}">
+                        ${Utils.formatCurrency(Math.abs(item.remaining))}
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 60px; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
+                                <div style="width: ${progressWidth}%; height: 100%; background: ${statusClass === 'over' ? '#ef4444' : statusClass === 'warning' ? '#f59e0b' : '#10b981'}; transition: width 0.3s ease;"></div>
+                            </div>
+                            <span style="font-size: 0.8rem; color: #6b7280;">${item.progress.toFixed(0)}%</span>
+                        </div>
+                    </td>
+                    <td class="status-${statusClass}">${statusText}</td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // Utility methods for display names and icons
+    getCategoryDisplayName(category) {
+        const categoryNames = {
+            'food': '🍕 Food & Dining',
+            'bills': '📧 Bills & Utilities',
+            'shopping': '🛍️ Shopping',
+            'travel': '✈️ Travel & Transport',
+            'entertainment': '🎬 Entertainment',
+            'healthcare': '🏥 Healthcare',
+            'education': '📚 Education',
+            'fitness': '💪 Fitness & Sports',
+            'subscriptions': '📺 Subscriptions',
+            'groceries': '🛒 Groceries',
+            'clothing': '👕 Clothing',
+            'other': '📦 Other'
+        };
+        return categoryNames[category] || '📦 Other';
+    }
+
+    getCategoryIcon(category) {
+        const categoryIcons = {
+            'food': '🍕',
+            'bills': '📧',
+            'shopping': '🛍️',
+            'travel': '✈️',
+            'entertainment': '🎬',
+            'healthcare': '🏥',
+            'education': '📚',
+            'fitness': '💪',
+            'subscriptions': '📺',
+            'groceries': '🛒',
+            'clothing': '👕',
+            'other': '📦'
+        };
+        return categoryIcons[category] || '📦';
+    }
+
+    getPaymentMethodDisplayName(method) {
+        const paymentMethods = {
+            'cash': '💵 Cash',
+            'card': '💳 Card',
+            'upi': '📱 UPI',
+            'bank': '🏦 Bank Transfer',
+            'wallet': '📱 Digital Wallet'
+        };
+        return paymentMethods[method] || '💵 Cash';
+    }
+
+    // Export functionality
+    exportReport(format) {
+        const expenses = window.storage.getExpenses();
+        const reportData = this.calculateReportData(expenses);
+
+        if (format === 'json') {
+            this.exportReportAsJSON(reportData, expenses);
+        } else if (format === 'csv') {
+            this.exportReportAsCSV(expenses);
+        }
+    }
+
+    exportReportAsJSON(reportData, expenses) {
+        const exportData = {
+            generatedAt: new Date().toISOString(),
+            summary: {
+                totalExpenses: reportData.totalExpenses,
+                totalTransactions: reportData.totalTransactions,
+                largestExpense: reportData.largestExpense,
+                avgDaily: reportData.avgDaily,
+                thisMonthExpenses: reportData.thisMonthExpenses,
+                lastMonthExpenses: reportData.lastMonthExpenses
+            },
+            categoryBreakdown: reportData.categoryData,
+            paymentMethodAnalysis: reportData.paymentMethodData,
+            monthlyTrends: reportData.monthlyData,
+            topExpenses: reportData.topExpenses,
+            recentTransactions: reportData.recentTransactions,
+            budgetPerformance: reportData.budgetData,
+            allTransactions: expenses
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `expense-report-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        Utils.showNotification('Report exported as JSON', 'success');
+    }
+
+    exportReportAsCSV(expenses) {
+        const csvHeaders = ['Date', 'Description', 'Category', 'Payment Method', 'Amount'];
+        const csvRows = expenses.map(expense => [
+            new Date(expense.createdAt).toLocaleDateString(),
+            `"${(expense.notes || 'No description').replace(/"/g, '""')}"`,
+            this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim(),
+            this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash').replace(/[💵💳📱🏦]/g, '').trim(),
+            expense.amount
+        ]);
+
+        const csvContent = [csvHeaders, ...csvRows].map(row => row.join(',')).join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `expense-report-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        Utils.showNotification('Report exported as CSV', 'success');
+    }
+
+    refreshReport() {
+        Utils.showNotification('Refreshing report...', 'info');
+        this.generateOverallExpenseReport();
+        Utils.showNotification('Report refreshed successfully!', 'success');
     }
 }
 
