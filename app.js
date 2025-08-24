@@ -1704,7 +1704,24 @@ class WorkLifeBalanceApp {
 
     addExpenseForDate(dateStr) {
         const date = new Date(dateStr);
+
+        // Reset form first
+        this.resetExpenseForm();
+
+        // Set the date from calendar selection
         document.getElementById('expenseDate').value = date.toISOString().split('T')[0];
+
+        // Update modal title to show selected date
+        const modalTitle = document.getElementById('expenseModalTitle');
+        if (modalTitle) {
+            modalTitle.textContent = `Add Expense for ${date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            })}`;
+        }
+
         this.openModal('expenseModal');
     }
 
@@ -2761,18 +2778,23 @@ class WorkLifeBalanceApp {
             delete form.dataset.editId;
 
             // Reset dynamic elements
-        const sharedOptions = document.getElementById('sharedOptions');
-
-        if (sharedOptions) sharedOptions.style.display = 'none';
+            const sharedOptions = document.getElementById('sharedOptions');
+            if (sharedOptions) sharedOptions.style.display = 'none';
 
             this.hideCategorySuggestion();
             this.hideForecast();
 
-            // Set default date to today
-            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+            // Set default date to today only if no date is already set
+            const dateField = document.getElementById('expenseDate');
+            if (dateField && !dateField.value) {
+                dateField.value = new Date().toISOString().split('T')[0];
+            }
 
             // Reset modal title
-            document.getElementById('expenseModalTitle').textContent = 'Add New Expense';
+            const modalTitle = document.getElementById('expenseModalTitle');
+            if (modalTitle) {
+                modalTitle.textContent = 'Add New Expense';
+            }
         }
     }
 
@@ -8060,7 +8082,7 @@ class WorkLifeBalanceApp {
             { name: 'Fitness', score: scores.fitness, icon: '���' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
             { name: 'Productivity', score: scores.productivity, icon: '����' },
-            { name: 'Financial', score: scores.financial, icon: '💰' },
+            { name: 'Financial', score: scores.financial, icon: '���' },
             { name: 'Wellness', score: scores.wellness, icon: '��' }
         ];
 
@@ -10323,7 +10345,8 @@ class WorkLifeBalanceApp {
         const month = this.currentAnalysisDate.getMonth();
 
         return allExpenses.filter(expense => {
-            const expenseDate = new Date(expense.createdAt);
+            // Use actual expense date, fallback to creation date for backward compatibility
+            const expenseDate = new Date(expense.date || expense.createdAt);
             return expenseDate.getFullYear() === year && expenseDate.getMonth() === month;
         });
     }
