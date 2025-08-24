@@ -1271,7 +1271,7 @@ class WorkLifeBalanceApp {
                     <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
                     <div class="expense-actions">
                         <button onclick="app.editExpense(${expense.id})" title="Edit">✏️</button>
-                        <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
+                        <button onclick="app.deleteExpense(${expense.id})" title="Delete">���️</button>
                     </div>
                 </div>
             `).join('')}
@@ -2684,12 +2684,14 @@ class WorkLifeBalanceApp {
             // Handle calendar navigation for expenses
             if (e.target.id === 'prevMonthBtn' && this.currentSection === 'expenses' && this.currentExpenseTab === 'calendar') {
                 e.preventDefault();
+                console.log('📅 Navigating to previous month');
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
                 this.updateCalendarHeader();
                 this.renderExpenseCalendar();
             }
             if (e.target.id === 'nextMonthBtn' && this.currentSection === 'expenses' && this.currentExpenseTab === 'calendar') {
                 e.preventDefault();
+                console.log('📅 Navigating to next month');
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
                 this.updateCalendarHeader();
                 this.renderExpenseCalendar();
@@ -9088,7 +9090,7 @@ class WorkLifeBalanceApp {
         if (moods.length === 0) {
             return `
                 <div class="summary-card">
-                    <h3>��� Mood</h3>
+                    <h3>😌 Mood</h3>
                     <div class="big-stat">-</div>
                     <p>No mood data</p>
                 </div>
