@@ -110,6 +110,8 @@ class WorkLifeBalanceApp {
             window.app.openModal = this.openModal.bind(this);
             window.app.editExpense = this.editExpense.bind(this);
             window.app.deleteExpense = this.deleteExpense.bind(this);
+            window.app.applyCategorySuggestion = this.applyCategorySuggestion.bind(this);
+            window.app.applyAmountSuggestion = this.applyAmountSuggestion.bind(this);
         }
 
         console.log('✅ Global app access ensured for calendar functionality');
