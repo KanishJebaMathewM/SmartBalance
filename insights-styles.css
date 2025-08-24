@@ -1345,15 +1345,24 @@
         min-width: auto;
     }
 
-    .report-options {
+    .report-stats-grid {
         grid-template-columns: 1fr;
     }
 
-    .export-format-grid {
-        grid-template-columns: 1fr;
+    .export-buttons {
+        flex-direction: column;
+        gap: 8px;
     }
 
-    .schedule-options {
+    .report-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+
+    .trend-analysis-content,
+    .weekly-report-content,
+    .daily-report-content {
         grid-template-columns: 1fr;
     }
 
