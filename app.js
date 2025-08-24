@@ -995,8 +995,12 @@ class WorkLifeBalanceApp {
 
     // Calendar Tab Methods
     loadCalendarTab() {
+        console.log('Loading calendar tab');
         this.updateCalendarHeader();
         this.renderExpenseCalendar();
+
+        // Ensure calendar navigation handlers are set up
+        this.initializeCalendarNavigation();
     }
 
     updateCalendarHeader() {
@@ -1105,6 +1109,7 @@ class WorkLifeBalanceApp {
     }
 
     selectCalendarDate(year, month, day) {
+        console.log('Calendar date clicked:', year, month, day);
         this.selectedCalendarDate = new Date(year, month, day);
         this.renderExpenseCalendar();
         this.showSelectedDateExpenses();
@@ -1861,13 +1866,20 @@ class WorkLifeBalanceApp {
     }
 
     addExpenseForDate(dateStr) {
+        console.log('Add expense for date called:', dateStr);
         const date = new Date(dateStr);
 
         // Reset form first
         this.resetExpenseForm();
 
         // Set the date from calendar selection
-        document.getElementById('expenseDate').value = date.toISOString().split('T')[0];
+        const dateField = document.getElementById('expenseDate');
+        if (dateField) {
+            dateField.value = date.toISOString().split('T')[0];
+            console.log('Date field set to:', dateField.value);
+        } else {
+            console.error('expenseDate field not found!');
+        }
 
         // Update modal title to show selected date
         const modalTitle = document.getElementById('expenseModalTitle');
@@ -2573,6 +2585,29 @@ class WorkLifeBalanceApp {
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
                 this.loadCalendarTab();
             });
+        }
+    }
+
+    // Additional method to ensure calendar navigation is set up when tab loads
+    initializeCalendarNavigation() {
+        // Re-initialize navigation if needed
+        const prevMonthBtn = document.getElementById('prevMonthBtn');
+        const nextMonthBtn = document.getElementById('nextMonthBtn');
+
+        if (prevMonthBtn && !prevMonthBtn.hasEventListener) {
+            prevMonthBtn.addEventListener('click', () => {
+                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
+                this.loadCalendarTab();
+            });
+            prevMonthBtn.hasEventListener = true;
+        }
+
+        if (nextMonthBtn && !nextMonthBtn.hasEventListener) {
+            nextMonthBtn.addEventListener('click', () => {
+                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
+                this.loadCalendarTab();
+            });
+            nextMonthBtn.hasEventListener = true;
         }
     }
 
