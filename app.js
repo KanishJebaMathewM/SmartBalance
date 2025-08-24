@@ -1132,6 +1132,8 @@ class WorkLifeBalanceApp {
 
         calendarHTML += '</div>';
         calendarEl.innerHTML = calendarHTML;
+
+        console.log('Calendar HTML rendered successfully');
     }
 
     selectCalendarDate(year, month, day) {
@@ -1649,7 +1651,7 @@ class WorkLifeBalanceApp {
         } else if (percentage > 25) {
             return {
                 type: 'info',
-                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️���🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         }
         return null;
