@@ -2683,11 +2683,9 @@ class WorkLifeBalanceApp {
             delete form.dataset.editId;
 
             // Reset dynamic elements
-            const recurringOptions = document.getElementById('recurringOptions');
-            const sharedOptions = document.getElementById('sharedOptions');
+        const sharedOptions = document.getElementById('sharedOptions');
 
-            if (recurringOptions) recurringOptions.style.display = 'none';
-            if (sharedOptions) sharedOptions.style.display = 'none';
+        if (sharedOptions) sharedOptions.style.display = 'none';
 
             this.hideCategorySuggestion();
             this.hideForecast();
@@ -3148,7 +3146,7 @@ class WorkLifeBalanceApp {
             '💪 Working out significantly improves your mood!' :
             correlation < -0.3 ?
             '😰 High workout intensity might be causing stress' :
-            '�� Moderate correlation - keep tracking for better insights';
+            '���� Moderate correlation - keep tracking for better insights';
 
         this.updateCorrelationDisplay('fitnessStressCorrelation', percentage, insight);
     }
