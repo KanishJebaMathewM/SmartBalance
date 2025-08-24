@@ -2569,17 +2569,6 @@ class WorkLifeBalanceApp {
 
     // Enhanced expense form functionality
     initializeExpenseFormEnhancements() {
-        // Recurring expense toggle
-        const recurringCheckbox = document.getElementById('expenseRecurring');
-        const recurringOptions = document.getElementById('recurringOptions');
-
-        if (recurringCheckbox && recurringOptions) {
-            recurringCheckbox.addEventListener('change', () => {
-                recurringOptions.style.display = recurringCheckbox.checked ? 'block' : 'none';
-            });
-        }
-
-
         // Auto-calculate share amount
         const expenseAmount = document.getElementById('expenseAmount');
         if (expenseAmount) {
@@ -8254,7 +8243,7 @@ class WorkLifeBalanceApp {
         const priorityActions = [
             {
                 category: 'fitness',
-                categoryIcon: '������',
+                categoryIcon: '�������',
                 title: 'Exercise Regularly',
                 description: 'Do at least 20 minutes of physical activity',
                 frequency: '3-4 times this week',
