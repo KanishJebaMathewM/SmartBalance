@@ -1153,12 +1153,23 @@ class WorkLifeBalanceApp {
     }
 
     showSelectedDateExpenses() {
-        if (!this.selectedCalendarDate) return;
+        if (!this.selectedCalendarDate) {
+            console.log('No calendar date selected');
+            return;
+        }
 
         const selectedDateTitle = document.getElementById('selectedDateTitle');
         const dateExpenseList = document.getElementById('dateExpenseList');
 
-        if (!selectedDateTitle || !dateExpenseList) return;
+        if (!selectedDateTitle || !dateExpenseList) {
+            console.error('Required DOM elements not found:', {
+                selectedDateTitle: !!selectedDateTitle,
+                dateExpenseList: !!dateExpenseList
+            });
+            return;
+        }
+
+        console.log('Showing expenses for selected date:', this.selectedCalendarDate);
 
         const dateStr = this.selectedCalendarDate.toLocaleDateString('en-US', {
             weekday: 'long',
@@ -4101,7 +4112,7 @@ class WorkLifeBalanceApp {
             'personal': '����',
             'health': '🏥',
             'food': '🍕',
-            'bills': '📧',
+            'bills': '���',
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
