@@ -781,6 +781,8 @@ class WorkLifeBalanceApp {
     }
 
     loadCurrentExpenseTab() {
+        console.log('Loading current expense tab:', this.currentExpenseTab);
+
         // Show current tab content
         document.querySelectorAll('.tab-content').forEach(tab => {
             tab.classList.remove('active');
@@ -789,6 +791,9 @@ class WorkLifeBalanceApp {
         const currentTab = document.getElementById(`${this.currentExpenseTab}-tab`);
         if (currentTab) {
             currentTab.classList.add('active');
+            console.log('Activated tab content:', currentTab.id);
+        } else {
+            console.error('Tab content not found:', `${this.currentExpenseTab}-tab`);
         }
 
         // Update tab buttons
@@ -799,6 +804,9 @@ class WorkLifeBalanceApp {
         const activeBtn = document.querySelector(`[data-tab="${this.currentExpenseTab}"]`);
         if (activeBtn) {
             activeBtn.classList.add('active');
+            console.log('Activated tab button:', activeBtn.textContent);
+        } else {
+            console.error('Tab button not found for:', this.currentExpenseTab);
         }
     }
 
@@ -8596,7 +8604,7 @@ class WorkLifeBalanceApp {
         const priorityActions = [
             {
                 category: 'fitness',
-                categoryIcon: '��������',
+                categoryIcon: '�������',
                 title: 'Exercise Regularly',
                 description: 'Do at least 20 minutes of physical activity',
                 frequency: '3-4 times this week',
@@ -8937,7 +8945,7 @@ class WorkLifeBalanceApp {
 
             <div class="report-details">
                 <div class="report-section">
-                    <h3>���� Trends & Analytics</h3>
+                    <h3>�� Trends & Analytics</h3>
                     <div class="chart-container">
                         <canvas id="reportTrendsChart" width="600" height="300"></canvas>
                     </div>
@@ -10211,7 +10219,7 @@ class WorkLifeBalanceApp {
             new Date(expense.createdAt).toLocaleDateString(),
             `"${(expense.notes || 'No description').replace(/"/g, '""')}"`,
             this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥📚💪������👕📦]/g, '').trim(),
-            this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash').replace(/[💵💳📱��]/g, '').trim(),
+            this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash').replace(/[💵💳📱🏦]/g, '').trim(),
             expense.amount
         ]);
 
