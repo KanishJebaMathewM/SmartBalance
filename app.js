@@ -1253,14 +1253,22 @@ class WorkLifeBalanceApp {
 
     // Insights Tab Methods
     loadInsightsTab() {
-        const expenses = window.storage.getExpenses();
+        const monthExpenses = this.getAnalysisMonthExpenses();
+        const allExpenses = window.storage.getExpenses();
 
+        // Update month display
+        this.updateAnalysisMonthDisplay();
+        this.updateAnalysisNavigationButtons();
+
+        // Keep financial health score based on all-time data
         this.loadFinancialHealthScore();
         this.loadIncomeVsExpensesChart();
-        this.loadCategoryInsights();
-        this.generateSpendingPredictions(expenses);
-        this.generateSpendingPatterns(expenses);
-        this.generateSmartRecommendations(expenses);
+
+        // Use month-specific data for category insights and patterns
+        this.loadCategoryInsights(monthExpenses);
+        this.generateSpendingPredictions(allExpenses); // Keep predictions based on all data
+        this.generateSpendingPatterns(monthExpenses);
+        this.generateSmartRecommendations(monthExpenses);
     }
 
     loadFinancialHealthScore() {
@@ -2088,7 +2096,7 @@ class WorkLifeBalanceApp {
                             runCycle();
                         } else {
                             this.stopBreathingExercise();
-                            Utils.showNotification('Breathing exercise completed! ����‍♀️', 'success');
+                            Utils.showNotification('Breathing exercise completed! 🧘‍♀️', 'success');
                         }
                     }, 4000);
                 }, 2000);
