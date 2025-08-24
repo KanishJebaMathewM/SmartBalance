@@ -2981,6 +2981,24 @@ class WorkLifeBalanceApp {
             amountField.addEventListener('focus', () => {
                 this.showAmountSuggestions();
             });
+
+            amountField.addEventListener('blur', () => {
+                // Hide suggestions after a short delay to allow clicking on suggestion buttons
+                setTimeout(() => {
+                    this.hideAmountSuggestions();
+                }, 200);
+            });
+        }
+
+        // Show amount suggestions when category changes
+        const categoryField = document.getElementById('expenseCategory');
+        if (categoryField) {
+            categoryField.addEventListener('change', () => {
+                // If amount field is focused, show suggestions
+                if (document.activeElement === amountField) {
+                    this.showAmountSuggestions();
+                }
+            });
         }
     }
 
@@ -10347,7 +10365,7 @@ class WorkLifeBalanceApp {
         const csvRows = expenses.map(expense => [
             new Date(expense.createdAt).toLocaleDateString(),
             `"${(expense.notes || 'No description').replace(/"/g, '""')}"`,
-            this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥📚💪������👕📦]/g, '').trim(),
+            this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥���💪������👕📦]/g, '').trim(),
             this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash').replace(/[💵💳📱🏦]/g, '').trim(),
             expense.amount
         ]);
