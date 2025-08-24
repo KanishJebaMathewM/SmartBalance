@@ -2975,6 +2975,13 @@ class WorkLifeBalanceApp {
         }
     }
 
+    hideForecast() {
+        const forecastEl = document.getElementById('expenseForecast');
+        if (forecastEl) {
+            forecastEl.style.display = 'none';
+        }
+    }
+
     applyCategorySuggestion(category) {
         document.getElementById('expenseCategory').value = category;
         this.hideCategorySuggestion();
@@ -10093,7 +10100,7 @@ class WorkLifeBalanceApp {
             'travel': '��️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
-            'education': '📚 Education',
+            'education': '���� Education',
             'fitness': '💪 Fitness & Sports',
             'subscriptions': '📺 Subscriptions',
             'groceries': '🛒 Groceries',
