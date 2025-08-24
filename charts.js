@@ -500,7 +500,8 @@ class Charts {
         const dailyData = last7Days.map(date => {
             const dateStr = date.toDateString();
             const dayExpenses = expenses.filter(expense =>
-                new Date(expense.createdAt).toDateString() === dateStr
+                // Use actual expense date, fallback to creation date for backward compatibility
+                new Date(expense.date || expense.createdAt).toDateString() === dateStr
             ).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
 
             return {
@@ -882,7 +883,8 @@ class Charts {
         const dayData = new Array(7).fill(0);
 
         expenses.forEach(expense => {
-            const day = new Date(expense.createdAt).getDay();
+            // Use actual expense date, fallback to creation date for backward compatibility
+            const day = new Date(expense.date || expense.createdAt).getDay();
             dayData[day] += parseFloat(expense.amount);
         });
 
