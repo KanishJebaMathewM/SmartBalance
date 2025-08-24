@@ -1056,6 +1056,12 @@ class WorkLifeBalanceApp {
         const allChecksPass = Object.values(checks).every(check => check) && dateCheck;
         console.log(allChecksPass ? '✅ Calendar validation passed' : '❌ Calendar validation failed');
 
+        // If validation passes and no date is selected, select today's date
+        if (allChecksPass && !this.selectedCalendarDate) {
+            const today = new Date();
+            this.selectCalendarDate(today.getFullYear(), today.getMonth(), today.getDate());
+        }
+
         return allChecksPass;
     }
 
@@ -9082,7 +9088,7 @@ class WorkLifeBalanceApp {
         if (moods.length === 0) {
             return `
                 <div class="summary-card">
-                    <h3>😌 Mood</h3>
+                    <h3>��� Mood</h3>
                     <div class="big-stat">-</div>
                     <p>No mood data</p>
                 </div>
