@@ -7234,7 +7234,7 @@ class WorkLifeBalanceApp {
         const nutritionProductivityCorrelation = this.analyzeNutritionProductivityCorrelation(data.meals, data.tasks);
         if (nutritionProductivityCorrelation.correlation > 0.3) {
             correlationInsights.push({
-                title: '🍲 Nutrition Impact',
+                title: '��� Nutrition Impact',
                 insight: `Home cooking correlates with ${Math.round(nutritionProductivityCorrelation.correlation * 100)}% higher task completion`,
                 strength: nutritionProductivityCorrelation.correlation
             });
@@ -7411,7 +7411,7 @@ class WorkLifeBalanceApp {
             (weeklyStats.homeMeals / weeklyStats.totalMeals) * 100 : 0;
 
         if (homeCookingRate >= 70) {
-            insights.push('���� Excellent home cooking habits! Keep it up.');
+            insights.push('🍳 Excellent home cooking habits! Keep it up.');
         } else if (homeCookingRate >= 50) {
             insights.push('���� Good balance of home cooking and dining out.');
         } else {
@@ -8673,7 +8673,7 @@ class WorkLifeBalanceApp {
         });
 
         const avgMood = moodScores.reduce((sum, score) => sum + score, 0) / moodScores.length;
-        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '����' : '😓';
+        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '����' : '����';
 
         return `
             <div class="summary-card">
@@ -10156,6 +10156,150 @@ class WorkLifeBalanceApp {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
+        });
+    }
+
+    getPreviousPeriodRange() {
+        const { startDate, endDate } = this.getCurrentPeriodRange();
+        const duration = endDate.getTime() - startDate.getTime();
+
+        const previousEndDate = new Date(startDate.getTime() - 1);
+        const previousStartDate = new Date(previousEndDate.getTime() - duration);
+
+        return {
+            previousStartDate,
+            previousEndDate
+        };
+    }
+
+    getPreviousPeriodName() {
+        switch (this.currentReportPeriod) {
+            case 'week':
+                return 'Previous Week';
+            case 'month':
+                return 'Previous Month';
+            case 'quarter':
+                return 'Previous Quarter';
+            case 'year':
+                return 'Previous Year';
+            default:
+                return 'Previous Period';
+        }
+    }
+
+    calculateTrendsData(expenses) {
+        // For period-based reports, we'll show daily/weekly breakdown within the period
+        if (this.currentReportPeriod === 'all') {
+            return this.calculateMonthlyData(expenses);
+        }
+
+        const { startDate, endDate } = this.getCurrentPeriodRange();
+        const periodDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+        if (periodDays <= 31) {
+            // Show daily breakdown for periods <= 31 days
+            return this.calculateDailyData(expenses, startDate, endDate);
+        } else if (periodDays <= 93) {
+            // Show weekly breakdown for periods <= 3 months
+            return this.calculateWeeklyData(expenses, startDate, endDate);
+        } else {
+            // Show monthly breakdown for longer periods
+            return this.calculateMonthlyData(expenses);
+        }
+    }
+
+    calculateDailyData(expenses, startDate, endDate) {
+        const dailyMap = {};
+        const currentDate = new Date(startDate);
+
+        // Initialize all days in range
+        while (currentDate <= endDate) {
+            const dateKey = currentDate.toISOString().split('T')[0];
+            dailyMap[dateKey] = {
+                amount: 0,
+                transactions: 0,
+                name: currentDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                date: new Date(currentDate)
+            };
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        // Add expense data
+        expenses.forEach(expense => {
+            const dateKey = new Date(expense.createdAt).toISOString().split('T')[0];
+            if (dailyMap[dateKey]) {
+                dailyMap[dateKey].amount += parseFloat(expense.amount);
+                dailyMap[dateKey].transactions += 1;
+            }
+        });
+
+        return Object.values(dailyMap).sort((a, b) => a.date - b.date);
+    }
+
+    calculateWeeklyData(expenses, startDate, endDate) {
+        const weeklyMap = {};
+
+        expenses.forEach(expense => {
+            const expenseDate = new Date(expense.createdAt);
+            const weekStart = new Date(expenseDate);
+            weekStart.setDate(expenseDate.getDate() - expenseDate.getDay()); // Start of week (Sunday)
+
+            const weekKey = weekStart.toISOString().split('T')[0];
+            const weekName = `Week of ${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
+            if (!weeklyMap[weekKey]) {
+                weeklyMap[weekKey] = {
+                    amount: 0,
+                    transactions: 0,
+                    name: weekName,
+                    date: new Date(weekStart)
+                };
+            }
+
+            weeklyMap[weekKey].amount += parseFloat(expense.amount);
+            weeklyMap[weekKey].transactions += 1;
+        });
+
+        return Object.values(weeklyMap).sort((a, b) => a.date - b.date);
+    }
+
+    calculateBudgetDataForPeriod(allExpenses) {
+        // Always use current month for budget calculations regardless of report period
+        const settings = window.storage.getSettings();
+        const budgets = settings.categoryBudgets || {};
+
+        if (Object.keys(budgets).length === 0) {
+            return null;
+        }
+
+        const now = new Date();
+        const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const monthlyExpenses = allExpenses.filter(exp => new Date(exp.createdAt) >= thisMonth);
+
+        const categorySpending = {};
+        monthlyExpenses.forEach(expense => {
+            const category = expense.category || 'other';
+            categorySpending[category] = (categorySpending[category] || 0) + parseFloat(expense.amount);
+        });
+
+        return Object.entries(budgets).map(([category, budgetAmount]) => {
+            const spent = categorySpending[category] || 0;
+            const remaining = budgetAmount - spent;
+            const progress = budgetAmount > 0 ? (spent / budgetAmount * 100) : 0;
+            let status = 'good';
+
+            if (progress >= 100) status = 'over';
+            else if (progress >= 80) status = 'warning';
+
+            return {
+                category,
+                name: this.getCategoryDisplayName(category),
+                budget: budgetAmount,
+                spent,
+                remaining,
+                progress,
+                status
+            };
         });
     }
 }
