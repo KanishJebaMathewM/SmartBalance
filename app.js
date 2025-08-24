@@ -144,6 +144,9 @@ class WorkLifeBalanceApp {
         // Calendar handlers
         this.initializeCalendarHandlers();
 
+        // Report navigation handlers
+        this.initializeReportNavigationHandlers();
+
         // Habit tab handlers
         this.initializeHabitTabHandlers();
     }
@@ -2355,6 +2358,44 @@ class WorkLifeBalanceApp {
             nextMonthBtn.addEventListener('click', () => {
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
                 this.loadCalendarTab();
+            });
+        }
+    }
+
+    initializeReportNavigationHandlers() {
+        const prevPeriodBtn = document.getElementById('prevPeriodBtn');
+        const nextPeriodBtn = document.getElementById('nextPeriodBtn');
+        const periodSelector = document.getElementById('periodSelector');
+        const customStartDate = document.getElementById('customStartDate');
+        const customEndDate = document.getElementById('customEndDate');
+
+        if (prevPeriodBtn) {
+            prevPeriodBtn.addEventListener('click', () => {
+                this.navigateReportPeriod('prev');
+            });
+        }
+
+        if (nextPeriodBtn) {
+            nextPeriodBtn.addEventListener('click', () => {
+                this.navigateReportPeriod('next');
+            });
+        }
+
+        if (periodSelector) {
+            periodSelector.addEventListener('change', (e) => {
+                this.changePeriodType(e.target.value);
+            });
+        }
+
+        if (customStartDate) {
+            customStartDate.addEventListener('change', () => {
+                this.updateCustomPeriod();
+            });
+        }
+
+        if (customEndDate) {
+            customEndDate.addEventListener('change', () => {
+                this.updateCustomPeriod();
             });
         }
     }
