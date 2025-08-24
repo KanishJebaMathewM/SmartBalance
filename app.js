@@ -1165,7 +1165,11 @@ class WorkLifeBalanceApp {
 
     // Analytics Tab Methods
     loadAnalyticsTab() {
-        const expenses = window.storage.getExpenses();
+        const expenses = this.getAnalysisMonthExpenses();
+
+        // Update month display
+        this.updateAnalysisMonthDisplay();
+        this.updateAnalysisNavigationButtons();
 
         // Load all analytics charts
         this.charts.createSpendingTrendChart('spendingTrendChart', expenses);
@@ -2084,7 +2088,7 @@ class WorkLifeBalanceApp {
                             runCycle();
                         } else {
                             this.stopBreathingExercise();
-                            Utils.showNotification('Breathing exercise completed! 🧘‍♀️', 'success');
+                            Utils.showNotification('Breathing exercise completed! ����‍♀️', 'success');
                         }
                     }, 4000);
                 }, 2000);
