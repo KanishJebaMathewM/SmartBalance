@@ -1182,9 +1182,16 @@ class WorkLifeBalanceApp {
 
         const expenses = window.storage.getExpenses();
         const selectedDateStr = this.selectedCalendarDate.toDateString();
-        const dayExpenses = expenses.filter(expense =>
-            new Date(expense.date || expense.createdAt).toDateString() === selectedDateStr
-        );
+        console.log('Filtering expenses for date:', selectedDateStr);
+        console.log('Total expenses to filter:', expenses.length);
+
+        const dayExpenses = expenses.filter(expense => {
+            const expenseDate = new Date(expense.date || expense.createdAt);
+            const expenseDateStr = expenseDate.toDateString();
+            return expenseDateStr === selectedDateStr;
+        });
+
+        console.log('Found expenses for selected date:', dayExpenses.length);
 
         // Always show add expense button regardless of existing expenses
         const addExpenseButton = `<button class="btn-primary" onclick="app.addExpenseForDate('${this.selectedCalendarDate.toISOString()}')">Add Expense for This Date</button>`;
@@ -4112,7 +4119,7 @@ class WorkLifeBalanceApp {
             'personal': '����',
             'health': '🏥',
             'food': '🍕',
-            'bills': '���',
+            'bills': '📧',
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
