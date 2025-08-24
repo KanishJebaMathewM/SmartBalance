@@ -2722,9 +2722,13 @@ class WorkLifeBalanceApp {
     }
 
     switchExpenseTab(tabName) {
+        console.log('Switching to expense tab:', tabName);
         this.currentExpenseTab = tabName;
         this.loadCurrentExpenseTab();
         this.loadExpenseTabs();
+
+        // Update view toggle button text when switching tabs
+        this.updateViewToggleButton();
     }
 
     switchCategoryChart(chartType) {
