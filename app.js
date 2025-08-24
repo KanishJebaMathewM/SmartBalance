@@ -1027,6 +1027,36 @@ class WorkLifeBalanceApp {
         console.log('Loading calendar tab');
         this.updateCalendarHeader();
         this.renderExpenseCalendar();
+        this.validateCalendarFunctionality();
+    }
+
+    validateCalendarFunctionality() {
+        console.log('🔍 Validating calendar functionality...');
+
+        // Check if calendar elements exist
+        const checks = {
+            expenseCalendar: !!document.getElementById('expenseCalendar'),
+            currentMonthYear: !!document.getElementById('currentMonthYear'),
+            prevMonthBtn: !!document.getElementById('prevMonthBtn'),
+            nextMonthBtn: !!document.getElementById('nextMonthBtn'),
+            selectedDateTitle: !!document.getElementById('selectedDateTitle'),
+            dateExpenseList: !!document.getElementById('dateExpenseList')
+        };
+
+        console.log('Calendar elements check:', checks);
+
+        // Check if current calendar date is valid
+        const dateCheck = this.currentCalendarDate instanceof Date && !isNaN(this.currentCalendarDate);
+        console.log('Calendar date valid:', dateCheck, this.currentCalendarDate);
+
+        // Check if expenses can be loaded
+        const expenses = window.storage.getExpenses();
+        console.log('Expenses available:', expenses.length);
+
+        const allChecksPass = Object.values(checks).every(check => check) && dateCheck;
+        console.log(allChecksPass ? '✅ Calendar validation passed' : '❌ Calendar validation failed');
+
+        return allChecksPass;
     }
 
     updateCalendarHeader() {
@@ -2485,7 +2515,7 @@ class WorkLifeBalanceApp {
             reportExpenseDetail.textContent = `Top category: ${topCategory}`;
         }
         if (reportHealthyMeals) reportHealthyMeals.textContent = '5/7'; // Mock data
-        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ���1,200';
+        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ��1,200';
         if (reportWorkoutDays) reportWorkoutDays.textContent = `${weeklyWorkouts.length}/7`;
         if (reportFitnessDetail) {
             const streak = window.storage.getWorkoutStreak();
