@@ -85,7 +85,7 @@ class WorkLifeBalanceApp {
 
         elements.forEach(id => {
             const element = document.getElementById(id);
-            console.log(`�� Element #${id}:`, element ? 'Found' : 'Not found');
+            console.log(`✅ Element #${id}:`, element ? 'Found' : 'Not found');
         });
 
         console.log('✅ Fitness functionality verification complete!');
@@ -5442,7 +5442,7 @@ class WorkLifeBalanceApp {
                                 `<button class="btn-small btn-success" onclick="event.stopPropagation(); app.markMealAsEaten(${meal.id})">✓ Eaten</button>` :
                                 `<button class="btn-small btn-secondary" onclick="event.stopPropagation(); app.editExistingMeal('${meal.id}')">Edit</button>`
                             }
-                            <button class="btn-small btn-danger" onclick="event.stopPropagation(); app.deleteMeal(${meal.id})">🗑️</button>
+                            <button class="btn-small btn-danger" onclick="event.stopPropagation(); app.deleteMeal(${meal.id})">���️</button>
                         </div>
                     </div>
                 `;
@@ -9317,8 +9317,21 @@ class WorkLifeBalanceApp {
     }
 
     generateOverallExpenseReport() {
-        const expenses = window.storage.getExpenses();
-        const reportData = this.calculateReportData(expenses);
+        const allExpenses = window.storage.getExpenses();
+
+        // Filter expenses based on current period
+        let filteredExpenses;
+        if (this.currentReportPeriod === 'all') {
+            filteredExpenses = allExpenses;
+        } else {
+            const { startDate, endDate } = this.getCurrentPeriodRange();
+            filteredExpenses = allExpenses.filter(expense => {
+                const expenseDate = new Date(expense.createdAt);
+                return expenseDate >= startDate && expenseDate <= endDate;
+            });
+        }
+
+        const reportData = this.calculateReportData(filteredExpenses, allExpenses);
 
         // Update report generation time
         const reportGeneratedTime = document.getElementById('reportGeneratedTime');
@@ -9329,8 +9342,12 @@ class WorkLifeBalanceApp {
         // Update total records
         const reportTotalRecords = document.getElementById('reportTotalRecords');
         if (reportTotalRecords) {
-            reportTotalRecords.textContent = expenses.length.toLocaleString();
+            reportTotalRecords.textContent = filteredExpenses.length.toLocaleString();
         }
+
+        // Update period display
+        this.updatePeriodDisplay();
+        this.updateNavigationButtons();
 
         // Generate all report sections
         this.populateSummaryStats(reportData);
