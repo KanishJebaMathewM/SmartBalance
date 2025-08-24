@@ -434,18 +434,20 @@ class Storage {
     getWeeklyExpenses() {
         const expenses = this.getExpenses();
         const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        
-        return expenses.filter(expense => 
-            new Date(expense.createdAt) >= weekAgo
+
+        return expenses.filter(expense =>
+            // Use actual expense date, fallback to creation date for backward compatibility
+            new Date(expense.date || expense.createdAt) >= weekAgo
         ).reduce((total, expense) => total + parseFloat(expense.amount), 0);
     }
 
     getMonthlyExpenses() {
         const expenses = this.getExpenses();
         const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-        
-        return expenses.filter(expense => 
-            new Date(expense.createdAt) >= monthAgo
+
+        return expenses.filter(expense =>
+            // Use actual expense date, fallback to creation date for backward compatibility
+            new Date(expense.date || expense.createdAt) >= monthAgo
         ).reduce((total, expense) => total + parseFloat(expense.amount), 0);
     }
 
