@@ -1019,9 +1019,6 @@ class WorkLifeBalanceApp {
         console.log('Loading calendar tab');
         this.updateCalendarHeader();
         this.renderExpenseCalendar();
-
-        // Ensure calendar navigation handlers are set up
-        this.initializeCalendarNavigation();
     }
 
     updateCalendarHeader() {
@@ -2604,45 +2601,22 @@ class WorkLifeBalanceApp {
 
     // Calendar Event Handlers
     initializeCalendarHandlers() {
-        const prevMonthBtn = document.getElementById('prevMonthBtn');
-        const nextMonthBtn = document.getElementById('nextMonthBtn');
-
-        if (prevMonthBtn) {
-            prevMonthBtn.addEventListener('click', () => {
+        // Use event delegation to handle calendar navigation clicks
+        document.addEventListener('click', (e) => {
+            // Handle calendar navigation for expenses
+            if (e.target.id === 'prevMonthBtn' && this.currentSection === 'expenses' && this.currentExpenseTab === 'calendar') {
+                e.preventDefault();
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
-                this.loadCalendarTab();
-            });
-        }
-
-        if (nextMonthBtn) {
-            nextMonthBtn.addEventListener('click', () => {
+                this.updateCalendarHeader();
+                this.renderExpenseCalendar();
+            }
+            if (e.target.id === 'nextMonthBtn' && this.currentSection === 'expenses' && this.currentExpenseTab === 'calendar') {
+                e.preventDefault();
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
-                this.loadCalendarTab();
-            });
-        }
-    }
-
-    // Additional method to ensure calendar navigation is set up when tab loads
-    initializeCalendarNavigation() {
-        // Re-initialize navigation if needed
-        const prevMonthBtn = document.getElementById('prevMonthBtn');
-        const nextMonthBtn = document.getElementById('nextMonthBtn');
-
-        if (prevMonthBtn && !prevMonthBtn.hasEventListener) {
-            prevMonthBtn.addEventListener('click', () => {
-                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
-                this.loadCalendarTab();
-            });
-            prevMonthBtn.hasEventListener = true;
-        }
-
-        if (nextMonthBtn && !nextMonthBtn.hasEventListener) {
-            nextMonthBtn.addEventListener('click', () => {
-                this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
-                this.loadCalendarTab();
-            });
-            nextMonthBtn.hasEventListener = true;
-        }
+                this.updateCalendarHeader();
+                this.renderExpenseCalendar();
+            }
+        });
     }
 
     initializeReportNavigationHandlers() {
@@ -2730,7 +2704,7 @@ class WorkLifeBalanceApp {
             food: '🍕',
             bills: '📧',
             shopping: '🛍️',
-            travel: '✈���',
+            travel: '������',
             entertainment: '🎬',
             healthcare: '����',
             education: '📚',
@@ -4658,7 +4632,7 @@ class WorkLifeBalanceApp {
 
         localStorage.setItem('meal_plans', JSON.stringify(savedMealPlans));
 
-        Utils.showNotification('📋 Meal plan saved!', 'success');
+        Utils.showNotification('��� Meal plan saved!', 'success');
     }
 
     saveMealToStorage(mealType, mealName, calories, cost) {
