@@ -1261,9 +1261,9 @@ class WorkLifeBalanceApp {
         this.updateAnalysisMonthDisplay();
         this.updateAnalysisNavigationButtons();
 
-        // Keep financial health score based on all-time data
-        this.loadFinancialHealthScore();
-        this.loadIncomeVsExpensesChart();
+        // Use monthly-specific data for insights
+        this.loadMonthlyFinancialHealthScore(monthExpenses);
+        this.loadMonthlyIncomeVsExpensesChart(monthExpenses);
 
         // Use month-specific data for category insights and patterns
         this.loadCategoryInsights(monthExpenses);
@@ -1367,6 +1367,163 @@ class WorkLifeBalanceApp {
             ctx.font = '12px Inter, sans-serif';
             ctx.fillText(Utils.formatCurrency(analysis.monthlyIncome), startX + barWidth/2, height - incomeHeight - 45);
             ctx.fillText(Utils.formatCurrency(analysis.monthlyExpenses), startX + barWidth + barSpacing + barWidth/2, height - expenseHeight - 45);
+        }
+    }
+
+    // Monthly-specific version for insights tab
+    loadMonthlyIncomeVsExpensesChart(monthExpenses) {
+        const summaryEl = document.getElementById('comparisonSummary');
+        if (!summaryEl) return;
+
+        // Calculate monthly totals for the selected month
+        const monthlyExpenseTotal = monthExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+
+        // Get user's income (assume it's the same every month)
+        const settings = window.storage.getSettings();
+        const monthlyIncome = settings.monthlyIncome || 0;
+
+        const monthlySavings = monthlyIncome - monthlyExpenseTotal;
+        const savingsRate = monthlyIncome > 0 ? ((monthlySavings / monthlyIncome) * 100).toFixed(1) : 0;
+
+        // Get month name for display
+        const monthName = this.getAnalysisMonthDisplayName(this.currentAnalysisDate);
+
+        const stats = [
+            { label: `${monthName} Income`, value: Utils.formatCurrency(monthlyIncome), type: 'neutral' },
+            { label: `${monthName} Expenses`, value: Utils.formatCurrency(monthlyExpenseTotal), type: 'neutral' },
+            { label: `${monthName} Savings`, value: Utils.formatCurrency(monthlySavings), type: monthlySavings > 0 ? 'positive' : 'negative' },
+            { label: 'Savings Rate', value: `${savingsRate}%`, type: savingsRate >= 20 ? 'positive' : savingsRate >= 10 ? 'neutral' : 'negative' }
+        ];
+
+        summaryEl.innerHTML = stats.map(stat => `
+            <div class="comparison-stat ${stat.type}">
+                <div class="comparison-stat-value">${stat.value}</div>
+                <div class="comparison-stat-label">${stat.label}</div>
+            </div>
+        `).join('');
+
+        // Create a simple bar chart using canvas
+        const canvas = document.getElementById('incomeVsExpensesChart');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Chart data
+            const maxValue = Math.max(monthlyIncome, monthlyExpenseTotal) * 1.1 || 1000;
+            const barWidth = 80;
+            const barSpacing = 100;
+            const startX = (width - 2 * barWidth - barSpacing) / 2;
+
+            // Draw income bar
+            const incomeHeight = maxValue > 0 ? (monthlyIncome / maxValue) * (height - 80) : 0;
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(startX, height - incomeHeight - 40, barWidth, incomeHeight);
+
+            // Draw expenses bar
+            const expenseHeight = maxValue > 0 ? (monthlyExpenseTotal / maxValue) * (height - 80) : 0;
+            ctx.fillStyle = '#ef4444';
+            ctx.fillRect(startX + barWidth + barSpacing, height - expenseHeight - 40, barWidth, expenseHeight);
+
+            // Add labels
+            ctx.fillStyle = '#374151';
+            ctx.font = '14px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Income', startX + barWidth/2, height - 20);
+            ctx.fillText('Expenses', startX + barWidth + barSpacing + barWidth/2, height - 20);
+
+            // Add values
+            ctx.font = '12px Inter, sans-serif';
+            if (incomeHeight > 20) {
+                ctx.fillText(Utils.formatCurrency(monthlyIncome), startX + barWidth/2, height - incomeHeight - 45);
+            }
+            if (expenseHeight > 20) {
+                ctx.fillText(Utils.formatCurrency(monthlyExpenseTotal), startX + barWidth + barSpacing + barWidth/2, height - expenseHeight - 45);
+            }
+        }
+    }
+
+    // Monthly-specific version for insights tab
+    loadMonthlyFinancialHealthScore(monthExpenses) {
+        const healthScoreEl = document.getElementById('healthScoreValue');
+        const healthBreakdownEl = document.getElementById('healthBreakdown');
+
+        // Calculate monthly financial health metrics
+        const monthlyExpenseTotal = monthExpenses.reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+        const settings = window.storage.getSettings();
+        const monthlyIncome = settings.monthlyIncome || 0;
+        const monthlySavings = monthlyIncome - monthlyExpenseTotal;
+        const savingsRate = monthlyIncome > 0 ? ((monthlySavings / monthlyIncome) * 100) : 0;
+
+        // Calculate simplified health score based on monthly data
+        let healthScore = 0;
+
+        // Savings rate component (40% of score)
+        if (savingsRate >= 20) healthScore += 40;
+        else if (savingsRate >= 10) healthScore += 25;
+        else if (savingsRate >= 0) healthScore += 10;
+
+        // Expense control component (30% of score)
+        const avgDailyExpense = monthlyExpenseTotal / 30;
+        if (avgDailyExpense <= monthlyIncome / 60) healthScore += 30; // Less than 2% of monthly income per day
+        else if (avgDailyExpense <= monthlyIncome / 30) healthScore += 20; // Less than 3.3% of monthly income per day
+        else if (avgDailyExpense <= monthlyIncome / 20) healthScore += 10; // Less than 5% of monthly income per day
+
+        // Income utilization component (30% of score)
+        const utilizationRate = monthlyIncome > 0 ? (monthlyExpenseTotal / monthlyIncome) * 100 : 100;
+        if (utilizationRate <= 70) healthScore += 30;
+        else if (utilizationRate <= 85) healthScore += 20;
+        else if (utilizationRate <= 100) healthScore += 10;
+
+        // Get month name for display
+        const monthName = this.getAnalysisMonthDisplayName(this.currentAnalysisDate);
+
+        if (healthScoreEl) {
+            healthScoreEl.textContent = Math.round(healthScore);
+
+            // Update the progress circle
+            const circle = healthScoreEl.closest('.health-score-circle');
+            if (circle) {
+                const angle = (healthScore / 100) * 360;
+                circle.style.setProperty('--score-angle', `${angle}deg`);
+
+                // Update color based on score
+                let color = '#ef4444'; // red for poor
+                if (healthScore >= 70) color = '#10b981'; // green for good
+                else if (healthScore >= 40) color = '#f59e0b'; // yellow for fair
+
+                circle.style.background = `conic-gradient(${color} 0deg, ${color} ${angle}deg, #e5e7eb ${angle}deg)`;
+            }
+        }
+
+        if (healthBreakdownEl) {
+            const breakdown = [
+                {
+                    label: `${monthName} Savings Rate`,
+                    value: `${savingsRate.toFixed(1)}%`,
+                    type: savingsRate >= 20 ? 'good' : savingsRate >= 10 ? 'warning' : 'danger'
+                },
+                {
+                    label: `${monthName} Utilization`,
+                    value: `${utilizationRate.toFixed(1)}%`,
+                    type: utilizationRate <= 70 ? 'good' : utilizationRate <= 85 ? 'warning' : 'danger'
+                },
+                {
+                    label: 'Income Status',
+                    value: monthlySavings > 0 ? 'Surplus' : 'Deficit',
+                    type: monthlySavings > 0 ? 'good' : 'danger'
+                }
+            ];
+
+            healthBreakdownEl.innerHTML = breakdown.map(item => `
+                <div class="health-breakdown-item">
+                    <span class="breakdown-label">${item.label}</span>
+                    <span class="breakdown-value ${item.type}">${item.value}</span>
+                </div>
+            `).join('');
         }
     }
 
