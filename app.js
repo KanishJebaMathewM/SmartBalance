@@ -926,9 +926,9 @@ class WorkLifeBalanceApp {
         const expenses = window.storage.getExpenses();
         const today = new Date();
 
-        // Daily expenses
+        // Daily expenses - use actual expense date, fallback to creation date
         const dailyExpenses = expenses.filter(expense =>
-            Utils.isToday(expense.createdAt)
+            Utils.isToday(expense.date || expense.createdAt)
         ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
 
         // Weekly expenses
@@ -939,7 +939,8 @@ class WorkLifeBalanceApp {
 
         // Average daily expenses (last 30 days)
         const last30Days = expenses.filter(expense => {
-            const expenseDate = new Date(expense.createdAt);
+            // Use actual expense date, fallback to creation date for backward compatibility
+            const expenseDate = new Date(expense.date || expense.createdAt);
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             return expenseDate >= thirtyDaysAgo;
