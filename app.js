@@ -1142,9 +1142,14 @@ class WorkLifeBalanceApp {
 
     selectCalendarDate(year, month, day) {
         console.log('Calendar date clicked:', year, month, day);
-        this.selectedCalendarDate = new Date(year, month, day);
-        this.renderExpenseCalendar();
-        this.showSelectedDateExpenses();
+        try {
+            this.selectedCalendarDate = new Date(year, month, day);
+            console.log('Selected calendar date set to:', this.selectedCalendarDate);
+            this.renderExpenseCalendar();
+            this.showSelectedDateExpenses();
+        } catch (error) {
+            console.error('Error selecting calendar date:', error);
+        }
     }
 
     showSelectedDateExpenses() {
