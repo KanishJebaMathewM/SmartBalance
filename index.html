@@ -83,7 +83,7 @@
                     </div>
                     
                     <div class="widget fitness-widget">
-                        <h3>🏋��� Workout Streak</h3>
+                        <h3>🏋️ Workout Streak</h3>
                         <div class="widget-content">
                             <div class="stat-number" id="workoutStreak">0</div>
                             <div class="stat-label">Days 🔥</div>
@@ -158,7 +158,7 @@
                                 <option value="entertainment">🎬 Entertainment</option>
                                 <option value="education">📚 Education</option>
                                 <option value="reminder">⏰ Reminder</option>
-                                <option value="other">���� Other</option>
+                                <option value="other">📦 Other</option>
                             </select>
                             <input type="date" id="taskDate">
                             <div class="checkbox-group">
@@ -370,7 +370,7 @@
                     <div class="insights-dashboard">
                         <!-- Financial Health Score -->
                         <div class="financial-health-section">
-                            <h3>���� Financial Health Score</h3>
+                            <h3>🏥 Financial Health Score</h3>
                             <div class="health-score-container">
                                 <div class="health-score-circle">
                                     <div class="health-score-value" id="healthScoreValue">0</div>
@@ -467,165 +467,187 @@
                 <!-- Reports Tab -->
                 <div id="reports-tab" class="tab-content">
                     <div class="reports-dashboard">
-                        <!-- Summary Report -->
-                        <div class="report-preview-section">
+                        <!-- Comprehensive Expenses Report -->
+                        <div class="overall-report-section">
                             <div class="report-header">
-                                <h3>📈 Summary Report</h3>
+                                <h2>📊 Overall Expenses Report</h2>
                                 <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('summary', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('summary', 'csv')">📊 Export CSV</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('csv')">📊 Export CSV</button>
+                                    <button class="btn-secondary" onclick="app.refreshReport()">🔄 Refresh Report</button>
                                 </div>
                             </div>
-                            <div class="report-content" id="summaryReportContent">
+
+                            <!-- Report Generated Info -->
+                            <div class="report-info">
+                                <div class="report-meta">
+                                    <span class="report-generated">Generated: <span id="reportGeneratedTime">Loading...</span></span>
+                                    <span class="report-period">Period: <span id="reportPeriod">All Time</span></span>
+                                    <span class="report-total-records">Total Records: <span id="reportTotalRecords">0</span></span>
+                                </div>
+                            </div>
+
+                            <!-- Summary Statistics -->
+                            <div class="report-section">
+                                <h3>📈 Summary Statistics</h3>
                                 <div class="report-stats-grid">
                                     <div class="report-stat-card">
-                                        <div class="stat-value" id="totalExpenses">₹0</div>
+                                        <div class="stat-value" id="reportTotalExpenses">₹0</div>
                                         <div class="stat-label">Total Expenses</div>
-                                        <div class="stat-period">This Month</div>
+                                        <div class="stat-period">All Time</div>
                                     </div>
                                     <div class="report-stat-card">
-                                        <div class="stat-value" id="avgDailySpend">₹0</div>
-                                        <div class="stat-label">Avg Daily Spend</div>
-                                        <div class="stat-period">This Month</div>
+                                        <div class="stat-value" id="reportAvgDaily">₹0</div>
+                                        <div class="stat-label">Daily Average</div>
+                                        <div class="stat-period">Based on active days</div>
                                     </div>
                                     <div class="report-stat-card">
-                                        <div class="stat-value" id="totalTransactions">0</div>
+                                        <div class="stat-value" id="reportTotalTransactions">0</div>
                                         <div class="stat-label">Total Transactions</div>
-                                        <div class="stat-period">This Month</div>
+                                        <div class="stat-period">All Time</div>
                                     </div>
                                     <div class="report-stat-card">
-                                        <div class="stat-value" id="largestExpense">₹0</div>
+                                        <div class="stat-value" id="reportLargestExpense">₹0</div>
                                         <div class="stat-label">Largest Expense</div>
-                                        <div class="stat-period">This Month</div>
+                                        <div class="stat-period">Single Transaction</div>
+                                    </div>
+                                    <div class="report-stat-card">
+                                        <div class="stat-value" id="reportThisMonth">₹0</div>
+                                        <div class="stat-label">This Month</div>
+                                        <div class="stat-period">Current Month</div>
+                                    </div>
+                                    <div class="report-stat-card">
+                                        <div class="stat-value" id="reportLastMonth">₹0</div>
+                                        <div class="stat-label">Last Month</div>
+                                        <div class="stat-period">Previous Month</div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Category Analysis Report -->
-                        <div class="report-preview-section">
-                            <div class="report-header">
-                                <h3>📋 Category Analysis Report</h3>
-                                <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('category', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('category', 'csv')">📊 Export CSV</button>
+                            <!-- Category Breakdown -->
+                            <div class="report-section">
+                                <h3>📋 Category Breakdown</h3>
+                                <div class="category-breakdown-container">
+                                    <table class="category-breakdown-table" id="categoryBreakdownTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Amount</th>
+                                                <th>Transactions</th>
+                                                <th>Percentage</th>
+                                                <th>Avg Per Transaction</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="categoryBreakdownBody">
+                                            <!-- Category data will be populated here -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="report-content">
-                                <div class="category-breakdown-table" id="categoryBreakdownTable">
-                                    <!-- Category breakdown will be generated here -->
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Payment Method Report -->
-                        <div class="report-preview-section">
-                            <div class="report-header">
-                                <h3>💳 Payment Method Report</h3>
-                                <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('payment', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('payment', 'csv')">📊 Export CSV</button>
+                            <!-- Payment Method Analysis -->
+                            <div class="report-section">
+                                <h3>💳 Payment Method Analysis</h3>
+                                <div class="payment-method-container">
+                                    <table class="payment-method-table" id="paymentMethodTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Payment Method</th>
+                                                <th>Amount</th>
+                                                <th>Transactions</th>
+                                                <th>Percentage</th>
+                                                <th>Avg Per Transaction</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="paymentMethodBody">
+                                            <!-- Payment method data will be populated here -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="report-content">
-                                <div class="payment-method-breakdown" id="paymentMethodBreakdown">
-                                    <!-- Payment method breakdown will be generated here -->
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Monthly Comparison Report -->
-                        <div class="report-preview-section">
-                            <div class="report-header">
-                                <h3>📅 Monthly Comparison Report</h3>
-                                <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('monthly', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('monthly', 'csv')">📊 Export CSV</button>
+                            <!-- Monthly Trends -->
+                            <div class="report-section">
+                                <h3>📅 Monthly Trends</h3>
+                                <div class="monthly-trends-container">
+                                    <table class="monthly-trends-table" id="monthlyTrendsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Month</th>
+                                                <th>Total Amount</th>
+                                                <th>Transactions</th>
+                                                <th>Daily Average</th>
+                                                <th>Change from Previous</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="monthlyTrendsBody">
+                                            <!-- Monthly trends data will be populated here -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="report-content">
-                                <div class="monthly-comparison-table" id="monthlyComparisonTable">
-                                    <!-- Monthly comparison will be generated here -->
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Budget vs Actual Report -->
-                        <div class="report-preview-section">
-                            <div class="report-header">
-                                <h3>🎯 Budget vs Actual Report</h3>
-                                <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('budget', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('budget', 'csv')">📊 Export CSV</button>
+                            <!-- Top Expenses -->
+                            <div class="report-section">
+                                <h3>🔝 Top Expenses</h3>
+                                <div class="top-expenses-container">
+                                    <table class="top-expenses-table" id="topExpensesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Description</th>
+                                                <th>Category</th>
+                                                <th>Payment Method</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="topExpensesBody">
+                                            <!-- Top expenses data will be populated here -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="report-content">
-                                <div class="budget-comparison-table" id="budgetComparisonTable">
-                                    <!-- Budget vs actual comparison will be generated here -->
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Trend Analysis Report -->
-                        <div class="report-preview-section">
-                            <div class="report-header">
-                                <h3>📈 Trend Analysis Report</h3>
-                                <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('trend', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('trend', 'csv')">📊 Export CSV</button>
+                            <!-- Recent Transactions -->
+                            <div class="report-section">
+                                <h3>📝 Recent Transactions (Last 20)</h3>
+                                <div class="recent-transactions-container">
+                                    <table class="recent-transactions-table" id="recentTransactionsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Description</th>
+                                                <th>Category</th>
+                                                <th>Payment Method</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="recentTransactionsBody">
+                                            <!-- Recent transactions data will be populated here -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div class="report-content">
-                                <div class="trend-analysis-content" id="trendAnalysisContent">
-                                    <!-- Trend analysis will be generated here -->
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Weekly Report -->
-                        <div class="report-preview-section">
-                            <div class="report-header">
-                                <h3>📅 Weekly Report</h3>
-                                <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('weekly', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('weekly', 'csv')">📊 Export CSV</button>
-                                </div>
-                            </div>
-                            <div class="report-content">
-                                <div class="weekly-report-content" id="weeklyReportContent">
-                                    <!-- Weekly report will be generated here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Daily Report -->
-                        <div class="report-preview-section">
-                            <div class="report-header">
-                                <h3>📊 Daily Report</h3>
-                                <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('daily', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('daily', 'csv')">📊 Export CSV</button>
-                                </div>
-                            </div>
-                            <div class="report-content">
-                                <div class="daily-report-content" id="dailyReportContent">
-                                    <!-- Daily report will be generated here -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- All Expenses Detailed Report -->
-                        <div class="report-preview-section">
-                            <div class="report-header">
-                                <h3>📝 All Expenses Detailed Report</h3>
-                                <div class="export-buttons">
-                                    <button class="btn-secondary" onclick="app.exportReport('detailed', 'json')">📄 Export JSON</button>
-                                    <button class="btn-secondary" onclick="app.exportReport('detailed', 'csv')">📊 Export CSV</button>
-                                </div>
-                            </div>
-                            <div class="report-content">
-                                <div class="detailed-expenses-table" id="detailedExpensesTable">
-                                    <!-- Detailed expenses table will be generated here -->
+                            <!-- Budget Performance (if budgets are set) -->
+                            <div class="report-section" id="budgetSection" style="display: none;">
+                                <h3>🎯 Budget Performance</h3>
+                                <div class="budget-performance-container">
+                                    <table class="budget-performance-table" id="budgetPerformanceTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Category</th>
+                                                <th>Budget</th>
+                                                <th>Spent</th>
+                                                <th>Remaining</th>
+                                                <th>Progress</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="budgetPerformanceBody">
+                                            <!-- Budget performance data will be populated here -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -1314,7 +1336,7 @@
                 <div class="section-header">
                     <h1>🏋️ Fitness & Home Workouts</h1>
                     <div class="header-actions">
-                        <button class="btn-secondary export-btn" data-section="fitness" data-format="csv">📊 Export CSV</button>
+                        <button class="btn-secondary export-btn" data-section="fitness" data-format="csv">���� Export CSV</button>
                         <button class="btn-secondary export-btn" data-section="fitness" data-format="json">📄 Export JSON</button>
                     </div>
                 </div>
