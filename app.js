@@ -1644,7 +1644,6 @@ class WorkLifeBalanceApp {
         document.getElementById('expenseNotes').value = expense.notes || '';
         document.getElementById('expenseDate').value = expense.date || expense.createdAt.split('T')[0];
         document.getElementById('expensePaymentMethod').value = expense.paymentMethod || 'cash';
-        document.getElementById('expenseRecurring').checked = expense.recurring || false;
 
         // Change modal title
         document.getElementById('expenseModalTitle').textContent = 'Edit Expense';
@@ -2875,7 +2874,7 @@ class WorkLifeBalanceApp {
                     <p>${habit.target || 'Complete once'} �� ${habit.category}</p>
                 </div>
                 <div class="habit-streak">
-                    <div class="streak-number">${habit.currentStreak || 0}🔥</div>
+                    <div class="streak-number">${habit.currentStreak || 0}��</div>
                     <div class="streak-label">streak</div>
                 </div>
             </div>
@@ -5280,7 +5279,7 @@ class WorkLifeBalanceApp {
 
         if (weeklyStats.totalCalories > 0) {
             insights.push({
-                icon: '🔥',
+                icon: '���',
                 title: 'Weekly Calorie Intake',
                 description: `You consumed ${weeklyStats.totalCalories} calories this week, averaging ${Math.round(weeklyStats.avgCaloriesPerDay)} per day.`
             });
@@ -9869,7 +9868,7 @@ class WorkLifeBalanceApp {
         const csvRows = expenses.map(expense => [
             new Date(expense.createdAt).toLocaleDateString(),
             `"${(expense.notes || 'No description').replace(/"/g, '""')}"`,
-            this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim(),
+            this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺���👕📦]/g, '').trim(),
             this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash').replace(/[💵💳📱🏦]/g, '').trim(),
             expense.amount
         ]);
