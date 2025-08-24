@@ -478,12 +478,42 @@
                                 </div>
                             </div>
 
+                            <!-- Report Period Navigation -->
+                            <div class="report-navigation">
+                                <div class="period-navigation">
+                                    <button class="nav-btn" id="prevPeriodBtn" onclick="app.navigateReportPeriod('prev')">‹ Previous</button>
+                                    <div class="current-period">
+                                        <h3 id="currentReportPeriod">This Month</h3>
+                                        <select id="periodSelector" onchange="app.changePeriodType(this.value)">
+                                            <option value="month">Monthly View</option>
+                                            <option value="quarter">Quarterly View</option>
+                                            <option value="year">Yearly View</option>
+                                            <option value="all">All Time</option>
+                                            <option value="week">Weekly View</option>
+                                            <option value="custom">Custom Period</option>
+                                        </select>
+                                    </div>
+                                    <button class="nav-btn" id="nextPeriodBtn" onclick="app.navigateReportPeriod('next')">Next ›</button>
+                                </div>
+
+                                <!-- Custom Date Range (hidden by default) -->
+                                <div class="custom-date-range" id="customDateRange" style="display: none;">
+                                    <div class="date-inputs">
+                                        <input type="date" id="customStartDate" onchange="app.updateCustomPeriod()">
+                                        <span>to</span>
+                                        <input type="date" id="customEndDate" onchange="app.updateCustomPeriod()">
+                                    </div>
+                                    <button class="btn-small" onclick="app.resetToCurrentMonth()">Reset to Current Month</button>
+                                </div>
+                            </div>
+
                             <!-- Report Generated Info -->
                             <div class="report-info">
                                 <div class="report-meta">
                                     <span class="report-generated">Generated: <span id="reportGeneratedTime">Loading...</span></span>
-                                    <span class="report-period">Period: <span id="reportPeriod">All Time</span></span>
+                                    <span class="report-period">Period: <span id="reportPeriod">This Month</span></span>
                                     <span class="report-total-records">Total Records: <span id="reportTotalRecords">0</span></span>
+                                    <span class="report-date-range">Date Range: <span id="reportDateRange">-</span></span>
                                 </div>
                             </div>
 
@@ -1336,7 +1366,7 @@
                 <div class="section-header">
                     <h1>🏋️ Fitness & Home Workouts</h1>
                     <div class="header-actions">
-                        <button class="btn-secondary export-btn" data-section="fitness" data-format="csv">���� Export CSV</button>
+                        <button class="btn-secondary export-btn" data-section="fitness" data-format="csv">📊 Export CSV</button>
                         <button class="btn-secondary export-btn" data-section="fitness" data-format="json">📄 Export JSON</button>
                     </div>
                 </div>
