@@ -1090,8 +1090,9 @@ class WorkLifeBalanceApp {
             calendarHTML += `
                 <div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}"
                      onclick="app.selectCalendarDate(${year}, ${month}, ${day})"
+                     ondblclick="app.addExpenseForDate('${new Date(year, month, day).toISOString()}')"
                      data-date="${year}-${month}-${day}"
-                     title="Click to select this date">
+                     title="Click to select • Double-click to add expense">
                     <div class="day-number">${day}</div>
                     ${expenseDisplay}
                 </div>
@@ -7711,7 +7712,7 @@ class WorkLifeBalanceApp {
         if (completionRate >= 80) {
             insights.push('🎯 Excellent task completion rate! You\'re very productive.');
         } else if (completionRate >= 60) {
-            insights.push('📈 Good task progress. Try to improve completion consistency.');
+            insights.push('��� Good task progress. Try to improve completion consistency.');
         } else {
             insights.push('📝 Focus on completing more tasks to boost productivity.');
         }
@@ -10103,7 +10104,7 @@ class WorkLifeBalanceApp {
         const paymentMethods = {
             'cash': '💵 Cash',
             'card': '💳 Card',
-            'upi': '📱 UPI',
+            'upi': '��� UPI',
             'bank': '🏦 Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
