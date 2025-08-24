@@ -3152,6 +3152,154 @@ class WorkLifeBalanceApp {
 
             // Trigger any change events
             amountField.dispatchEvent(new Event('input', { bubbles: true }));
+
+            // Show smart insights after amount is set
+            this.showSmartInsights();
+        }
+    }
+
+    showSmartInsights() {
+        const amountField = document.getElementById('expenseAmount');
+        const categoryField = document.getElementById('expenseCategory');
+        const forecastEl = document.getElementById('expenseForecast');
+
+        if (!amountField || !categoryField || !forecastEl) return;
+
+        const amount = parseFloat(amountField.value);
+        const category = categoryField.value;
+
+        if (!amount || amount <= 0 || !category) {
+            this.hideForecast();
+            return;
+        }
+
+        // Get insights based on amount and category
+        const insights = this.generateExpenseInsights(amount, category);
+
+        if (insights.length > 0) {
+            forecastEl.innerHTML = `
+                <h4>💡 Smart Insights</h4>
+                <div class="forecast-content">
+                    ${insights.map(insight => `
+                        <div class="insight-item ${insight.type}">
+                            <span class="insight-icon">${insight.icon}</span>
+                            <span class="insight-text">${insight.text}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            forecastEl.style.display = 'block';
+        } else {
+            this.hideForecast();
+        }
+    }
+
+    generateExpenseInsights(amount, category) {
+        const insights = [];
+        const expenses = window.storage.getExpenses();
+        const categoryExpenses = expenses.filter(exp => exp.category === category);
+
+        if (categoryExpenses.length > 0) {
+            const amounts = categoryExpenses.map(exp => parseFloat(exp.amount));
+            const average = amounts.reduce((sum, amt) => sum + amt, 0) / amounts.length;
+            const max = Math.max(...amounts);
+            const min = Math.min(...amounts);
+
+            // Compare with average
+            if (amount > average * 1.5) {
+                insights.push({
+                    type: 'warning',
+                    icon: '⚠️',
+                    text: `This is ${Math.round((amount / average - 1) * 100)}% higher than your usual ${this.getCategoryDisplayName(category)} expenses (avg: ₹${Math.round(average)})`
+                });
+            } else if (amount < average * 0.5) {
+                insights.push({
+                    type: 'positive',
+                    icon: '👍',
+                    text: `Great! This is below your usual ${this.getCategoryDisplayName(category)} spending`
+                });
+            }
+
+            // Check if it's the highest expense in category
+            if (amount > max) {
+                insights.push({
+                    type: 'info',
+                    icon: '📊',
+                    text: `This will be your highest ${this.getCategoryDisplayName(category)} expense`
+                });
+            }
+        }
+
+        // Budget check
+        const settings = window.storage.getSettings();
+        const budgets = settings.categoryBudgets || {};
+        if (budgets[category]) {
+            const budget = budgets[category];
+            const currentMonth = new Date();
+            const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+            const monthExpenses = expenses.filter(exp => {
+                const expDate = new Date(exp.createdAt);
+                return expDate >= monthStart && exp.category === category;
+            });
+            const monthlySpent = monthExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+            const remaining = budget - monthlySpent - amount;
+
+            if (remaining < 0) {
+                insights.push({
+                    type: 'danger',
+                    icon: '🚨',
+                    text: `This will exceed your ${this.getCategoryDisplayName(category)} budget by ₹${Math.abs(remaining)}`
+                });
+            } else if (remaining < budget * 0.2) {
+                insights.push({
+                    type: 'warning',
+                    icon: '⚠️',
+                    text: `Only ₹${remaining} left in your ${this.getCategoryDisplayName(category)} budget`
+                });
+            }
+        }
+
+        return insights;
+    }
+
+    showDescriptionSuggestions(notes) {
+        const suggestionEl = document.getElementById('descriptionSuggestions');
+        if (!suggestionEl || !notes || notes.length < 2) {
+            this.hideDescriptionSuggestions();
+            return;
+        }
+
+        // Get recent expense descriptions that match
+        const expenses = window.storage.getExpenses();
+        const matchingDescriptions = expenses
+            .filter(exp => exp.notes && exp.notes.toLowerCase().includes(notes.toLowerCase()) && exp.notes !== notes)
+            .map(exp => exp.notes)
+            .filter((desc, index, arr) => arr.indexOf(desc) === index) // Remove duplicates
+            .slice(0, 5);
+
+        if (matchingDescriptions.length > 0) {
+            suggestionEl.innerHTML = matchingDescriptions
+                .map(desc => `
+                    <div class="suggestion-item" onclick="app.applyDescriptionSuggestion('${desc.replace(/'/g, '\\\'')}')">${desc}</div>
+                `).join('');
+            suggestionEl.style.display = 'block';
+        } else {
+            this.hideDescriptionSuggestions();
+        }
+    }
+
+    hideDescriptionSuggestions() {
+        const suggestionEl = document.getElementById('descriptionSuggestions');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+    }
+
+    applyDescriptionSuggestion(description) {
+        const notesField = document.getElementById('expenseNotes');
+        if (notesField) {
+            notesField.value = description;
+            this.hideDescriptionSuggestions();
         }
     }
 
