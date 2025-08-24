@@ -4321,6 +4321,79 @@ body.dark-mode {
     border-color: #9ca3af;
 }
 
+/* Expense Insights */
+.forecast-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.insight-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.insight-item.positive {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #22c55e;
+}
+
+.insight-item.warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+}
+
+.insight-item.danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
+
+.insight-item.info {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #3b82f6;
+}
+
+.dark-mode .insight-item.positive {
+    background: #065f46;
+    color: #86efac;
+    border-color: #059669;
+}
+
+.dark-mode .insight-item.warning {
+    background: #78350f;
+    color: #fcd34d;
+    border-color: #d97706;
+}
+
+.dark-mode .insight-item.danger {
+    background: #7f1d1d;
+    color: #fca5a5;
+    border-color: #dc2626;
+}
+
+.dark-mode .insight-item.info {
+    background: #1e3a8a;
+    color: #93c5fd;
+    border-color: #2563eb;
+}
+
+.insight-icon {
+    font-size: 1rem;
+}
+
+.insight-text {
+    flex: 1;
+    line-height: 1.4;
+}
+
 /* Recurring and Shared Options */
 .recurring-options {
     margin-top: 16px;
