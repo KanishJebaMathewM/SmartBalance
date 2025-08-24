@@ -2485,7 +2485,7 @@ class WorkLifeBalanceApp {
             reportExpenseDetail.textContent = `Top category: ${topCategory}`;
         }
         if (reportHealthyMeals) reportHealthyMeals.textContent = '5/7'; // Mock data
-        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ��1,200';
+        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ���1,200';
         if (reportWorkoutDays) reportWorkoutDays.textContent = `${weeklyWorkouts.length}/7`;
         if (reportFitnessDetail) {
             const streak = window.storage.getWorkoutStreak();
@@ -4110,6 +4110,8 @@ class WorkLifeBalanceApp {
 
     // Calendar view switching
     switchToCalendarView() {
+        console.log('Switching to calendar view');
+
         // Switch to expenses section if not already there
         if (this.currentSection !== 'expenses') {
             this.showSection('expenses');
@@ -4118,18 +4120,26 @@ class WorkLifeBalanceApp {
         // Switch to calendar tab
         this.switchExpenseTab('calendar');
 
-        // Update the button text to indicate current view
+        // Set up toggle behavior for view button
+        this.setupViewToggleBehavior();
+    }
+
+    setupViewToggleBehavior() {
         const viewToggleBtn = document.getElementById('viewToggleBtn');
         if (viewToggleBtn) {
-            const isCalendarActive = this.currentExpenseTab === 'calendar';
-            viewToggleBtn.textContent = isCalendarActive ? '📊 Overview' : '📅 Calendar View';
+            // Remove existing event listeners by cloning the element
+            const newViewToggleBtn = viewToggleBtn.cloneNode(true);
+            viewToggleBtn.parentNode.replaceChild(newViewToggleBtn, viewToggleBtn);
 
-            // Add toggle behavior
-            viewToggleBtn.onclick = () => {
+            // Add new event listener
+            newViewToggleBtn.addEventListener('click', () => {
                 const newTab = this.currentExpenseTab === 'calendar' ? 'overview' : 'calendar';
                 this.switchExpenseTab(newTab);
-                viewToggleBtn.textContent = newTab === 'calendar' ? '��� Overview' : '📅 Calendar View';
-            };
+            });
+
+            console.log('View toggle behavior set up');
+        } else {
+            console.error('viewToggleBtn not found');
         }
     }
 
