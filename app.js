@@ -1586,16 +1586,8 @@ class WorkLifeBalanceApp {
             category: document.getElementById('expenseCategory').value,
             notes: Utils.sanitizeInput(document.getElementById('expenseNotes').value),
             date: document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0],
-            paymentMethod: document.getElementById('expensePaymentMethod').value,
-            recurring: document.getElementById('expenseRecurring').checked,
+            paymentMethod: document.getElementById('expensePaymentMethod').value
         };
-
-        // Add recurring options if applicable
-        if (expenseData.recurring) {
-            expenseData.recurringFrequency = document.getElementById('recurringFrequency').value;
-            expenseData.recurringEndDate = document.getElementById('recurringEndDate').value;
-            expenseData.recurringReminder = parseInt(document.getElementById('recurringReminder').value);
-        }
 
 
         if (!Utils.validateAmount(expenseData.amount)) {
@@ -4819,7 +4811,7 @@ class WorkLifeBalanceApp {
                 });
             } else if (avgDailyCalories < 1800) {
                 insights.push({
-                    icon: '⚡',
+                    icon: '��',
                     title: 'Low Calorie Intake',
                     description: `Your daily average of ${avgDailyCalories} calories seems low. Consider adding more nutritious meals to meet your energy needs.`
                 });
