@@ -1024,10 +1024,14 @@ class WorkLifeBalanceApp {
     updateCalendarHeader() {
         const currentMonthYearEl = document.getElementById('currentMonthYear');
         if (currentMonthYearEl) {
-            currentMonthYearEl.textContent = this.currentCalendarDate.toLocaleDateString('en-US', {
+            const monthYearText = this.currentCalendarDate.toLocaleDateString('en-US', {
                 month: 'long',
                 year: 'numeric'
             });
+            currentMonthYearEl.textContent = monthYearText;
+            console.log('Calendar header updated to:', monthYearText);
+        } else {
+            console.error('currentMonthYear element not found!');
         }
     }
 
