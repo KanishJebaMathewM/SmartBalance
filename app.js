@@ -2084,7 +2084,7 @@ class WorkLifeBalanceApp {
                             runCycle();
                         } else {
                             this.stopBreathingExercise();
-                            Utils.showNotification('Breathing exercise completed! 🧘‍���️', 'success');
+                            Utils.showNotification('Breathing exercise completed! 🧘‍♀️', 'success');
                         }
                     }, 4000);
                 }, 2000);
@@ -2367,6 +2367,36 @@ class WorkLifeBalanceApp {
         if (customEndDate) {
             customEndDate.addEventListener('change', () => {
                 this.updateCustomPeriod();
+            });
+        }
+
+        // Analytics and Insights navigation
+        const prevAnalyticsBtn = document.getElementById('prevAnalyticsMonthBtn');
+        const nextAnalyticsBtn = document.getElementById('nextAnalyticsMonthBtn');
+        const prevInsightsBtn = document.getElementById('prevInsightsMonthBtn');
+        const nextInsightsBtn = document.getElementById('nextInsightsMonthBtn');
+
+        if (prevAnalyticsBtn) {
+            prevAnalyticsBtn.addEventListener('click', () => {
+                this.navigateAnalysisMonth('prev');
+            });
+        }
+
+        if (nextAnalyticsBtn) {
+            nextAnalyticsBtn.addEventListener('click', () => {
+                this.navigateAnalysisMonth('next');
+            });
+        }
+
+        if (prevInsightsBtn) {
+            prevInsightsBtn.addEventListener('click', () => {
+                this.navigateAnalysisMonth('prev');
+            });
+        }
+
+        if (nextInsightsBtn) {
+            nextInsightsBtn.addEventListener('click', () => {
+                this.navigateAnalysisMonth('next');
             });
         }
     }
@@ -9835,7 +9865,7 @@ class WorkLifeBalanceApp {
         const csvRows = expenses.map(expense => [
             new Date(expense.createdAt).toLocaleDateString(),
             `"${(expense.notes || 'No description').replace(/"/g, '""')}"`,
-            this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺���👕📦]/g, '').trim(),
+            this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥📚💪������👕📦]/g, '').trim(),
             this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash').replace(/[💵💳📱🏦]/g, '').trim(),
             expense.amount
         ]);
