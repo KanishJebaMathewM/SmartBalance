@@ -21,6 +21,12 @@ class WorkLifeBalanceApp {
         this.currentHelpPage = 1;
         this.totalHelpPages = 6;
 
+        // Report period navigation state
+        this.currentReportPeriod = 'month'; // 'month', 'quarter', 'year', 'week', 'all', 'custom'
+        this.currentReportDate = new Date(); // Base date for period calculations
+        this.customStartDate = null;
+        this.customEndDate = null;
+
         this.init();
     }
 
