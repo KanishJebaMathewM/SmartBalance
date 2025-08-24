@@ -112,6 +112,7 @@ class WorkLifeBalanceApp {
             window.app.deleteExpense = this.deleteExpense.bind(this);
             window.app.applyCategorySuggestion = this.applyCategorySuggestion.bind(this);
             window.app.applyAmountSuggestion = this.applyAmountSuggestion.bind(this);
+            window.app.applyDescriptionSuggestion = this.applyDescriptionSuggestion.bind(this);
         }
 
         console.log('✅ Global app access ensured for calendar functionality');
