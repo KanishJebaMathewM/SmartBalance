@@ -1397,3 +1397,259 @@
         align-items: stretch;
     }
 }
+
+/* Additional Report Styles */
+.overall-report-section {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    overflow: hidden;
+}
+
+.dark-mode .overall-report-section {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.overall-report-section .report-header h2 {
+    font-size: 1.5rem;
+    color: #111827;
+    margin: 0;
+    font-weight: 700;
+}
+
+.dark-mode .overall-report-section .report-header h2 {
+    color: #f9fafb;
+}
+
+.report-info {
+    padding: 16px 32px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dark-mode .report-info {
+    background: #374151;
+    border-bottom-color: #4b5563;
+}
+
+.report-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.dark-mode .report-meta {
+    color: #9ca3af;
+}
+
+.report-meta span {
+    font-weight: 500;
+}
+
+.report-section {
+    padding: 32px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dark-mode .report-section {
+    border-bottom-color: #4b5563;
+}
+
+.report-section:last-child {
+    border-bottom: none;
+}
+
+.report-section h3 {
+    color: #111827;
+    margin-bottom: 24px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dark-mode .report-section h3 {
+    color: #f9fafb;
+}
+
+.category-breakdown-container,
+.payment-method-container,
+.monthly-trends-container,
+.top-expenses-container,
+.recent-transactions-container,
+.budget-performance-container {
+    overflow-x: auto;
+}
+
+.category-breakdown-table,
+.payment-method-table,
+.monthly-trends-table,
+.top-expenses-table,
+.recent-transactions-table,
+.budget-performance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.category-breakdown-table th,
+.payment-method-table th,
+.monthly-trends-table th,
+.top-expenses-table th,
+.recent-transactions-table th,
+.budget-performance-table th {
+    background: #f9fafb;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: #111827;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.dark-mode .category-breakdown-table th,
+.dark-mode .payment-method-table th,
+.dark-mode .monthly-trends-table th,
+.dark-mode .top-expenses-table th,
+.dark-mode .recent-transactions-table th,
+.dark-mode .budget-performance-table th {
+    background: #374151;
+    color: #f9fafb;
+    border-bottom-color: #4b5563;
+}
+
+.category-breakdown-table td,
+.payment-method-table td,
+.monthly-trends-table td,
+.top-expenses-table td,
+.recent-transactions-table td,
+.budget-performance-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+}
+
+.dark-mode .category-breakdown-table td,
+.dark-mode .payment-method-table td,
+.dark-mode .monthly-trends-table td,
+.dark-mode .top-expenses-table td,
+.dark-mode .recent-transactions-table td,
+.dark-mode .budget-performance-table td {
+    border-bottom-color: #4b5563;
+    color: #f9fafb;
+}
+
+.category-breakdown-table tr:nth-child(even),
+.payment-method-table tr:nth-child(even),
+.monthly-trends-table tr:nth-child(even),
+.top-expenses-table tr:nth-child(even),
+.recent-transactions-table tr:nth-child(even),
+.budget-performance-table tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.dark-mode .category-breakdown-table tr:nth-child(even),
+.dark-mode .payment-method-table tr:nth-child(even),
+.dark-mode .monthly-trends-table tr:nth-child(even),
+.dark-mode .top-expenses-table tr:nth-child(even),
+.dark-mode .recent-transactions-table tr:nth-child(even),
+.dark-mode .budget-performance-table tr:nth-child(even) {
+    background: #374151;
+}
+
+.category-breakdown-table tr:hover,
+.payment-method-table tr:hover,
+.monthly-trends-table tr:hover,
+.top-expenses-table tr:hover,
+.recent-transactions-table tr:hover,
+.budget-performance-table tr:hover {
+    background: #f3f4f6;
+}
+
+.dark-mode .category-breakdown-table tr:hover,
+.dark-mode .payment-method-table tr:hover,
+.dark-mode .monthly-trends-table tr:hover,
+.dark-mode .top-expenses-table tr:hover,
+.dark-mode .recent-transactions-table tr:hover,
+.dark-mode .budget-performance-table tr:hover {
+    background: #4b5563;
+}
+
+/* Status colors for trends and budget */
+.positive {
+    color: #059669;
+    font-weight: 600;
+}
+
+.negative {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.neutral {
+    color: #6b7280;
+}
+
+.status-good {
+    color: #059669;
+    font-weight: 600;
+}
+
+.status-warning {
+    color: #d97706;
+    font-weight: 600;
+}
+
+.status-over {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+/* Mobile responsiveness for tables */
+@media (max-width: 768px) {
+    .report-section {
+        padding: 20px;
+    }
+
+    .overall-report-section .report-header {
+        padding: 16px 20px;
+    }
+
+    .report-info {
+        padding: 12px 20px;
+    }
+
+    .report-meta {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .category-breakdown-table,
+    .payment-method-table,
+    .monthly-trends-table,
+    .top-expenses-table,
+    .recent-transactions-table,
+    .budget-performance-table {
+        font-size: 0.8rem;
+    }
+
+    .category-breakdown-table th,
+    .payment-method-table th,
+    .monthly-trends-table th,
+    .top-expenses-table th,
+    .recent-transactions-table th,
+    .budget-performance-table th,
+    .category-breakdown-table td,
+    .payment-method-table td,
+    .monthly-trends-table td,
+    .top-expenses-table td,
+    .recent-transactions-table td,
+    .budget-performance-table td {
+        padding: 8px 12px;
+    }
+}
