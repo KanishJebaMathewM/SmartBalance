@@ -1369,11 +1369,19 @@ class WorkLifeBalanceApp {
         }
     }
 
-    loadCategoryInsights() {
+    loadCategoryInsights(expenses = null) {
         const gridEl = document.getElementById('categoryAnalysisGrid');
         if (!gridEl) return;
 
-        const categoryAnalysis = window.storage.getCategoryWiseAnalysis('month');
+        let categoryAnalysis;
+        if (expenses) {
+            // Calculate category analysis for specific expenses
+            categoryAnalysis = this.calculateCategoryAnalysis(expenses);
+        } else {
+            // Use default storage method
+            categoryAnalysis = window.storage.getCategoryWiseAnalysis('month');
+        }
+
         const entries = Object.entries(categoryAnalysis)
             .sort(([,a], [,b]) => b.total - a.total)
             .slice(0, 6); // Show top 6 categories
@@ -1398,6 +1406,54 @@ class WorkLifeBalanceApp {
                 ` : ''}
             </div>
         `).join('');
+    }
+
+    calculateCategoryAnalysis(expenses) {
+        const categoryTotals = {};
+        const categoryCount = {};
+
+        expenses.forEach(expense => {
+            const category = expense.category || 'other';
+            const amount = parseFloat(expense.amount);
+
+            categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+            categoryCount[category] = (categoryCount[category] || 0) + 1;
+        });
+
+        const totalAmount = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0);
+        const analysis = {};
+
+        Object.keys(categoryTotals).forEach(category => {
+            const total = categoryTotals[category];
+            const count = categoryCount[category];
+            const percentage = totalAmount > 0 ? (total / totalAmount) * 100 : 0;
+            const averageTransaction = count > 0 ? total / count : 0;
+
+            analysis[category] = {
+                total,
+                count,
+                percentage,
+                averageTransaction,
+                recommendation: this.generateCategoryRecommendation(category, percentage, averageTransaction)
+            };
+        });
+
+        return analysis;
+    }
+
+    generateCategoryRecommendation(category, percentage, averageTransaction) {
+        if (percentage > 40) {
+            return {
+                type: 'warning',
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+            };
+        } else if (percentage > 25) {
+            return {
+                type: 'info',
+                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+            };
+        }
+        return null;
     }
 
     generateSpendingPredictions(expenses) {
