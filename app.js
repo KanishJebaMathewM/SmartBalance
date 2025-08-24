@@ -2799,7 +2799,7 @@ class WorkLifeBalanceApp {
             shopping: '🛍️',
             travel: '������',
             entertainment: '🎬',
-            healthcare: '����',
+            healthcare: '�����',
             education: '📚',
             other: '������'
         };
@@ -3052,6 +3052,87 @@ class WorkLifeBalanceApp {
     applyCategorySuggestion(category) {
         document.getElementById('expenseCategory').value = category;
         this.hideCategorySuggestion();
+
+        // Show amount suggestions when category is applied
+        this.showAmountSuggestions();
+    }
+
+    showAmountSuggestions() {
+        const categorySelect = document.getElementById('expenseCategory');
+        const suggestionEl = document.getElementById('amountSuggestions');
+
+        if (!categorySelect || !suggestionEl) return;
+
+        const selectedCategory = categorySelect.value;
+        if (!selectedCategory) {
+            this.hideAmountSuggestions();
+            return;
+        }
+
+        // Get recent expenses from the same category
+        const expenses = window.storage.getExpenses();
+        const categoryExpenses = expenses.filter(exp => exp.category === selectedCategory);
+
+        if (categoryExpenses.length === 0) {
+            this.hideAmountSuggestions();
+            return;
+        }
+
+        // Calculate common amounts and average
+        const amounts = categoryExpenses.map(exp => parseFloat(exp.amount));
+        const average = amounts.reduce((sum, amt) => sum + amt, 0) / amounts.length;
+
+        // Get most common amounts (rounded to nearest 50)
+        const roundedAmounts = amounts.map(amt => Math.round(amt / 50) * 50);
+        const amountCounts = {};
+        roundedAmounts.forEach(amt => {
+            amountCounts[amt] = (amountCounts[amt] || 0) + 1;
+        });
+
+        // Sort by frequency and take top 3
+        const suggestions = Object.entries(amountCounts)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 3)
+            .map(([amount]) => parseInt(amount))
+            .filter(amt => amt > 0);
+
+        // Add average if not already in suggestions
+        const roundedAvg = Math.round(average / 10) * 10;
+        if (roundedAvg > 0 && !suggestions.includes(roundedAvg)) {
+            suggestions.push(roundedAvg);
+        }
+
+        if (suggestions.length > 0) {
+            suggestionEl.innerHTML = `
+                <div class="suggestion-header">💡 Common amounts for ${this.getCategoryDisplayName(selectedCategory)}:</div>
+                <div class="suggestion-buttons">
+                    ${suggestions.slice(0, 4).map(amount =>
+                        `<button type="button" onclick="app.applyAmountSuggestion(${amount})" class="btn-suggestion">₹${amount}</button>`
+                    ).join('')}
+                </div>
+            `;
+            suggestionEl.style.display = 'block';
+        } else {
+            this.hideAmountSuggestions();
+        }
+    }
+
+    hideAmountSuggestions() {
+        const suggestionEl = document.getElementById('amountSuggestions');
+        if (suggestionEl) {
+            suggestionEl.style.display = 'none';
+        }
+    }
+
+    applyAmountSuggestion(amount) {
+        const amountField = document.getElementById('expenseAmount');
+        if (amountField) {
+            amountField.value = amount;
+            this.hideAmountSuggestions();
+
+            // Trigger any change events
+            amountField.dispatchEvent(new Event('input', { bubbles: true }));
+        }
     }
 
     getCategoryIcon(category) {
