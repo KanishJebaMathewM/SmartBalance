@@ -52,6 +52,9 @@ class WorkLifeBalanceApp {
 
         // Verify fitness functionality
         this.verifyFitnessFunctionality();
+
+        // Make sure app methods are available globally for onclick handlers
+        this.ensureGlobalAccess();
     }
 
     overrideMethodsWithEnhancedVersions() {
@@ -7712,7 +7715,7 @@ class WorkLifeBalanceApp {
         if (completionRate >= 80) {
             insights.push('🎯 Excellent task completion rate! You\'re very productive.');
         } else if (completionRate >= 60) {
-            insights.push('��� Good task progress. Try to improve completion consistency.');
+            insights.push('📈 Good task progress. Try to improve completion consistency.');
         } else {
             insights.push('📝 Focus on completing more tasks to boost productivity.');
         }
@@ -8944,7 +8947,7 @@ class WorkLifeBalanceApp {
 
         return `
             <div class="summary-card">
-                <h3>💰 Expenses</h3>
+                <h3>��� Expenses</h3>
                 <div class="big-stat">${Utils.formatCurrency(total)}</div>
                 <p>Total spent</p>
                 <div class="avg-daily">Avg: ${Utils.formatCurrency(avgDaily)}/day</div>
@@ -10104,7 +10107,7 @@ class WorkLifeBalanceApp {
         const paymentMethods = {
             'cash': '💵 Cash',
             'card': '💳 Card',
-            'upi': '��� UPI',
+            'upi': '📱 UPI',
             'bank': '🏦 Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
