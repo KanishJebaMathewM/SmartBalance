@@ -5442,7 +5442,7 @@ class WorkLifeBalanceApp {
                                 `<button class="btn-small btn-success" onclick="event.stopPropagation(); app.markMealAsEaten(${meal.id})">✓ Eaten</button>` :
                                 `<button class="btn-small btn-secondary" onclick="event.stopPropagation(); app.editExistingMeal('${meal.id}')">Edit</button>`
                             }
-                            <button class="btn-small btn-danger" onclick="event.stopPropagation(); app.deleteMeal(${meal.id})">���️</button>
+                            <button class="btn-small btn-danger" onclick="event.stopPropagation(); app.deleteMeal(${meal.id})">🗑️</button>
                         </div>
                     </div>
                 `;
@@ -7411,7 +7411,7 @@ class WorkLifeBalanceApp {
             (weeklyStats.homeMeals / weeklyStats.totalMeals) * 100 : 0;
 
         if (homeCookingRate >= 70) {
-            insights.push('🍳 Excellent home cooking habits! Keep it up.');
+            insights.push('���� Excellent home cooking habits! Keep it up.');
         } else if (homeCookingRate >= 50) {
             insights.push('���� Good balance of home cooking and dining out.');
         } else {
@@ -9359,28 +9359,42 @@ class WorkLifeBalanceApp {
         this.populateBudgetPerformance(reportData.budgetData);
     }
 
-    calculateReportData(expenses) {
-        const now = new Date();
-        const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+    calculateReportData(filteredExpenses, allExpenses = null) {
+        // Use allExpenses for comparisons, filteredExpenses for current period data
+        const expenses = filteredExpenses;
+        const allExp = allExpenses || filteredExpenses;
 
-        // Basic statistics
+        const now = new Date();
+        const { startDate, endDate } = this.getCurrentPeriodRange();
+
+        // Basic statistics for current period
         const totalExpenses = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
         const totalTransactions = expenses.length;
         const largestExpense = expenses.length > 0 ? Math.max(...expenses.map(exp => parseFloat(exp.amount))) : 0;
 
-        // Calculate daily average (only count days with expenses)
-        const uniqueDates = [...new Set(expenses.map(exp => new Date(exp.createdAt).toDateString()))];
-        const avgDaily = uniqueDates.length > 0 ? totalExpenses / uniqueDates.length : 0;
+        // Calculate daily average based on period duration
+        let avgDaily = 0;
+        if (this.currentReportPeriod === 'all') {
+            const uniqueDates = [...new Set(expenses.map(exp => new Date(exp.createdAt).toDateString()))];
+            avgDaily = uniqueDates.length > 0 ? totalExpenses / uniqueDates.length : 0;
+        } else {
+            const periodDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            avgDaily = periodDays > 0 ? totalExpenses / periodDays : 0;
+        }
 
-        // This month and last month expenses
-        const thisMonthExpenses = expenses.filter(exp => new Date(exp.createdAt) >= thisMonth)
-            .reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
-        const lastMonthExpenses = expenses.filter(exp => {
-            const expDate = new Date(exp.createdAt);
-            return expDate >= lastMonth && expDate <= lastMonthEnd;
-        }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+        // Compare with previous period (same duration)
+        let previousPeriodExpenses = 0;
+        let comparisonPeriodName = '';
+
+        if (this.currentReportPeriod !== 'all' && this.currentReportPeriod !== 'custom') {
+            const { previousStartDate, previousEndDate } = this.getPreviousPeriodRange();
+            comparisonPeriodName = this.getPreviousPeriodName();
+
+            previousPeriodExpenses = allExp.filter(exp => {
+                const expDate = new Date(exp.createdAt);
+                return expDate >= previousStartDate && expDate <= previousEndDate;
+            }).reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+        }
 
         // Category data
         const categoryData = this.calculateCategoryData(expenses, totalExpenses);
@@ -9388,32 +9402,33 @@ class WorkLifeBalanceApp {
         // Payment method data
         const paymentMethodData = this.calculatePaymentMethodData(expenses, totalExpenses);
 
-        // Monthly trends
-        const monthlyData = this.calculateMonthlyData(expenses);
+        // Trends data (use filtered expenses)
+        const trendsData = this.calculateTrendsData(expenses);
 
-        // Top expenses (largest 10)
+        // Top expenses (largest 10 from current period)
         const topExpenses = expenses
             .sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount))
             .slice(0, 10);
 
-        // Recent transactions (last 20)
+        // Recent transactions (last 20 from current period)
         const recentTransactions = expenses
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, 20);
 
-        // Budget data (if budgets are set)
-        const budgetData = this.calculateBudgetData(expenses);
+        // Budget data (if budgets are set) - use current month for budget comparison
+        const budgetData = this.calculateBudgetDataForPeriod(allExp);
 
         return {
             totalExpenses,
             totalTransactions,
             largestExpense,
             avgDaily,
-            thisMonthExpenses,
-            lastMonthExpenses,
+            thisMonthExpenses: totalExpenses, // Rename for consistency
+            lastMonthExpenses: previousPeriodExpenses,
+            comparisonPeriodName,
             categoryData,
             paymentMethodData,
-            monthlyData,
+            monthlyData: trendsData, // Rename for consistency
             topExpenses,
             recentTransactions,
             budgetData
