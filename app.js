@@ -1033,7 +1033,12 @@ class WorkLifeBalanceApp {
 
     renderExpenseCalendar() {
         const calendarEl = document.getElementById('expenseCalendar');
-        if (!calendarEl) return;
+        if (!calendarEl) {
+            console.error('Calendar element not found!');
+            return;
+        }
+
+        console.log('Rendering expense calendar for:', this.currentCalendarDate);
 
         const year = this.currentCalendarDate.getFullYear();
         const month = this.currentCalendarDate.getMonth();
@@ -1644,7 +1649,7 @@ class WorkLifeBalanceApp {
         } else if (percentage > 25) {
             return {
                 type: 'info',
-                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️���🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         }
         return null;
