@@ -27,6 +27,9 @@ class WorkLifeBalanceApp {
         this.customStartDate = null;
         this.customEndDate = null;
 
+        // Analysis period navigation state
+        this.currentAnalysisDate = new Date(); // For Analytics and Insights tabs
+
         this.init();
     }
 
@@ -2081,7 +2084,7 @@ class WorkLifeBalanceApp {
                             runCycle();
                         } else {
                             this.stopBreathingExercise();
-                            Utils.showNotification('Breathing exercise completed! 🧘‍♀️', 'success');
+                            Utils.showNotification('Breathing exercise completed! 🧘‍���️', 'success');
                         }
                     }, 4000);
                 }, 2000);
