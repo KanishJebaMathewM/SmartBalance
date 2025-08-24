@@ -10188,6 +10188,78 @@ class WorkLifeBalanceApp {
         });
     }
 
+    // Analysis Month Navigation Methods
+    navigateAnalysisMonth(direction) {
+        const currentDate = new Date(this.currentAnalysisDate);
+        currentDate.setMonth(currentDate.getMonth() + (direction === 'next' ? 1 : -1));
+        this.currentAnalysisDate = currentDate;
+
+        this.updateAnalysisMonthDisplay();
+        this.updateAnalysisNavigationButtons();
+
+        // Reload current tab data with new month
+        if (this.currentExpenseTab === 'analytics') {
+            this.loadAnalyticsTab();
+        } else if (this.currentExpenseTab === 'insights') {
+            this.loadInsightsTab();
+        }
+    }
+
+    updateAnalysisMonthDisplay() {
+        const analyticsMonthEl = document.getElementById('currentAnalyticsMonth');
+        const insightsMonthEl = document.getElementById('currentInsightsMonth');
+
+        const monthName = this.getAnalysisMonthDisplayName(this.currentAnalysisDate);
+
+        if (analyticsMonthEl) analyticsMonthEl.textContent = monthName;
+        if (insightsMonthEl) insightsMonthEl.textContent = monthName;
+    }
+
+    getAnalysisMonthDisplayName(date) {
+        const today = new Date();
+        const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const targetMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+
+        if (targetMonth.getTime() === thisMonth.getTime()) {
+            return 'This Month';
+        } else if (targetMonth.getTime() === new Date(today.getFullYear(), today.getMonth() - 1, 1).getTime()) {
+            return 'Last Month';
+        } else if (targetMonth.getTime() === new Date(today.getFullYear(), today.getMonth() + 1, 1).getTime()) {
+            return 'Next Month';
+        } else {
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+        }
+    }
+
+    updateAnalysisNavigationButtons() {
+        const prevAnalyticsBtn = document.getElementById('prevAnalyticsMonthBtn');
+        const nextAnalyticsBtn = document.getElementById('nextAnalyticsMonthBtn');
+        const prevInsightsBtn = document.getElementById('prevInsightsMonthBtn');
+        const nextInsightsBtn = document.getElementById('nextInsightsMonthBtn');
+
+        // Disable next button if current month extends into the future
+        const today = new Date();
+        const currentMonth = new Date(this.currentAnalysisDate.getFullYear(), this.currentAnalysisDate.getMonth(), 1);
+        const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const isCurrentOrFuture = currentMonth >= thisMonth;
+
+        if (nextAnalyticsBtn) nextAnalyticsBtn.disabled = isCurrentOrFuture;
+        if (nextInsightsBtn) nextInsightsBtn.disabled = isCurrentOrFuture;
+        if (prevAnalyticsBtn) prevAnalyticsBtn.disabled = false;
+        if (prevInsightsBtn) prevInsightsBtn.disabled = false;
+    }
+
+    getAnalysisMonthExpenses() {
+        const allExpenses = window.storage.getExpenses();
+        const year = this.currentAnalysisDate.getFullYear();
+        const month = this.currentAnalysisDate.getMonth();
+
+        return allExpenses.filter(expense => {
+            const expenseDate = new Date(expense.createdAt);
+            return expenseDate.getFullYear() === year && expenseDate.getMonth() === month;
+        });
+    }
+
     getPreviousPeriodRange() {
         const { startDate, endDate } = this.getCurrentPeriodRange();
         const duration = endDate.getTime() - startDate.getTime();
