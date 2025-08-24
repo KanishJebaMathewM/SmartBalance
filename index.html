@@ -83,7 +83,7 @@
                     </div>
                     
                     <div class="widget fitness-widget">
-                        <h3>🏋️ Workout Streak</h3>
+                        <h3>🏋��� Workout Streak</h3>
                         <div class="widget-content">
                             <div class="stat-number" id="workoutStreak">0</div>
                             <div class="stat-label">Days 🔥</div>
@@ -158,7 +158,7 @@
                                 <option value="entertainment">🎬 Entertainment</option>
                                 <option value="education">📚 Education</option>
                                 <option value="reminder">⏰ Reminder</option>
-                                <option value="other">📦 Other</option>
+                                <option value="other">���� Other</option>
                             </select>
                             <input type="date" id="taskDate">
                             <div class="checkbox-group">
@@ -370,7 +370,7 @@
                     <div class="insights-dashboard">
                         <!-- Financial Health Score -->
                         <div class="financial-health-section">
-                            <h3>🏥 Financial Health Score</h3>
+                            <h3>���� Financial Health Score</h3>
                             <div class="health-score-container">
                                 <div class="health-score-circle">
                                     <div class="health-score-value" id="healthScoreValue">0</div>
@@ -467,200 +467,165 @@
                 <!-- Reports Tab -->
                 <div id="reports-tab" class="tab-content">
                     <div class="reports-dashboard">
-                        <div class="report-generator-section">
-                            <h3>📊 Generate Expense Reports</h3>
-                            <div class="report-options">
-                                <div class="report-option-card">
-                                    <h4>📈 Summary Report</h4>
-                                    <p>Overall spending summary with key metrics and trends</p>
-                                    <div class="report-controls">
-                                        <select id="summaryReportPeriod">
-                                            <option value="week">Last Week</option>
-                                            <option value="month" selected>Last Month</option>
-                                            <option value="quarter">Last Quarter</option>
-                                            <option value="year">Last Year</option>
-                                            <option value="custom">Custom Period</option>
-                                        </select>
-                                        <button class="btn-primary" onclick="app.generateSummaryReport()">Generate Report</button>
-                                    </div>
+                        <!-- Summary Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>📈 Summary Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('summary', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('summary', 'csv')">📊 Export CSV</button>
                                 </div>
-
-                                <div class="report-option-card">
-                                    <h4>📋 Category Analysis Report</h4>
-                                    <p>Detailed breakdown by spending categories with comparisons</p>
-                                    <div class="report-controls">
-                                        <select id="categoryReportPeriod">
-                                            <option value="month" selected>Last Month</option>
-                                            <option value="quarter">Last Quarter</option>
-                                            <option value="year">Last Year</option>
-                                        </select>
-                                        <button class="btn-primary" onclick="app.generateCategoryReport()">Generate Report</button>
+                            </div>
+                            <div class="report-content" id="summaryReportContent">
+                                <div class="report-stats-grid">
+                                    <div class="report-stat-card">
+                                        <div class="stat-value" id="totalExpenses">₹0</div>
+                                        <div class="stat-label">Total Expenses</div>
+                                        <div class="stat-period">This Month</div>
                                     </div>
-                                </div>
-
-                                <div class="report-option-card">
-                                    <h4>💳 Payment Method Report</h4>
-                                    <p>Analysis of spending patterns by payment methods</p>
-                                    <div class="report-controls">
-                                        <select id="paymentReportPeriod">
-                                            <option value="month" selected>Last Month</option>
-                                            <option value="quarter">Last Quarter</option>
-                                            <option value="year">Last Year</option>
-                                        </select>
-                                        <button class="btn-primary" onclick="app.generatePaymentReport()">Generate Report</button>
+                                    <div class="report-stat-card">
+                                        <div class="stat-value" id="avgDailySpend">₹0</div>
+                                        <div class="stat-label">Avg Daily Spend</div>
+                                        <div class="stat-period">This Month</div>
                                     </div>
-                                </div>
-
-                                <div class="report-option-card">
-                                    <h4>📅 Monthly Comparison Report</h4>
-                                    <p>Month-over-month spending comparisons and trends</p>
-                                    <div class="report-controls">
-                                        <select id="comparisonReportMonths">
-                                            <option value="3">Last 3 Months</option>
-                                            <option value="6" selected>Last 6 Months</option>
-                                            <option value="12">Last 12 Months</option>
-                                        </select>
-                                        <button class="btn-primary" onclick="app.generateComparisonReport()">Generate Report</button>
+                                    <div class="report-stat-card">
+                                        <div class="stat-value" id="totalTransactions">0</div>
+                                        <div class="stat-label">Total Transactions</div>
+                                        <div class="stat-period">This Month</div>
                                     </div>
-                                </div>
-
-                                <div class="report-option-card">
-                                    <h4>🎯 Budget vs Actual Report</h4>
-                                    <p>Compare actual spending against set budgets</p>
-                                    <div class="report-controls">
-                                        <select id="budgetReportPeriod">
-                                            <option value="month" selected>This Month</option>
-                                            <option value="quarter">This Quarter</option>
-                                            <option value="year">This Year</option>
-                                        </select>
-                                        <button class="btn-primary" onclick="app.generateBudgetReport()">Generate Report</button>
-                                    </div>
-                                </div>
-
-                                <div class="report-option-card">
-                                    <h4>📈 Trend Analysis Report</h4>
-                                    <p>Long-term spending trends and forecasting</p>
-                                    <div class="report-controls">
-                                        <select id="trendReportPeriod">
-                                            <option value="6months">Last 6 Months</option>
-                                            <option value="year" selected>Last Year</option>
-                                            <option value="2years">Last 2 Years</option>
-                                        </select>
-                                        <button class="btn-primary" onclick="app.generateTrendReport()">Generate Report</button>
+                                    <div class="report-stat-card">
+                                        <div class="stat-value" id="largestExpense">₹0</div>
+                                        <div class="stat-label">Largest Expense</div>
+                                        <div class="stat-period">This Month</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="custom-report-section">
-                            <h3>🛠️ Custom Report Builder</h3>
-                            <div class="custom-report-builder">
-                                <div class="builder-section">
-                                    <h4>Date Range</h4>
-                                    <div class="date-range-selector">
-                                        <input type="date" id="customReportStartDate" class="form-control">
-                                        <span>to</span>
-                                        <input type="date" id="customReportEndDate" class="form-control">
-                                    </div>
+                        <!-- Category Analysis Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>📋 Category Analysis Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('category', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('category', 'csv')">📊 Export CSV</button>
                                 </div>
-
-                                <div class="builder-section">
-                                    <h4>Categories</h4>
-                                    <div class="category-checkboxes" id="reportCategoryFilters">
-                                        <label><input type="checkbox" value="food" checked> 🍕 Food & Dining</label>
-                                        <label><input type="checkbox" value="bills" checked> 📧 Bills & Utilities</label>
-                                        <label><input type="checkbox" value="shopping" checked> 🛍️ Shopping</label>
-                                        <label><input type="checkbox" value="travel" checked> ✈️ Travel & Transport</label>
-                                        <label><input type="checkbox" value="entertainment" checked> 🎬 Entertainment</label>
-                                        <label><input type="checkbox" value="healthcare" checked> 🏥 Healthcare</label>
-                                        <label><input type="checkbox" value="education" checked> 📚 Education</label>
-                                        <label><input type="checkbox" value="fitness" checked> 💪 Fitness & Sports</label>
-                                        <label><input type="checkbox" value="subscriptions" checked> 📺 Subscriptions</label>
-                                        <label><input type="checkbox" value="groceries" checked> 🛒 Groceries</label>
-                                        <label><input type="checkbox" value="clothing" checked> 👕 Clothing</label>
-                                        <label><input type="checkbox" value="other" checked> 📦 Other</label>
-                                    </div>
-                                </div>
-
-                                <div class="builder-section">
-                                    <h4>Report Sections</h4>
-                                    <div class="report-sections-checkboxes">
-                                        <label><input type="checkbox" value="summary" checked> Summary Statistics</label>
-                                        <label><input type="checkbox" value="charts" checked> Charts & Graphs</label>
-                                        <label><input type="checkbox" value="trends" checked> Trend Analysis</label>
-                                        <label><input type="checkbox" value="predictions" checked> Predictions</label>
-                                        <label><input type="checkbox" value="recommendations" checked> Recommendations</label>
-                                        <label><input type="checkbox" value="detailed" checked> Detailed Transaction List</label>
-                                    </div>
-                                </div>
-
-                                <div class="builder-actions">
-                                    <button class="btn-secondary" onclick="app.previewCustomReport()">Preview Report</button>
-                                    <button class="btn-primary" onclick="app.generateCustomReport()">Generate Custom Report</button>
+                            </div>
+                            <div class="report-content">
+                                <div class="category-breakdown-table" id="categoryBreakdownTable">
+                                    <!-- Category breakdown will be generated here -->
                                 </div>
                             </div>
                         </div>
 
-                        <div class="export-options-section">
-                            <h3>📥 Export Options</h3>
-                            <div class="export-format-grid">
-                                <div class="export-option">
-                                    <div class="export-icon">📄</div>
-                                    <h4>PDF Report</h4>
-                                    <p>Professional formatted report for printing or sharing</p>
-                                    <button class="btn-secondary" onclick="app.exportReportPDF()">Export PDF</button>
+                        <!-- Payment Method Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>💳 Payment Method Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('payment', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('payment', 'csv')">📊 Export CSV</button>
                                 </div>
-                                <div class="export-option">
-                                    <div class="export-icon">📊</div>
-                                    <h4>Excel Spreadsheet</h4>
-                                    <p>Raw data for further analysis in Excel</p>
-                                    <button class="btn-secondary" onclick="app.exportReportExcel()">Export Excel</button>
-                                </div>
-                                <div class="export-option">
-                                    <div class="export-icon">📋</div>
-                                    <h4>CSV Data</h4>
-                                    <p>Simple comma-separated values format</p>
-                                    <button class="btn-secondary" onclick="app.exportReportCSV()">Export CSV</button>
-                                </div>
-                                <div class="export-option">
-                                    <div class="export-icon">📧</div>
-                                    <h4>Email Report</h4>
-                                    <p>Send report directly to your email</p>
-                                    <button class="btn-secondary" onclick="app.emailReport()">Email Report</button>
+                            </div>
+                            <div class="report-content">
+                                <div class="payment-method-breakdown" id="paymentMethodBreakdown">
+                                    <!-- Payment method breakdown will be generated here -->
                                 </div>
                             </div>
                         </div>
 
-                        <div class="scheduled-reports-section">
-                            <h3>⏰ Scheduled Reports</h3>
-                            <div class="scheduled-reports-content">
-                                <p>Set up automatic report generation and delivery</p>
-                                <div class="schedule-options">
-                                    <div class="schedule-option">
-                                        <h4>📅 Weekly Summary</h4>
-                                        <p>Get a weekly spending summary every Monday</p>
-                                        <button class="btn-primary" onclick="app.setupWeeklyReport()">Setup Weekly Report</button>
-                                    </div>
-                                    <div class="schedule-option">
-                                        <h4>🗓️ Monthly Report</h4>
-                                        <p>Comprehensive monthly analysis on the 1st of each month</p>
-                                        <button class="btn-primary" onclick="app.setupMonthlyReport()">Setup Monthly Report</button>
-                                    </div>
-                                    <div class="schedule-option">
-                                        <h4>📈 Quarterly Review</h4>
-                                        <p>In-depth quarterly financial review</p>
-                                        <button class="btn-primary" onclick="app.setupQuarterlyReport()">Setup Quarterly Report</button>
-                                    </div>
+                        <!-- Monthly Comparison Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>📅 Monthly Comparison Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('monthly', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('monthly', 'csv')">📊 Export CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-content">
+                                <div class="monthly-comparison-table" id="monthlyComparisonTable">
+                                    <!-- Monthly comparison will be generated here -->
                                 </div>
                             </div>
                         </div>
 
-                        <div class="report-history-section">
-                            <h3>📚 Report History</h3>
-                            <div class="report-history-list" id="reportHistoryList">
-                                <!-- Generated reports history will be shown here -->
-                                <div class="empty-state">
-                                    <p>No reports generated yet. Create your first report above!</p>
+                        <!-- Budget vs Actual Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>🎯 Budget vs Actual Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('budget', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('budget', 'csv')">📊 Export CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-content">
+                                <div class="budget-comparison-table" id="budgetComparisonTable">
+                                    <!-- Budget vs actual comparison will be generated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trend Analysis Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>📈 Trend Analysis Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('trend', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('trend', 'csv')">📊 Export CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-content">
+                                <div class="trend-analysis-content" id="trendAnalysisContent">
+                                    <!-- Trend analysis will be generated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Weekly Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>📅 Weekly Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('weekly', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('weekly', 'csv')">📊 Export CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-content">
+                                <div class="weekly-report-content" id="weeklyReportContent">
+                                    <!-- Weekly report will be generated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Daily Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>📊 Daily Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('daily', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('daily', 'csv')">📊 Export CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-content">
+                                <div class="daily-report-content" id="dailyReportContent">
+                                    <!-- Daily report will be generated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- All Expenses Detailed Report -->
+                        <div class="report-preview-section">
+                            <div class="report-header">
+                                <h3>📝 All Expenses Detailed Report</h3>
+                                <div class="export-buttons">
+                                    <button class="btn-secondary" onclick="app.exportReport('detailed', 'json')">📄 Export JSON</button>
+                                    <button class="btn-secondary" onclick="app.exportReport('detailed', 'csv')">📊 Export CSV</button>
+                                </div>
+                            </div>
+                            <div class="report-content">
+                                <div class="detailed-expenses-table" id="detailedExpensesTable">
+                                    <!-- Detailed expenses table will be generated here -->
                                 </div>
                             </div>
                         </div>
@@ -1486,7 +1451,7 @@
                             <small>Cook at home 15 days</small>
                         </div>
                         <div class="badge locked" data-badge="nutritionExpert">
-                            <span>��</span>
+                            <span>🥗</span>
                             <p>Nutrition Expert</p>
                             <small>Maintain healthy eating for 30 days</small>
                         </div>
