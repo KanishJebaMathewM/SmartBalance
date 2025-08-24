@@ -97,6 +97,24 @@ class WorkLifeBalanceApp {
         console.log('✅ Fitness functionality verification complete!');
     }
 
+    ensureGlobalAccess() {
+        // Make sure key methods are available globally for onclick handlers
+        if (typeof window.app === 'undefined') {
+            window.app = this;
+        }
+
+        // Also ensure the methods exist on the global app object
+        if (window.app) {
+            window.app.selectCalendarDate = this.selectCalendarDate.bind(this);
+            window.app.addExpenseForDate = this.addExpenseForDate.bind(this);
+            window.app.openModal = this.openModal.bind(this);
+            window.app.editExpense = this.editExpense.bind(this);
+            window.app.deleteExpense = this.deleteExpense.bind(this);
+        }
+
+        console.log('✅ Global app access ensured for calendar functionality');
+    }
+
     initializeEventListeners() {
         // Navigation
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -8947,7 +8965,7 @@ class WorkLifeBalanceApp {
 
         return `
             <div class="summary-card">
-                <h3>��� Expenses</h3>
+                <h3>💰 Expenses</h3>
                 <div class="big-stat">${Utils.formatCurrency(total)}</div>
                 <p>Total spent</p>
                 <div class="avg-daily">Avg: ${Utils.formatCurrency(avgDaily)}/day</div>
