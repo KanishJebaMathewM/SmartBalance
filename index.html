@@ -75,7 +75,7 @@
                     </div>
                     
                     <div class="widget food-widget">
-                        <h3>🍲 Today's Meal</h3>
+                        <h3>��� Today's Meal</h3>
                         <div class="widget-content">
                             <div id="mealSuggestion">Healthy Oats Bowl</div>
                             <div class="stat-label">Suggested</div>
@@ -212,6 +212,7 @@
                     <button class="tab-btn" data-tab="calendar">📅 Calendar</button>
                     <button class="tab-btn" data-tab="analytics">📈 Analytics</button>
                     <button class="tab-btn" data-tab="insights">🧠 Insights</button>
+                    <button class="tab-btn" data-tab="reports">📋 Reports</button>
                 </div>
 
                 <!-- Overview Tab -->
@@ -401,7 +402,7 @@
                         </div>
 
                         <div class="prediction-section">
-                            <h3>🔮 Spending Predictions</h3>
+                            <h3>🔮 Advanced Spending Predictions</h3>
                             <div class="prediction-cards">
                                 <div class="prediction-card">
                                     <h4>Next Week</h4>
@@ -414,10 +415,39 @@
                                     <div class="prediction-confidence">Confidence: <span id="monthConfidence">78%</span></div>
                                 </div>
                                 <div class="prediction-card">
+                                    <h4>Next Quarter</h4>
+                                    <div class="prediction-amount" id="nextQuarterPrediction">₹0</div>
+                                    <div class="prediction-confidence">Confidence: <span id="quarterConfidence">72%</span></div>
+                                </div>
+                                <div class="prediction-card">
+                                    <h4>Year-End Total</h4>
+                                    <div class="prediction-amount" id="yearEndPrediction">₹0</div>
+                                    <div class="prediction-confidence">Projected spending</div>
+                                </div>
+                                <div class="prediction-card">
                                     <h4>Annual Savings</h4>
                                     <div class="prediction-amount" id="annualSavingsPrediction">₹0</div>
                                     <div class="prediction-confidence">At current rate</div>
                                 </div>
+                                <div class="prediction-card">
+                                    <h4>Budget Depletion</h4>
+                                    <div class="prediction-amount" id="budgetDepletionPrediction">15 days</div>
+                                    <div class="prediction-confidence">If overspending continues</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="category-predictions">
+                            <h3>📊 Category-wise Predictions</h3>
+                            <div class="category-prediction-grid" id="categoryPredictions">
+                                <!-- Category predictions will be generated here -->
+                            </div>
+                        </div>
+
+                        <div class="seasonal-predictions">
+                            <h3>🌟 Seasonal & Event Predictions</h3>
+                            <div class="seasonal-prediction-cards" id="seasonalPredictions">
+                                <!-- Seasonal predictions will be generated here -->
                             </div>
                         </div>
 
