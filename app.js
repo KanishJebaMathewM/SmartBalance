@@ -1089,7 +1089,9 @@ class WorkLifeBalanceApp {
 
             calendarHTML += `
                 <div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}"
-                     onclick="app.selectCalendarDate(${year}, ${month}, ${day})">
+                     onclick="app.selectCalendarDate(${year}, ${month}, ${day})"
+                     data-date="${year}-${month}-${day}"
+                     title="Click to select this date">
                     <div class="day-number">${day}</div>
                     ${expenseDisplay}
                 </div>
@@ -1138,11 +1140,14 @@ class WorkLifeBalanceApp {
             new Date(expense.date || expense.createdAt).toDateString() === selectedDateStr
         );
 
+        // Always show add expense button regardless of existing expenses
+        const addExpenseButton = `<button class="btn-primary" onclick="app.addExpenseForDate('${this.selectedCalendarDate.toISOString()}')">Add Expense for This Date</button>`;
+
         if (dayExpenses.length === 0) {
             dateExpenseList.innerHTML = `
                 <div class="empty-state">
                     <p>No expenses on this date</p>
-                    <button class="btn-primary" onclick="app.addExpenseForDate('${this.selectedCalendarDate.toISOString()}')">Add Expense</button>
+                    ${addExpenseButton}
                 </div>
             `;
             return;
@@ -1153,6 +1158,9 @@ class WorkLifeBalanceApp {
         dateExpenseList.innerHTML = `
             <div class="date-summary">
                 <h4>Total: ${Utils.formatCurrency(totalAmount)}</h4>
+                <div class="date-actions">
+                    ${addExpenseButton}
+                </div>
             </div>
             ${dayExpenses.map(expense => `
                 <div class="date-expense-item">
@@ -1164,6 +1172,10 @@ class WorkLifeBalanceApp {
                         <div class="expense-description">${Utils.sanitizeInput(expense.notes || 'No description')}</div>
                     </div>
                     <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
+                    <div class="expense-actions">
+                        <button onclick="app.editExpense(${expense.id})" title="Edit">✏️</button>
+                        <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
+                    </div>
                 </div>
             `).join('')}
         `;
