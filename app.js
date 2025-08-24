@@ -85,7 +85,7 @@ class WorkLifeBalanceApp {
 
         elements.forEach(id => {
             const element = document.getElementById(id);
-            console.log(`✅ Element #${id}:`, element ? 'Found' : 'Not found');
+            console.log(`�� Element #${id}:`, element ? 'Found' : 'Not found');
         });
 
         console.log('✅ Fitness functionality verification complete!');
@@ -9828,6 +9828,303 @@ class WorkLifeBalanceApp {
         Utils.showNotification('Refreshing report...', 'info');
         this.generateOverallExpenseReport();
         Utils.showNotification('Report refreshed successfully!', 'success');
+    }
+
+    // Period Navigation Methods
+    navigateReportPeriod(direction) {
+        if (this.currentReportPeriod === 'custom') {
+            // For custom periods, navigate by the same duration
+            this.navigateCustomPeriod(direction);
+        } else {
+            // Navigate based on period type
+            this.navigateStandardPeriod(direction);
+        }
+
+        this.updatePeriodDisplay();
+        this.generateOverallExpenseReport();
+    }
+
+    navigateStandardPeriod(direction) {
+        const currentDate = new Date(this.currentReportDate);
+
+        switch (this.currentReportPeriod) {
+            case 'week':
+                currentDate.setDate(currentDate.getDate() + (direction === 'next' ? 7 : -7));
+                break;
+            case 'month':
+                currentDate.setMonth(currentDate.getMonth() + (direction === 'next' ? 1 : -1));
+                break;
+            case 'quarter':
+                currentDate.setMonth(currentDate.getMonth() + (direction === 'next' ? 3 : -3));
+                break;
+            case 'year':
+                currentDate.setFullYear(currentDate.getFullYear() + (direction === 'next' ? 1 : -1));
+                break;
+        }
+
+        this.currentReportDate = currentDate;
+    }
+
+    navigateCustomPeriod(direction) {
+        if (!this.customStartDate || !this.customEndDate) return;
+
+        const start = new Date(this.customStartDate);
+        const end = new Date(this.customEndDate);
+        const duration = end.getTime() - start.getTime();
+
+        if (direction === 'next') {
+            this.customStartDate = new Date(end.getTime() + 1);
+            this.customEndDate = new Date(this.customStartDate.getTime() + duration);
+        } else {
+            this.customEndDate = new Date(start.getTime() - 1);
+            this.customStartDate = new Date(this.customEndDate.getTime() - duration);
+        }
+
+        // Update the date inputs
+        const startInput = document.getElementById('customStartDate');
+        const endInput = document.getElementById('customEndDate');
+        if (startInput) startInput.value = this.formatDateForInput(this.customStartDate);
+        if (endInput) endInput.value = this.formatDateForInput(this.customEndDate);
+    }
+
+    changePeriodType(newPeriodType) {
+        this.currentReportPeriod = newPeriodType;
+        this.currentReportDate = new Date(); // Reset to current date
+
+        // Show/hide custom date range
+        const customDateRange = document.getElementById('customDateRange');
+        if (customDateRange) {
+            customDateRange.style.display = newPeriodType === 'custom' ? 'flex' : 'none';
+        }
+
+        // Initialize custom dates if needed
+        if (newPeriodType === 'custom') {
+            this.initializeCustomDates();
+        }
+
+        this.updatePeriodDisplay();
+        this.updateNavigationButtons();
+        this.generateOverallExpenseReport();
+    }
+
+    initializeCustomDates() {
+        const today = new Date();
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        this.customStartDate = startOfMonth;
+        this.customEndDate = endOfMonth;
+
+        const startInput = document.getElementById('customStartDate');
+        const endInput = document.getElementById('customEndDate');
+        if (startInput) startInput.value = this.formatDateForInput(startOfMonth);
+        if (endInput) endInput.value = this.formatDateForInput(endOfMonth);
+    }
+
+    updateCustomPeriod() {
+        const startInput = document.getElementById('customStartDate');
+        const endInput = document.getElementById('customEndDate');
+
+        if (startInput && endInput && startInput.value && endInput.value) {
+            this.customStartDate = new Date(startInput.value);
+            this.customEndDate = new Date(endInput.value);
+
+            // Ensure end date is after start date
+            if (this.customEndDate < this.customStartDate) {
+                this.customEndDate = new Date(this.customStartDate);
+                endInput.value = this.formatDateForInput(this.customEndDate);
+            }
+
+            this.updatePeriodDisplay();
+            this.generateOverallExpenseReport();
+        }
+    }
+
+    resetToCurrentMonth() {
+        this.currentReportPeriod = 'month';
+        this.currentReportDate = new Date();
+
+        const periodSelector = document.getElementById('periodSelector');
+        if (periodSelector) periodSelector.value = 'month';
+
+        const customDateRange = document.getElementById('customDateRange');
+        if (customDateRange) customDateRange.style.display = 'none';
+
+        this.updatePeriodDisplay();
+        this.updateNavigationButtons();
+        this.generateOverallExpenseReport();
+    }
+
+    updatePeriodDisplay() {
+        const currentPeriodEl = document.getElementById('currentReportPeriod');
+        const reportPeriodEl = document.getElementById('reportPeriod');
+        const reportDateRangeEl = document.getElementById('reportDateRange');
+
+        let periodName = '';
+        let dateRange = '';
+
+        const { startDate, endDate } = this.getCurrentPeriodRange();
+
+        switch (this.currentReportPeriod) {
+            case 'week':
+                periodName = this.getWeekDisplayName(this.currentReportDate);
+                break;
+            case 'month':
+                periodName = this.getMonthDisplayName(this.currentReportDate);
+                break;
+            case 'quarter':
+                periodName = this.getQuarterDisplayName(this.currentReportDate);
+                break;
+            case 'year':
+                periodName = this.getYearDisplayName(this.currentReportDate);
+                break;
+            case 'all':
+                periodName = 'All Time';
+                dateRange = 'All recorded data';
+                break;
+            case 'custom':
+                periodName = 'Custom Period';
+                break;
+        }
+
+        if (this.currentReportPeriod !== 'all') {
+            dateRange = `${this.formatDisplayDate(startDate)} - ${this.formatDisplayDate(endDate)}`;
+        }
+
+        if (currentPeriodEl) currentPeriodEl.textContent = periodName;
+        if (reportPeriodEl) reportPeriodEl.textContent = periodName;
+        if (reportDateRangeEl) reportDateRangeEl.textContent = dateRange;
+    }
+
+    getCurrentPeriodRange() {
+        if (this.currentReportPeriod === 'custom') {
+            return {
+                startDate: this.customStartDate || new Date(),
+                endDate: this.customEndDate || new Date()
+            };
+        }
+
+        const baseDate = new Date(this.currentReportDate);
+        let startDate, endDate;
+
+        switch (this.currentReportPeriod) {
+            case 'week':
+                // Get start of week (Sunday)
+                const dayOfWeek = baseDate.getDay();
+                startDate = new Date(baseDate);
+                startDate.setDate(baseDate.getDate() - dayOfWeek);
+                endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + 6);
+                break;
+
+            case 'month':
+                startDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
+                endDate = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0);
+                break;
+
+            case 'quarter':
+                const quarterStart = Math.floor(baseDate.getMonth() / 3) * 3;
+                startDate = new Date(baseDate.getFullYear(), quarterStart, 1);
+                endDate = new Date(baseDate.getFullYear(), quarterStart + 3, 0);
+                break;
+
+            case 'year':
+                startDate = new Date(baseDate.getFullYear(), 0, 1);
+                endDate = new Date(baseDate.getFullYear(), 11, 31);
+                break;
+
+            default:
+                startDate = new Date(0);
+                endDate = new Date();
+        }
+
+        return { startDate, endDate };
+    }
+
+    updateNavigationButtons() {
+        const prevBtn = document.getElementById('prevPeriodBtn');
+        const nextBtn = document.getElementById('nextPeriodBtn');
+
+        if (this.currentReportPeriod === 'all') {
+            // Disable navigation for "All Time" view
+            if (prevBtn) prevBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = true;
+        } else {
+            if (prevBtn) prevBtn.disabled = false;
+            if (nextBtn) {
+                // Disable next button if current period extends into the future
+                const { endDate } = this.getCurrentPeriodRange();
+                const today = new Date();
+                nextBtn.disabled = endDate > today;
+            }
+        }
+    }
+
+    // Helper methods for period display names
+    getWeekDisplayName(date) {
+        const startOfWeek = new Date(date);
+        startOfWeek.setDate(date.getDate() - date.getDay());
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        return `Week of ${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+    }
+
+    getMonthDisplayName(date) {
+        const today = new Date();
+        const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const targetMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+
+        if (targetMonth.getTime() === thisMonth.getTime()) {
+            return 'This Month';
+        } else if (targetMonth.getTime() === new Date(today.getFullYear(), today.getMonth() - 1, 1).getTime()) {
+            return 'Last Month';
+        } else if (targetMonth.getTime() === new Date(today.getFullYear(), today.getMonth() + 1, 1).getTime()) {
+            return 'Next Month';
+        } else {
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+        }
+    }
+
+    getQuarterDisplayName(date) {
+        const quarter = Math.floor(date.getMonth() / 3) + 1;
+        const year = date.getFullYear();
+        const today = new Date();
+        const currentQuarter = Math.floor(today.getMonth() / 3) + 1;
+        const currentYear = today.getFullYear();
+
+        if (year === currentYear && quarter === currentQuarter) {
+            return 'This Quarter';
+        } else {
+            return `Q${quarter} ${year}`;
+        }
+    }
+
+    getYearDisplayName(date) {
+        const year = date.getFullYear();
+        const currentYear = new Date().getFullYear();
+
+        if (year === currentYear) {
+            return 'This Year';
+        } else if (year === currentYear - 1) {
+            return 'Last Year';
+        } else if (year === currentYear + 1) {
+            return 'Next Year';
+        } else {
+            return year.toString();
+        }
+    }
+
+    formatDateForInput(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    formatDisplayDate(date) {
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
     }
 }
 
