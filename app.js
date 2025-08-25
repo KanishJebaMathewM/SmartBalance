@@ -297,16 +297,68 @@ class WorkLifeBalanceApp {
 
     initializeExpenseCheckbox() {
         console.log('🔧 Initializing expense checkbox...');
-        // Re-initialize expense checkbox functionality
-        const expenseCheckbox = document.getElementById('taskExpense');
-        const expenseDetails = document.getElementById('expenseTaskDetails');
-        const amountField = document.getElementById('taskAmount');
 
-        console.log('Elements found:', {
-            expenseCheckbox: !!expenseCheckbox,
-            expenseDetails: !!expenseDetails,
-            amountField: !!amountField
+        // Use a more direct approach - set up the event listener immediately
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.id === 'taskExpense') {
+                console.log('📋 Expense checkbox changed via delegation:', e.target.checked);
+
+                const expenseDetails = document.getElementById('expenseTaskDetails');
+                const amountField = document.getElementById('taskAmount');
+
+                if (expenseDetails) {
+                    expenseDetails.style.display = e.target.checked ? 'block' : 'none';
+                    console.log('💰 Expense details display:', expenseDetails.style.display);
+                }
+
+                if (amountField) {
+                    amountField.required = e.target.checked;
+
+                    if (e.target.checked) {
+                        setTimeout(() => {
+                            amountField.focus();
+                            amountField.placeholder = "Enter expected amount (₹) - Required *";
+                        }, 100);
+                        Utils.showNotification('Please enter the expected amount for this expense', 'info');
+                    } else {
+                        amountField.placeholder = "Expected amount (₹) *";
+                        amountField.value = '';
+                    }
+                }
+
+                if (e.target.checked) {
+                    this.updateExpenseCategory();
+                } else {
+                    // Reset expense category display when unchecked
+                    const categoryDisplay = document.getElementById('selectedExpenseCategory');
+                    const changeBtn = document.getElementById('changeExpenseCategoryBtn');
+                    const expenseCategorySelect = document.getElementById('taskExpenseCategory');
+
+                    if (categoryDisplay) categoryDisplay.textContent = '-';
+                    if (changeBtn) changeBtn.style.display = 'none';
+                    if (expenseCategorySelect) {
+                        expenseCategorySelect.style.display = 'none';
+                        const expenseCategoryContainer = expenseCategorySelect.parentElement;
+                        if (expenseCategoryContainer) {
+                            expenseCategoryContainer.style.display = 'none';
+                        }
+                    }
+                }
+            }
         });
+
+        // Also add a direct click handler as backup
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'taskExpense') {
+                console.log('📋 Expense checkbox clicked via delegation:', e.target.checked);
+                // Trigger change event manually
+                setTimeout(() => {
+                    e.target.dispatchEvent(new Event('change'));
+                }, 10);
+            }
+        });
+
+        console.log('✅ Event delegation listeners attached successfully');
 
         // Add global testing function for debugging
         window.testExpenseCheckbox = () => {
@@ -324,77 +376,6 @@ class WorkLifeBalanceApp {
                 console.log('Manually updated display to:', details.style.display);
             }
         };
-
-        if (expenseCheckbox && expenseDetails) {
-            // Remove existing event listeners to avoid duplicates
-            if (this.expenseCheckboxHandler) {
-                expenseCheckbox.removeEventListener('change', this.expenseCheckboxHandler);
-            }
-
-            // Create new handler and store reference
-            this.expenseCheckboxHandler = () => {
-                console.log('📋 Expense checkbox changed:', expenseCheckbox.checked);
-                expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
-                console.log('💰 Expense details display:', expenseDetails.style.display);
-
-                // Make amount field required when expense is checked
-                if (amountField) {
-                    amountField.required = expenseCheckbox.checked;
-
-                    // Focus on amount field and show notification when expense is checked
-                    if (expenseCheckbox.checked) {
-                        setTimeout(() => {
-                            amountField.focus();
-                            amountField.placeholder = "Enter expected amount (₹) - Required *";
-                        }, 100);
-                        Utils.showNotification('Please enter the expected amount for this expense', 'info');
-                    } else {
-                        amountField.placeholder = "Expected amount (₹) *";
-                    }
-                }
-
-                if (expenseCheckbox.checked) {
-                    this.updateExpenseCategory();
-                } else {
-                    // Reset expense category display when unchecked
-                    const categoryDisplay = document.getElementById('selectedExpenseCategory');
-                    const changeBtn = document.getElementById('changeExpenseCategoryBtn');
-                    const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-
-                    if (categoryDisplay) categoryDisplay.textContent = '-';
-                    if (changeBtn) changeBtn.style.display = 'none';
-                    if (expenseCategorySelect) {
-                        expenseCategorySelect.style.display = 'none';
-                        // Hide the container as well
-                        const expenseCategoryContainer = expenseCategorySelect.parentElement;
-                        if (expenseCategoryContainer) {
-                            expenseCategoryContainer.style.display = 'none';
-                        }
-                    }
-
-                    // Clear amount field value when expense checkbox is unchecked
-                    if (amountField) {
-                        amountField.value = '';
-                    }
-                }
-            };
-
-            // Add the new event listener
-            expenseCheckbox.addEventListener('change', this.expenseCheckboxHandler);
-
-            // Also add click listener as fallback
-            expenseCheckbox.addEventListener('click', this.expenseCheckboxHandler);
-
-            console.log('✅ Event listeners attached successfully');
-        } else {
-            console.error('❌ Required elements not found for expense checkbox');
-
-            // Try again after a delay
-            setTimeout(() => {
-                console.log('🔄 Retrying expense checkbox initialization...');
-                this.initializeExpenseCheckbox();
-            }, 500);
-        }
     }
 
     initializeButtonHandlers() {
@@ -2865,7 +2846,7 @@ class WorkLifeBalanceApp {
             shopping: '🛍️',
             travel: '������',
             entertainment: '🎬',
-            healthcare: '�������',
+            healthcare: '�����',
             education: '📚',
             other: '������'
         };
@@ -7231,7 +7212,7 @@ class WorkLifeBalanceApp {
                 description: 'You tend to be more stressed on days with higher spending'
             },
             {
-                title: '��️ Workout Impact',
+                title: '🏋️ Workout Impact',
                 description: 'Your mood is 30% better on workout days'
             }
         ];
