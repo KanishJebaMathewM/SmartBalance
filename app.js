@@ -1,32 +1,56 @@
 // Global function to toggle expense details in task modal
 function toggleExpenseDetails(checkbox) {
-    console.log('🔧 TOGGLE EXPENSE DETAILS CALLED!');
+    console.log('🔧 ADVANCED TOGGLE EXPENSE DETAILS CALLED!');
     console.log('📋 Checkbox checked:', checkbox ? checkbox.checked : 'undefined');
-    console.log('📋 Checkbox element:', checkbox);
 
     const expenseDetails = document.getElementById('expenseTaskDetails');
     const amountField = document.getElementById('taskAmount');
 
     console.log('🔍 Elements found:', {
         expenseDetails: !!expenseDetails,
-        amountField: !!amountField,
-        expenseDetailsDisplay: expenseDetails ? expenseDetails.style.display : 'not found'
+        amountField: !!amountField
     });
 
     if (expenseDetails) {
-        console.log('💰 Before change - display:', expenseDetails.style.display);
+        console.log('💰 Current state - display:', window.getComputedStyle(expenseDetails).display);
+        console.log('💰 Current inline style:', expenseDetails.style.cssText);
 
         if (checkbox.checked) {
-            // Force remove any hidden styles and show the element
-            expenseDetails.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
-            console.log('💰 Forced display to block with !important');
+            // Method 1: Remove all inline styles
+            expenseDetails.removeAttribute('style');
+            console.log('🔧 Removed all inline styles');
+
+            // Method 2: Add CSS class for show
+            expenseDetails.classList.add('expense-details-show');
+            expenseDetails.classList.remove('expense-details-hide');
+            console.log('🔧 Added show class, removed hide class');
+
+            // Method 3: Force inline styles as backup
+            expenseDetails.style.setProperty('display', 'block', 'important');
+            expenseDetails.style.setProperty('visibility', 'visible', 'important');
+            expenseDetails.style.setProperty('opacity', '1', 'important');
+            console.log('🔧 Set individual CSS properties with important');
+
+            // Method 4: Direct manipulation
+            expenseDetails.hidden = false;
+            console.log('🔧 Set hidden attribute to false');
+
         } else {
-            expenseDetails.style.cssText = 'display: none !important;';
-            console.log('💰 Forced display to none with !important');
+            // Hide the element
+            expenseDetails.classList.add('expense-details-hide');
+            expenseDetails.classList.remove('expense-details-show');
+            expenseDetails.style.setProperty('display', 'none', 'important');
+            expenseDetails.hidden = true;
+            console.log('🔧 Hidden the element with all methods');
         }
 
-        console.log('💰 After change - display:', expenseDetails.style.display);
-        console.log('💰 Full style:', expenseDetails.style.cssText);
+        // Verify the change
+        setTimeout(() => {
+            const computedStyle = window.getComputedStyle(expenseDetails);
+            console.log('✅ Final computed display:', computedStyle.display);
+            console.log('✅ Final computed visibility:', computedStyle.visibility);
+            console.log('✅ Final inline style:', expenseDetails.style.cssText);
+        }, 50);
 
     } else {
         console.error('❌ expenseTaskDetails element not found!');
@@ -41,7 +65,7 @@ function toggleExpenseDetails(checkbox) {
                 amountField.focus();
                 amountField.placeholder = "Enter expected amount (₹) - Required *";
                 console.log('🎯 Amount field focused and placeholder updated');
-            }, 100);
+            }, 200);
 
             // Show notification if Utils is available
             if (typeof Utils !== 'undefined') {
