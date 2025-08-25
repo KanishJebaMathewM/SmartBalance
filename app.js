@@ -343,18 +343,29 @@ class WorkLifeBalanceApp {
     }
 
     initializeExpenseCheckbox() {
+        console.log('🔧 Initializing expense checkbox...');
         // Re-initialize expense checkbox functionality
         const expenseCheckbox = document.getElementById('taskExpense');
         const expenseDetails = document.getElementById('expenseTaskDetails');
         const amountField = document.getElementById('taskAmount');
 
+        console.log('Elements found:', {
+            expenseCheckbox: !!expenseCheckbox,
+            expenseDetails: !!expenseDetails,
+            amountField: !!amountField
+        });
+
         if (expenseCheckbox && expenseDetails) {
             // Remove existing event listeners to avoid duplicates
-            expenseCheckbox.removeEventListener('change', this.expenseCheckboxHandler);
+            if (this.expenseCheckboxHandler) {
+                expenseCheckbox.removeEventListener('change', this.expenseCheckboxHandler);
+            }
 
             // Create new handler and store reference
             this.expenseCheckboxHandler = () => {
+                console.log('📋 Expense checkbox changed:', expenseCheckbox.checked);
                 expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
+                console.log('💰 Expense details display:', expenseDetails.style.display);
 
                 // Make amount field required when expense is checked
                 if (amountField) {
@@ -1105,7 +1116,7 @@ class WorkLifeBalanceApp {
     }
 
     validateCalendarFunctionality() {
-        console.log('���� Validating calendar functionality...');
+        console.log('🔍 Validating calendar functionality...');
 
         // Check if calendar elements exist
         const checks = {
