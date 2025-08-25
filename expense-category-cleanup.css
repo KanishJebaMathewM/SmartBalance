@@ -1,0 +1,25 @@
+/* Styling for expense info note */
+.expense-info {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #f0f8ff;
+    border-left: 3px solid #3b82f6;
+    border-radius: 4px;
+}
+
+.expense-note {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #4b5563;
+    line-height: 1.4;
+}
+
+/* Dark mode styling */
+.dark-mode .expense-info {
+    background-color: #1e293b;
+    border-left-color: #60a5fa;
+}
+
+.dark-mode .expense-note {
+    color: #cbd5e1;
+}
