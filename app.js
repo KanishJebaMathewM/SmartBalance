@@ -1,3 +1,55 @@
+// Global function to toggle expense details in task modal
+function toggleExpenseDetails(checkbox) {
+    console.log('🔧 Toggle expense details called, checked:', checkbox.checked);
+
+    const expenseDetails = document.getElementById('expenseTaskDetails');
+    const amountField = document.getElementById('taskAmount');
+
+    if (expenseDetails) {
+        expenseDetails.style.display = checkbox.checked ? 'block' : 'none';
+        console.log('💰 Expense details display set to:', expenseDetails.style.display);
+    }
+
+    if (amountField) {
+        amountField.required = checkbox.checked;
+
+        if (checkbox.checked) {
+            setTimeout(() => {
+                amountField.focus();
+                amountField.placeholder = "Enter expected amount (₹) - Required *";
+            }, 100);
+
+            // Show notification if Utils is available
+            if (typeof Utils !== 'undefined') {
+                Utils.showNotification('Please enter the expected amount for this expense', 'info');
+            }
+        } else {
+            amountField.placeholder = "Expected amount (₹) *";
+            amountField.value = '';
+        }
+    }
+
+    // Update expense category if app instance is available
+    if (window.app && checkbox.checked) {
+        window.app.updateExpenseCategory();
+    } else if (window.app && !checkbox.checked) {
+        // Reset expense category display when unchecked
+        const categoryDisplay = document.getElementById('selectedExpenseCategory');
+        const changeBtn = document.getElementById('changeExpenseCategoryBtn');
+        const expenseCategorySelect = document.getElementById('taskExpenseCategory');
+
+        if (categoryDisplay) categoryDisplay.textContent = '-';
+        if (changeBtn) changeBtn.style.display = 'none';
+        if (expenseCategorySelect) {
+            expenseCategorySelect.style.display = 'none';
+            const expenseCategoryContainer = expenseCategorySelect.parentElement;
+            if (expenseCategoryContainer) {
+                expenseCategoryContainer.style.display = 'none';
+            }
+        }
+    }
+}
+
 // Main application logic for Work-Life Balance Companion
 
 class WorkLifeBalanceApp {
@@ -2149,7 +2201,7 @@ class WorkLifeBalanceApp {
                             <div class="meal-meta">
                                 <span class="meal-type">${meal.type}</span>
                                 <span class="meal-calories">${meal.calories} cal</span>
-                                <span class="meal-source">${meal.source === 'home' ? '🏠 Home' : '🏨 Hotel'}</span>
+                                <span class="meal-source">${meal.source === 'home' ? '🏠 Home' : '�� Hotel'}</span>
                                 <span class="meal-date">${Utils.formatDate(meal.date)}</span>
                             </div>
                         </div>
@@ -3260,7 +3312,7 @@ class WorkLifeBalanceApp {
             } else if (amount < average * 0.5) {
                 insights.push({
                     type: 'positive',
-                    icon: '👍',
+                    icon: '����',
                     text: `Great! This is below your usual ${this.getCategoryDisplayName(category)} spending`
                 });
             }
