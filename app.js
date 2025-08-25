@@ -769,7 +769,8 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ' • ����� Expense-related' : ''}
+                        ${task.expenseRelated ? ` • ����� Expense: ${Utils.formatCurrency(task.amount)}` : ''}
+                        ${task.completed && task.expenseRelated ? ' • ✅ Added to expenses' : ''}
                     </div>
                 </div>
                 <div class="task-actions">
