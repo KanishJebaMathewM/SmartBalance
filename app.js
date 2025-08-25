@@ -139,7 +139,8 @@ class WorkLifeBalanceApp {
         // Form submissions
         this.initializeFormHandlers();
 
-        // Note: Expense checkbox is handled in initializeFormHandlers
+        // Initialize expense checkbox functionality
+        this.initializeExpenseCheckbox();
 
         // Button actions
         this.initializeButtonHandlers();
