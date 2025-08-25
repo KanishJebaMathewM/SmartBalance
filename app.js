@@ -2917,8 +2917,6 @@ class WorkLifeBalanceApp {
             // Special handling for task modal
             if (modalId === 'taskModal') {
                 this.resetTaskForm();
-                // Re-attach expense checkbox handler to ensure it works
-                setTimeout(() => this.fixExpenseCheckbox(), 100);
             }
         }
     }
