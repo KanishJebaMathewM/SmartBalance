@@ -106,7 +106,7 @@ window.toggleExpenseDetails = toggleExpenseDetails;
 
 // Test function for debugging
 window.testExpenseToggle = function() {
-    console.log('🧪 Testing expense toggle manually...');
+    console.log('🧪 ADVANCED Testing expense toggle manually...');
     const checkbox = document.getElementById('taskExpense');
     const details = document.getElementById('expenseTaskDetails');
 
@@ -114,16 +114,34 @@ window.testExpenseToggle = function() {
         checkbox: !!checkbox,
         checkboxChecked: checkbox ? checkbox.checked : 'n/a',
         details: !!details,
-        detailsDisplay: details ? details.style.display : 'n/a'
+        detailsDisplay: details ? window.getComputedStyle(details).display : 'n/a'
     });
 
     if (checkbox && details) {
-        // Force show the details with !important
-        details.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
-        console.log('🔧 Manually forced details to show with !important');
-        console.log('📊 Details display is now:', details.style.display);
-        console.log('📊 Full style:', details.style.cssText);
-        return 'Details forced visible with !important';
+        // Force check the checkbox first
+        checkbox.checked = true;
+        console.log('🔧 Forced checkbox to checked');
+
+        // Apply all methods to show
+        details.removeAttribute('style');
+        details.classList.add('expense-details-show');
+        details.classList.remove('expense-details-hide');
+        details.style.setProperty('display', 'block', 'important');
+        details.style.setProperty('visibility', 'visible', 'important');
+        details.style.setProperty('opacity', '1', 'important');
+        details.hidden = false;
+
+        console.log('🔧 Applied all advanced methods to show details');
+
+        setTimeout(() => {
+            const computedStyle = window.getComputedStyle(details);
+            console.log('📊 Final computed display:', computedStyle.display);
+            console.log('📊 Final computed visibility:', computedStyle.visibility);
+            console.log('📊 Final classes:', details.className);
+            console.log('📊 Final inline style:', details.style.cssText);
+        }, 100);
+
+        return 'Advanced methods applied';
     } else {
         return 'Elements not found';
     }
@@ -3425,7 +3443,7 @@ class WorkLifeBalanceApp {
             if (remaining < 0) {
                 insights.push({
                     type: 'danger',
-                    icon: '🚨',
+                    icon: '��',
                     text: `This will exceed your ${this.getCategoryDisplayName(category)} budget by ₹${Math.abs(remaining)}`
                 });
             } else if (remaining < budget * 0.2) {
@@ -4029,7 +4047,7 @@ class WorkLifeBalanceApp {
             '�� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
             '������ Completing tasks reduces your stress levels!' :
-            '📊 Keep tracking to understand your productivity-stress patterns';
+            '�� Keep tracking to understand your productivity-stress patterns';
 
         this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
     }
