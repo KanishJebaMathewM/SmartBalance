@@ -74,6 +74,37 @@ function toggleExpenseDetails(checkbox) {
     }
 }
 
+// Make function globally available and add test function
+window.toggleExpenseDetails = toggleExpenseDetails;
+
+// Test function for debugging
+window.testExpenseToggle = function() {
+    console.log('🧪 Testing expense toggle manually...');
+    const checkbox = document.getElementById('taskExpense');
+    const details = document.getElementById('expenseTaskDetails');
+
+    console.log('Elements:', {
+        checkbox: !!checkbox,
+        checkboxChecked: checkbox ? checkbox.checked : 'n/a',
+        details: !!details,
+        detailsDisplay: details ? details.style.display : 'n/a'
+    });
+
+    if (checkbox && details) {
+        // Force show the details
+        details.style.display = 'block';
+        details.style.visibility = 'visible';
+        details.style.opacity = '1';
+        console.log('🔧 Manually forced details to show');
+        console.log('📊 Details display is now:', details.style.display);
+        return 'Details forced visible';
+    } else {
+        return 'Elements not found';
+    }
+};
+
+console.log('✅ Global functions defined: toggleExpenseDetails and testExpenseToggle');
+
 // Main application logic for Work-Life Balance Companion
 
 class WorkLifeBalanceApp {
@@ -768,7 +799,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ' �� ���� Expense-related' : ''}
+                        ${task.expenseRelated ? ' • ���� Expense-related' : ''}
                     </div>
                 </div>
                 <div class="task-actions">
