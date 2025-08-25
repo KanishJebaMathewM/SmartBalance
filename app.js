@@ -94,13 +94,12 @@ window.testExpenseToggle = function() {
     });
 
     if (checkbox && details) {
-        // Force show the details
-        details.style.display = 'block';
-        details.style.visibility = 'visible';
-        details.style.opacity = '1';
-        console.log('🔧 Manually forced details to show');
+        // Force show the details with !important
+        details.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+        console.log('🔧 Manually forced details to show with !important');
         console.log('📊 Details display is now:', details.style.display);
-        return 'Details forced visible';
+        console.log('📊 Full style:', details.style.cssText);
+        return 'Details forced visible with !important';
     } else {
         return 'Elements not found';
     }
@@ -1876,7 +1875,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺���👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -10577,7 +10576,7 @@ class WorkLifeBalanceApp {
         const categoryNames = {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
-            'shopping': '🛍��� Shopping',
+            'shopping': '🛍️ Shopping',
             'travel': '��️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
