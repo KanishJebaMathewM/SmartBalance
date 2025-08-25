@@ -769,7 +769,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ' • ����� Expense-related' : ''}
+                        ${task.expenseRelated ? ' • ������� Expense-related' : ''}
                     </div>
                 </div>
                 <div class="task-actions">
@@ -4605,17 +4605,51 @@ class WorkLifeBalanceApp {
 
                 // Add expense if task is expense-related
                 if (updatedTask.expenseRelated && updatedTask.amount) {
+                    // Use the task's date if available, otherwise use today
+                    let expenseDate;
+                    if (updatedTask.date) {
+                        expenseDate = updatedTask.date;
+                    } else {
+                        expenseDate = new Date().toISOString().split('T')[0];
+                    }
+
+                    // Map task category to expense category
+                    const categoryMapping = {
+                        'work': 'other',
+                        'personal': 'other',
+                        'health': 'healthcare',
+                        'food': 'food',
+                        'bills': 'bills',
+                        'shopping': 'shopping',
+                        'travel': 'travel',
+                        'entertainment': 'entertainment',
+                        'education': 'education',
+                        'reminder': 'other',
+                        'other': 'other'
+                    };
+
+                    const expenseCategory = categoryMapping[updatedTask.category] || updatedTask.expenseCategory || 'other';
+
                     const expenseData = {
                         amount: parseFloat(updatedTask.amount),
-                        category: updatedTask.expenseCategory || 'other',
+                        category: expenseCategory,
                         notes: `From completed task: ${updatedTask.title}`,
-                        date: new Date().toISOString().split('T')[0],
+                        date: expenseDate,
                         paymentMethod: 'cash',
                         source: 'task'
                     };
 
-                    window.storage.addExpense(expenseData);
-                    Utils.showNotification(`Expense added: ${Utils.formatCurrency(updatedTask.amount)} to ${this.getCategoryDisplayName(updatedTask.expenseCategory)}`, 'info', 4000);
+                    const addedExpense = window.storage.addExpense(expenseData);
+                    Utils.showNotification(`✅ Task completed! Expense of ${Utils.formatCurrency(updatedTask.amount)} added to ${this.getCategoryDisplayName(expenseCategory)} on ${new Date(expenseDate).toLocaleDateString()}`, 'success', 5000);
+
+                    // If we're on the expense section and calendar tab, refresh the calendar view
+                    if (this.currentSection === 'expenses' && this.currentExpenseTab === 'calendar') {
+                        this.renderExpenseCalendar();
+                        // If the expense date is selected, update the selected date view
+                        if (this.selectedCalendarDate && this.selectedCalendarDate.toISOString().split('T')[0] === expenseDate) {
+                            this.showSelectedDateExpenses();
+                        }
+                    }
                 }
             }
 
@@ -5809,7 +5843,7 @@ class WorkLifeBalanceApp {
 
     getMealTypeIcon(type) {
         const icons = {
-            breakfast: '🌅',
+            breakfast: '����',
             lunch: '🌞',
             dinner: '🌙',
             snack: '🥨'
