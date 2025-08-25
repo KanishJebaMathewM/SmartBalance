@@ -422,21 +422,6 @@ class WorkLifeBalanceApp {
 
                 if (e.target.checked) {
                     this.updateExpenseCategory();
-                } else {
-                    // Reset expense category display when unchecked
-                    const categoryDisplay = document.getElementById('selectedExpenseCategory');
-                    const changeBtn = document.getElementById('changeExpenseCategoryBtn');
-                    const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-
-                    if (categoryDisplay) categoryDisplay.textContent = '-';
-                    if (changeBtn) changeBtn.style.display = 'none';
-                    if (expenseCategorySelect) {
-                        expenseCategorySelect.style.display = 'none';
-                        const expenseCategoryContainer = expenseCategorySelect.parentElement;
-                        if (expenseCategoryContainer) {
-                            expenseCategoryContainer.style.display = 'none';
-                        }
-                    }
                 }
             }
         });
@@ -1414,7 +1399,7 @@ class WorkLifeBalanceApp {
                     <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
                     <div class="expense-actions">
                         <button onclick="app.editExpense(${expense.id})" title="Edit">✏️</button>
-                        <button onclick="app.deleteExpense(${expense.id})" title="Delete">���️</button>
+                        <button onclick="app.deleteExpense(${expense.id})" title="Delete">�����️</button>
                     </div>
                 </div>
             `).join('')}
