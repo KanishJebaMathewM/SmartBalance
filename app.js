@@ -4484,55 +4484,6 @@ class WorkLifeBalanceApp {
         }).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
     }
 
-    // Update expense category based on task category
-    updateExpenseCategory() {
-        const taskCategorySelect = document.getElementById('taskCategory');
-        const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-        const categoryDisplay = document.getElementById('selectedExpenseCategory');
-        const changeBtn = document.getElementById('changeExpenseCategoryBtn');
-
-        if (!taskCategorySelect || !expenseCategorySelect || !categoryDisplay) return;
-
-        const taskCategory = taskCategorySelect.value;
-        const categoryMapping = {
-            'food': 'food',
-            'health': 'healthcare',
-            'bills': 'bills',
-            'shopping': 'shopping',
-            'travel': 'travel',
-            'entertainment': 'entertainment',
-            'education': 'education',
-            'work': 'other',
-            'personal': 'other',
-            'reminder': 'other',
-            'other': 'other'
-        };
-
-        const mappedCategory = categoryMapping[taskCategory] || 'other';
-
-        // Set the expense category automatically
-        expenseCategorySelect.value = mappedCategory;
-
-        // Update the display
-        const selectedOption = expenseCategorySelect.querySelector(`option[value="${mappedCategory}"]`);
-        if (selectedOption) {
-            categoryDisplay.textContent = selectedOption.textContent;
-        }
-
-        // Show/hide change button appropriately
-        if (changeBtn) {
-            changeBtn.style.display = 'inline';
-        }
-
-        // Hide the select dropdown initially since category is auto-mapped
-        expenseCategorySelect.style.display = 'none';
-
-        // Hide the entire expense category selection section since it's auto-mapped
-        const expenseCategoryContainer = expenseCategorySelect.parentElement;
-        if (expenseCategoryContainer) {
-            expenseCategoryContainer.style.display = 'none';
-        }
-    }
 
     // Calendar view switching
     switchToCalendarView() {
