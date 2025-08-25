@@ -23,7 +23,9 @@ function toggleExpenseDetails(checkbox) {
         if (checkbox.checked) {
             expenseDetails.style.visibility = 'visible';
             expenseDetails.style.opacity = '1';
-            console.log('🔧 Forced visibility and opacity');
+            expenseDetails.style.height = 'auto';
+            expenseDetails.style.overflow = 'visible';
+            console.log('🔧 Forced visibility, opacity, height, and overflow');
         }
     } else {
         console.error('❌ expenseTaskDetails element not found!');
