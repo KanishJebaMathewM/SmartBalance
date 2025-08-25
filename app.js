@@ -4575,7 +4575,7 @@ class WorkLifeBalanceApp {
             date: document.getElementById('taskDate').value,
             expenseRelated: document.getElementById('taskExpense').checked,
             amount: document.getElementById('taskAmount').value,
-            expenseCategory: document.getElementById('taskExpenseCategory').value
+            expenseCategory: document.getElementById('taskCategory').value // Use task category for expense category
         };
 
         if (!taskData.title) {
@@ -5074,7 +5074,7 @@ class WorkLifeBalanceApp {
 
         localStorage.setItem('meal_plans', JSON.stringify(savedMealPlans));
 
-        Utils.showNotification('��� Meal plan saved!', 'success');
+        Utils.showNotification('���� Meal plan saved!', 'success');
     }
 
     saveMealToStorage(mealType, mealName, calories, cost) {
