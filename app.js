@@ -1981,10 +1981,10 @@ class WorkLifeBalanceApp {
         console.log('Add expense for date called:', dateStr);
         const date = new Date(dateStr);
 
-        // Reset form first
-        this.resetExpenseForm();
+        // Open modal first (this will reset the form)
+        this.openModal('expenseModal');
 
-        // Set the date from calendar selection
+        // Set the date from calendar selection after opening modal
         const dateField = document.getElementById('expenseDate');
         if (dateField) {
             dateField.value = date.toISOString().split('T')[0];
@@ -2003,8 +2003,6 @@ class WorkLifeBalanceApp {
                 day: 'numeric'
             })}`;
         }
-
-        this.openModal('expenseModal');
     }
 
     loadFoodData() {
