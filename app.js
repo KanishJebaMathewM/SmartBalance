@@ -769,7 +769,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ' • ������� Expense-related' : ''}
+                        ${task.expenseRelated ? ' • ����� Expense-related' : ''}
                     </div>
                 </div>
                 <div class="task-actions">
@@ -4539,13 +4539,30 @@ class WorkLifeBalanceApp {
     handleTaskSubmitEnhanced(e) {
         e.preventDefault();
 
+        const taskCategory = document.getElementById('taskCategory').value;
+
+        // Map task category to appropriate expense category
+        const categoryMapping = {
+            'work': 'other',
+            'personal': 'other',
+            'health': 'healthcare',
+            'food': 'food',
+            'bills': 'bills',
+            'shopping': 'shopping',
+            'travel': 'travel',
+            'entertainment': 'entertainment',
+            'education': 'education',
+            'reminder': 'other',
+            'other': 'other'
+        };
+
         const taskData = {
             title: Utils.sanitizeInput(document.getElementById('taskTitle').value),
-            category: document.getElementById('taskCategory').value,
+            category: taskCategory,
             date: document.getElementById('taskDate').value,
             expenseRelated: document.getElementById('taskExpense').checked,
             amount: document.getElementById('taskAmount').value,
-            expenseCategory: document.getElementById('taskCategory').value // Use task category for expense category
+            expenseCategory: categoryMapping[taskCategory] || 'other'
         };
 
         if (!taskData.title) {
@@ -5843,7 +5860,7 @@ class WorkLifeBalanceApp {
 
     getMealTypeIcon(type) {
         const icons = {
-            breakfast: '����',
+            breakfast: '🌅',
             lunch: '🌞',
             dinner: '🌙',
             snack: '🥨'
@@ -6836,7 +6853,7 @@ class WorkLifeBalanceApp {
                             <span class="meal-calories">${meal.calories} cal</span>
                         </div>
                         <div class="meal-status ${meal.status}">
-                            ${meal.status === 'eaten' ? '✅ Eaten' : '📅 Planned'}
+                            ${meal.status === 'eaten' ? '✅ Eaten' : '���� Planned'}
                         </div>
                     </div>
                 `).join('');
