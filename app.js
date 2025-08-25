@@ -360,44 +360,7 @@ class WorkLifeBalanceApp {
             // Note: Expense checkbox functionality is handled in initializeExpenseCheckbox() method
             // which is called when the task modal opens
 
-            // Handle task category changes to auto-update expense category (only if expense is checked)
-            const taskCategorySelect = document.getElementById('taskCategory');
-            if (taskCategorySelect) {
-                taskCategorySelect.addEventListener('change', () => {
-                    const expenseCheckbox = document.getElementById('taskExpense');
-                    if (expenseCheckbox && expenseCheckbox.checked) {
-                        this.updateExpenseCategory();
-                    }
-                });
-            }
-
-            // Handle change expense category button
-            const changeExpenseCategoryBtn = document.getElementById('changeExpenseCategoryBtn');
-            const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-            if (changeExpenseCategoryBtn && expenseCategorySelect) {
-                changeExpenseCategoryBtn.addEventListener('click', () => {
-                    // Show the category select dropdown
-                    expenseCategorySelect.style.display = 'block';
-                    // Show the container if it was hidden
-                    const expenseCategoryContainer = expenseCategorySelect.parentElement;
-                    if (expenseCategoryContainer) {
-                        expenseCategoryContainer.style.display = 'block';
-                    }
-                    changeExpenseCategoryBtn.style.display = 'none';
-                });
-
-                expenseCategorySelect.addEventListener('change', () => {
-                    if (expenseCategorySelect.value) {
-                        const selectedOption = expenseCategorySelect.querySelector(`option[value="${expenseCategorySelect.value}"]`);
-                        const categoryDisplay = document.getElementById('selectedExpenseCategory');
-                        if (categoryDisplay && selectedOption) {
-                            categoryDisplay.textContent = selectedOption.textContent;
-                        }
-                        expenseCategorySelect.style.display = 'none';
-                        changeExpenseCategoryBtn.style.display = 'inline';
-                    }
-                });
-            }
+            // Note: Expense category is now automatically inherited from task category
         }
 
         // Expense form
@@ -1902,7 +1865,7 @@ class WorkLifeBalanceApp {
         } else if (percentage > 25) {
             return {
                 type: 'info',
-                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️���🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️���🏥📚���📺🛒👕📦]/g, '').trim()}`
             };
         }
         return null;
@@ -3484,7 +3447,7 @@ class WorkLifeBalanceApp {
             'food': '🍕',
             'bills': '📧',
             'shopping': '🛍️',
-            'travel': '✈���',
+            'travel': '✈️',
             'entertainment': '🎬',
             'healthcare': '🏥',
             'education': '📚',
@@ -10635,7 +10598,7 @@ class WorkLifeBalanceApp {
             'cash': '💵 Cash',
             'card': '💳 Card',
             'upi': '📱 UPI',
-            'bank': '���� Bank Transfer',
+            'bank': '������ Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
         return paymentMethods[method] || '💵 Cash';
