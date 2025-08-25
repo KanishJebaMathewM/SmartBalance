@@ -1,32 +1,56 @@
 // Global function to toggle expense details in task modal
 function toggleExpenseDetails(checkbox) {
-    console.log('🔧 Toggle expense details called, checked:', checkbox.checked);
+    console.log('🔧 TOGGLE EXPENSE DETAILS CALLED!');
+    console.log('📋 Checkbox checked:', checkbox ? checkbox.checked : 'undefined');
+    console.log('📋 Checkbox element:', checkbox);
 
     const expenseDetails = document.getElementById('expenseTaskDetails');
     const amountField = document.getElementById('taskAmount');
 
+    console.log('🔍 Elements found:', {
+        expenseDetails: !!expenseDetails,
+        amountField: !!amountField,
+        expenseDetailsDisplay: expenseDetails ? expenseDetails.style.display : 'not found'
+    });
+
     if (expenseDetails) {
-        expenseDetails.style.display = checkbox.checked ? 'block' : 'none';
-        console.log('💰 Expense details display set to:', expenseDetails.style.display);
+        const newDisplay = checkbox.checked ? 'block' : 'none';
+        expenseDetails.style.display = newDisplay;
+        console.log('💰 Expense details display set to:', newDisplay);
+        console.log('💰 Actual display after setting:', expenseDetails.style.display);
+
+        // Force visibility for debugging
+        if (checkbox.checked) {
+            expenseDetails.style.visibility = 'visible';
+            expenseDetails.style.opacity = '1';
+            console.log('🔧 Forced visibility and opacity');
+        }
+    } else {
+        console.error('❌ expenseTaskDetails element not found!');
     }
 
     if (amountField) {
         amountField.required = checkbox.checked;
+        console.log('📝 Amount field required set to:', checkbox.checked);
 
         if (checkbox.checked) {
             setTimeout(() => {
                 amountField.focus();
                 amountField.placeholder = "Enter expected amount (₹) - Required *";
+                console.log('🎯 Amount field focused and placeholder updated');
             }, 100);
 
             // Show notification if Utils is available
             if (typeof Utils !== 'undefined') {
                 Utils.showNotification('Please enter the expected amount for this expense', 'info');
+                console.log('📢 Notification shown');
             }
         } else {
             amountField.placeholder = "Expected amount (₹) *";
             amountField.value = '';
         }
+    } else {
+        console.error('❌ taskAmount element not found!');
     }
 
     // Update expense category if app instance is available
@@ -744,7 +768,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ' • ���� Expense-related' : ''}
+                        ${task.expenseRelated ? ' �� ���� Expense-related' : ''}
                     </div>
                 </div>
                 <div class="task-actions">
@@ -2201,7 +2225,7 @@ class WorkLifeBalanceApp {
                             <div class="meal-meta">
                                 <span class="meal-type">${meal.type}</span>
                                 <span class="meal-calories">${meal.calories} cal</span>
-                                <span class="meal-source">${meal.source === 'home' ? '🏠 Home' : '�� Hotel'}</span>
+                                <span class="meal-source">${meal.source === 'home' ? '🏠 Home' : '🏨 Hotel'}</span>
                                 <span class="meal-date">${Utils.formatDate(meal.date)}</span>
                             </div>
                         </div>
@@ -3312,7 +3336,7 @@ class WorkLifeBalanceApp {
             } else if (amount < average * 0.5) {
                 insights.push({
                     type: 'positive',
-                    icon: '����',
+                    icon: '👍',
                     text: `Great! This is below your usual ${this.getCategoryDisplayName(category)} spending`
                 });
             }
