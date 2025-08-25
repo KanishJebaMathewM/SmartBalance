@@ -308,6 +308,23 @@ class WorkLifeBalanceApp {
             amountField: !!amountField
         });
 
+        // Add global testing function for debugging
+        window.testExpenseCheckbox = () => {
+            const checkbox = document.getElementById('taskExpense');
+            const details = document.getElementById('expenseTaskDetails');
+            console.log('Testing manually:', {
+                checkboxExists: !!checkbox,
+                checkboxChecked: checkbox?.checked,
+                detailsExists: !!details,
+                detailsDisplay: details?.style.display,
+                detailsHidden: details?.style.display === 'none'
+            });
+            if (checkbox && details) {
+                details.style.display = checkbox.checked ? 'block' : 'none';
+                console.log('Manually updated display to:', details.style.display);
+            }
+        };
+
         if (expenseCheckbox && expenseDetails) {
             // Remove existing event listeners to avoid duplicates
             if (this.expenseCheckboxHandler) {
@@ -7279,7 +7296,7 @@ class WorkLifeBalanceApp {
                     <span class="breakdown-value ${this.getScoreClass(fitnessScore)}">${fitnessScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
-                    <span class="breakdown-label">🍲 Nutrition</span>
+                    <span class="breakdown-label">��� Nutrition</span>
                     <span class="breakdown-value ${this.getScoreClass(nutritionScore)}">${nutritionScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
