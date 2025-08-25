@@ -79,26 +79,6 @@ function toggleExpenseDetails(checkbox) {
     } else {
         console.error('❌ taskAmount element not found!');
     }
-
-    // Update expense category if app instance is available
-    if (window.app && checkbox.checked) {
-        window.app.updateExpenseCategory();
-    } else if (window.app && !checkbox.checked) {
-        // Reset expense category display when unchecked
-        const categoryDisplay = document.getElementById('selectedExpenseCategory');
-        const changeBtn = document.getElementById('changeExpenseCategoryBtn');
-        const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-
-        if (categoryDisplay) categoryDisplay.textContent = '-';
-        if (changeBtn) changeBtn.style.display = 'none';
-        if (expenseCategorySelect) {
-            expenseCategorySelect.style.display = 'none';
-            const expenseCategoryContainer = expenseCategorySelect.parentElement;
-            if (expenseCategoryContainer) {
-                expenseCategoryContainer.style.display = 'none';
-            }
-        }
-    }
 }
 
 // Make function globally available and add test function
@@ -3443,7 +3423,7 @@ class WorkLifeBalanceApp {
             if (remaining < 0) {
                 insights.push({
                     type: 'danger',
-                    icon: '��',
+                    icon: '🚨',
                     text: `This will exceed your ${this.getCategoryDisplayName(category)} budget by ₹${Math.abs(remaining)}`
                 });
             } else if (remaining < budget * 0.2) {
@@ -3504,7 +3484,7 @@ class WorkLifeBalanceApp {
             'food': '🍕',
             'bills': '📧',
             'shopping': '🛍️',
-            'travel': '✈️',
+            'travel': '✈���',
             'entertainment': '🎬',
             'healthcare': '🏥',
             'education': '📚',
@@ -4047,7 +4027,7 @@ class WorkLifeBalanceApp {
             '�� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
             '������ Completing tasks reduces your stress levels!' :
-            '�� Keep tracking to understand your productivity-stress patterns';
+            '📊 Keep tracking to understand your productivity-stress patterns';
 
         this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
     }
