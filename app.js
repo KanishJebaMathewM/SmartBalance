@@ -3497,20 +3497,7 @@ class WorkLifeBalanceApp {
                 amountField.value = '';
             }
 
-            // Reset expense category elements
-            const categoryDisplay = document.getElementById('selectedExpenseCategory');
-            const changeBtn = document.getElementById('changeExpenseCategoryBtn');
-            const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-
-            if (categoryDisplay) categoryDisplay.textContent = '-';
-            if (changeBtn) changeBtn.style.display = 'none';
-            if (expenseCategorySelect) {
-                expenseCategorySelect.style.display = 'none';
-                const expenseCategoryContainer = expenseCategorySelect.parentElement;
-                if (expenseCategoryContainer) {
-                    expenseCategoryContainer.style.display = 'none';
-                }
-            }
+            // Note: Expense category elements removed since task category is used directly
 
             // Set default date to today
             const taskDate = document.getElementById('taskDate');
@@ -5984,7 +5971,7 @@ class WorkLifeBalanceApp {
         if (avgHomeCost > 0 && avgHotelCost > 0) {
             const savings = avgHotelCost - avgHomeCost;
             insights.push({
-                icon: '💰',
+                icon: '��',
                 title: 'Cost Comparison',
                 description: `On average, home cooking saves you ${Utils.formatCurrency(savings)} per meal compared to ordering out.`
             });
