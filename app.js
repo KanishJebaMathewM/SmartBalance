@@ -225,56 +225,8 @@ class WorkLifeBalanceApp {
         if (taskForm) {
             taskForm.addEventListener('submit', (e) => this.handleTaskSubmit(e));
             
-            // Show/hide expense task details
-            const expenseCheckbox = document.getElementById('taskExpense');
-            const expenseDetails = document.getElementById('expenseTaskDetails');
-            const amountField = document.getElementById('taskAmount');
-            if (expenseCheckbox && expenseDetails) {
-                expenseCheckbox.addEventListener('change', () => {
-                    expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
-
-                    // Make amount field required when expense is checked
-                    if (amountField) {
-                        amountField.required = expenseCheckbox.checked;
-
-                        // Focus on amount field and show notification when expense is checked
-                        if (expenseCheckbox.checked) {
-                            setTimeout(() => {
-                                amountField.focus();
-                                amountField.placeholder = "Enter expected amount (₹) - Required *";
-                            }, 100);
-                            Utils.showNotification('Please enter the expected amount for this expense', 'info');
-                        } else {
-                            amountField.placeholder = "Expected amount (₹) *";
-                        }
-                    }
-
-                    if (expenseCheckbox.checked) {
-                        this.updateExpenseCategory();
-                    } else {
-                        // Reset expense category display when unchecked
-                        const categoryDisplay = document.getElementById('selectedExpenseCategory');
-                        const changeBtn = document.getElementById('changeExpenseCategoryBtn');
-                        const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-
-                        if (categoryDisplay) categoryDisplay.textContent = '-';
-                        if (changeBtn) changeBtn.style.display = 'none';
-                        if (expenseCategorySelect) {
-                            expenseCategorySelect.style.display = 'none';
-                            // Hide the container as well
-                            const expenseCategoryContainer = expenseCategorySelect.parentElement;
-                            if (expenseCategoryContainer) {
-                                expenseCategoryContainer.style.display = 'none';
-                            }
-                        }
-
-                        // Clear amount field value when expense checkbox is unchecked
-                        if (amountField) {
-                            amountField.value = '';
-                        }
-                    }
-                });
-            }
+            // Note: Expense checkbox functionality is handled in initializeExpenseCheckbox() method
+            // which is called when the task modal opens
 
             // Handle task category changes to auto-update expense category (only if expense is checked)
             const taskCategorySelect = document.getElementById('taskCategory');
@@ -3589,7 +3541,7 @@ class WorkLifeBalanceApp {
                 <input type="checkbox" class="habit-checkbox" ${habit.completed ? 'checked' : ''} readonly>
                 <div class="habit-info">
                     <h4>${Utils.sanitizeInput(habit.name)}</h4>
-                    <p>${habit.target || 'Complete once'} �� ${habit.category}</p>
+                    <p>${habit.target || 'Complete once'} ��� ${habit.category}</p>
                 </div>
                 <div class="habit-streak">
                     <div class="streak-number">${habit.currentStreak || 0}��</div>
