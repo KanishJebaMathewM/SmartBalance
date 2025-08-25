@@ -1736,7 +1736,7 @@ class WorkLifeBalanceApp {
         } else if (percentage > 25) {
             return {
                 type: 'info',
-                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️���🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         }
         return null;
@@ -2917,6 +2917,8 @@ class WorkLifeBalanceApp {
             // Special handling for task modal
             if (modalId === 'taskModal') {
                 this.resetTaskForm();
+                // Re-initialize expense checkbox functionality
+                setTimeout(() => this.initializeExpenseCheckbox(), 100);
             }
         }
     }
@@ -10467,7 +10469,7 @@ class WorkLifeBalanceApp {
             'cash': '💵 Cash',
             'card': '💳 Card',
             'upi': '📱 UPI',
-            'bank': '🏦 Bank Transfer',
+            'bank': '���� Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
         return paymentMethods[method] || '💵 Cash';
