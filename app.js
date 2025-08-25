@@ -786,7 +786,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ' • ���� Expense-related' : ''}
+                        ${task.expenseRelated ? ' • ����� Expense-related' : ''}
                     </div>
                 </div>
                 <div class="task-actions">
@@ -4613,16 +4613,7 @@ class WorkLifeBalanceApp {
             amountField.value = '';
         }
 
-        document.getElementById('selectedExpenseCategory').textContent = '-';
-        const expenseCategorySelect = document.getElementById('taskExpenseCategory');
-        if (expenseCategorySelect) {
-            expenseCategorySelect.style.display = 'none';
-            // Hide the container as well
-            const expenseCategoryContainer = expenseCategorySelect.parentElement;
-            if (expenseCategoryContainer) {
-                expenseCategoryContainer.style.display = 'none';
-            }
-        }
+        // Note: Expense category elements removed since task category is used directly
         document.getElementById('changeExpenseCategoryBtn').style.display = 'none';
 
         if (this.currentSection === 'tasks') {
@@ -5074,7 +5065,7 @@ class WorkLifeBalanceApp {
 
         localStorage.setItem('meal_plans', JSON.stringify(savedMealPlans));
 
-        Utils.showNotification('���� Meal plan saved!', 'success');
+        Utils.showNotification('��� Meal plan saved!', 'success');
     }
 
     saveMealToStorage(mealType, mealName, calories, cost) {
