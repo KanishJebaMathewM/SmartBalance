@@ -342,6 +342,66 @@ class WorkLifeBalanceApp {
         }
     }
 
+    initializeExpenseCheckbox() {
+        // Re-initialize expense checkbox functionality
+        const expenseCheckbox = document.getElementById('taskExpense');
+        const expenseDetails = document.getElementById('expenseTaskDetails');
+        const amountField = document.getElementById('taskAmount');
+
+        if (expenseCheckbox && expenseDetails) {
+            // Remove existing event listeners to avoid duplicates
+            expenseCheckbox.removeEventListener('change', this.expenseCheckboxHandler);
+
+            // Create new handler and store reference
+            this.expenseCheckboxHandler = () => {
+                expenseDetails.style.display = expenseCheckbox.checked ? 'block' : 'none';
+
+                // Make amount field required when expense is checked
+                if (amountField) {
+                    amountField.required = expenseCheckbox.checked;
+
+                    // Focus on amount field and show notification when expense is checked
+                    if (expenseCheckbox.checked) {
+                        setTimeout(() => {
+                            amountField.focus();
+                            amountField.placeholder = "Enter expected amount (₹) - Required *";
+                        }, 100);
+                        Utils.showNotification('Please enter the expected amount for this expense', 'info');
+                    } else {
+                        amountField.placeholder = "Expected amount (₹) *";
+                    }
+                }
+
+                if (expenseCheckbox.checked) {
+                    this.updateExpenseCategory();
+                } else {
+                    // Reset expense category display when unchecked
+                    const categoryDisplay = document.getElementById('selectedExpenseCategory');
+                    const changeBtn = document.getElementById('changeExpenseCategoryBtn');
+                    const expenseCategorySelect = document.getElementById('taskExpenseCategory');
+
+                    if (categoryDisplay) categoryDisplay.textContent = '-';
+                    if (changeBtn) changeBtn.style.display = 'none';
+                    if (expenseCategorySelect) {
+                        expenseCategorySelect.style.display = 'none';
+                        // Hide the container as well
+                        const expenseCategoryContainer = expenseCategorySelect.parentElement;
+                        if (expenseCategoryContainer) {
+                            expenseCategoryContainer.style.display = 'none';
+                        }
+                    }
+
+                    // Clear amount field value when expense checkbox is unchecked
+                    if (amountField) {
+                        amountField.value = '';
+                    }
+                }
+            };
+
+            // Add the new event listener
+            expenseCheckbox.addEventListener('change', this.expenseCheckboxHandler);
+        }
+    }
 
     initializeButtonHandlers() {
         // Exercise buttons
@@ -1045,7 +1105,7 @@ class WorkLifeBalanceApp {
     }
 
     validateCalendarFunctionality() {
-        console.log('🔍 Validating calendar functionality...');
+        console.log('���� Validating calendar functionality...');
 
         // Check if calendar elements exist
         const checks = {
