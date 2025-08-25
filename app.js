@@ -236,6 +236,17 @@ class WorkLifeBalanceApp {
                     // Make amount field required when expense is checked
                     if (amountField) {
                         amountField.required = expenseCheckbox.checked;
+
+                        // Focus on amount field and show notification when expense is checked
+                        if (expenseCheckbox.checked) {
+                            setTimeout(() => {
+                                amountField.focus();
+                                amountField.placeholder = "Enter expected amount (₹) - Required *";
+                            }, 100);
+                            Utils.showNotification('Please enter the expected amount for this expense', 'info');
+                        } else {
+                            amountField.placeholder = "Expected amount (₹) *";
+                        }
                     }
 
                     if (expenseCheckbox.checked) {
