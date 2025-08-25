@@ -3436,7 +3436,7 @@ class WorkLifeBalanceApp {
             'entertainment': '🎬',
             'healthcare': '🏥',
             'education': '📚',
-            'fitness': '💪',
+            'fitness': '��',
             'subscriptions': '����',
             'groceries': '🛒',
             'clothing': '👕',
@@ -3962,7 +3962,7 @@ class WorkLifeBalanceApp {
             '�� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
             '������ Completing tasks reduces your stress levels!' :
-            '📊 Keep tracking to understand your productivity-stress patterns';
+            '�� Keep tracking to understand your productivity-stress patterns';
 
         this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
     }
@@ -4586,7 +4586,6 @@ class WorkLifeBalanceApp {
         }
 
         // Note: Expense category elements removed since task category is used directly
-        document.getElementById('changeExpenseCategoryBtn').style.display = 'none';
 
         if (this.currentSection === 'tasks') {
             this.loadTasks();
@@ -5971,7 +5970,7 @@ class WorkLifeBalanceApp {
         if (avgHomeCost > 0 && avgHotelCost > 0) {
             const savings = avgHotelCost - avgHomeCost;
             insights.push({
-                icon: '��',
+                icon: '💰',
                 title: 'Cost Comparison',
                 description: `On average, home cooking saves you ${Utils.formatCurrency(savings)} per meal compared to ordering out.`
             });
