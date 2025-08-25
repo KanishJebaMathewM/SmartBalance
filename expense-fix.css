@@ -1,0 +1,30 @@
+/* CSS to force expense details visibility */
+.expense-details-show {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.expense-details-hide {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Force override for the specific element */
+#expenseTaskDetails.expense-details-show {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+#expenseTaskDetails.expense-details-hide {
+    display: none !important;
+}
+
+/* Additional backup styles */
+#expenseTaskDetails[style*="display: block"] {
+    display: block !important;
+}
