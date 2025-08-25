@@ -14,19 +14,20 @@ function toggleExpenseDetails(checkbox) {
     });
 
     if (expenseDetails) {
-        const newDisplay = checkbox.checked ? 'block' : 'none';
-        expenseDetails.style.display = newDisplay;
-        console.log('💰 Expense details display set to:', newDisplay);
-        console.log('💰 Actual display after setting:', expenseDetails.style.display);
+        console.log('💰 Before change - display:', expenseDetails.style.display);
 
-        // Force visibility for debugging
         if (checkbox.checked) {
-            expenseDetails.style.visibility = 'visible';
-            expenseDetails.style.opacity = '1';
-            expenseDetails.style.height = 'auto';
-            expenseDetails.style.overflow = 'visible';
-            console.log('🔧 Forced visibility, opacity, height, and overflow');
+            // Force remove any hidden styles and show the element
+            expenseDetails.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+            console.log('💰 Forced display to block with !important');
+        } else {
+            expenseDetails.style.cssText = 'display: none !important;';
+            console.log('💰 Forced display to none with !important');
         }
+
+        console.log('💰 After change - display:', expenseDetails.style.display);
+        console.log('💰 Full style:', expenseDetails.style.cssText);
+
     } else {
         console.error('❌ expenseTaskDetails element not found!');
     }
@@ -1875,7 +1876,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺���👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -10576,7 +10577,7 @@ class WorkLifeBalanceApp {
         const categoryNames = {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
-            'shopping': '🛍️ Shopping',
+            'shopping': '🛍��� Shopping',
             'travel': '��️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
