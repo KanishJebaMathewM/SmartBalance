@@ -381,6 +381,19 @@ class WorkLifeBalanceApp {
 
             // Add the new event listener
             expenseCheckbox.addEventListener('change', this.expenseCheckboxHandler);
+
+            // Also add click listener as fallback
+            expenseCheckbox.addEventListener('click', this.expenseCheckboxHandler);
+
+            console.log('✅ Event listeners attached successfully');
+        } else {
+            console.error('❌ Required elements not found for expense checkbox');
+
+            // Try again after a delay
+            setTimeout(() => {
+                console.log('🔄 Retrying expense checkbox initialization...');
+                this.initializeExpenseCheckbox();
+            }, 500);
         }
     }
 
@@ -2852,7 +2865,7 @@ class WorkLifeBalanceApp {
             shopping: '🛍️',
             travel: '������',
             entertainment: '🎬',
-            healthcare: '�����',
+            healthcare: '�������',
             education: '📚',
             other: '������'
         };
@@ -7218,7 +7231,7 @@ class WorkLifeBalanceApp {
                 description: 'You tend to be more stressed on days with higher spending'
             },
             {
-                title: '🏋️ Workout Impact',
+                title: '��️ Workout Impact',
                 description: 'Your mood is 30% better on workout days'
             }
         ];
@@ -7296,7 +7309,7 @@ class WorkLifeBalanceApp {
                     <span class="breakdown-value ${this.getScoreClass(fitnessScore)}">${fitnessScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
-                    <span class="breakdown-label">��� Nutrition</span>
+                    <span class="breakdown-label">🍲 Nutrition</span>
                     <span class="breakdown-value ${this.getScoreClass(nutritionScore)}">${nutritionScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
