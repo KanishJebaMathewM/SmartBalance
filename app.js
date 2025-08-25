@@ -420,9 +420,7 @@ class WorkLifeBalanceApp {
                     }
                 }
 
-                if (e.target.checked) {
-                    this.updateExpenseCategory();
-                }
+                // Note: Expense category is now automatically inherited from task category
             }
         });
 
