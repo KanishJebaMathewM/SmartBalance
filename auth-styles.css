@@ -1,0 +1,11 @@
+/* Authentication Overlay Styles */
+.auth-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.auth-overlay.hidden { display: none; }
+.auth-card { background: #ffffff; color: #111827; border-radius: 12px; padding: 24px; width: 90%; max-width: 420px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+.dark-mode .auth-card { background: #1f2937; color: #f9fafb; }
+.auth-tabs { display: flex; gap: 8px; margin-bottom: 8px; }
+.auth-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+.auth-form input { padding: 10px 12px; border: 1px solid #e5e7eb; border-radius: 8px; }
+.dark-mode .auth-form input { background: #111827; border-color: #374151; color: #f9fafb; }
+.user-actions { margin-top: 16px; padding: 8px 0; }
+#currentUserDisplay { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
