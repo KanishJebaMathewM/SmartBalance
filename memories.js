@@ -386,8 +386,15 @@ class MemoriesManager {
             );
         }
 
-        // Sort by date (newest first)
-        return memories.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort by date (newest first) with robust date handling
+        return memories.sort((a, b) => {
+            // Get dates and handle fallbacks
+            const dateA = this.getValidDate(a.date) || this.getValidDate(a.createdAt) || new Date(0);
+            const dateB = this.getValidDate(b.date) || this.getValidDate(b.createdAt) || new Date(0);
+
+            // Sort newest first (b - a for descending order)
+            return dateB.getTime() - dateA.getTime();
+        });
     }
 
     formatMemoryDate(dateString) {
