@@ -526,6 +526,8 @@ class EightQueensWithColors {
         if (hintSection) {
             hintSection.style.display = 'none';
         }
+        // Clear highlights when hiding hint
+        this.clearHintHighlights();
     }
 
     generateHint() {
