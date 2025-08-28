@@ -84,11 +84,54 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.memory-image {
+.memory-image-container {
+    position: relative;
     width: 100%;
     height: 200px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.memory-image {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     background: var(--bg-secondary, #f8fafc);
+    transition: transform 0.3s ease;
+}
+
+.memory-image-container:hover .memory-image {
+    transform: scale(1.05);
+}
+
+.image-date-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.memory-image-container:hover .image-date-overlay {
+    opacity: 1;
+}
+
+.image-date-overlay .date-text {
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 0.5rem;
+    backdrop-filter: blur(10px);
 }
 
 .memory-content {
@@ -295,12 +338,47 @@
     margin: 0 auto;
 }
 
+.memory-date-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.memory-date-icon {
+    font-size: 1.25rem;
+}
+
+.memory-date-text {
+    font-size: 1.125rem;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 .memory-view-image {
     width: 100%;
     max-height: 400px;
     object-fit: contain;
     border-radius: 0.5rem;
     margin-bottom: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.memory-view-image:hover {
+    transform: scale(1.02);
+}
+
+.memory-relative-date {
+    color: var(--text-secondary, #6b7280);
+    font-size: 0.875rem;
+    font-style: italic;
 }
 
 .memory-view-title {
@@ -724,3 +802,96 @@
 .slideshow-btn.speed-1x::after { content: ' 1x'; }
 .slideshow-btn.speed-2x::after { content: ' 2x'; }
 .slideshow-btn.speed-3x::after { content: ' 3x'; }
+
+/* Date Tooltip Styles */
+.date-tooltip {
+    position: fixed;
+    z-index: 10000;
+    pointer-events: none;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.date-tooltip.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+.date-tooltip-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+}
+
+.date-tooltip .date-icon {
+    font-size: 1rem;
+}
+
+/* Memory Card Click Interaction */
+.memory-card {
+    position: relative;
+}
+
+.memory-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 0.75rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.memory-card:hover::before {
+    opacity: 1;
+}
+
+.memory-card:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+/* Enhanced Memory Card Styles */
+.memory-card:hover .memory-title {
+    color: var(--primary-color, #3b82f6);
+}
+
+.memory-card .memory-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Click instruction for images */
+.memory-image-container::after {
+    content: '📅 Click for date';
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.memory-image-container:hover::after {
+    opacity: 1;
+}
