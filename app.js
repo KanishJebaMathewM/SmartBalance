@@ -140,6 +140,7 @@ class WorkLifeBalanceApp {
         this.currentExpenseTab = 'overview';
         this.currentCalendarDate = new Date();
         this.selectedCalendarDate = null;
+        this._eventsInitialized = false;
 
         // Timer state
         this.exerciseTimer = null;
@@ -320,6 +321,8 @@ class WorkLifeBalanceApp {
         if (appContainer) appContainer.style.display = '';
         const display = document.getElementById('currentUserDisplay');
         if (display && user.username) display.textContent = `Signed in as @${user.username}`;
+        // Ensure event listeners are bound after login
+        this.initializeEventListeners();
         // Resume app initialization pieces
         try {
             this.loadSettings();
@@ -615,7 +618,7 @@ class WorkLifeBalanceApp {
 
         const streaksHTML = `
             <div class="streak-widgets-section">
-                <h3>🔥 Current Streaks</h3>
+                <h3>�� Current Streaks</h3>
                 <div class="streak-widgets" id="streakWidgets">
                     <!-- Streak widgets will be populated by updateStreakWidgets -->
                 </div>
@@ -667,6 +670,8 @@ class WorkLifeBalanceApp {
     }
 
     initializeEventListeners() {
+        if (this._eventsInitialized) return;
+        this._eventsInitialized = true;
         // Navigation
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', (e) => {
@@ -4330,7 +4335,7 @@ class WorkLifeBalanceApp {
             shopping: '🛍️',
             travel: '✈️',
             entertainment: '🎬',
-            healthcare: '🏥',
+            healthcare: '���',
             education: '📚',
             other: '📦'
         };
