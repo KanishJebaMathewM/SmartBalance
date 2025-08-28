@@ -531,44 +531,54 @@ class EightQueensWithColors {
     }
 
     generateHint() {
+        // Clear any previous highlights
+        this.clearHintHighlights();
+
         if (this.queens.length === 0) {
-            return "Start by placing a queen on any colored square. Remember, each queen must be on a unique color!";
+            // Suggest a random safe starting position
+            const suggestions = [
+                {row: 1, col: 1, color: 'red'},
+                {row: 2, col: 4, color: 'purple'},
+                {row: 3, col: 7, color: 'red'}
+            ];
+            const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+            this.hintPosition = suggestion;
+            return `💡 <strong>Start here:</strong> Place your first queen at <strong>Row ${suggestion.row}, Column ${suggestion.col}</strong> (${suggestion.color} square). Click on that square to begin!`;
         }
 
-        if (this.queens.length < 4) {
-            const usedColors = this.queens.map(q => this.getQueenColor(q, this.boardColors, this.indexBase));
-            const availableColors = this.colorNames.filter(color => !usedColors.includes(color));
-            return `Try placing a queen on a ${availableColors[0]} square while avoiding row/column conflicts.`;
-        }
-
-        // Check for conflicts and provide specific hints
+        // Check for conflicts first and highlight mistakes
         const result = this.validatePuzzle();
         if (result.conflicts.length > 0) {
             const conflict = result.conflicts[0];
-            if (conflict.types.includes('sameRow')) {
-                return "Two queens are on the same row! Move one to a different row.";
-            } else if (conflict.types.includes('sameColumn')) {
-                return "Two queens are on the same column! Move one to a different column.";
-            } else if (conflict.types.includes('duplicateColor')) {
-                return `Two queens are on the same color (${conflict.details.color})! Each queen needs a unique color.`;
-            } else if (conflict.types.includes('adjacentDiagonal')) {
-                return "Two queens are attacking each other diagonally (distance = 1)! Move them apart.";
+            const conflictedQueens = result.perQueen.filter(q => q.state === 'conflict');
+
+            if (conflictedQueens.length > 0) {
+                const wrongQueen = conflictedQueens[0];
+                this.highlightMistake = {row: wrongQueen.row, col: wrongQueen.col};
+
+                if (conflict.types.includes('sameRow')) {
+                    return `❌ <strong>Mistake found:</strong> The queen at <strong>Row ${wrongQueen.row}, Column ${wrongQueen.col}</strong> is in the same row as another queen. Move one of them to a different row.`;
+                } else if (conflict.types.includes('sameColumn')) {
+                    return `❌ <strong>Mistake found:</strong> The queen at <strong>Row ${wrongQueen.row}, Column ${wrongQueen.col}</strong> is in the same column as another queen. Move one of them to a different column.`;
+                } else if (conflict.types.includes('duplicateColor')) {
+                    return `❌ <strong>Color conflict:</strong> The queen at <strong>Row ${wrongQueen.row}, Column ${wrongQueen.col}</strong> is on the same color (${wrongQueen.color}) as another queen. Each queen needs a unique color!`;
+                } else if (conflict.types.includes('adjacentDiagonal')) {
+                    return `❌ <strong>Adjacent diagonal attack:</strong> The queen at <strong>Row ${wrongQueen.row}, Column ${wrongQueen.col}</strong> is attacking another queen diagonally (distance = 1). Move one of them!`;
+                }
             }
         }
 
+        // If no conflicts, suggest next safe position
         if (this.queens.length < 8) {
-            const usedRows = this.queens.map(q => q.row);
-            const usedCols = this.queens.map(q => q.col);
-            const availableRows = [];
-            for (let i = 1; i <= 8; i++) {
-                if (!usedRows.includes(i)) availableRows.push(i);
-            }
-            if (availableRows.length > 0) {
-                return `Try placing a queen on row ${availableRows[0]}. Make sure it's on an unused color!`;
+            const nextPosition = this.findBestNextPosition();
+            if (nextPosition) {
+                this.hintPosition = nextPosition;
+                const colorName = this.boardColors[nextPosition.row-1][nextPosition.col-1];
+                return `✅ <strong>Next position:</strong> Place a queen at <strong>Row ${nextPosition.row}, Column ${nextPosition.col}</strong> (${colorName} square). This position follows all rules!`;
             }
         }
 
-        return "You're doing great! Keep placing queens while following the rules.";
+        return "🎉 You're doing great! Keep placing queens while following the rules.";
     }
 
     // Setup event listeners
