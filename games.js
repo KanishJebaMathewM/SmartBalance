@@ -223,8 +223,13 @@ class GamesManager {
 
         document.getElementById('sudoku-completed').textContent = 
             `Completed: ${games.sudoku.completed}`;
-        document.getElementById('sudoku-best-time').textContent = 
+        document.getElementById('sudoku-best-time').textContent =
             `Best: ${games.sudoku.bestTime ? this.formatTime(games.sudoku.bestTime) : '--'}`;
+
+        document.getElementById('colorpattern-best-level').textContent =
+            `Best Level: ${games.colorpattern.bestLevel}`;
+        document.getElementById('colorpattern-best-score').textContent =
+            `Best Score: ${games.colorpattern.bestScore}`;
 
         document.getElementById('2048-high-score').textContent = 
             `High Score: ${games['2048'].highScore}`;
