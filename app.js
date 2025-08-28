@@ -2842,7 +2842,7 @@ class WorkLifeBalanceApp {
                             runCycle();
                         } else {
                             this.stopBreathingExercise();
-                            Utils.showNotification('Breathing exercise completed! 🧘‍♀️', 'success');
+                            Utils.showNotification('Breathing exercise completed! 🧘', 'success');
                         }
                     }, 4000);
                 }, 2000);
@@ -3263,7 +3263,7 @@ class WorkLifeBalanceApp {
             bills: '📧',
             shopping: '🛍️',
             travel: '✈️',
-            entertainment: '🎬',
+            entertainment: '���',
             healthcare: '🏥',
             education: '📚',
             other: '📦'
@@ -3776,7 +3776,7 @@ class WorkLifeBalanceApp {
             'healthcare': '🏥',
             'education': '📚',
             'fitness': '💪',
-            'subscriptions': '����',
+            'subscriptions': '📺',
             'groceries': '🛒',
             'clothing': '👕',
             'other': '📦'
@@ -11254,7 +11254,7 @@ class WorkLifeBalanceApp {
             'cash': '💵 Cash',
             'card': '💳 Card',
             'upi': '📱 UPI',
-            'bank': '������ Bank Transfer',
+            'bank': '������� Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
         return paymentMethods[method] || '��� Cash';
