@@ -1436,15 +1436,23 @@ class WorkLifeBalanceApp {
     calculateSavingsStreak() {
         const expenses = window.storage.getExpenses();
         const settings = window.storage.getSettings();
-        const dailyBudget = (settings.monthlyIncome || 50000) / 30;
 
+        const monthlyIncome = Number(settings.monthlyIncome) || 0;
+        if (monthlyIncome <= 0) return 0; // Only compute after income is set
+        if (!expenses || expenses.length === 0) return 0; // Require some expense history
+
+        const dailyBudget = monthlyIncome / 30;
         let streak = 0;
         const today = new Date();
 
+        // Do not count days before the first recorded expense
+        const firstExpenseDate = new Date(Math.min(...expenses.map(e => new Date(e.date || e.createdAt).getTime())));
+
         for (let i = 0; i < 30; i++) {
             const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-            const dateString = checkDate.toDateString();
+            if (checkDate < firstExpenseDate) break;
 
+            const dateString = checkDate.toDateString();
             const dayExpenses = expenses.filter(expense =>
                 new Date(expense.date || expense.createdAt).toDateString() === dateString
             ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
@@ -10860,7 +10868,7 @@ class WorkLifeBalanceApp {
             <div class="breakdown-list">
                 ${tasks.map(task => `
                     <div class="breakdown-item ${task.completed ? 'completed' : 'pending'}">
-                        <span class="item-status">${task.completed ? '✅' : '⏳'}</span>
+                        <span class="item-status">${task.completed ? '✅' : '��'}</span>
                         <span class="item-title">${task.title}</span>
                         <span class="item-category">${task.category}</span>
                         <span class="item-date">${Utils.formatDate(task.createdAt)}</span>
