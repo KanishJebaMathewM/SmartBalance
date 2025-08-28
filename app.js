@@ -3149,7 +3149,7 @@ class WorkLifeBalanceApp {
             // Handle calendar navigation for expenses
             if (e.target.id === 'prevMonthBtn' && this.currentSection === 'expenses' && this.currentExpenseTab === 'calendar') {
                 e.preventDefault();
-                console.log('📅 Navigating to previous month');
+                console.log('��� Navigating to previous month');
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
                 this.updateCalendarHeader();
                 this.renderExpenseCalendar();
@@ -7588,6 +7588,7 @@ class WorkLifeBalanceApp {
     updateStressStats() {
         const moods = window.storage.getMoods();
         const today = new Date().toISOString().split('T')[0];
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
         // Find today's mood
         const todaysMood = moods.find(m => {
@@ -7595,14 +7596,58 @@ class WorkLifeBalanceApp {
             return moodDate === today;
         });
 
+        // Calculate weekly stats
+        const weeklyMoods = moods.filter(m => new Date(m.date) >= weekAgo);
+        const weeklyAverage = window.storage.getWeeklyMoodAverage();
+
+        // Calculate happy days streak
+        const happyMoods = ['very-happy', 'happy'];
+        let streak = 0;
+        for (let i = 0; i < 30; i++) {
+            const checkDate = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+            const dateString = checkDate.toISOString().split('T')[0];
+            const dayMood = moods.find(m => new Date(m.date).toISOString().split('T')[0] === dateString);
+
+            if (dayMood && happyMoods.includes(dayMood.mood)) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+
+        // Calculate stress level
+        const stressedDays = weeklyMoods.filter(m => ['stressed', 'very-stressed'].includes(m.mood)).length;
+        const stressLevel = stressedDays <= 1 ? 'Low' : stressedDays <= 3 ? 'Medium' : 'High';
+
+        // Update UI elements
         const currentStressEl = document.getElementById('currentStress');
+        const weeklyMoodAverageEl = document.getElementById('weeklyMoodAverage');
+        const moodStreakEl = document.getElementById('moodStreak');
+        const stressLevelEl = document.getElementById('stressLevel');
         const currentMoodTextEl = document.getElementById('currentMoodText');
 
-        if (currentStressEl && currentMoodTextEl) {
+        if (currentStressEl) {
             if (todaysMood) {
                 currentStressEl.textContent = Utils.getMoodEmoji(todaysMood.mood);
+            } else {
+                currentStressEl.textContent = '🤖';
+            }
+        }
 
-                // Show detailed mood information
+        if (weeklyMoodAverageEl) {
+            weeklyMoodAverageEl.textContent = Utils.getMoodEmoji(weeklyAverage);
+        }
+
+        if (moodStreakEl) {
+            moodStreakEl.textContent = streak;
+        }
+
+        if (stressLevelEl) {
+            stressLevelEl.textContent = stressLevel;
+        }
+
+        if (currentMoodTextEl) {
+            if (todaysMood) {
                 const moodLabels = {
                     'very-happy': 'Very Happy',
                     'happy': 'Happy',
@@ -7611,13 +7656,14 @@ class WorkLifeBalanceApp {
                     'very-stressed': 'Very Stressed'
                 };
 
-                let moodText = moodLabels[todaysMood.mood] || 'Unknown';
+                let moodText = `Today: ${moodLabels[todaysMood.mood] || 'Unknown'}`;
 
                 if (todaysMood.automated) {
-                    moodText += ` (Auto-calculated)`;
+                    moodText += ` (Auto-calculated`;
                     if (todaysMood.score) {
                         moodText += ` - Score: ${Math.round(todaysMood.score)}/100`;
                     }
+                    moodText += `)`;
                 }
 
                 currentMoodTextEl.textContent = moodText;
@@ -7627,16 +7673,8 @@ class WorkLifeBalanceApp {
                     this.displayMoodFactors(todaysMood.factors);
                 }
             } else {
-                currentStressEl.textContent = '🤖';
-                currentMoodTextEl.textContent = 'Calculating mood based on today\'s activities...';
+                currentMoodTextEl.textContent = 'Calculating today\'s mood based on your activities...';
             }
-        }
-
-        // Also update the fallback element if it exists
-        const fallbackCurrentStress = document.getElementById('currentStress');
-        if (fallbackCurrentStress && !currentMoodTextEl) {
-            const currentMood = window.storage.getWeeklyMoodAverage();
-            fallbackCurrentStress.textContent = Utils.getMoodEmoji(currentMood);
         }
     }
 
@@ -11198,7 +11236,7 @@ class WorkLifeBalanceApp {
             'cash': '💵 Cash',
             'card': '💳 Card',
             'upi': '📱 UPI',
-            'bank': '������ Bank Transfer',
+            'bank': '������� Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
         return paymentMethods[method] || '��� Cash';
