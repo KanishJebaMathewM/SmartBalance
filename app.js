@@ -319,6 +319,11 @@ class WorkLifeBalanceApp {
     initializeAutomatedMoodTracking() {
         console.log('🤖 Initializing automated mood tracking...');
 
+        // Show welcome notification about automated system
+        setTimeout(() => {
+            Utils.showNotification('🤖 New Feature: Automated mood tracking is now active! Your stress and mood will be calculated based on daily activities.', 'info', 6000);
+        }, 3000);
+
         // Check if we need to calculate mood for yesterday
         this.checkPendingMoodCalculations();
 
@@ -4834,7 +4839,7 @@ class WorkLifeBalanceApp {
             'health': '🏥',
             'food': '🍕',
             'bills': '📧',
-            'shopping': '🛍���',
+            'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
             'education': '📚',
