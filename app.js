@@ -3509,25 +3509,31 @@ class WorkLifeBalanceApp {
 
     handleFoodSubmit(e) {
         e.preventDefault();
-        
+
         const foodData = {
             name: Utils.sanitizeInput(document.getElementById('foodName').value),
             quantity: parseFloat(document.getElementById('foodQuantity').value),
             unit: Utils.sanitizeInput(document.getElementById('foodUnit').value),
             expiry: document.getElementById('foodExpiry').value
         };
-        
+
         if (!foodData.name || !foodData.quantity) {
             Utils.showNotification('Please fill in all required fields', 'error');
             return;
         }
-        
-        window.storage.addFoodItem(foodData);
-        Utils.showNotification('Food item added!', 'success');
-        
+
+        if (this.editingFoodItemId) {
+            window.storage.updateFoodItem(this.editingFoodItemId, foodData);
+            this.editingFoodItemId = null;
+            Utils.showNotification('Food item updated!', 'success');
+        } else {
+            window.storage.addFoodItem(foodData);
+            Utils.showNotification('Food item added to pantry!', 'success');
+        }
+
         this.closeModal('foodModal');
         e.target.reset();
-        
+
         if (this.currentSection === 'food') {
             this.loadFoodData();
         }
@@ -10484,7 +10490,7 @@ class WorkLifeBalanceApp {
                 title: 'Nutrition Progress',
                 current: currentScores.nutrition,
                 previous: previousScores.nutrition,
-                icon: '���'
+                icon: '🍎'
             },
             {
                 title: 'Productivity Progress',
@@ -12173,7 +12179,7 @@ class WorkLifeBalanceApp {
     getCategoryIcon(category) {
         const categoryIcons = {
             'food': '🍕',
-            'bills': '����',
+            'bills': '📧',
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
