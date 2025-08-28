@@ -9998,6 +9998,250 @@ class WorkLifeBalanceApp {
         });
     }
 
+    // Export functionality for each section
+    exportSectionData(section, format) {
+        console.log(`Exporting ${section} data as ${format}`);
+
+        let data = {};
+        let filename = '';
+
+        try {
+            switch (section) {
+                case 'tasks':
+                    data = { tasks: window.storage.getTasks() };
+                    filename = `tasks-export-${new Date().toISOString().split('T')[0]}.${format}`;
+                    break;
+
+                case 'food':
+                    data = {
+                        meals: window.storage.getMeals(),
+                        foodItems: window.storage.getFoodItems(),
+                        analytics: this.getFoodAnalytics()
+                    };
+                    filename = `food-nutrition-export-${new Date().toISOString().split('T')[0]}.${format}`;
+                    break;
+
+                case 'fitness':
+                    data = {
+                        workouts: window.storage.getWorkouts(),
+                        analytics: this.getFitnessAnalytics()
+                    };
+                    filename = `fitness-export-${new Date().toISOString().split('T')[0]}.${format}`;
+                    break;
+
+                case 'stress':
+                    data = {
+                        moods: window.storage.getMoods(),
+                        analytics: this.getStressAnalytics()
+                    };
+                    filename = `stress-mood-export-${new Date().toISOString().split('T')[0]}.${format}`;
+                    break;
+
+                case 'games':
+                    data = this.getGamesData();
+                    filename = `games-export-${new Date().toISOString().split('T')[0]}.${format}`;
+                    break;
+
+                case 'report':
+                    data = this.generateComprehensiveReport();
+                    filename = `comprehensive-report-${new Date().toISOString().split('T')[0]}.${format}`;
+                    break;
+
+                default:
+                    Utils.showNotification(`Unknown section: ${section}`, 'error');
+                    return;
+            }
+
+            // Export the data
+            if (format === 'csv') {
+                Utils.exportToCSV(data, filename);
+            } else if (format === 'json') {
+                Utils.exportToJSON(data, filename);
+            } else {
+                Utils.showNotification(`Unknown format: ${format}`, 'error');
+                return;
+            }
+
+            Utils.showNotification(`${section.charAt(0).toUpperCase() + section.slice(1)} data exported successfully!`, 'success');
+
+        } catch (error) {
+            console.error('Export error:', error);
+            Utils.showNotification(`Failed to export ${section} data: ${error.message}`, 'error');
+        }
+    }
+
+    // Get food analytics data
+    getFoodAnalytics() {
+        const meals = window.storage.getMeals();
+        const weeklyStats = window.storage.getWeeklyMealStats();
+
+        const analytics = {
+            weeklyStats,
+            totalMeals: meals.length,
+            homeCookingPercentage: weeklyStats.totalMeals > 0 ? Math.round((weeklyStats.homeMeals / weeklyStats.totalMeals) * 100) : 0,
+            averageCaloriesPerDay: weeklyStats.avgCaloriesPerDay || 0,
+            totalMoneySaved: weeklyStats.moneySaved || 0,
+            mealsByType: this.categorizeMealsByType(meals),
+            nutritionTrends: this.calculateNutritionTrends(meals)
+        };
+
+        return analytics;
+    }
+
+    // Get fitness analytics data
+    getFitnessAnalytics() {
+        const workouts = window.storage.getWorkouts();
+        const streak = window.storage.getWorkoutStreak();
+
+        const analytics = {
+            totalWorkouts: workouts.length,
+            currentStreak: streak,
+            weeklyWorkouts: this.getWeeklyWorkoutCount(workouts),
+            workoutsByType: this.categorizeWorkoutsByType(workouts),
+            caloriesBurned: this.calculateTotalCaloriesBurned(workouts),
+            averageWorkoutDuration: this.calculateAverageWorkoutDuration(workouts),
+            workoutTrends: this.calculateWorkoutTrends(workouts)
+        };
+
+        return analytics;
+    }
+
+    // Get stress/mood analytics data
+    getStressAnalytics() {
+        const moods = window.storage.getMoods();
+        const weeklyAverage = window.storage.getWeeklyMoodAverage();
+
+        const analytics = {
+            totalMoodEntries: moods.length,
+            weeklyMoodAverage: weeklyAverage,
+            moodDistribution: this.calculateMoodDistribution(moods),
+            stressTrends: this.calculateStressTrends(moods),
+            moodPatterns: this.analyzeMoodPatterns(moods)
+        };
+
+        return analytics;
+    }
+
+    // Get comprehensive games data
+    getGamesData() {
+        let gamesData = {
+            totalGamesPlayed: 0,
+            gameStreak: 0,
+            totalScore: 0,
+            averageTime: 0,
+            gameStats: {},
+            recentGames: [],
+            achievements: []
+        };
+
+        // Check if games manager exists
+        if (typeof window.gamesManager !== 'undefined' && window.gamesManager) {
+            const manager = window.gamesManager;
+            gamesData = {
+                totalGamesPlayed: manager.gameData?.stats?.totalGamesPlayed || 0,
+                gameStreak: manager.gameData?.stats?.gameStreak || 0,
+                totalScore: manager.gameData?.stats?.totalScore || 0,
+                averageTime: manager.gameData?.stats?.averageTime || 0,
+                gameStats: manager.gameData?.games || {},
+                recentGames: manager.gameData?.recentGames || [],
+                achievements: manager.gameData?.achievements || [],
+                analytics: this.calculateGamesAnalytics(manager.gameData)
+            };
+        } else {
+            // Fallback to localStorage if games manager not available
+            const savedGamesData = localStorage.getItem('gamesData');
+            if (savedGamesData) {
+                try {
+                    const parsedData = JSON.parse(savedGamesData);
+                    gamesData = {
+                        ...gamesData,
+                        ...parsedData,
+                        analytics: this.calculateGamesAnalytics(parsedData)
+                    };
+                } catch (error) {
+                    console.error('Error parsing games data:', error);
+                }
+            }
+        }
+
+        return gamesData;
+    }
+
+    // Calculate games analytics
+    calculateGamesAnalytics(gameData) {
+        if (!gameData) return {};
+
+        const analytics = {
+            mostPlayedGame: this.getMostPlayedGame(gameData.games || {}),
+            averageScorePerGame: this.getAverageScorePerGame(gameData.recentGames || []),
+            improvementTrend: this.calculateImprovementTrend(gameData.recentGames || []),
+            completionRates: this.calculateCompletionRates(gameData.games || {}),
+            timeSpentGaming: this.calculateTimeSpentGaming(gameData.recentGames || [])
+        };
+
+        return analytics;
+    }
+
+    // Generate comprehensive report with all data and analytics
+    generateComprehensiveReport() {
+        const currentDate = new Date();
+        const weekAgo = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        // Get all data
+        const tasks = window.storage.getTasks();
+        const expenses = window.storage.getExpenses();
+        const meals = window.storage.getMeals();
+        const workouts = window.storage.getWorkouts();
+        const moods = window.storage.getMoods();
+        const games = this.getGamesData();
+
+        // Calculate comprehensive analytics
+        const analytics = {
+            // Task analytics
+            taskCompletionRate: this.calculateTaskCompletionRate(tasks),
+
+            // Expense analytics
+            totalExpenses: expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0),
+            weeklyExpenses: window.storage.getWeeklyExpenses(),
+            monthlyExpenses: window.storage.getMonthlyExpenses(),
+            dailyAverageExpense: window.storage.getWeeklyExpenses() / 7,
+
+            // Food analytics
+            homeCookingPercentage: this.calculateHomeCookingPercentage(meals),
+            averageCaloriesPerDay: this.calculateAverageCaloriesPerDay(meals),
+            moneySavedCooking: this.calculateMoneySavedCooking(meals),
+
+            // Fitness analytics
+            workoutStreak: window.storage.getWorkoutStreak(),
+            totalCaloriesBurned: this.calculateTotalCaloriesBurned(workouts),
+            weeklyWorkoutCount: this.getWeeklyWorkoutCount(workouts),
+
+            // Mood analytics
+            averageMood: window.storage.getWeeklyMoodAverage(),
+            stressTrend: this.calculateStressTrend(moods),
+
+            // Overall health score
+            overallHealthScore: this.calculateOverallHealthScore({
+                tasks, expenses, meals, workouts, moods, games
+            })
+        };
+
+        return {
+            generatedAt: currentDate.toISOString(),
+            period: {
+                from: weekAgo.toISOString(),
+                to: currentDate.toISOString()
+            },
+            tasks,
+            expenses,
+            meals,
+            workouts,
+            moods,
+            games,
+            analytics
+        };
+    }
+
     // Helper function to check if food is South Indian
     isSouthIndianFood(foodName) {
         const southIndianFoods = [
@@ -10546,7 +10790,7 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '����️ Travel & Transport',
+            'travel': '�����️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '���� Education',
