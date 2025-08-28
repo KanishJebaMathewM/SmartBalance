@@ -2945,7 +2945,7 @@ class WorkLifeBalanceApp {
             shopping: '🛍️',
             travel: '✈️',
             entertainment: '🎬',
-            healthcare: '�����',
+            healthcare: '🏥',
             education: '📚',
             other: '������'
         };
@@ -9712,7 +9712,7 @@ class WorkLifeBalanceApp {
 
         if (homeCookingRate >= 70 && foodExpenses.length > 0) {
             const avgFoodCost = foodExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0) / foodExpenses.length;
-            insights.push(`🍳 Great job! ${homeCookingRate.toFixed(0)}% home cooking is saving you money. Average meal cost: ${Utils.formatCurrency(avgFoodCost)}`);
+            insights.push(`��� Great job! ${homeCookingRate.toFixed(0)}% home cooking is saving you money. Average meal cost: ${Utils.formatCurrency(avgFoodCost)}`);
         }
 
         // Stress and activity correlation
@@ -10564,7 +10564,7 @@ class WorkLifeBalanceApp {
             'food': '🍕',
             'bills': '📧',
             'shopping': '🛍️',
-            'travel': '���️',
+            'travel': '✈️',
             'entertainment': '🎬',
             'healthcare': '🏥',
             'education': '📚',
