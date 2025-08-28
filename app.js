@@ -2667,7 +2667,7 @@ class WorkLifeBalanceApp {
             reportExpenseDetail.textContent = `Top category: ${topCategory}`;
         }
         if (reportHealthyMeals) reportHealthyMeals.textContent = '5/7'; // Mock data
-        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ��1,200';
+        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ₹1,200';
         if (reportWorkoutDays) reportWorkoutDays.textContent = `${weeklyWorkouts.length}/7`;
         if (reportFitnessDetail) {
             const streak = window.storage.getWorkoutStreak();
