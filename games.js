@@ -14,6 +14,7 @@ class GamesManager {
             games: {
                 '8queens': { bestScore: 0, attempts: 0, completed: 0 },
                 'sudoku': { completed: 0, bestTime: null },
+                'colorpattern': { bestLevel: 0, bestScore: 0 },
                 '2048': { highScore: 0, bestTile: 0 },
                 'memory': { bestMoves: null, completed: 0 },
                 'snake': { highScore: 0, longest: 0 }
