@@ -244,16 +244,19 @@ class MemoriesManager {
         reader.onload = (event) => {
             const imageData = event.target.result;
 
+            const memoryDate = formData.get('memoryDate') || document.getElementById('memoryDate').value;
+            const now = new Date();
+
             const memory = {
                 id: Date.now(),
                 title: formData.get('memoryTitle') || document.getElementById('memoryTitle').value,
                 description: formData.get('memoryDescription') || document.getElementById('memoryDescription').value,
-                date: formData.get('memoryDate') || document.getElementById('memoryDate').value,
+                date: memoryDate || now.toISOString().split('T')[0], // Use today if no date provided
                 favorite: document.getElementById('memoryFavorite').checked,
                 imageData: imageData,
                 fileName: imageFile.name,
                 fileSize: imageFile.size,
-                createdAt: new Date().toISOString()
+                createdAt: now.toISOString()
             };
 
             this.saveMemory(memory);
