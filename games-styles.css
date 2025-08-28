@@ -284,46 +284,83 @@
     display: grid;
     grid-template-columns: repeat(9, 1fr);
     gap: 1px;
-    background: #333;
-    border: 3px solid #333;
+    background: #2c3e50;
+    border: 4px solid #2c3e50;
     width: 450px;
     height: 450px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .sudoku-cell {
-    background: #fff;
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1.2rem;
-    font-weight: bold;
-    transition: background-color 0.2s;
-    border: 1px solid #ddd;
+    font-size: 1.4rem;
+    font-weight: 600;
+    font-family: 'Georgia', serif;
+    transition: all 0.2s ease;
+    border: 1px solid #ecf0f1;
+    color: #2c3e50;
+    position: relative;
+}
+
+.sudoku-cell:hover:not(.given) {
+    background: #ebf3fd;
+    transform: scale(1.02);
 }
 
 .sudoku-cell.given {
-    background: #f0f0f0;
-    color: #333;
+    background: #f8f9fa;
+    color: #2c3e50;
     cursor: not-allowed;
+    font-weight: 700;
 }
 
 .sudoku-cell.selected {
-    background: #87ceeb;
+    background: #3498db;
+    color: white;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.6);
 }
 
 .sudoku-cell.error {
-    background: #ffebee;
-    color: #d32f2f;
+    background: #ffe6e6;
+    color: #e74c3c;
+    animation: shake 0.5s ease-in-out;
 }
 
-.sudoku-cell:nth-child(3n) {
-    border-right: 2px solid #333;
+.sudoku-cell.hint {
+    background: #e8f5e8;
+    color: #27ae60;
 }
 
+/* 3x3 box borders for better visual separation */
+.sudoku-cell:nth-child(3n):not(:nth-child(9n)) {
+    border-right: 3px solid #2c3e50;
+}
+
+.sudoku-cell:nth-child(9n) {
+    border-right: 1px solid #ecf0f1;
+}
+
+/* Horizontal 3x3 separators */
 .sudoku-cell:nth-child(n+19):nth-child(-n+27),
 .sudoku-cell:nth-child(n+46):nth-child(-n+54) {
-    border-bottom: 2px solid #333;
+    border-bottom: 3px solid #2c3e50;
+}
+
+/* Add subtle highlighting for related cells */
+.sudoku-cell.related {
+    background: #f0f8ff;
+}
+
+/* Animation for errors */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
 }
 
 .number-pad {
