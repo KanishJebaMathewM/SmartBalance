@@ -5,6 +5,18 @@ class MemoriesManager {
         this.currentTab = 'memories-gallery';
         this.currentFilter = 'all';
         this.searchQuery = '';
+
+        // Slideshow properties
+        this.slideshow = {
+            isActive: false,
+            isPlaying: false,
+            currentIndex: 0,
+            memories: [],
+            interval: null,
+            speed: 3000, // 3 seconds
+            isFullscreen: false
+        };
+
         this.init();
     }
 
