@@ -246,24 +246,80 @@ class WorkLifeBalanceApp {
     bindAuthHandlers() {
         const loginForm = document.getElementById('loginForm');
         const signupForm = document.getElementById('signupForm');
+        const forgotForm = document.getElementById('forgotForm');
         const showLoginBtn = document.getElementById('showLoginBtn');
         const showSignupBtn = document.getElementById('showSignupBtn');
         const logoutBtn = document.getElementById('logoutBtn');
+        const forgotLink = document.getElementById('forgotPasswordLink');
+        const backToLoginBtn = document.getElementById('backToLoginBtn');
 
-        if (showLoginBtn && showSignupBtn && loginForm && signupForm) {
-            showLoginBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                showLoginBtn.classList.add('active');
-                showSignupBtn.classList.remove('active');
-                loginForm.style.display = 'flex';
-                signupForm.style.display = 'none';
+        const switchTo = (view) => {
+            const overlay = document.getElementById('authOverlay');
+            if (!overlay) return;
+            if (view === 'login') {
+                showLoginBtn && showLoginBtn.classList.add('active');
+                showSignupBtn && showSignupBtn.classList.remove('active');
+                loginForm && (loginForm.style.display = 'flex');
+                signupForm && (signupForm.style.display = 'none');
+                forgotForm && (forgotForm.style.display = 'none');
+            } else if (view === 'signup') {
+                showSignupBtn && showSignupBtn.classList.add('active');
+                showLoginBtn && showLoginBtn.classList.remove('active');
+                signupForm && (signupForm.style.display = 'flex');
+                loginForm && (loginForm.style.display = 'none');
+                forgotForm && (forgotForm.style.display = 'none');
+            } else if (view === 'forgot') {
+                showLoginBtn && showLoginBtn.classList.remove('active');
+                showSignupBtn && showSignupBtn.classList.remove('active');
+                forgotForm && (forgotForm.style.display = 'flex');
+                loginForm && (loginForm.style.display = 'none');
+                signupForm && (signupForm.style.display = 'none');
+            }
+        };
+
+        if (showLoginBtn) {
+            showLoginBtn.addEventListener('click', (e) => { e.preventDefault(); switchTo('login'); });
+        }
+        if (showSignupBtn) {
+            showSignupBtn.addEventListener('click', (e) => { e.preventDefault(); switchTo('signup'); });
+        }
+        if (forgotLink) {
+            forgotLink.addEventListener('click', (e) => { e.preventDefault(); switchTo('forgot'); });
+        }
+        if (backToLoginBtn) {
+            backToLoginBtn.addEventListener('click', (e) => { e.preventDefault(); switchTo('login'); });
+        }
+
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-visibility').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (!input) return;
+                input.type = input.type === 'password' ? 'text' : 'password';
             });
-            showSignupBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                showSignupBtn.classList.add('active');
-                showLoginBtn.classList.remove('active');
-                signupForm.style.display = 'flex';
-                loginForm.style.display = 'none';
+        });
+
+        // Password strength meter
+        const pw = document.getElementById('signupPassword');
+        const strength = document.getElementById('passwordStrength');
+        const bar = document.getElementById('passwordStrengthBar');
+        const label = document.getElementById('passwordStrengthText');
+        if (pw && strength && bar && label) {
+            strength.style.display = 'flex';
+            pw.addEventListener('input', () => {
+                const val = pw.value || '';
+                let score = 0;
+                if (val.length >= 8) score++;
+                if (/[A-Z]/.test(val)) score++;
+                if (/[0-9]/.test(val)) score++;
+                if (/[^A-Za-z0-9]/.test(val)) score++;
+                const pct = (score / 4) * 100;
+                bar.style.width = pct + '%';
+                if (score <= 1) { bar.style.background = 'var(--danger-color)'; label.textContent = 'Weak'; }
+                else if (score === 2) { bar.style.background = 'var(--warning-color)'; label.textContent = 'Fair'; }
+                else if (score === 3) { bar.style.background = 'var(--secondary-color)'; label.textContent = 'Good'; }
+                else { bar.style.background = 'var(--success-color)'; label.textContent = 'Strong'; }
             });
         }
 
@@ -272,11 +328,13 @@ class WorkLifeBalanceApp {
                 e.preventDefault();
                 const username = (document.getElementById('loginUsername') || {}).value;
                 const password = (document.getElementById('loginPassword') || {}).value;
+                const feedback = document.getElementById('loginFeedback');
                 if (!username || !password) return;
                 const user = window.storage.findUserByUsername(username);
-                if (!user) { Utils.showNotification('User not found', 'error'); return; }
+                if (!user) { feedback && (feedback.textContent = 'User not found'); return; }
                 const hash = await this.hashPassword(password);
-                if (user.passwordHash !== hash) { Utils.showNotification('Invalid credentials', 'error'); return; }
+                if (user.passwordHash !== hash) { feedback && (feedback.textContent = 'Invalid credentials'); return; }
+                feedback && (feedback.textContent = '');
                 window.storage.setCurrentUser(user);
                 this.onLoginSuccess(user);
             });
@@ -288,15 +346,60 @@ class WorkLifeBalanceApp {
                 const username = (document.getElementById('signupUsername') || {}).value;
                 const password = (document.getElementById('signupPassword') || {}).value;
                 const confirm = (document.getElementById('signupPasswordConfirm') || {}).value;
-                if (!username || !password) return;
-                if (password !== confirm) { Utils.showNotification('Passwords do not match', 'error'); return; }
-                if (window.storage.findUserByUsername(username)) { Utils.showNotification('Username already taken', 'error'); return; }
+                const recoveryQuestion = (document.getElementById('recoveryQuestion') || {}).value;
+                const recoveryAnswer = (document.getElementById('recoveryAnswer') || {}).value;
+                const feedback = document.getElementById('signupFeedback');
+                if (!username || !password || !recoveryQuestion || !recoveryAnswer) return;
+                if (password !== confirm) { feedback && (feedback.textContent = 'Passwords do not match'); return; }
+                if (window.storage.findUserByUsername(username)) { feedback && (feedback.textContent = 'Username already taken'); return; }
                 const hash = await this.hashPassword(password);
-                const user = window.storage.addUser({ username, passwordHash: hash });
+                const answerHash = await this.hashPassword(recoveryAnswer.trim());
+                const user = window.storage.addUser({ username, passwordHash: hash, recoveryQuestion, recoveryAnswerHash: answerHash });
                 window.storage.setCurrentUser(user);
-                // Set default display name for this user
                 window.storage.updateSettings({ userName: username });
+                feedback && (feedback.textContent = '');
                 this.onLoginSuccess(user);
+            });
+        }
+
+        if (forgotForm) {
+            const forgotUsername = document.getElementById('forgotUsername');
+            const qDisplay = document.getElementById('recoveryQuestionDisplay');
+            const answerInput = document.getElementById('forgotRecoveryAnswer');
+            const forgotFeedback = document.getElementById('forgotFeedback');
+            const newPass = document.getElementById('forgotNewPassword');
+            const newPass2 = document.getElementById('forgotNewPasswordConfirm');
+
+            const refreshQuestion = () => {
+                const uname = forgotUsername.value;
+                const user = window.storage.findUserByUsername(uname);
+                if (user && user.recoveryQuestion) {
+                    qDisplay.textContent = `Recovery question: ${user.recoveryQuestion}`;
+                } else {
+                    qDisplay.textContent = 'Enter a valid username to show recovery question';
+                }
+            };
+
+            if (forgotUsername) {
+                forgotUsername.addEventListener('blur', refreshQuestion);
+                forgotUsername.addEventListener('input', () => { qDisplay.textContent = ''; });
+            }
+
+            forgotForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const uname = forgotUsername.value;
+                const user = window.storage.findUserByUsername(uname);
+                if (!user) { forgotFeedback.textContent = 'User not found'; return; }
+                if (!answerInput.value) { forgotFeedback.textContent = 'Enter recovery answer'; return; }
+                const ansHash = await this.hashPassword(answerInput.value.trim());
+                if (user.recoveryAnswerHash !== ansHash) { forgotFeedback.textContent = 'Incorrect recovery answer'; return; }
+                if (!newPass.value || newPass.value !== newPass2.value) { forgotFeedback.textContent = 'Passwords do not match'; return; }
+                const passHash = await this.hashPassword(newPass.value);
+                window.storage.updateUser(user.id, { passwordHash: passHash });
+                forgotFeedback.textContent = '';
+                Utils.showNotification('Password reset successful. Please login.', 'success');
+                document.getElementById('loginUsername').value = uname;
+                switchTo('login');
             });
         }
 
@@ -618,7 +721,7 @@ class WorkLifeBalanceApp {
 
         const streaksHTML = `
             <div class="streak-widgets-section">
-                <h3>�� Current Streaks</h3>
+                <h3>🔥 Current Streaks</h3>
                 <div class="streak-widgets" id="streakWidgets">
                     <!-- Streak widgets will be populated by updateStreakWidgets -->
                 </div>
@@ -4335,7 +4438,7 @@ class WorkLifeBalanceApp {
             shopping: '🛍️',
             travel: '✈️',
             entertainment: '🎬',
-            healthcare: '���',
+            healthcare: '🏥',
             education: '📚',
             other: '📦'
         };
