@@ -1,142 +1,149 @@
-/* Automated Mood Tracking Styles */
+/* Automated Mood Tracking Styles - Consistent with App Design */
 
-.mood-automated-info {
+/* Mood Stats - using same pattern as task-stats and fitness-stats */
+.mood-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
     margin: 20px 0;
 }
 
-.automated-mood-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 15px;
-    padding: 25px;
-    color: white;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
+/* Automated Info Card - consistent with existing cards */
+.automated-info-card {
+    background: var(--surface-color, #f8f9fa);
+    border: 1px solid var(--border-color, #e9ecef);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.automated-mood-card h3 {
-    margin: 0 0 15px 0;
-    font-size: 1.4em;
+.automated-info-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-primary, #2c3e50);
+    font-size: 1.2em;
     font-weight: 600;
 }
 
-.automated-mood-card p {
-    margin: 0 0 20px 0;
-    opacity: 0.9;
+.automated-info-card p {
+    margin: 0 0 15px 0;
+    color: var(--text-secondary, #6c757d);
     line-height: 1.5;
 }
 
-.mood-factors {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.factor-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 12px 15px;
+.mood-insight {
+    background: var(--primary-light, #e3f2fd);
+    border: 1px solid var(--primary-color, #2196f3);
     border-radius: 8px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 16px;
+    color: var(--primary-dark, #1976d2);
+    font-weight: 500;
+    font-size: 0.95em;
 }
 
-.factor-icon {
-    font-size: 1.2em;
-    min-width: 24px;
-}
-
-.current-mood-display {
-    background: rgba(255, 255, 255, 0.15);
+/* Mood Chart - consistent with existing chart containers */
+.mood-chart {
+    background: var(--surface-color, #f8f9fa);
+    border: 1px solid var(--border-color, #e9ecef);
     border-radius: 12px;
     padding: 20px;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.current-mood-display h4 {
+.mood-chart h3 {
     margin: 0 0 15px 0;
+    color: var(--text-primary, #2c3e50);
     font-size: 1.2em;
-    opacity: 0.9;
+    font-weight: 600;
 }
 
-.current-mood {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Insights Section - using existing pattern */
+.insights-section {
+    margin: 20px 0;
+}
+
+.insights-section h3 {
+    margin: 0 0 15px 0;
+    color: var(--text-primary, #2c3e50);
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.insight-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 15px;
-    flex-wrap: wrap;
 }
 
-.mood-emoji {
-    font-size: 3em;
-    line-height: 1;
+.insight-card {
+    background: var(--surface-color, #f8f9fa);
+    border: 1px solid var(--border-color, #e9ecef);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.mood-text {
-    font-size: 1.1em;
-    font-weight: 500;
-    background: rgba(255, 255, 255, 0.2);
-    padding: 8px 16px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+.insight-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.insight-card h4 {
+    margin: 0 0 8px 0;
+    color: var(--text-primary, #2c3e50);
+    font-size: 1em;
+    font-weight: 600;
+}
+
+.insight-card p {
+    margin: 0;
+    color: var(--text-secondary, #6c757d);
+    font-size: 0.9em;
+    line-height: 1.4;
 }
 
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
-    .automated-mood-card {
-        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    .automated-info-card,
+    .mood-chart,
+    .insight-card {
+        background: var(--surface-dark, #2d3748);
+        border-color: var(--border-dark, #4a5568);
+    }
+    
+    .mood-insight {
+        background: var(--primary-dark-bg, #1a365d);
+        border-color: var(--primary-dark, #3182ce);
+        color: var(--primary-light, #63b3ed);
     }
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
-    .mood-factors {
+    .mood-stats {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+    }
+    
+    .insight-cards {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 12px;
     }
     
-    .factor-item {
-        padding: 10px 12px;
-    }
-    
-    .current-mood {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .mood-emoji {
-        font-size: 2.5em;
-    }
-    
-    .automated-mood-card {
-        padding: 20px;
+    .automated-info-card,
+    .mood-chart {
+        padding: 15px;
         margin: 15px 0;
     }
 }
 
-/* Animation for mood updates */
-.mood-emoji {
-    transition: transform 0.3s ease;
-}
-
-.mood-emoji:hover {
-    transform: scale(1.1);
-}
-
-.mood-text {
-    transition: all 0.3s ease;
-}
-
-/* Status indicators */
-.mood-status-automated::before {
-    content: "🤖";
-    margin-right: 5px;
-}
-
-.mood-status-manual::before {
-    content: "👤";
-    margin-right: 5px;
+/* Remove any previous custom gradient styling that doesn't match */
+.mood-automated-info,
+.automated-mood-card,
+.mood-factors,
+.factor-item,
+.current-mood-display {
+    /* These classes are no longer used - removing any custom styling */
 }
