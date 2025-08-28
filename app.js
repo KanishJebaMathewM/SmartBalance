@@ -241,6 +241,19 @@ class WorkLifeBalanceApp {
         console.log('✅ Fitness functionality verification complete!');
     }
 
+    // New user activity check
+    hasUserActivity(days = 7) {
+        const tasks = window.storage.getTasks();
+        const expenses = window.storage.getExpenses();
+        const workouts = window.storage.getWorkouts();
+        const meals = window.storage.getMeals();
+
+        if (tasks.length > 0 || expenses.length > 0 || workouts.length > 0 || meals.length > 0) {
+            return true;
+        }
+        return false;
+    }
+
     // Clean Dashboard Methods - Stats Only
     updateCleanInsights() {
         const insightsEl = document.getElementById('dashboardInsights');
@@ -12126,7 +12139,7 @@ class WorkLifeBalanceApp {
     getCategoryIcon(category) {
         const categoryIcons = {
             'food': '🍕',
-            'bills': '📧',
+            'bills': '���',
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
