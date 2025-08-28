@@ -3979,10 +3979,10 @@ class WorkLifeBalanceApp {
         const correlation = this.calculateTaskMoodCorrelation(tasks, moods);
         const percentage = Math.abs(correlation * 100);
         const insight = correlation > 0.3 ?
-            '�� High productivity increases stress - consider work-life balance!' :
+            '⚠️ High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
-            '������ Completing tasks reduces your stress levels!' :
-            '�� Keep tracking to understand your productivity-stress patterns';
+            '✅ Completing tasks reduces your stress levels!' :
+            '📈 Keep tracking to understand your productivity-stress patterns';
 
         this.updateCorrelationDisplay('productivityStressCorrelation', percentage, insight);
     }
