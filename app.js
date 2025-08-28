@@ -86,7 +86,7 @@ window.toggleExpenseDetails = toggleExpenseDetails;
 
 // Test function for debugging
 window.testExpenseToggle = function() {
-    console.log('🧪 ADVANCED Testing expense toggle manually...');
+    console.log('���� ADVANCED Testing expense toggle manually...');
     const checkbox = document.getElementById('taskExpense');
     const details = document.getElementById('expenseTaskDetails');
 
@@ -189,8 +189,11 @@ class WorkLifeBalanceApp {
             }
         }, 30000);
 
-        // Override old methods with enhanced versions
+            // Override old methods with enhanced versions
         this.overrideMethodsWithEnhancedVersions();
+
+        // Initialize session tracking
+        this.sessionStart = new Date();
 
         // Verify fitness functionality
         this.verifyFitnessFunctionality();
@@ -239,11 +242,282 @@ class WorkLifeBalanceApp {
         console.log('✅ Fitness functionality verification complete!');
     }
 
+    // Enhanced Dashboard Methods
+    updateQuickActions() {
+        const quickActionsEl = document.getElementById('quickActions');
+        if (!quickActionsEl) {
+            // Create quick actions panel if it doesn't exist
+            this.createQuickActionsPanel();
+            return;
+        }
+
+        const tasks = window.storage.getTasks();
+        const today = new Date().toDateString();
+        const todayTasks = tasks.filter(task =>
+            new Date(task.createdAt).toDateString() === today
+        );
+        const pendingTasks = todayTasks.filter(task => !task.completed).length;
+
+        const expenses = window.storage.getExpenses();
+        const todayExpenses = expenses.filter(expense =>
+            Utils.isToday(expense.date || expense.createdAt)
+        ).length;
+
+        const workouts = window.storage.getWorkouts();
+        const todayWorkouts = workouts.filter(workout =>
+            Utils.isToday(workout.createdAt)
+        ).length;
+
+        const actions = [
+            {
+                id: 'addTask',
+                icon: '➕',
+                label: 'Add Task',
+                badge: pendingTasks > 0 ? pendingTasks : null,
+                action: () => this.openModal('taskModal')
+            },
+            {
+                id: 'addExpense',
+                icon: '💳',
+                label: 'Log Expense',
+                badge: todayExpenses === 0 ? '!' : null,
+                action: () => this.openModal('expenseModal')
+            },
+            {
+                id: 'addMeal',
+                icon: '🍽️',
+                label: 'Add Meal',
+                badge: null,
+                action: () => this.openModal('mealModal')
+            },
+            {
+                id: 'quickWorkout',
+                icon: '💪',
+                label: 'Quick Exercise',
+                badge: todayWorkouts === 0 ? '!' : null,
+                action: () => this.startExercise('desk-stretches')
+            },
+            {
+                id: 'viewAnalytics',
+                icon: '📊',
+                label: 'Analytics',
+                badge: null,
+                action: () => this.showSection('expenses')
+            }
+        ];
+
+        quickActionsEl.innerHTML = actions.map(action => `
+            <button class="quick-action-btn" onclick="app.${action.action.toString().split('=')[1]}" title="${action.label}">
+                <span class="action-icon">${action.icon}</span>
+                <span class="action-label">${action.label}</span>
+                ${action.badge ? `<span class="action-badge">${action.badge}</span>` : ''}
+            </button>
+        `).join('');
+    }
+
+    updateDashboardInsights() {
+        const insightsEl = document.getElementById('dashboardInsights');
+        if (!insightsEl) {
+            this.createDashboardInsights();
+            return;
+        }
+
+        const insights = this.generateSmartInsights();
+
+        insightsEl.innerHTML = `
+            <div class="insights-header">
+                <h3>💡 Smart Insights</h3>
+                <span class="insights-count">${insights.length} insights</span>
+            </div>
+            <div class="insights-list">
+                ${insights.slice(0, 3).map(insight => `
+                    <div class="insight-item ${insight.type}">
+                        <span class="insight-icon">${insight.icon}</span>
+                        <div class="insight-content">
+                            <div class="insight-title">${insight.title}</div>
+                            <div class="insight-description">${insight.description}</div>
+                        </div>
+                        ${insight.action ? `<button class="insight-action" onclick="${insight.action}">${insight.actionLabel}</button>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    updateProgressRings() {
+        const progressEl = document.getElementById('progressRings');
+        if (!progressEl) {
+            this.createProgressRings();
+            return;
+        }
+
+        const today = new Date().toDateString();
+        const tasks = window.storage.getTasks();
+        const expenses = window.storage.getExpenses();
+        const workouts = window.storage.getWorkouts();
+        const meals = window.storage.getMeals();
+
+        // Calculate progress percentages
+        const todayTasks = tasks.filter(task =>
+            new Date(task.createdAt).toDateString() === today
+        );
+        const taskProgress = todayTasks.length > 0 ?
+            (todayTasks.filter(task => task.completed).length / todayTasks.length) * 100 : 0;
+
+        const workoutProgress = workouts.filter(workout =>
+            Utils.isToday(workout.createdAt)
+        ).length > 0 ? 100 : 0;
+
+        const mealProgress = Math.min(
+            (meals.filter(meal => Utils.isToday(meal.date)).length / 3) * 100, 100
+        );
+
+        const settings = window.storage.getSettings();
+        const dailyBudget = settings.dailyBudget || 1000;
+        const todayExpenses = expenses.filter(expense =>
+            Utils.isToday(expense.date || expense.createdAt)
+        ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+        const budgetProgress = Math.min((todayExpenses / dailyBudget) * 100, 100);
+
+        const rings = [
+            { label: 'Tasks', progress: taskProgress, color: '#3b82f6', value: `${Math.round(taskProgress)}%` },
+            { label: 'Workout', progress: workoutProgress, color: '#10b981', value: workoutProgress > 0 ? '✅' : '⭕' },
+            { label: 'Meals', progress: mealProgress, color: '#f59e0b', value: `${Math.round(mealProgress)}%` },
+            { label: 'Budget', progress: 100 - budgetProgress, color: budgetProgress > 80 ? '#ef4444' : '#8b5cf6', value: Utils.formatCurrency(todayExpenses) }
+        ];
+
+        progressEl.innerHTML = rings.map(ring => `
+            <div class="progress-ring">
+                <svg class="ring-svg" width="80" height="80">
+                    <circle cx="40" cy="40" r="35" stroke="#e5e7eb" stroke-width="6" fill="none"/>
+                    <circle
+                        cx="40" cy="40" r="35"
+                        stroke="${ring.color}"
+                        stroke-width="6"
+                        fill="none"
+                        stroke-dasharray="${2 * Math.PI * 35}"
+                        stroke-dashoffset="${2 * Math.PI * 35 * (1 - ring.progress / 100)}"
+                        transform="rotate(-90 40 40)"
+                        class="progress-circle"
+                    />
+                </svg>
+                <div class="ring-content">
+                    <div class="ring-value">${ring.value}</div>
+                </div>
+                <div class="ring-label">${ring.label}</div>
+            </div>
+        `).join('');
+    }
+
+    updateStreakWidgets() {
+        const streaksEl = document.getElementById('streakWidgets');
+        if (!streaksEl) {
+            this.createStreakWidgets();
+            return;
+        }
+
+        const workoutStreak = window.storage.getWorkoutStreak();
+        const taskStreak = this.calculateTaskStreak();
+        const moodStreak = this.calculateMoodStreak();
+        const savingsStreak = this.calculateSavingsStreak();
+
+        const streaks = [
+            {
+                label: 'Workout Streak',
+                value: workoutStreak,
+                icon: '🔥',
+                color: workoutStreak >= 7 ? '#10b981' : workoutStreak >= 3 ? '#f59e0b' : '#6b7280',
+                unit: 'days'
+            },
+            {
+                label: 'Task Streak',
+                value: taskStreak,
+                icon: '⭐',
+                color: taskStreak >= 7 ? '#3b82f6' : taskStreak >= 3 ? '#f59e0b' : '#6b7280',
+                unit: 'days'
+            },
+            {
+                label: 'Mood Track',
+                value: moodStreak,
+                icon: '😊',
+                color: moodStreak >= 7 ? '#8b5cf6' : moodStreak >= 3 ? '#f59e0b' : '#6b7280',
+                unit: 'days'
+            },
+            {
+                label: 'Savings',
+                value: savingsStreak,
+                icon: '💰',
+                color: savingsStreak >= 30 ? '#10b981' : savingsStreak >= 7 ? '#f59e0b' : '#6b7280',
+                unit: 'days'
+            }
+        ];
+
+        streaksEl.innerHTML = streaks.map(streak => `
+            <div class="streak-widget" style="border-left-color: ${streak.color}">
+                <div class="streak-icon">${streak.icon}</div>
+                <div class="streak-content">
+                    <div class="streak-value" style="color: ${streak.color}">${streak.value}</div>
+                    <div class="streak-label">${streak.label}</div>
+                    <div class="streak-unit">${streak.unit}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    checkDailyGoals() {
+        const goalsEl = document.getElementById('dailyGoals');
+        if (!goalsEl) {
+            this.createDailyGoals();
+            return;
+        }
+
+        const goals = this.getDailyGoals();
+        const completedGoals = goals.filter(goal => goal.completed).length;
+        const totalGoals = goals.length;
+        const progressPercentage = totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
+
+        goalsEl.innerHTML = `
+            <div class="goals-header">
+                <h3>🎯 Daily Goals</h3>
+                <span class="goals-progress">${completedGoals}/${totalGoals}</span>
+            </div>
+            <div class="goals-progress-bar">
+                <div class="goals-progress-fill" style="width: ${progressPercentage}%"></div>
+            </div>
+            <div class="goals-list">
+                ${goals.map(goal => `
+                    <div class="goal-item ${goal.completed ? 'completed' : ''}">
+                        <span class="goal-icon">${goal.completed ? '✅' : '⭕'}</span>
+                        <span class="goal-text">${goal.text}</span>
+                        ${goal.value ? `<span class="goal-value">${goal.value}</span>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    updateLiveMetrics() {
+        // Update timestamp
+        const timestampEl = document.getElementById('lastUpdated');
+        if (timestampEl) {
+            timestampEl.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+        }
+
+        // Update any live counters or real-time data
+        this.updateRealTimeStats();
+    }
+
     ensureGlobalAccess() {
         // Make sure key methods are available globally for onclick handlers
         if (typeof window.app === 'undefined') {
             window.app = this;
         }
+
+        // Add enhanced dashboard methods to global scope
+        window.app.updateQuickActions = this.updateQuickActions.bind(this);
+        window.app.updateDashboardInsights = this.updateDashboardInsights.bind(this);
+        window.app.generateSmartInsights = this.generateSmartInsights.bind(this);
+        window.app.startExercise = this.startExercise.bind(this);
 
         // Also ensure the methods exist on the global app object
         if (window.app) {
@@ -261,6 +535,96 @@ class WorkLifeBalanceApp {
         }
 
         console.log('✅ Global app access ensured for calendar functionality');
+    }
+
+    // Helper methods for creating enhanced dashboard elements
+    createQuickActionsPanel() {
+        const dashboard = document.getElementById('dashboard');
+        if (!dashboard) return;
+
+        const quickActionsHTML = `
+            <div class="quick-actions-panel" id="quickActions">
+                <!-- Quick actions will be populated by updateQuickActions -->
+            </div>
+        `;
+
+        // Insert after dashboard grid
+        const dashboardGrid = dashboard.querySelector('.dashboard-grid');
+        if (dashboardGrid) {
+            dashboardGrid.insertAdjacentHTML('afterend', quickActionsHTML);
+        }
+    }
+
+    createDashboardInsights() {
+        const dashboard = document.getElementById('dashboard');
+        if (!dashboard) return;
+
+        const insightsHTML = `
+            <div class="dashboard-insights" id="dashboardInsights">
+                <!-- Insights will be populated by updateDashboardInsights -->
+            </div>
+        `;
+
+        const quickActions = document.getElementById('quickActions');
+        if (quickActions) {
+            quickActions.insertAdjacentHTML('afterend', insightsHTML);
+        }
+    }
+
+    createProgressRings() {
+        const dashboard = document.getElementById('dashboard');
+        if (!dashboard) return;
+
+        const progressHTML = `
+            <div class="progress-rings-section">
+                <h3>📊 Daily Progress</h3>
+                <div class="progress-rings" id="progressRings">
+                    <!-- Progress rings will be populated by updateProgressRings -->
+                </div>
+            </div>
+        `;
+
+        const insights = document.getElementById('dashboardInsights');
+        if (insights) {
+            insights.insertAdjacentHTML('afterend', progressHTML);
+        }
+    }
+
+    createStreakWidgets() {
+        const dashboard = document.getElementById('dashboard');
+        if (!dashboard) return;
+
+        const streaksHTML = `
+            <div class="streak-widgets-section">
+                <h3>🔥 Current Streaks</h3>
+                <div class="streak-widgets" id="streakWidgets">
+                    <!-- Streak widgets will be populated by updateStreakWidgets -->
+                </div>
+            </div>
+        `;
+
+        const progressRings = document.querySelector('.progress-rings-section');
+        if (progressRings) {
+            progressRings.insertAdjacentHTML('afterend', streaksHTML);
+        }
+    }
+
+    createDailyGoals() {
+        const dashboard = document.getElementById('dashboard');
+        if (!dashboard) return;
+
+        const goalsHTML = `
+            <div class="daily-goals-section">
+                <div class="daily-goals" id="dailyGoals">
+                    <!-- Daily goals will be populated by checkDailyGoals -->
+                </div>
+            </div>
+        `;
+
+        const streakWidgets = document.querySelector('.streak-widgets-section');
+        if (streakWidgets) {
+            streakWidgets.insertAdjacentHTML('afterend', goalsHTML);
+        }
     }
 
     initializeEventListeners() {
@@ -1106,17 +1470,17 @@ class WorkLifeBalanceApp {
         const tasks = window.storage.getTasks();
         let streak = 0;
         const today = new Date();
-        
+
         for (let i = 0; i < 30; i++) {
             const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
             const dateString = checkDate.toDateString();
-            
-            const dayTasks = tasks.filter(task => 
+
+            const dayTasks = tasks.filter(task =>
                 new Date(task.createdAt).toDateString() === dateString
             );
-            
+
             const allCompleted = dayTasks.length > 0 && dayTasks.every(task => task.completed);
-            
+
             if (allCompleted) {
                 streak++;
             } else if (i === 0) {
@@ -1125,7 +1489,56 @@ class WorkLifeBalanceApp {
                 break;
             }
         }
-        
+
+        return streak;
+    }
+
+    calculateMoodStreak() {
+        const moods = window.storage.getMoods();
+        let streak = 0;
+        const today = new Date();
+
+        for (let i = 0; i < 30; i++) {
+            const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+            const dateString = checkDate.toISOString().split('T')[0];
+
+            const dayMood = moods.find(mood =>
+                new Date(mood.date).toISOString().split('T')[0] === dateString
+            );
+
+            if (dayMood) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+
+        return streak;
+    }
+
+    calculateSavingsStreak() {
+        const expenses = window.storage.getExpenses();
+        const settings = window.storage.getSettings();
+        const dailyBudget = (settings.monthlyIncome || 50000) / 30;
+
+        let streak = 0;
+        const today = new Date();
+
+        for (let i = 0; i < 30; i++) {
+            const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+            const dateString = checkDate.toDateString();
+
+            const dayExpenses = expenses.filter(expense =>
+                new Date(expense.date || expense.createdAt).toDateString() === dateString
+            ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+
+            if (dayExpenses <= dailyBudget) {
+                streak++;
+            } else {
+                break;
+            }
+        }
+
         return streak;
     }
 
@@ -1169,11 +1582,249 @@ class WorkLifeBalanceApp {
         if (confirm('Are you sure you want to delete this task?')) {
             window.storage.deleteTask(taskId);
             Utils.showNotification('Task deleted', 'info');
-            
+
             if (this.currentSection === 'tasks') {
                 this.loadTasks();
             }
             this.updateDashboard();
+        }
+    }
+
+    // Helper methods for enhanced dashboard
+    generateSmartInsights() {
+        const insights = [];
+        const tasks = window.storage.getTasks();
+        const expenses = window.storage.getExpenses();
+        const workouts = window.storage.getWorkouts();
+        const moods = window.storage.getMoods();
+
+        const today = new Date().toDateString();
+        const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString();
+
+        // Task insights
+        const todayTasks = tasks.filter(task =>
+            new Date(task.createdAt).toDateString() === today
+        );
+        const completedToday = todayTasks.filter(task => task.completed).length;
+
+        if (todayTasks.length > 0 && completedToday === todayTasks.length) {
+            insights.push({
+                type: 'success',
+                icon: '🎉',
+                title: 'All Tasks Complete!',
+                description: `Great job! You've completed all ${todayTasks.length} tasks today.`,
+                action: 'app.openModal("taskModal")',
+                actionLabel: 'Add More'
+            });
+        } else if (todayTasks.length > 0 && completedToday === 0) {
+            insights.push({
+                type: 'warning',
+                icon: '⚡',
+                title: 'Get Started',
+                description: `You have ${todayTasks.length} tasks waiting. Let's tackle them!`,
+                action: 'app.showSection("tasks")',
+                actionLabel: 'View Tasks'
+            });
+        }
+
+        // Expense insights
+        const todayExpenses = expenses.filter(expense =>
+            Utils.isToday(expense.date || expense.createdAt)
+        ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+
+        const yesterdayExpenses = expenses.filter(expense =>
+            new Date(expense.date || expense.createdAt).toDateString() === yesterday
+        ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+
+        if (todayExpenses === 0) {
+            insights.push({
+                type: 'info',
+                icon: '💰',
+                title: 'No Expenses Today',
+                description: 'You haven\'t logged any expenses today. Track your spending!',
+                action: 'app.openModal("expenseModal")',
+                actionLabel: 'Add Expense'
+            });
+        } else if (yesterdayExpenses > 0 && todayExpenses < yesterdayExpenses * 0.5) {
+            insights.push({
+                type: 'success',
+                icon: '📉',
+                title: 'Spending Down',
+                description: `You've spent ${((1 - todayExpenses/yesterdayExpenses) * 100).toFixed(0)}% less than yesterday!`,
+                action: null,
+                actionLabel: null
+            });
+        }
+
+        // Workout insights
+        const todayWorkouts = workouts.filter(workout =>
+            Utils.isToday(workout.createdAt)
+        );
+
+        if (todayWorkouts.length === 0) {
+            const hour = new Date().getHours();
+            if (hour >= 9 && hour <= 18) {
+                insights.push({
+                    type: 'info',
+                    icon: '💪',
+                    title: 'Time to Move',
+                    description: 'Take a quick exercise break! Even 5 minutes helps.',
+                    action: 'app.startExercise("desk-stretches")',
+                    actionLabel: 'Quick Exercise'
+                });
+            }
+        }
+
+        // Mood insights
+        const recentMoods = moods.filter(mood =>
+            Utils.getDaysDifference(new Date(), new Date(mood.date)) <= 3
+        );
+
+        const stressedMoods = recentMoods.filter(mood =>
+            ['stressed', 'very-stressed'].includes(mood.mood)
+        );
+
+        if (stressedMoods.length >= 2) {
+            insights.push({
+                type: 'warning',
+                icon: '😌',
+                title: 'High Stress Detected',
+                description: 'You\'ve been stressed lately. Try some breathing exercises.',
+                action: 'app.startExercise("breathing")',
+                actionLabel: 'Relax Now'
+            });
+        }
+
+        // Streak insights
+        const workoutStreak = window.storage.getWorkoutStreak();
+        if (workoutStreak >= 7) {
+            insights.push({
+                type: 'success',
+                icon: '🔥',
+                title: 'Amazing Streak!',
+                description: `You've maintained a ${workoutStreak}-day workout streak!`,
+                action: null,
+                actionLabel: null
+            });
+        }
+
+        return insights;
+    }
+
+    generateWeeklyInsights(stats) {
+        let summary = '';
+        let topInsight = '';
+
+        const { taskPercentage, weeklyExpenseAmount, homeCookingPercentage, workoutCount, stressedDays } = stats;
+
+        // Generate dynamic summary
+        const taskStatus = taskPercentage >= 80 ? 'excellently' : taskPercentage >= 60 ? 'well' : 'moderately';
+        const expenseStatus = weeklyExpenseAmount < 5000 ? 'efficiently' : weeklyExpenseAmount < 10000 ? 'reasonably' : 'heavily';
+        const cookingStatus = homeCookingPercentage >= 70 ? 'frequently' : homeCookingPercentage >= 40 ? 'regularly' : 'occasionally';
+        const workoutStatus = workoutCount >= 5 ? 'consistently' : workoutCount >= 3 ? 'regularly' : 'lightly';
+
+        summary = `This week you managed tasks ${taskStatus} (${taskPercentage}%), spent ${expenseStatus} (${Utils.formatCurrency(weeklyExpenseAmount)}), cooked at home ${cookingStatus} (${homeCookingPercentage}%), and exercised ${workoutStatus} (${workoutCount} sessions).`;
+
+        // Generate top insight
+        if (taskPercentage >= 90 && workoutCount >= 5) {
+            topInsight = 'You\'re crushing both productivity and fitness! 💪';
+        } else if (homeCookingPercentage >= 80 && weeklyExpenseAmount < 3000) {
+            topInsight = 'Great job saving money with home cooking! 👨\u200d🍳';
+        } else if (stressedDays <= 1 && workoutCount >= 3) {
+            topInsight = 'Your stress levels are well managed with regular exercise! 😌';
+        } else if (taskPercentage < 50) {
+            topInsight = 'Focus on completing more tasks to boost productivity! 📋';
+        } else if (workoutCount === 0) {
+            topInsight = 'Add some physical activity to improve your wellness! 🏃';
+        } else {
+            topInsight = 'Keep up the good work maintaining your life balance! ⚖️';
+        }
+
+        return { summary, topInsight };
+    }
+
+    getDailyGoals() {
+        const today = new Date().toDateString();
+        const tasks = window.storage.getTasks();
+        const expenses = window.storage.getExpenses();
+        const workouts = window.storage.getWorkouts();
+        const meals = window.storage.getMeals();
+
+        // Calculate current status
+        const todayTasks = tasks.filter(task =>
+            new Date(task.createdAt).toDateString() === today
+        );
+        const completedTasks = todayTasks.filter(task => task.completed).length;
+        const totalTasks = todayTasks.length;
+
+        const todayWorkouts = workouts.filter(workout =>
+            Utils.isToday(workout.createdAt)
+        ).length;
+
+        const todayMeals = meals.filter(meal =>
+            Utils.isToday(meal.date)
+        ).length;
+
+        const todayExpenses = expenses.filter(expense =>
+            Utils.isToday(expense.date || expense.createdAt)
+        ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+
+        const settings = window.storage.getSettings();
+        const dailyBudget = (settings.monthlyIncome || 50000) / 30;
+
+        return [
+            {
+                text: 'Complete all daily tasks',
+                completed: totalTasks > 0 && completedTasks === totalTasks,
+                value: totalTasks > 0 ? `${completedTasks}/${totalTasks}` : '0/0'
+            },
+            {
+                text: 'Do at least one workout',
+                completed: todayWorkouts > 0,
+                value: `${todayWorkouts} done`
+            },
+            {
+                text: 'Log meals (3 per day)',
+                completed: todayMeals >= 3,
+                value: `${todayMeals}/3`
+            },
+            {
+                text: 'Stay within daily budget',
+                completed: todayExpenses <= dailyBudget,
+                value: `${Utils.formatCurrency(todayExpenses)}/${Utils.formatCurrency(dailyBudget)}`
+            },
+            {
+                text: 'Track mood/stress level',
+                completed: this.hasTodayMoodEntry(),
+                value: this.hasTodayMoodEntry() ? '✓' : '○'
+            }
+        ];
+    }
+
+    hasTodayMoodEntry() {
+        const moods = window.storage.getMoods();
+        const today = new Date().toISOString().split('T')[0];
+        return moods.some(mood =>
+            new Date(mood.date).toISOString().split('T')[0] === today
+        );
+    }
+
+    updateRealTimeStats() {
+        // Update any counters or live data that should refresh automatically
+        const now = new Date();
+        const timeElements = document.querySelectorAll('.live-time');
+        timeElements.forEach(el => {
+            el.textContent = now.toLocaleTimeString();
+        });
+
+        // Update session duration
+        if (!this.sessionStart) {
+            this.sessionStart = new Date();
+        }
+        const sessionDuration = Math.floor((now - this.sessionStart) / 1000 / 60);
+        const sessionEl = document.getElementById('sessionDuration');
+        if (sessionEl) {
+            sessionEl.textContent = `${sessionDuration} min`;
         }
     }
 
