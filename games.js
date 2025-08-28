@@ -167,6 +167,13 @@ class GamesManager {
                 if (result.score && result.score > gameStats.bestScore) {
                     gameStats.bestScore = result.score;
                 }
+            } else if (gameType === 'colorpattern') {
+                if (result.level > gameStats.bestLevel) {
+                    gameStats.bestLevel = result.level;
+                }
+                if (result.score > gameStats.bestScore) {
+                    gameStats.bestScore = result.score;
+                }
             } else if (gameType === '2048') {
                 if (result.bestTile > gameStats.bestTile) {
                     gameStats.bestTile = result.bestTile;
