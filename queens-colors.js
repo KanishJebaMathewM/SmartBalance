@@ -682,18 +682,24 @@ if (typeof window !== 'undefined') {
         }
 
         completeGame(won = false) {
+            this.stopTimer();
             if (this.gameStartTime) {
-                const elapsed = Math.floor((Date.now() - this.gameStartTime) / 1000);
                 const result = {
                     won: won,
                     score: this.validationResult ? this.validationResult.summary.score : 0,
-                    elapsed: elapsed
+                    elapsed: this.elapsedTime
                 };
 
                 if (window.gamesManager) {
                     window.gamesManager.onGameComplete('8queens', result);
                 }
             }
+        }
+
+        formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
         }
 
         // Override validateAndUpdate to check for completion
