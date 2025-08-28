@@ -207,7 +207,7 @@ class WorkLifeBalanceApp {
         console.log('✅ Enhanced startExercise method:', typeof this.startExercise === 'function');
         console.log('✅ Enhanced completeExercise method:', typeof this.completeExercise === 'function');
         console.log('✅ Enhanced loadFitnessData method:', typeof this.loadFitnessData === 'function');
-        console.log('��� Enhanced updateFitnessStats method:', typeof this.updateFitnessStats === 'function');
+        console.log('✅ Enhanced updateFitnessStats method:', typeof this.updateFitnessStats === 'function');
 
         // Check if DOM elements exist
         const elements = [
@@ -3642,7 +3642,7 @@ class WorkLifeBalanceApp {
                     <p>${habit.target || 'Complete once'} • ${habit.category}</p>
                 </div>
                 <div class="habit-streak">
-                    <div class="streak-number">${habit.currentStreak || 0}��</div>
+                    <div class="streak-number">${habit.currentStreak || 0}🔥</div>
                     <div class="streak-label">streak</div>
                 </div>
             </div>
@@ -5107,7 +5107,7 @@ class WorkLifeBalanceApp {
 
         localStorage.setItem('meal_plans', JSON.stringify(savedMealPlans));
 
-        Utils.showNotification('������� Meal plan saved!', 'success');
+        Utils.showNotification('����� Meal plan saved!', 'success');
     }
 
     saveMealToStorage(mealType, mealName, calories, cost) {
@@ -6227,7 +6227,7 @@ class WorkLifeBalanceApp {
             if (meal) {
                 gridHTML += `
                     <div class="meal-card ${meal.status || 'planned'}">
-                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '���� Planned'}</div>
+                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '������ Planned'}</div>
                         <div class="meal-emoji">${typeInfo.emoji}</div>
                         <h4>${typeInfo.name}</h4>
                         <p class="meal-name">${Utils.sanitizeInput(meal.name)}</p>
@@ -9218,7 +9218,7 @@ class WorkLifeBalanceApp {
 
         if (topArea.score >= 80) {
             insights.push({
-                icon: '🌟',
+                icon: '����',
                 title: `${topArea.name} Excellence`,
                 description: `Your ${topArea.name.toLowerCase()} score of ${topArea.score}/100 is outstanding! Keep up the excellent work.`,
                 type: 'success'
@@ -9280,7 +9280,7 @@ class WorkLifeBalanceApp {
             </div>
             <div class="export-options">
                 <button class="btn-secondary export-btn" data-section="report" data-format="csv" onclick="app.exportSectionData('report', 'csv')">📊 Export CSV</button>
-                <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">���� Export JSON</button>
+                <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">����� Export JSON</button>
             </div>
         `;
 
