@@ -23,7 +23,7 @@ function toggleExpenseDetails(checkbox) {
             // Method 2: Add CSS class for show
             expenseDetails.classList.add('expense-details-show');
             expenseDetails.classList.remove('expense-details-hide');
-            console.log('🔧 Added show class, removed hide class');
+            console.log('��� Added show class, removed hide class');
 
             // Method 3: Force inline styles as backup
             expenseDetails.style.setProperty('display', 'block', 'important');
@@ -470,7 +470,7 @@ class WorkLifeBalanceApp {
 
         const progressHTML = `
             <div class="progress-rings-section">
-                <h3>📊 Daily Progress</h3>
+                <h3>�� Daily Progress</h3>
                 <div class="progress-rings" id="progressRings">
                     <!-- Progress rings will be populated by updateProgressRings -->
                 </div>
@@ -949,7 +949,7 @@ class WorkLifeBalanceApp {
     }
 
     initializeExpenseCheckbox() {
-        console.log('🔧 Initializing expense checkbox...');
+        console.log('��� Initializing expense checkbox...');
 
         // Use a more direct approach - set up the event listener immediately
         document.addEventListener('change', (e) => {
@@ -3030,7 +3030,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈��🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -3297,7 +3297,9 @@ class WorkLifeBalanceApp {
         // Set the date from calendar selection after opening modal
         const dateField = document.getElementById('expenseDate');
         if (dateField) {
-            dateField.value = date.toISOString().split('T')[0];
+            const adjusted = new Date(date);
+            adjusted.setDate(adjusted.getDate() + 1);
+            dateField.value = adjusted.toISOString().split('T')[0];
             console.log('Date field set to:', dateField.value);
         } else {
             console.error('expenseDate field not found!');
@@ -10793,7 +10795,7 @@ class WorkLifeBalanceApp {
                 </div>
 
                 <div class="report-section">
-                    <h3>🎯 Key Insights</h3>
+                    <h3>��� Key Insights</h3>
                     <div class="insights-grid">
                         ${this.generateInsightCards(data)}
                     </div>
