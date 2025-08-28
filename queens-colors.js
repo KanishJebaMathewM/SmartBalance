@@ -1,31 +1,28 @@
-// 8 Queens with Colors - Complete Implementation
-// Follows the detailed specification from the user prompt
+// 5 Queens with Colors - Complete Implementation
+// Implements a 5x5 board with 5 different colored queens
 
-class EightQueensWithColors {
+class FiveQueensWithColors {
     constructor() {
         this.boardColors = this.generateColoredBoard();
         this.queens = [];
         this.indexBase = 1;
         this.validationResult = null;
         
-        // Color mappings
-        this.colorNames = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'cyan', 'gray'];
+        // Color mappings for 5x5 board
+        this.colorNames = ['red', 'blue', 'green', 'yellow', 'purple'];
         
         // Initialize UI when created
         this.initializeUI();
     }
 
-    // Generate a standard colored board layout
+    // Generate a 5x5 colored board layout
     generateColoredBoard() {
         return [
-            ["red","blue","green","yellow","purple","orange","cyan","gray"],
-            ["blue","green","yellow","purple","orange","cyan","gray","red"],
-            ["green","yellow","purple","orange","cyan","gray","red","blue"],
-            ["yellow","purple","orange","cyan","gray","red","blue","green"],
-            ["purple","orange","cyan","gray","red","blue","green","yellow"],
-            ["orange","cyan","gray","red","blue","green","yellow","purple"],
-            ["cyan","gray","red","blue","green","yellow","purple","orange"],
-            ["gray","red","blue","green","yellow","purple","orange","cyan"]
+            ["red", "blue", "green", "yellow", "purple"],
+            ["blue", "green", "yellow", "purple", "red"],
+            ["green", "yellow", "purple", "red", "blue"],
+            ["yellow", "purple", "red", "blue", "green"],
+            ["purple", "red", "blue", "green", "yellow"]
         ];
     }
 
@@ -44,8 +41,8 @@ class EightQueensWithColors {
 
         boardElement.innerHTML = '';
         
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
+        for (let row = 0; row < 5; row++) {
+            for (let col = 0; col < 5; col++) {
                 const square = document.createElement('div');
                 square.className = `queens-colored-square color-${this.boardColors[row][col]}`;
                 square.dataset.row = row;
@@ -118,7 +115,7 @@ class EightQueensWithColors {
             // Validate input format
             if (!input.boardColors || !input.queens || input.indexBase === undefined) {
                 return {
-                    meta: { indexBase: 1, boardSize: 8 },
+                    meta: { indexBase: 1, boardSize: 5 },
                     summary: {
                         placed: 0,
                         uniqueColorsUsed: [],
@@ -144,10 +141,10 @@ class EightQueensWithColors {
             indexBase = this.indexBase;
         }
 
-        // Validate board colors (exactly 8 unique colors across 8x8 board)
+        // Validate board colors (exactly 5 unique colors across 5x5 board)
         const allColors = [];
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
+        for (let row = 0; row < 5; row++) {
+            for (let col = 0; col < 5; col++) {
                 if (boardColors[row] && boardColors[row][col]) {
                     allColors.push(boardColors[row][col]);
                 }
@@ -155,8 +152,8 @@ class EightQueensWithColors {
         }
         
         const uniqueBoardColors = [...new Set(allColors)];
-        if (uniqueBoardColors.length !== 8 || allColors.length !== 64) {
-            return this.createInvalidResult("Board must be 8x8 with exactly 8 unique colors", indexBase);
+        if (uniqueBoardColors.length !== 5 || allColors.length !== 25) {
+            return this.createInvalidResult("Board must be 5x5 with exactly 5 unique colors", indexBase);
         }
 
         // Start validation
@@ -180,7 +177,7 @@ class EightQueensWithColors {
             const rowIndex = queen.row - indexBase;
             const colIndex = queen.col - indexBase;
             
-            if (rowIndex < 0 || rowIndex >= 8 || colIndex < 0 || colIndex >= 8) {
+            if (rowIndex < 0 || rowIndex >= 5 || colIndex < 0 || colIndex >= 5) {
                 queenResult.state = "conflict";
                 queenResult.reasons.push("outOfBounds");
                 conflictCount++;
@@ -240,7 +237,7 @@ class EightQueensWithColors {
         const messages = this.generateMessages(queens.length, conflictCount, uniqueColorsUsed, duplicateColors);
 
         return {
-            meta: { indexBase, boardSize: 8 },
+            meta: { indexBase, boardSize: 5 },
             summary: {
                 placed: queens.length,
                 uniqueColorsUsed,
@@ -261,7 +258,7 @@ class EightQueensWithColors {
     getQueenColor(queen, boardColors, indexBase) {
         const row = queen.row - indexBase;
         const col = queen.col - indexBase;
-        if (row >= 0 && row < 8 && col >= 0 && col < 8) {
+        if (row >= 0 && row < 5 && col >= 0 && col < 5) {
             return boardColors[row][col];
         }
         return "unknown";
@@ -321,13 +318,13 @@ class EightQueensWithColors {
     calculateScore(placed, conflicts, duplicateColors) {
         let score = 100;
         
-        if (placed === 8 && conflicts === 0) {
+        if (placed === 5 && conflicts === 0) {
             return 100; // Perfect score
         }
         
-        if (placed < 8 && conflicts === 0) {
+        if (placed < 5 && conflicts === 0) {
             // 70-90 proportional to placement
-            return 70 + Math.floor((placed / 8) * 20);
+            return 70 + Math.floor((placed / 5) * 20);
         }
         
         // Subtract 15 for each conflict
@@ -343,10 +340,10 @@ class EightQueensWithColors {
 
     // Determine overall status
     determineStatus(placed, conflicts, uniqueColors) {
-        if (placed === 8 && conflicts === 0) {
+        if (placed === 5 && conflicts === 0) {
             return "perfect";
         }
-        if (placed > 0 && conflicts === 0 && placed < 8) {
+        if (placed > 0 && conflicts === 0 && placed < 5) {
             return "partial";
         }
         if (conflicts > 0) {
@@ -387,8 +384,8 @@ class EightQueensWithColors {
             .map(q => q.color);
         
         // Try all positions
-        for (let row = 1; row <= 8; row++) {
-            for (let col = 1; col <= 8; col++) {
+        for (let row = 1; row <= 5; row++) {
+            for (let col = 1; col <= 5; col++) {
                 const testQueen = { row, col };
                 const testColor = this.getQueenColor(testQueen, boardColors, indexBase);
                 
@@ -446,7 +443,7 @@ class EightQueensWithColors {
     // Create invalid result
     createInvalidResult(message, indexBase = 1) {
         return {
-            meta: { indexBase, boardSize: 8 },
+            meta: { indexBase, boardSize: 5 },
             summary: {
                 placed: 0,
                 uniqueColorsUsed: [],
@@ -477,11 +474,17 @@ class EightQueensWithColors {
         const result = this.validationResult;
         
         // Update stats
-        document.getElementById('queensPlaced').textContent = result.summary.placed;
-        document.getElementById('uniqueColors').textContent = result.summary.uniqueColorsUsed.length;
-        document.getElementById('queensConflicts').textContent = result.summary.conflictCount;
-        document.getElementById('currentScore').textContent = result.summary.score;
-        document.getElementById('queensScore').textContent = `Score: ${result.summary.score}`;
+        const queensPlacedElement = document.getElementById('queensPlaced');
+        const uniqueColorsElement = document.getElementById('uniqueColors');
+        const queensConflictsElement = document.getElementById('queensConflicts');
+        const currentScoreElement = document.getElementById('currentScore');
+        const queensScoreElement = document.getElementById('queensScore');
+        
+        if (queensPlacedElement) queensPlacedElement.textContent = result.summary.placed;
+        if (uniqueColorsElement) uniqueColorsElement.textContent = result.summary.uniqueColorsUsed.length;
+        if (queensConflictsElement) queensConflictsElement.textContent = result.summary.conflictCount;
+        if (currentScoreElement) currentScoreElement.textContent = result.summary.score;
+        if (queensScoreElement) queensScoreElement.textContent = `Score: ${result.summary.score}`;
         
         // Update status badge
         const statusElement = document.getElementById('queensStatus');
@@ -489,16 +492,6 @@ class EightQueensWithColors {
             statusElement.textContent = result.summary.status.charAt(0).toUpperCase() + result.summary.status.slice(1);
             statusElement.className = `status-badge status-${result.summary.status}`;
         }
-        
-        // Show validation results
-        this.displayValidationResults(result);
-    }
-
-    // Simplified validation display - only show basic info
-    displayValidationResults(result) {
-        // Remove the complex validation results display
-        // Keep only essential feedback through the progress stats
-        return;
     }
 
     // Show hint functionality
@@ -538,8 +531,8 @@ class EightQueensWithColors {
             // Suggest a random safe starting position
             const suggestions = [
                 {row: 1, col: 1, color: 'red'},
-                {row: 2, col: 4, color: 'purple'},
-                {row: 3, col: 7, color: 'red'}
+                {row: 2, col: 3, color: 'yellow'},
+                {row: 3, col: 5, color: 'blue'}
             ];
             const suggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
             this.hintPosition = suggestion;
@@ -569,7 +562,7 @@ class EightQueensWithColors {
         }
 
         // If no conflicts, suggest next safe position
-        if (this.queens.length < 8) {
+        if (this.queens.length < 5) {
             const nextPosition = this.findBestNextPosition();
             if (nextPosition) {
                 this.hintPosition = nextPosition;
@@ -588,10 +581,10 @@ class EightQueensWithColors {
         const usedCols = this.queens.map(q => q.col);
 
         // Try to find a safe position
-        for (let row = 1; row <= 8; row++) {
+        for (let row = 1; row <= 5; row++) {
             if (usedRows.includes(row)) continue;
 
-            for (let col = 1; col <= 8; col++) {
+            for (let col = 1; col <= 5; col++) {
                 if (usedCols.includes(col)) continue;
 
                 const testQueen = { row, col };
@@ -652,36 +645,35 @@ class EightQueensWithColors {
         const patterns = [
             // Standard pattern
             [
-                ["red","blue","green","yellow","purple","orange","cyan","gray"],
-                ["blue","green","yellow","purple","orange","cyan","gray","red"],
-                ["green","yellow","purple","orange","cyan","gray","red","blue"],
-                ["yellow","purple","orange","cyan","gray","red","blue","green"],
-                ["purple","orange","cyan","gray","red","blue","green","yellow"],
-                ["orange","cyan","gray","red","blue","green","yellow","purple"],
-                ["cyan","gray","red","blue","green","yellow","purple","orange"],
-                ["gray","red","blue","green","yellow","purple","orange","cyan"]
+                ["red", "blue", "green", "yellow", "purple"],
+                ["blue", "green", "yellow", "purple", "red"],
+                ["green", "yellow", "purple", "red", "blue"],
+                ["yellow", "purple", "red", "blue", "green"],
+                ["purple", "red", "blue", "green", "yellow"]
             ],
             // Rotated pattern
             [
-                ["purple","orange","cyan","gray","red","blue","green","yellow"],
-                ["orange","cyan","gray","red","blue","green","yellow","purple"],
-                ["cyan","gray","red","blue","green","yellow","purple","orange"],
-                ["gray","red","blue","green","yellow","purple","orange","cyan"],
-                ["red","blue","green","yellow","purple","orange","cyan","gray"],
-                ["blue","green","yellow","purple","orange","cyan","gray","red"],
-                ["green","yellow","purple","orange","cyan","gray","red","blue"],
-                ["yellow","purple","orange","cyan","gray","red","blue","green"]
+                ["purple", "red", "blue", "green", "yellow"],
+                ["red", "blue", "green", "yellow", "purple"],
+                ["blue", "green", "yellow", "purple", "red"],
+                ["green", "yellow", "purple", "red", "blue"],
+                ["yellow", "purple", "red", "blue", "green"]
             ],
             // Shifted pattern
             [
-                ["cyan","gray","red","blue","green","yellow","purple","orange"],
-                ["gray","red","blue","green","yellow","purple","orange","cyan"],
-                ["red","blue","green","yellow","purple","orange","cyan","gray"],
-                ["blue","green","yellow","purple","orange","cyan","gray","red"],
-                ["green","yellow","purple","orange","cyan","gray","red","blue"],
-                ["yellow","purple","orange","cyan","gray","red","blue","green"],
-                ["purple","orange","cyan","gray","red","blue","green","yellow"],
-                ["orange","cyan","gray","red","blue","green","yellow","purple"]
+                ["green", "yellow", "purple", "red", "blue"],
+                ["yellow", "purple", "red", "blue", "green"],
+                ["purple", "red", "blue", "green", "yellow"],
+                ["red", "blue", "green", "yellow", "purple"],
+                ["blue", "green", "yellow", "purple", "red"]
+            ],
+            // Diagonal pattern
+            [
+                ["yellow", "red", "purple", "blue", "green"],
+                ["purple", "green", "red", "yellow", "blue"],
+                ["blue", "yellow", "green", "purple", "red"],
+                ["red", "blue", "yellow", "green", "purple"],
+                ["green", "purple", "blue", "red", "yellow"]
             ]
         ];
 
@@ -720,8 +712,6 @@ class EightQueensWithColors {
         this.hideHint();
     }
 
-    // Removed loadExample and loadTestInput methods to simplify interface
-
     // Apply a suggestion
     applySuggestion(suggestionIndex) {
         if (!this.validationResult || !this.validationResult.suggestions[suggestionIndex]) return;
@@ -758,7 +748,7 @@ class EightQueensWithColors {
 
 // Enhanced Games Manager for 5 Queens with Colors
 if (typeof window !== 'undefined') {
-    // Override the original EightQueensGame in games.js
+    // Enhanced wrapper class that integrates with the games manager
     class FiveQueensGameEnhanced extends FiveQueensWithColors {
         constructor() {
             super();
@@ -836,7 +826,7 @@ if (typeof window !== 'undefined') {
             
             if (this.validationResult && this.validationResult.summary.status === 'perfect') {
                 setTimeout(() => {
-                    alert('���� Congratulations! You solved the 5 Queens with Colors puzzle!');
+                    alert('🎉 Congratulations! You solved the 5 Queens with Colors puzzle!');
                     this.completeGame(true);
                 }, 500);
             }
@@ -847,7 +837,7 @@ if (typeof window !== 'undefined') {
     window.FiveQueensWithColors = FiveQueensWithColors;
     window.FiveQueensGameEnhanced = FiveQueensGameEnhanced;
 
-    // Keep backward compatibility
+    // Keep backward compatibility for games.js
     window.EightQueensWithColors = FiveQueensWithColors;
     window.EightQueensGameEnhanced = FiveQueensGameEnhanced;
 
