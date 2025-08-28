@@ -771,7 +771,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ` • ����� Expense: ${Utils.formatCurrency(task.amount)}` : ''}
+                        ${task.expenseRelated ? ` • 💰 Expense: ${Utils.formatCurrency(task.amount)}` : ''}
                         ${task.completed && task.expenseRelated ? ' • ✅ Added to expenses' : ''}
                     </div>
                 </div>
@@ -1074,7 +1074,7 @@ class WorkLifeBalanceApp {
                 </div>
                 <div class="expense-amount">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
-                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑���</button>
+                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑�����</button>
                 </div>
             </div>
         `).join('');
@@ -6049,7 +6049,7 @@ class WorkLifeBalanceApp {
 
         if (weeklyStats.totalCalories > 0) {
             insights.push({
-                icon: '���',
+                icon: '����',
                 title: 'Weekly Calorie Intake',
                 description: `You consumed ${weeklyStats.totalCalories} calories this week, averaging ${Math.round(weeklyStats.avgCaloriesPerDay)} per day.`
             });
