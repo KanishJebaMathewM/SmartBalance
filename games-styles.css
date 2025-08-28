@@ -759,3 +759,45 @@ body.dark-mode .number-btn {
 body.dark-mode .sudoku-cell.given {
     background: #2d3748;
 }
+
+body.dark-mode .sudoku-cell.related {
+    background: #4a5568;
+    border-color: #63b3ed;
+}
+
+body.dark-mode .sudoku-cell.box-highlight {
+    background: #5a5a2d;
+    border-color: #f6e05e;
+}
+
+body.dark-mode .sudoku-cell.same-number {
+    background: #2d4a48;
+    border-color: #4fd1c7;
+}
+
+body.dark-mode .sudoku-cell.valid-user {
+    color: #68d391;
+}
+
+body.dark-mode .sudoku-cell.invalid {
+    color: #fc8181;
+    background: #553c3c;
+}
+
+body.dark-mode .sudoku-message.error {
+    background: #553c3c;
+    color: #fed7d7;
+    border-color: #fc8181;
+}
+
+body.dark-mode .sudoku-message.success {
+    background: #276749;
+    color: #c6f6d5;
+    border-color: #68d391;
+}
+
+body.dark-mode .sudoku-message.info {
+    background: #2a4365;
+    color: #bee3f8;
+    border-color: #63b3ed;
+}
