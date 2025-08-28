@@ -2947,7 +2947,7 @@ class WorkLifeBalanceApp {
             entertainment: '🎬',
             healthcare: '🏥',
             education: '📚',
-            other: '������'
+            other: '📦'
         };
         return icons[category] || '📦';
     }
@@ -6875,7 +6875,7 @@ class WorkLifeBalanceApp {
                             <span class="meal-calories">${meal.calories} cal</span>
                         </div>
                         <div class="meal-status ${meal.status}">
-                            ${meal.status === 'eaten' ? '✅ Eaten' : '���� Planned'}
+                            ${meal.status === 'eaten' ? '✅ Eaten' : '����� Planned'}
                         </div>
                     </div>
                 `).join('');
@@ -9712,7 +9712,7 @@ class WorkLifeBalanceApp {
 
         if (homeCookingRate >= 70 && foodExpenses.length > 0) {
             const avgFoodCost = foodExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0) / foodExpenses.length;
-            insights.push(`��� Great job! ${homeCookingRate.toFixed(0)}% home cooking is saving you money. Average meal cost: ${Utils.formatCurrency(avgFoodCost)}`);
+            insights.push(`🍳 Great job! ${homeCookingRate.toFixed(0)}% home cooking is saving you money. Average meal cost: ${Utils.formatCurrency(avgFoodCost)}`);
         }
 
         // Stress and activity correlation
@@ -10546,7 +10546,7 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '��️ Travel & Transport',
+            'travel': '����️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '���� Education',
