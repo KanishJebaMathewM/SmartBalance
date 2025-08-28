@@ -709,6 +709,161 @@ class SudokuGame {
     }
 }
 
+// Color Pattern Game Implementation
+class ColorPatternGame {
+    constructor() {
+        this.sequence = [];
+        this.playerSequence = [];
+        this.level = 1;
+        this.score = 0;
+        this.isPlaying = false;
+        this.isPlayerTurn = false;
+
+        this.colors = [
+            { name: 'red', color: '#e74c3c', sound: 'C' },
+            { name: 'blue', color: '#3498db', sound: 'D' },
+            { name: 'green', color: '#2ecc71', sound: 'E' },
+            { name: 'yellow', color: '#f1c40f', sound: 'F' }
+        ];
+    }
+
+    startGame() {
+        this.sequence = [];
+        this.playerSequence = [];
+        this.level = 1;
+        this.score = 0;
+        this.isPlaying = true;
+        this.isPlayerTurn = false;
+
+        this.renderBoard();
+        this.updateDisplay();
+        this.setupEventListeners();
+
+        setTimeout(() => {
+            this.nextLevel();
+        }, 1000);
+    }
+
+    renderBoard() {
+        const boardElement = document.getElementById('colorPatternBoard');
+        if (!boardElement) return;
+
+        boardElement.innerHTML = this.colors.map((color, index) => `
+            <div class="color-button"
+                 data-color="${index}"
+                 style="background-color: ${color.color}">
+                <span class="color-name">${color.name}</span>
+            </div>
+        `).join('');
+    }
+
+    updateDisplay() {
+        document.getElementById('colorPatternLevel').textContent = `Level: ${this.level}`;
+        document.getElementById('colorPatternScore').textContent = `Score: ${this.score}`;
+        document.getElementById('colorPatternStatus').textContent = this.getStatusMessage();
+    }
+
+    getStatusMessage() {
+        if (!this.isPlaying) return 'Press Start to play';
+        if (!this.isPlayerTurn) return 'Watch the pattern...';
+        return `Your turn! Repeat ${this.sequence.length} colors`;
+    }
+
+    nextLevel() {
+        this.isPlayerTurn = false;
+        this.playerSequence = [];
+
+        // Add new color to sequence
+        const newColor = Math.floor(Math.random() * this.colors.length);
+        this.sequence.push(newColor);
+
+        this.updateDisplay();
+        this.playSequence();
+    }
+
+    playSequence() {
+        let index = 0;
+
+        const playNext = () => {
+            if (index < this.sequence.length) {
+                this.flashButton(this.sequence[index], () => {
+                    index++;
+                    setTimeout(playNext, 600);
+                });
+            } else {
+                // Sequence finished, player's turn
+                this.isPlayerTurn = true;
+                this.updateDisplay();
+            }
+        };
+
+        setTimeout(playNext, 500);
+    }
+
+    flashButton(colorIndex, callback) {
+        const button = document.querySelector(`[data-color="${colorIndex}"]`);
+        if (!button) return;
+
+        button.classList.add('active');
+
+        setTimeout(() => {
+            button.classList.remove('active');
+            if (callback) callback();
+        }, 400);
+    }
+
+    handlePlayerInput(colorIndex) {
+        if (!this.isPlayerTurn || !this.isPlaying) return;
+
+        this.playerSequence.push(colorIndex);
+        this.flashButton(colorIndex);
+
+        // Check if input is correct
+        const currentIndex = this.playerSequence.length - 1;
+        if (this.playerSequence[currentIndex] !== this.sequence[currentIndex]) {
+            this.gameOver();
+            return;
+        }
+
+        // Check if sequence is complete
+        if (this.playerSequence.length === this.sequence.length) {
+            this.score += this.level * 10;
+            this.level++;
+            this.updateDisplay();
+
+            setTimeout(() => {
+                this.nextLevel();
+            }, 1000);
+        }
+    }
+
+    gameOver() {
+        this.isPlaying = false;
+        this.isPlayerTurn = false;
+
+        const result = {
+            won: this.level > 1,
+            score: this.score,
+            level: this.level - 1
+        };
+
+        window.gamesManager.onGameComplete('colorpattern', result);
+
+        alert(`Game Over! You reached level ${this.level - 1} with a score of ${this.score}`);
+        this.updateDisplay();
+    }
+
+    setupEventListeners() {
+        document.getElementById('colorPatternStartBtn').onclick = () => this.startGame();
+
+        document.querySelectorAll('#colorPatternGameModal .color-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const colorIndex = parseInt(button.dataset.color);
+                this.handlePlayerInput(colorIndex);
+            });
+        });
+    }
+}
 
 // 2048 Game Implementation
 class Game2048 {
