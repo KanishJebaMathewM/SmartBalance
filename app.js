@@ -943,11 +943,27 @@ class WorkLifeBalanceApp {
     }
 
     updateStressWidget() {
-        const currentStress = window.storage.getWeeklyMoodAverage();
+        const moods = window.storage.getMoods();
+        const today = new Date().toISOString().split('T')[0];
+
+        // Try to find today's mood first
+        const todaysMood = moods.find(m => {
+            const moodDate = new Date(m.date).toISOString().split('T')[0];
+            return moodDate === today;
+        });
+
         const currentStressEl = document.getElementById('currentStress');
-        
+
         if (currentStressEl) {
-            currentStressEl.textContent = Utils.getMoodEmoji(currentStress);
+            if (todaysMood) {
+                currentStressEl.textContent = Utils.getMoodEmoji(todaysMood.mood);
+                currentStressEl.title = `Today's automated mood: ${todaysMood.mood} ${todaysMood.automated ? '(Auto-calculated)' : ''}`;
+            } else {
+                // Fallback to weekly average if today's mood isn't calculated yet
+                const currentStress = window.storage.getWeeklyMoodAverage();
+                currentStressEl.textContent = Utils.getMoodEmoji(currentStress);
+                currentStressEl.title = `Weekly average mood: ${currentStress}`;
+            }
         }
     }
 
@@ -4818,7 +4834,7 @@ class WorkLifeBalanceApp {
             'health': '🏥',
             'food': '🍕',
             'bills': '📧',
-            'shopping': '🛍️',
+            'shopping': '🛍���',
             'travel': '✈️',
             'entertainment': '🎬',
             'education': '📚',
@@ -7108,7 +7124,7 @@ class WorkLifeBalanceApp {
                             if (meal) {
                                 return `<span class="meal-dot ${meal.status === 'eaten' ? 'eaten' : 'planned'}" title="${meal.name}">•</span>`;
                             }
-                            return `<span class="meal-dot empty">���</span>`;
+                            return `<span class="meal-dot empty">•</span>`;
                         }).join('')}
                     </div>
                 </div>`;
@@ -11144,7 +11160,7 @@ class WorkLifeBalanceApp {
             'travel': '�������️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
-            'education': '����� Education',
+            'education': '���� Education',
             'fitness': '💪 Fitness & Sports',
             'subscriptions': '📺 Subscriptions',
             'groceries': '🛒 Groceries',
