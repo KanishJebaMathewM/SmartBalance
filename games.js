@@ -164,6 +164,9 @@ class GamesManager {
             // Update game-specific metrics
             if (gameType === '8queens') {
                 gameStats.attempts++;
+                if (result.score && result.score > gameStats.bestScore) {
+                    gameStats.bestScore = result.score;
+                }
             } else if (gameType === 'tango') {
                 if (result.wordsFound > gameStats.wordsFound) {
                     gameStats.wordsFound = result.wordsFound;
