@@ -2635,25 +2635,31 @@ class WorkLifeBalanceApp {
         this.updateGamesStats(comprehensiveData.games);
     }
 
-    updateReportStats(data) {
+    updateReportStats(comprehensiveData) {
         const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        
+        const analytics = comprehensiveData.analytics;
+
         // Tasks
-        const weeklyTasks = data.tasks.filter(t => new Date(t.createdAt) >= weekAgo);
+        const weeklyTasks = comprehensiveData.tasks.filter(t => new Date(t.createdAt) >= weekAgo);
         const completedTasks = weeklyTasks.filter(t => t.completed).length;
-        const taskPercentage = weeklyTasks.length > 0 ? Math.round((completedTasks / weeklyTasks.length) * 100) : 0;
-        
+        const taskPercentage = analytics.taskCompletionRate;
+
         // Expenses
-        const weeklyExpenses = data.expenses.filter(e => new Date(e.createdAt) >= weekAgo);
-        const totalSpent = weeklyExpenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
-        
+        const weeklyExpenses = comprehensiveData.expenses.filter(e => new Date(e.createdAt) >= weekAgo);
+        const totalSpent = analytics.weeklyExpenses;
+
+        // Meals
+        const weeklyMeals = comprehensiveData.meals.filter(m => new Date(m.date) >= weekAgo);
+        const homeCookingPercentage = analytics.homeCookingPercentage;
+        const moneySaved = analytics.moneySavedCooking;
+
         // Workouts
-        const weeklyWorkouts = data.workouts.filter(w => new Date(w.createdAt) >= weekAgo);
-        
+        const weeklyWorkouts = comprehensiveData.workouts.filter(w => new Date(w.createdAt) >= weekAgo);
+
         // Mood
-        const weeklyMoods = data.moods.filter(m => new Date(m.date) >= weekAgo);
-        const avgMood = window.storage.getWeeklyMoodAverage();
-        
+        const weeklyMoods = comprehensiveData.moods.filter(m => new Date(m.date) >= weekAgo);
+        const avgMood = analytics.averageMood;
+
         // Update UI
         const reportTasksCompleted = document.getElementById('reportTasksCompleted');
         const reportTasksDetail = document.getElementById('reportTasksDetail');
@@ -2665,7 +2671,7 @@ class WorkLifeBalanceApp {
         const reportFitnessDetail = document.getElementById('reportFitnessDetail');
         const reportStressLevel = document.getElementById('reportStressLevel');
         const reportStressDetail = document.getElementById('reportStressDetail');
-        
+
         if (reportTasksCompleted) reportTasksCompleted.textContent = `${taskPercentage}%`;
         if (reportTasksDetail) reportTasksDetail.textContent = `${completedTasks}/${weeklyTasks.length} tasks completed this week`;
         if (reportTotalSpent) reportTotalSpent.textContent = Utils.formatCurrency(totalSpent);
@@ -2673,18 +2679,39 @@ class WorkLifeBalanceApp {
             const topCategory = this.getTopExpenseCategory(weeklyExpenses);
             reportExpenseDetail.textContent = `Top category: ${topCategory}`;
         }
-        if (reportHealthyMeals) reportHealthyMeals.textContent = '5/7'; // Mock data
-        if (reportFoodDetail) reportFoodDetail.textContent = 'Cooked at home 5 days, saved ₹1,200';
+        if (reportHealthyMeals) reportHealthyMeals.textContent = `${homeCookingPercentage}%`;
+        if (reportFoodDetail) reportFoodDetail.textContent = `Cooked at home ${homeCookingPercentage}% of meals, saved ${Utils.formatCurrency(moneySaved)}`;
         if (reportWorkoutDays) reportWorkoutDays.textContent = `${weeklyWorkouts.length}/7`;
         if (reportFitnessDetail) {
-            const streak = window.storage.getWorkoutStreak();
-            reportFitnessDetail.textContent = `Maintained ${streak}-day streak`;
+            const streak = analytics.workoutStreak;
+            reportFitnessDetail.textContent = `Maintained ${streak}-day streak, burned ${analytics.totalCaloriesBurned} calories`;
         }
         if (reportStressLevel) reportStressLevel.textContent = this.getMoodLabel(avgMood);
         if (reportStressDetail) {
             const stressedDays = weeklyMoods.filter(m => ['stressed', 'very-stressed'].includes(m.mood)).length;
             const goodDays = weeklyMoods.filter(m => ['happy', 'very-happy'].includes(m.mood)).length;
-            reportStressDetail.textContent = `High stress on ${stressedDays} days, good mood on ${goodDays} days`;
+            reportStressDetail.textContent = `High stress on ${stressedDays} days, good mood on ${goodDays} days, trend: ${analytics.stressTrend}`;
+        }
+    }
+
+    updateGamesStats(gamesData) {
+        // Update games statistics in the report
+        const reportGamesPlayed = document.getElementById('reportGamesPlayed');
+        const reportGamesDetail = document.getElementById('reportGamesDetail');
+        const reportGamesScore = document.getElementById('reportGamesScore');
+
+        if (reportGamesPlayed) {
+            reportGamesPlayed.textContent = gamesData.totalGamesPlayed || 0;
+        }
+
+        if (reportGamesDetail) {
+            const mostPlayed = gamesData.analytics?.mostPlayedGame || 'None';
+            const avgScore = gamesData.analytics?.averageScorePerGame || 0;
+            reportGamesDetail.textContent = `Most played: ${mostPlayed}, Avg score: ${avgScore}`;
+        }
+
+        if (reportGamesScore) {
+            reportGamesScore.textContent = gamesData.totalScore || 0;
         }
     }
 
@@ -9156,7 +9183,7 @@ class WorkLifeBalanceApp {
         container.innerHTML = metrics.map(metric => {
             const change = metric.current - metric.previous;
             const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
-            const changeIcon = change > 0 ? '���️' : change < 0 ? '↘️' : '➡️';
+            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '➡️';
 
             return `
                 <div class="progress-metric">
@@ -9710,7 +9737,7 @@ class WorkLifeBalanceApp {
         });
 
         if (weekendExpenses.length > data.expenses.length * 0.4) {
-            insights.push('🛍️ You spend significantly more on weekends. Consider planning weekend budgets.');
+            insights.push('���️ You spend significantly more on weekends. Consider planning weekend budgets.');
         }
 
         // Meal patterns
