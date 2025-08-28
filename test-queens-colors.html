@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8 Queens with Colors - Test</title>
+    <link rel="stylesheet" href="queens-colors-styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .test-pass {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .test-fail {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .test-board {
+            display: inline-block;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .json-output {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌈♛ 8 Queens with Colors - Test Suite</h1>
+    
+    <div class="test-container">
+        <h2>🎯 Interactive Puzzle Board</h2>
+        <p>Click on colored squares to place/remove queens. Try to place 8 queens following the rules!</p>
+        
+        <div style="display: flex; align-items: flex-start; gap: 20px;">
+            <div class="test-board">
+                <div id="testBoard" class="queens-colored-board">
+                    <!-- Board will be generated here -->
+                </div>
+                <div class="board-legend">
+                    <h4>Color Legend</h4>
+                    <div id="testColorLegend" class="color-legend-grid">
+                        <!-- Color legend will be generated here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div style="flex: 1;">
+                <div class="game-progress">
+                    <div class="progress-stat">
+                        <span class="stat-label">Queens placed:</span>
+                        <span id="testQueensPlaced">0</span>/8
+                    </div>
+                    <div class="progress-stat">
+                        <span class="stat-label">Unique colors:</span>
+                        <span id="testUniqueColors">0</span>/8
+                    </div>
+                    <div class="progress-stat">
+                        <span class="stat-label">Conflicts:</span>
+                        <span id="testConflicts">0</span>
+                    </div>
+                    <div class="progress-stat">
+                        <span class="stat-label">Score:</span>
+                        <span id="testScore">100</span>
+                    </div>
+                    <div class="progress-stat">
+                        <span class="stat-label">Status:</span>
+                        <span id="testStatus" class="status-badge status-ready">Ready</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button onclick="resetTestBoard()">🔄 Reset</button>
+                    <button onclick="loadExamplePuzzle()">📋 Load Example</button>
+                    <button onclick="validateCurrent()">🔍 Validate</button>
+                </div>
+                
+                <div id="testResults" class="validation-results">
+                    <!-- Validation results will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>🧪 Automated Test Cases</h2>
+        <button onclick="runAllTests()">Run All Tests</button>
+        <div id="testResults2"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>📝 JSON Input/Output Testing</h2>
+        <p>Paste a JSON input below to test the validation engine:</p>
+        <textarea id="jsonInput" placeholder="Paste JSON input here...">
+{
+  "boardColors": [
+    ["red","blue","green","yellow","purple","orange","cyan","gray"],
+    ["blue","green","yellow","purple","orange","cyan","gray","red"],
+    ["green","yellow","purple","orange","cyan","gray","red","blue"],
+    ["yellow","purple","orange","cyan","gray","red","blue","green"],
+    ["purple","orange","cyan","gray","red","blue","green","yellow"],
+    ["orange","cyan","gray","red","blue","green","yellow","purple"],
+    ["cyan","gray","red","blue","green","yellow","purple","orange"],
+    ["gray","red","blue","green","yellow","purple","orange","cyan"]
+  ],
+  "queens": [
+    {"row": 1, "col": 3},
+    {"row": 2, "col": 6},
+    {"row": 3, "col": 2},
+    {"row": 4, "col": 7},
+    {"row": 5, "col": 1}
+  ],
+  "indexBase": 1
+}
+        </textarea>
+        <br>
+        <button onclick="testJsonInput()">🔍 Test JSON Input</button>
+        <button onclick="loadPredefinedTests()">📚 Load Test Cases</button>
+        
+        <h3>Validation Output:</h3>
+        <div id="jsonOutput" class="json-output">Click "Test JSON Input" to see validation results...</div>
+    </div>
+
+    <script src="queens-colors.js"></script>
+    <script>
+        // Global test instance
+        let testPuzzle = null;
+        
+        // Initialize test when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            testPuzzle = new EightQueensWithColors();
+            setupTestBoard();
+        });
+
+        function setupTestBoard() {
+            if (!testPuzzle) return;
+            
+            // Override the element IDs for test
+            const originalBoard = document.getElementById('queensBoard');
+            const originalLegend = document.getElementById('colorLegend');
+            
+            // Set up test board
+            testPuzzle.renderBoard = function() {
+                const boardElement = document.getElementById('testBoard');
+                if (!boardElement) return;
+
+                boardElement.innerHTML = '';
+                
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const square = document.createElement('div');
+                        square.className = `queens-colored-square color-${this.boardColors[row][col]}`;
+                        square.dataset.row = row;
+                        square.dataset.col = col;
+                        
+                        const queen = this.queens.find(q => 
+                            (q.row - this.indexBase) === row && (q.col - this.indexBase) === col
+                        );
+                        
+                        if (queen) {
+                            square.classList.add('has-queen');
+                            
+                            if (this.validationResult && this.validationResult.perQueen) {
+                                const queenData = this.validationResult.perQueen.find(pq => 
+                                    (pq.row - this.indexBase) === row && (pq.col - this.indexBase) === col
+                                );
+                                if (queenData) {
+                                    square.classList.add(`cell-${queenData.state}`);
+                                }
+                            }
+                        }
+                        
+                        square.addEventListener('click', () => this.handleSquareClick(row, col));
+                        boardElement.appendChild(square);
+                    }
+                }
+            };
+
+            testPuzzle.renderColorLegend = function() {
+                const legendElement = document.getElementById('testColorLegend');
+                if (!legendElement) return;
+
+                legendElement.innerHTML = this.colorNames.map(color => `
+                    <div class="color-legend-item">
+                        <div class="color-swatch color-${color}"></div>
+                        <span>${color.charAt(0).toUpperCase() + color.slice(1)}</span>
+                    </div>
+                `).join('');
+            };
+
+            testPuzzle.updateUI = function() {
+                if (!this.validationResult) return;
+
+                const result = this.validationResult;
+                
+                document.getElementById('testQueensPlaced').textContent = result.summary.placed;
+                document.getElementById('testUniqueColors').textContent = result.summary.uniqueColorsUsed.length;
+                document.getElementById('testConflicts').textContent = result.summary.conflictCount;
+                document.getElementById('testScore').textContent = result.summary.score;
+                
+                const statusElement = document.getElementById('testStatus');
+                if (statusElement) {
+                    statusElement.textContent = result.summary.status.charAt(0).toUpperCase() + result.summary.status.slice(1);
+                    statusElement.className = `status-badge status-${result.summary.status}`;
+                }
+                
+                this.displayTestValidationResults(result);
+            };
+
+            testPuzzle.displayTestValidationResults = function(result) {
+                const resultsElement = document.getElementById('testResults');
+                if (!resultsElement) return;
+
+                if (result.summary.placed === 0) {
+                    resultsElement.style.display = 'none';
+                    return;
+                }
+
+                resultsElement.style.display = 'block';
+                resultsElement.classList.add('show');
+
+                let html = `
+                    <div class="validation-summary ${result.summary.status}">
+                        <strong>${result.summary.status.toUpperCase()}</strong>: 
+                        Score ${result.summary.score}/100
+                    </div>
+                `;
+
+                if (result.messages.length > 0) {
+                    html += `<div class="messages-section">`;
+                    result.messages.forEach(message => {
+                        html += `<p class="message">${message}</p>`;
+                    });
+                    html += `</div>`;
+                }
+
+                if (result.conflicts.length > 0) {
+                    html += `<div class="conflict-list"><strong>Conflicts:</strong>`;
+                    result.conflicts.forEach(conflict => {
+                        html += `<div class="conflict-item">Q${conflict.qA} vs Q${conflict.qB}: ${conflict.types.join(', ')}</div>`;
+                    });
+                    html += `</div>`;
+                }
+
+                resultsElement.innerHTML = html;
+            };
+
+            testPuzzle.initializeUI();
+        }
+
+        function resetTestBoard() {
+            if (testPuzzle) {
+                testPuzzle.resetGame();
+            }
+        }
+
+        function loadExamplePuzzle() {
+            if (testPuzzle) {
+                testPuzzle.loadExample();
+            }
+        }
+
+        function validateCurrent() {
+            if (testPuzzle) {
+                testPuzzle.validateAndUpdate();
+            }
+        }
+
+        function testJsonInput() {
+            const input = document.getElementById('jsonInput').value;
+            const output = document.getElementById('jsonOutput');
+            
+            try {
+                const jsonInput = JSON.parse(input);
+                const result = testPuzzle.validatePuzzle(jsonInput);
+                output.textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                output.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        function loadPredefinedTests() {
+            const testCases = [
+                {
+                    name: "Example from spec",
+                    input: {
+                        "boardColors": [
+                            ["red","blue","green","yellow","purple","orange","cyan","gray"],
+                            ["blue","green","yellow","purple","orange","cyan","gray","red"],
+                            ["green","yellow","purple","orange","cyan","gray","red","blue"],
+                            ["yellow","purple","orange","cyan","gray","red","blue","green"],
+                            ["purple","orange","cyan","gray","red","blue","green","yellow"],
+                            ["orange","cyan","gray","red","blue","green","yellow","purple"],
+                            ["cyan","gray","red","blue","green","yellow","purple","orange"],
+                            ["gray","red","blue","green","yellow","purple","orange","cyan"]
+                        ],
+                        "queens": [
+                            {"row":1,"col":3},
+                            {"row":2,"col":6},
+                            {"row":3,"col":5},
+                            {"row":4,"col":7},
+                            {"row":6,"col":2}
+                        ],
+                        "indexBase":1
+                    }
+                },
+                {
+                    name: "Perfect solution",
+                    input: {
+                        "boardColors": [
+                            ["red","blue","green","yellow","purple","orange","cyan","gray"],
+                            ["blue","green","yellow","purple","orange","cyan","gray","red"],
+                            ["green","yellow","purple","orange","cyan","gray","red","blue"],
+                            ["yellow","purple","orange","cyan","gray","red","blue","green"],
+                            ["purple","orange","cyan","gray","red","blue","green","yellow"],
+                            ["orange","cyan","gray","red","blue","green","yellow","purple"],
+                            ["cyan","gray","red","blue","green","yellow","purple","orange"],
+                            ["gray","red","blue","green","yellow","purple","orange","cyan"]
+                        ],
+                        "queens": [
+                            {"row":1,"col":3},
+                            {"row":2,"col":6},
+                            {"row":3,"col":2},
+                            {"row":4,"col":7},
+                            {"row":5,"col":1},
+                            {"row":6,"col":4},
+                            {"row":7,"col":8},
+                            {"row":8,"col":5}
+                        ],
+                        "indexBase":1
+                    }
+                },
+                {
+                    name: "Color conflict test",
+                    input: {
+                        "boardColors": [
+                            ["red","blue","green","yellow","purple","orange","cyan","gray"],
+                            ["blue","green","yellow","purple","orange","cyan","gray","red"],
+                            ["green","yellow","purple","orange","cyan","gray","red","blue"],
+                            ["yellow","purple","orange","cyan","gray","red","blue","green"],
+                            ["purple","orange","cyan","gray","red","blue","green","yellow"],
+                            ["orange","cyan","gray","red","blue","green","yellow","purple"],
+                            ["cyan","gray","red","blue","green","yellow","purple","orange"],
+                            ["gray","red","blue","green","yellow","purple","orange","cyan"]
+                        ],
+                        "queens": [
+                            {"row":1,"col":1}, 
+                            {"row":2,"col":8}  
+                        ],
+                        "indexBase":1
+                    }
+                }
+            ];
+
+            const select = document.createElement('select');
+            testCases.forEach((testCase, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = testCase.name;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', (e) => {
+                const testCase = testCases[e.target.value];
+                document.getElementById('jsonInput').value = JSON.stringify(testCase.input, null, 2);
+            });
+
+            const container = document.getElementById('jsonInput').parentNode;
+            const existingSelect = container.querySelector('select');
+            if (existingSelect) existingSelect.remove();
+            
+            container.insertBefore(select, document.getElementById('jsonInput'));
+        }
+
+        function runAllTests() {
+            const resultsDiv = document.getElementById('testResults2');
+            resultsDiv.innerHTML = '<h3>Running Tests...</h3>';
+            
+            const tests = [
+                {
+                    name: "Test 1: Empty board validation",
+                    test: () => {
+                        const input = {
+                            boardColors: testPuzzle.boardColors,
+                            queens: [],
+                            indexBase: 1
+                        };
+                        const result = testPuzzle.validatePuzzle(input);
+                        return result.summary.status === 'ready' && result.summary.score === 100;
+                    }
+                },
+                {
+                    name: "Test 2: Single queen validation",
+                    test: () => {
+                        const input = {
+                            boardColors: testPuzzle.boardColors,
+                            queens: [{"row": 1, "col": 1}],
+                            indexBase: 1
+                        };
+                        const result = testPuzzle.validatePuzzle(input);
+                        return result.summary.placed === 1 && result.summary.conflictCount === 0;
+                    }
+                },
+                {
+                    name: "Test 3: Row conflict detection",
+                    test: () => {
+                        const input = {
+                            boardColors: testPuzzle.boardColors,
+                            queens: [{"row": 1, "col": 1}, {"row": 1, "col": 3}],
+                            indexBase: 1
+                        };
+                        const result = testPuzzle.validatePuzzle(input);
+                        return result.summary.conflictCount > 0 && 
+                               result.conflicts.some(c => c.types.includes('sameRow'));
+                    }
+                },
+                {
+                    name: "Test 4: Color conflict detection",
+                    test: () => {
+                        const input = {
+                            boardColors: testPuzzle.boardColors,
+                            queens: [{"row": 1, "col": 1}, {"row": 2, "col": 8}], // both red
+                            indexBase: 1
+                        };
+                        const result = testPuzzle.validatePuzzle(input);
+                        return result.summary.conflictCount > 0 && 
+                               result.conflicts.some(c => c.types.includes('duplicateColor'));
+                    }
+                },
+                {
+                    name: "Test 5: Adjacent diagonal conflict",
+                    test: () => {
+                        const input = {
+                            boardColors: testPuzzle.boardColors,
+                            queens: [{"row": 1, "col": 1}, {"row": 2, "col": 2}],
+                            indexBase: 1
+                        };
+                        const result = testPuzzle.validatePuzzle(input);
+                        return result.summary.conflictCount > 0 && 
+                               result.conflicts.some(c => c.types.includes('adjacentDiagonal'));
+                    }
+                },
+                {
+                    name: "Test 6: Far diagonal allowed",
+                    test: () => {
+                        const input = {
+                            boardColors: testPuzzle.boardColors,
+                            queens: [{"row": 1, "col": 1}, {"row": 3, "col": 3}], // distance = 2
+                            indexBase: 1
+                        };
+                        const result = testPuzzle.validatePuzzle(input);
+                        // Should not have diagonal conflict
+                        return !result.conflicts.some(c => c.types.includes('adjacentDiagonal'));
+                    }
+                },
+                {
+                    name: "Test 7: Score calculation for perfect solution",
+                    test: () => {
+                        const input = {
+                            boardColors: testPuzzle.boardColors,
+                            queens: [
+                                {"row":1,"col":3}, {"row":2,"col":6}, {"row":3,"col":2}, {"row":4,"col":7},
+                                {"row":5,"col":1}, {"row":6,"col":4}, {"row":7,"col":8}, {"row":8,"col":5}
+                            ],
+                            indexBase: 1
+                        };
+                        const result = testPuzzle.validatePuzzle(input);
+                        return result.summary.score === 100 && result.summary.status === 'perfect';
+                    }
+                }
+            ];
+
+            let html = '<h3>Test Results:</h3>';
+            let passCount = 0;
+
+            tests.forEach((test, index) => {
+                try {
+                    const passed = test.test();
+                    const resultClass = passed ? 'test-pass' : 'test-fail';
+                    const resultText = passed ? 'PASS' : 'FAIL';
+                    if (passed) passCount++;
+                    
+                    html += `<div class="test-result ${resultClass}">
+                        <strong>[${resultText}]</strong> ${test.name}
+                    </div>`;
+                } catch (error) {
+                    html += `<div class="test-result test-fail">
+                        <strong>[ERROR]</strong> ${test.name}: ${error.message}
+                    </div>`;
+                }
+            });
+
+            html += `<div style="margin-top: 20px; font-weight: bold;">
+                Tests Passed: ${passCount}/${tests.length}
+            </div>`;
+
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
