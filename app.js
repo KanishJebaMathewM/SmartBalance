@@ -86,7 +86,7 @@ window.toggleExpenseDetails = toggleExpenseDetails;
 
 // Test function for debugging
 window.testExpenseToggle = function() {
-    console.log('���� ADVANCED Testing expense toggle manually...');
+    console.log('🧪 ADVANCED Testing expense toggle manually...');
     const checkbox = document.getElementById('taskExpense');
     const details = document.getElementById('expenseTaskDetails');
 
@@ -306,13 +306,21 @@ class WorkLifeBalanceApp {
             }
         ];
 
-        quickActionsEl.innerHTML = actions.map(action => `
-            <button class="quick-action-btn" onclick="app.${action.action.toString().split('=')[1]}" title="${action.label}">
+        quickActionsEl.innerHTML = actions.map((action, index) => `
+            <button class="quick-action-btn" id="quickAction${index}" title="${action.label}">
                 <span class="action-icon">${action.icon}</span>
                 <span class="action-label">${action.label}</span>
                 ${action.badge ? `<span class="action-badge">${action.badge}</span>` : ''}
             </button>
         `).join('');
+
+        // Add click event listeners
+        actions.forEach((action, index) => {
+            const button = document.getElementById(`quickAction${index}`);
+            if (button) {
+                button.addEventListener('click', action.action);
+            }
+        });
     }
 
     updateDashboardInsights() {
