@@ -1589,7 +1589,7 @@
                             <small>Maintain all habits for 365 days</small>
                         </div>
                         <div class="badge locked" data-badge="dataGenius">
-                            <span>🧠</span>
+                            <span>��</span>
                             <p>Data Genius</p>
                             <small>Track every meal, expense, and workout for 90 days</small>
                         </div>
@@ -1643,46 +1643,37 @@
             <!-- Stress & Mood Section -->
             <section id="stress" class="section">
                 <div class="section-header">
-                    <h1>🤖 Automated Stress & Mood Tracker</h1>
+                    <h1>😌 Stress & Mood Tracker</h1>
                     <div class="header-actions">
                         <button class="btn-secondary export-btn" data-section="stress" data-format="csv">📊 Export CSV</button>
                         <button class="btn-secondary export-btn" data-section="stress" data-format="json">📄 Export JSON</button>
                     </div>
                 </div>
 
-                <div class="mood-automated-info">
-                    <div class="automated-mood-card">
-                        <h3>🧠 AI-Powered Mood Analysis</h3>
-                        <p>Your mood and stress levels are automatically calculated daily at midnight based on your activities:</p>
-                        <div class="mood-factors">
-                            <div class="factor-item">
-                                <span class="factor-icon">✅</span>
-                                <span>Task completion rate</span>
-                            </div>
-                            <div class="factor-item">
-                                <span class="factor-icon">🏋️</span>
-                                <span>Workout frequency</span>
-                            </div>
-                            <div class="factor-item">
-                                <span class="factor-icon">💰</span>
-                                <span>Spending patterns</span>
-                            </div>
-                            <div class="factor-item">
-                                <span class="factor-icon">🍳</span>
-                                <span>Home cooking habits</span>
-                            </div>
-                            <div class="factor-item">
-                                <span class="factor-icon">📅</span>
-                                <span>Day of the week</span>
-                            </div>
-                        </div>
-                        <div class="current-mood-display">
-                            <h4>Today's Calculated Mood:</h4>
-                            <div class="current-mood" id="currentMoodDisplay">
-                                <span class="mood-emoji" id="currentStress">😐</span>
-                                <span class="mood-text" id="currentMoodText">Calculating...</span>
-                            </div>
-                        </div>
+                <div class="mood-stats">
+                    <div class="stat-card">
+                        <span id="currentStress">😐</span>
+                        <label>Today's Mood</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="weeklyMoodAverage">😊</span>
+                        <label>Weekly Average</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="moodStreak">0</span>
+                        <label>Happy Days Streak</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="stressLevel">Low</span>
+                        <label>Stress Level</label>
+                    </div>
+                </div>
+
+                <div class="automated-info-card">
+                    <h3>🤖 Automated Tracking</h3>
+                    <p>Your mood is automatically calculated daily based on your activities. Factors include task completion, workouts, spending, cooking habits, and day patterns.</p>
+                    <div class="mood-insight" id="currentMoodText">
+                        Calculating today's mood based on your activities...
                     </div>
                 </div>
 
