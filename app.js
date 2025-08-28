@@ -306,11 +306,18 @@ class WorkLifeBalanceApp {
             Utils.isToday(expense.date || expense.createdAt)
         ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
 
+        // Daily balance based on income (if set)
+        const settings = window.storage.getSettings();
+        const monthlyIncome = Number(settings.monthlyIncome) || 0;
+        const dailyBudget = monthlyIncome > 0 ? (monthlyIncome / 30) : 0;
+        const balance = Math.max(0, dailyBudget - todayExpenses);
+
         const progress = [
             { label: 'Tasks', value: `${Math.round(taskProgress)}%`, color: '#3b82f6' },
             { label: 'Workouts', value: workoutCount, color: '#10b981' },
             { label: 'Meals', value: mealCount, color: '#f59e0b' },
-            { label: 'Spent', value: Utils.formatCurrency(todayExpenses), color: '#8b5cf6' }
+            { label: 'Spent', value: Utils.formatCurrency(todayExpenses), color: '#8b5cf6' },
+            { label: 'Balance', value: Utils.formatCurrency(balance), color: '#059669' }
         ];
 
         progressEl.innerHTML = `
@@ -4633,7 +4640,7 @@ class WorkLifeBalanceApp {
                 insights.push({
                     type: 'danger',
                     icon: '🚨',
-                    text: `This will exceed your ${this.getCategoryDisplayName(category)} budget by ₹${Math.abs(remaining)}`
+                    text: `This will exceed your ${this.getCategoryDisplayName(category)} budget by ���${Math.abs(remaining)}`
                 });
             } else if (remaining < budget * 0.2) {
                 insights.push({
