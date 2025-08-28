@@ -424,10 +424,10 @@ class EightQueensWithColors {
         
         if (placed === 0) {
             messages.push("Click on colored squares to place queens. Each queen must be on a different color.");
-        } else if (placed === 8 && conflicts === 0) {
-            messages.push("🎉 Perfect! You solved the 8 Queens with Colors puzzle!");
-        } else if (conflicts === 0 && placed < 8) {
-            messages.push(`Good progress! ${placed} queens placed with no conflicts. Add ${8 - placed} more queens on unused colors.`);
+        } else if (placed === 5 && conflicts === 0) {
+            messages.push("🎉 Perfect! You solved the 5 Queens with Colors puzzle!");
+        } else if (conflicts === 0 && placed < 5) {
+            messages.push(`Good progress! ${placed} queens placed with no conflicts. Add ${5 - placed} more queens on unused colors.`);
         } else {
             messages.push(`${placed} queens placed with ${conflicts} conflicts detected.`);
             
