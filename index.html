@@ -69,8 +69,8 @@
                     <h1 id="greeting">Hello there, here's your day at a glance.</h1>
                 </div>
                 <div class="dashboard-grid">
-                    <div class="widget task-widget animate-slide-in">
-                        <h3>📑 Tasks Today</h3>
+                    <div class="widget task-widget">
+                        <h3>📋 Tasks Today</h3>
                         <div class="widget-content">
                             <div class="stat-number" id="tasksCompleted">0</div>
                             <div class="stat-label">Completed / <span id="totalTasks">0</span> Total</div>
@@ -80,7 +80,7 @@
                         </div>
                     </div>
 
-                    <div class="widget expense-widget animate-slide-in">
+                    <div class="widget expense-widget">
                         <h3>💰 Weekly Spending</h3>
                         <div class="widget-content">
                             <div class="stat-number" id="weeklyExpense">₹0</div>
@@ -88,34 +88,34 @@
                         </div>
                     </div>
 
-                    <div class="widget food-widget animate-slide-in">
-                        <h3>🍽️ Today's Meal</h3>
-                        <div class="widget-content">
-                            <div id="mealSuggestion">Healthy Oats Bowl</div>
-                            <div class="stat-label">Suggested</div>
-                        </div>
-                    </div>
-
-                    <div class="widget fitness-widget animate-slide-in">
-                        <h3>🏋️ Workout Streak</h3>
+                    <div class="widget fitness-widget">
+                        <h3>💪 Workout Streak</h3>
                         <div class="widget-content">
                             <div class="stat-number" id="workoutStreak">0</div>
                             <div class="stat-label">Days 🔥</div>
                         </div>
                     </div>
 
-                    <div class="widget stress-widget animate-slide-in">
-                        <h3>😌 Stress Level</h3>
+                    <div class="widget stress-widget">
+                        <h3>😌 Mood Today</h3>
                         <div class="widget-content">
                             <div class="stress-emoji" id="currentStress">😐</div>
-                            <div class="stat-label">Today</div>
+                            <div class="stat-label">Current</div>
                         </div>
                     </div>
-                    
-                    <div class="widget summary-widget animate-slide-in">
+
+                    <div class="widget food-widget">
+                        <h3>🍽️ Meal Suggestion</h3>
+                        <div class="widget-content">
+                            <div id="mealSuggestion">Healthy Oats Bowl</div>
+                            <div class="stat-label">Recommended</div>
+                        </div>
+                    </div>
+
+                    <div class="widget summary-widget">
                         <h3>📊 Weekly Summary</h3>
                         <div class="widget-content">
-                            <div id="weeklySummary">You completed 80% of tasks, spent ₹4200, cooked 3 healthy meals, did 4 workouts, stress was high on 2 days.</div>
+                            <div class="summary-text" id="weeklySummary">Loading your weekly progress...</div>
                         </div>
                     </div>
                 </div>
@@ -1571,7 +1571,7 @@
                             <small>Work out every day for 60 days</small>
                         </div>
                         <div class="badge locked" data-badge="masterChef">
-                            <span>��</span>
+                            <span>👑</span>
                             <p>Master Chef</p>
                             <small>Cook at home 90% of meals for 30 days</small>
                         </div>
@@ -1955,7 +1955,7 @@
                     <div class="modal-content game-modal-content">
                         <span class="close">&times;</span>
                         <div class="game-header">
-                            <h2>🌈♛ 5 Queens with Colors</h2>
+                            <h2>🌈��� 5 Queens with Colors</h2>
                             <div class="game-controls">
                                 <span id="queensTimer">00:00</span>
                                 <span id="queensScore">Score: 100</span>
@@ -2395,7 +2395,7 @@
 
                 <!-- Help Instructions Section -->
                 <div class="help-instructions-section">
-                    <h3>❓ How to Use This App</h3>
+                    <h3>��� How to Use This App</h3>
 
                     <div class="help-navigation">
                         <button class="btn-secondary" id="prevHelpBtn" onclick="app.showPreviousHelp()">⬅️ Previous</button>
