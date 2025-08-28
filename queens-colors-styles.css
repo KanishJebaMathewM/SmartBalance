@@ -1,4 +1,4 @@
-/* 8 Queens with Colors Puzzle Styles */
+/* 5 Queens with Colors Puzzle Styles */
 
 /* Color Variables */
 :root {
@@ -23,13 +23,13 @@
 /* Colored Chess Board */
 .queens-colored-board {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 2px;
   background: #333;
   border: 3px solid #333;
   border-radius: 8px;
-  width: 480px;
-  height: 480px;
+  width: 400px;
+  height: 400px;
   position: relative;
 }
 
@@ -82,6 +82,24 @@
   animation: pulse-conflict 1s infinite;
 }
 
+/* Wrong position styling - red outline for queens in wrong positions */
+.queens-colored-square.wrong-position {
+  outline: 4px solid #ff0000;
+  box-shadow: 0 0 12px rgba(255, 0, 0, 0.8);
+  animation: wrongPositionPulse 2s infinite;
+}
+
+@keyframes wrongPositionPulse {
+  0%, 100% {
+    outline: 4px solid #ff0000;
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.8);
+  }
+  50% {
+    outline: 4px solid #ff6666;
+    box-shadow: 0 0 20px rgba(255, 102, 102, 0.9);
+  }
+}
+
 .queens-colored-square.cell-warning {
   outline: 3px solid rgba(180, 120, 0, 0.9);
   box-shadow: 0 0 8px rgba(180, 120, 0, 0.5);
@@ -114,7 +132,7 @@
 /* Color Legend */
 .color-legend-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
@@ -310,8 +328,8 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .queens-colored-board {
-    width: 320px;
-    height: 320px;
+    width: 300px;
+    height: 300px;
   }
   
   .queens-colored-square {
@@ -327,7 +345,7 @@
   }
   
   .color-legend-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
   
   .game-area {
