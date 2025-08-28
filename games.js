@@ -213,11 +213,6 @@ class GamesManager {
         document.getElementById('sudoku-best-time').textContent = 
             `Best: ${games.sudoku.bestTime ? this.formatTime(games.sudoku.bestTime) : '--'}`;
 
-        document.getElementById('tango-best-score').textContent = 
-            `Best Score: ${games.tango.bestScore}`;
-        document.getElementById('tango-words-found').textContent = 
-            `Words Found: ${games.tango.wordsFound}`;
-
         document.getElementById('2048-high-score').textContent = 
             `High Score: ${games['2048'].highScore}`;
         document.getElementById('2048-best-tile').textContent = 
