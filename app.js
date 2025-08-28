@@ -600,6 +600,14 @@ class WorkLifeBalanceApp {
         // Skip automated mood generation for brand new users with no activity
         if (!this.hasUserActivity()) {
             console.log('⏭️ Skipping mood automation: no user activity yet.');
+            // Clean up any auto-generated moods from previous sessions for a fresh start
+            try {
+                const moods = window.storage.getMoods() || [];
+                if (moods.length > 0 && moods.every(m => m.automated === true)) {
+                    window.storage.set(window.storage.keys.moods, []);
+                    console.log('🧹 Cleared automated mood history for new user.');
+                }
+            } catch (e) { /* no-op */ }
             return;
         }
 
@@ -10868,7 +10876,7 @@ class WorkLifeBalanceApp {
             <div class="breakdown-list">
                 ${tasks.map(task => `
                     <div class="breakdown-item ${task.completed ? 'completed' : 'pending'}">
-                        <span class="item-status">${task.completed ? '✅' : '��'}</span>
+                        <span class="item-status">${task.completed ? '✅' : '⏳'}</span>
                         <span class="item-title">${task.title}</span>
                         <span class="item-category">${task.category}</span>
                         <span class="item-date">${Utils.formatDate(task.createdAt)}</span>
