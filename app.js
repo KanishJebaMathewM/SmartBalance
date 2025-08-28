@@ -315,6 +315,252 @@ class WorkLifeBalanceApp {
         this.initializeHabitTabHandlers();
     }
 
+    // Initialize automated mood tracking system
+    initializeAutomatedMoodTracking() {
+        console.log('🤖 Initializing automated mood tracking...');
+
+        // Check if we need to calculate mood for yesterday
+        this.checkPendingMoodCalculations();
+
+        // Schedule daily mood calculation at midnight
+        this.scheduleMidnightMoodUpdate();
+
+        // Calculate mood for today if not already done
+        this.calculateTodaysMoodIfNeeded();
+    }
+
+    // Check for any pending mood calculations from previous days
+    checkPendingMoodCalculations() {
+        const moods = window.storage.getMoods();
+        const now = new Date();
+
+        // Check last 7 days for missing mood entries
+        for (let i = 1; i <= 7; i++) {
+            const checkDate = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+            const dateString = checkDate.toISOString().split('T')[0];
+
+            const existingMood = moods.find(m => {
+                const moodDate = new Date(m.date).toISOString().split('T')[0];
+                return moodDate === dateString;
+            });
+
+            if (!existingMood) {
+                console.log(`📅 Calculating missing mood for ${dateString}`);
+                this.calculateAndSaveDailyMood(checkDate);
+            }
+        }
+    }
+
+    // Calculate today's mood if not already calculated
+    calculateTodaysMoodIfNeeded() {
+        const moods = window.storage.getMoods();
+        const today = new Date().toISOString().split('T')[0];
+
+        const todaysMood = moods.find(m => {
+            const moodDate = new Date(m.date).toISOString().split('T')[0];
+            return moodDate === today;
+        });
+
+        if (!todaysMood) {
+            // Calculate mood for today based on current activities
+            setTimeout(() => {
+                this.calculateAndSaveDailyMood(new Date());
+            }, 2000); // Wait 2 seconds to ensure other data is loaded
+        }
+    }
+
+    // Schedule mood calculation at midnight
+    scheduleMidnightMoodUpdate() {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setDate(midnight.getDate() + 1);
+        midnight.setHours(0, 0, 0, 0);
+
+        const timeUntilMidnight = midnight.getTime() - now.getTime();
+
+        console.log(`⏰ Scheduling mood calculation in ${Math.round(timeUntilMidnight / 1000 / 60)} minutes`);
+
+        setTimeout(() => {
+            this.performMidnightMoodCalculation();
+
+            // Schedule the next day's calculation
+            setInterval(() => {
+                this.performMidnightMoodCalculation();
+            }, 24 * 60 * 60 * 1000); // Every 24 hours
+
+        }, timeUntilMidnight);
+    }
+
+    // Perform midnight mood calculation
+    performMidnightMoodCalculation() {
+        console.log('🌙 Performing midnight mood calculation...');
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        this.calculateAndSaveDailyMood(yesterday);
+
+        // Also update today's mood calculation
+        setTimeout(() => {
+            this.calculateAndSaveDailyMood(new Date());
+        }, 1000);
+    }
+
+    // Calculate and save daily mood based on activities
+    calculateAndSaveDailyMood(targetDate) {
+        console.log(`🧠 Calculating mood for ${targetDate.toDateString()}...`);
+
+        const dayData = this.getDayActivityData(targetDate);
+        const moodScore = this.calculateMoodScore(dayData);
+        const mood = this.moodScoreToMoodLevel(moodScore);
+
+        console.log(`📊 Mood calculation for ${targetDate.toDateString()}:`, {
+            dayData,
+            moodScore,
+            mood
+        });
+
+        // Save the calculated mood
+        window.storage.addMood({
+            mood: mood,
+            date: targetDate.toISOString(),
+            automated: true,
+            score: moodScore,
+            factors: dayData
+        });
+
+        Utils.showNotification(`🤖 Auto-calculated mood: ${Utils.getMoodEmoji(mood)} for ${targetDate.toDateString()}`, 'info');
+
+        // Update UI if currently viewing stress section
+        if (this.currentSection === 'stress') {
+            this.loadStressData();
+        }
+
+        this.updateDashboard();
+    }
+
+    // Get activity data for a specific day
+    getDayActivityData(date) {
+        const dateString = date.toDateString();
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Get tasks for the day
+        const tasks = window.storage.getTasks();
+        const dayTasks = tasks.filter(task => {
+            const taskDate = new Date(task.createdAt).toDateString();
+            return taskDate === dateString;
+        });
+        const completedTasks = dayTasks.filter(task => task.completed);
+        const taskCompletionRate = dayTasks.length > 0 ? completedTasks.length / dayTasks.length : 0;
+
+        // Get workouts for the day
+        const workouts = window.storage.getWorkouts();
+        const dayWorkouts = workouts.filter(workout => {
+            const workoutDate = new Date(workout.createdAt).toDateString();
+            return workoutDate === dateString;
+        });
+
+        // Get expenses for the day
+        const expenses = window.storage.getExpenses();
+        const dayExpenses = expenses.filter(expense => {
+            const expenseDate = new Date(expense.date || expense.createdAt).toDateString();
+            return expenseDate === dateString;
+        });
+        const totalSpending = dayExpenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+
+        // Get meals for the day
+        const meals = window.storage.getMeals();
+        const dayMeals = meals.filter(meal => {
+            const mealDate = new Date(meal.date).toDateString();
+            return mealDate === dateString;
+        });
+        const homeCookedMeals = dayMeals.filter(meal => meal.source === 'home').length;
+        const totalMeals = dayMeals.length;
+        const homeCookingRate = totalMeals > 0 ? homeCookedMeals / totalMeals : 0;
+
+        return {
+            taskCompletionRate,
+            totalTasks: dayTasks.length,
+            completedTasks: completedTasks.length,
+            workoutCount: dayWorkouts.length,
+            totalSpending,
+            homeCookingRate,
+            totalMeals,
+            dayOfWeek: date.getDay(), // 0 = Sunday, 1 = Monday, etc.
+            isWeekend: date.getDay() === 0 || date.getDay() === 6
+        };
+    }
+
+    // Calculate mood score based on daily activities (0-100 scale)
+    calculateMoodScore(dayData) {
+        let score = 50; // Start with neutral
+
+        // Task completion impact (±20 points)
+        if (dayData.taskCompletionRate >= 0.8) {
+            score += 20; // High completion = happy
+        } else if (dayData.taskCompletionRate >= 0.5) {
+            score += 10; // Medium completion = slight positive
+        } else if (dayData.taskCompletionRate < 0.3 && dayData.totalTasks > 0) {
+            score -= 15; // Low completion = stress
+        }
+
+        // Workout impact (±15 points)
+        if (dayData.workoutCount >= 2) {
+            score += 15; // Multiple workouts = very positive
+        } else if (dayData.workoutCount === 1) {
+            score += 10; // One workout = positive
+        } else {
+            score -= 5; // No workout = slight negative
+        }
+
+        // Spending impact (±15 points)
+        if (dayData.totalSpending > 2000) {
+            score -= 15; // High spending = stress
+        } else if (dayData.totalSpending > 1000) {
+            score -= 8; // Medium spending = slight stress
+        } else if (dayData.totalSpending === 0) {
+            score += 5; // No spending = slight positive
+        }
+
+        // Home cooking impact (±10 points)
+        if (dayData.homeCookingRate >= 0.7) {
+            score += 10; // Mostly home cooking = positive
+        } else if (dayData.homeCookingRate < 0.3 && dayData.totalMeals > 0) {
+            score -= 5; // Mostly eating out = slight negative
+        }
+
+        // Day of week adjustments (±5 points)
+        if (dayData.dayOfWeek === 1) { // Monday
+            score -= 5; // Monday blues
+        } else if (dayData.dayOfWeek === 5) { // Friday
+            score += 5; // TGIF
+        } else if (dayData.isWeekend) {
+            score += 3; // Weekend mood boost
+        }
+
+        // Productivity vs overwhelming tasks adjustment
+        if (dayData.totalTasks > 10) {
+            score -= 5; // Too many tasks = overwhelming
+        } else if (dayData.totalTasks === 0) {
+            score -= 3; // No productivity = slight negative
+        }
+
+        // Ensure score is within bounds
+        return Math.max(0, Math.min(100, score));
+    }
+
+    // Convert mood score to mood level
+    moodScoreToMoodLevel(score) {
+        if (score >= 80) return 'very-happy';
+        if (score >= 65) return 'happy';
+        if (score >= 35) return 'neutral';
+        if (score >= 20) return 'stressed';
+        return 'very-stressed';
+    }
+
     initializeModalControls() {
         // Modal open buttons
         const modalTriggers = {
@@ -9023,7 +9269,7 @@ class WorkLifeBalanceApp {
         const incompleteTasks = tasks.filter(t => !t.completed).length;
         if (incompleteTasks > 10) {
             recommendations.push({
-                icon: '��',
+                icon: '����',
                 title: 'Manage Task Backlog',
                 description: `You have ${incompleteTasks} incomplete tasks. Consider prioritizing or breaking them into smaller steps.`,
                 priority: 'high'
@@ -10886,7 +11132,7 @@ class WorkLifeBalanceApp {
             'entertainment': '🎬',
             'healthcare': '🏥',
             'education': '��',
-            'fitness': '💪',
+            'fitness': '����',
             'subscriptions': '📺',
             'groceries': '🛒',
             'clothing': '👕',
