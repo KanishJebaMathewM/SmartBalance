@@ -57,6 +57,10 @@ class GamesManager {
                 this.openModal('sudokuGameModal');
                 this.sudoku.startGame();
                 break;
+            case 'colorpattern':
+                this.openModal('colorPatternGameModal');
+                this.colorPattern.startGame();
+                break;
             case '2048':
                 this.openModal('2048GameModal');
                 this.game2048.startGame();
