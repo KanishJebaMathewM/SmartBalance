@@ -29,7 +29,12 @@ class GamesManager {
 
     // Initialize all games
     initializeGames() {
-        this.queens = new EightQueensGame();
+        // Use enhanced 8 Queens with Colors implementation if available
+        if (typeof EightQueensGameEnhanced !== 'undefined') {
+            this.queens = new EightQueensGameEnhanced();
+        } else {
+            this.queens = new EightQueensGame();
+        }
         this.sudoku = new SudokuGame();
         this.tango = new TangoWordGame();
         this.game2048 = new Game2048();
