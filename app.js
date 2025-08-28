@@ -3927,7 +3927,7 @@ class WorkLifeBalanceApp {
             '💪 Working out significantly improves your mood!' :
             correlation < -0.3 ?
             '😰 High workout intensity might be causing stress' :
-            '���� Moderate correlation - keep tracking for better insights';
+            '📊 Moderate correlation - keep tracking for better insights';
 
         this.updateCorrelationDisplay('fitnessStressCorrelation', percentage, insight);
     }
@@ -8215,7 +8215,7 @@ class WorkLifeBalanceApp {
         if (homeCookingRate >= 70) {
             insights.push('🍳 Excellent home cooking habits! Keep it up.');
         } else if (homeCookingRate >= 50) {
-            insights.push('���� Good balance of home cooking and dining out.');
+            insights.push('������ Good balance of home cooking and dining out.');
         } else {
             insights.push('🏠 Try cooking more meals at home for better health and savings.');
         }
@@ -10556,7 +10556,7 @@ class WorkLifeBalanceApp {
             'clothing': '👕 Clothing',
             'other': '📦 Other'
         };
-        return categoryNames[category] || '📦 Other';
+        return categoryNames[category] || '�� Other';
     }
 
     getCategoryIcon(category) {
