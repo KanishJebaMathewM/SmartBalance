@@ -6192,7 +6192,7 @@ class WorkLifeBalanceApp {
                     </div>
                 </div>
                 <div class="meal-source ${meal.source}">
-                    <span class="icon">${meal.source === 'home' ? '���' : '🏨'}</span>
+                    <span class="icon">${meal.source === 'home' ? '🏠' : '🏨'}</span>
                     <span>${meal.source === 'home' ? 'Home' : 'Hotel'}</span>
                 </div>
             </div>
@@ -6368,7 +6368,7 @@ class WorkLifeBalanceApp {
 
         if (weeklyStats.totalCalories > 0) {
             insights.push({
-                icon: '���',
+                icon: '📊',
                 title: 'Weekly Calorie Intake',
                 description: `You consumed ${weeklyStats.totalCalories} calories this week, averaging ${Math.round(weeklyStats.avgCaloriesPerDay)} per day.`
             });
@@ -6546,7 +6546,7 @@ class WorkLifeBalanceApp {
             if (meal) {
                 gridHTML += `
                     <div class="meal-card ${meal.status || 'planned'}">
-                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '������ Planned'}</div>
+                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '🍽️ Planned'}</div>
                         <div class="meal-emoji">${typeInfo.emoji}</div>
                         <h4>${typeInfo.name}</h4>
                         <p class="meal-name">${Utils.sanitizeInput(meal.name)}</p>
@@ -6927,7 +6927,7 @@ class WorkLifeBalanceApp {
                     ${suggestion.calories} cal • ₹${suggestion.estimatedHomeCost}
                 </div>
                 <div class="suggestion-actions">
-                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">��� Accept</button>
+                    <button class="btn-primary btn-small" onclick="app.acceptSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">✅ Accept</button>
                     <button class="btn-secondary btn-small" onclick="app.selectSuggestedMeal('${suggestion.type}', '${encodeURIComponent(JSON.stringify(suggestion))}')">Customize</button>
                 </div>
             </div>
@@ -7194,7 +7194,7 @@ class WorkLifeBalanceApp {
                             <span class="meal-calories">${meal.calories} cal</span>
                         </div>
                         <div class="meal-status ${meal.status}">
-                            ${meal.status === 'eaten' ? '✅ Eaten' : '������� Planned'}
+                            ${meal.status === 'eaten' ? '✅ Eaten' : '🍽️ Planned'}
                         </div>
                     </div>
                 `).join('');
@@ -8464,7 +8464,7 @@ class WorkLifeBalanceApp {
         const nutritionProductivityCorrelation = this.analyzeNutritionProductivityCorrelation(data.meals, data.tasks);
         if (nutritionProductivityCorrelation.correlation > 0.3) {
             correlationInsights.push({
-                title: '���� Nutrition Impact',
+                title: '🍎 Nutrition Impact',
                 insight: `Home cooking correlates with ${Math.round(nutritionProductivityCorrelation.correlation * 100)}% higher task completion`,
                 strength: nutritionProductivityCorrelation.correlation
             });
