@@ -192,8 +192,8 @@
 
                 boardElement.innerHTML = '';
                 
-                for (let row = 0; row < 8; row++) {
-                    for (let col = 0; col < 8; col++) {
+                for (let row = 0; row < 5; row++) {
+                    for (let col = 0; col < 5; col++) {
                         const square = document.createElement('div');
                         square.className = `queens-colored-square color-${this.boardColors[row][col]}`;
                         square.dataset.row = row;
