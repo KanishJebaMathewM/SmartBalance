@@ -10882,7 +10882,7 @@ class WorkLifeBalanceApp {
         const csvRows = expenses.map(expense => [
             new Date(expense.createdAt).toLocaleDateString(),
             `"${(expense.notes || 'No description').replace(/"/g, '""')}"`,
-            this.getCategoryDisplayName(expense.category).replace(/[🍕📧����️✈️🎬🏥���💪������👕📦]/g, '').trim(),
+            this.getCategoryDisplayName(expense.category).replace(/[🍕📧�����️✈️🎬🏥���💪������👕📦]/g, '').trim(),
             this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash').replace(/[💵💳📱🏦]/g, '').trim(),
             expense.amount
         ]);
@@ -11438,6 +11438,273 @@ class WorkLifeBalanceApp {
         if (window.gamesManager && window.gamesManager.startGame) {
             window.gamesManager.startGame(gameType);
         }
+    }
+
+    // Analytics helper methods
+    calculateTaskCompletionRate(tasks) {
+        if (tasks.length === 0) return 0;
+        const completed = tasks.filter(task => task.completed).length;
+        return Math.round((completed / tasks.length) * 100);
+    }
+
+    calculateHomeCookingPercentage(meals) {
+        if (meals.length === 0) return 0;
+        const homeMeals = meals.filter(meal => meal.source === 'home').length;
+        return Math.round((homeMeals / meals.length) * 100);
+    }
+
+    calculateAverageCaloriesPerDay(meals) {
+        if (meals.length === 0) return 0;
+        const totalCalories = meals.reduce((sum, meal) => sum + (meal.calories || 0), 0);
+        const uniqueDays = [...new Set(meals.map(meal => new Date(meal.date).toDateString()))];
+        return Math.round(totalCalories / Math.max(uniqueDays.length, 1));
+    }
+
+    calculateMoneySavedCooking(meals) {
+        const homeMeals = meals.filter(meal => meal.source === 'home');
+        const hotelMeals = meals.filter(meal => meal.source === 'hotel');
+
+        const homeCost = homeMeals.reduce((sum, meal) => sum + (parseFloat(meal.ingredientCost) || 0), 0);
+        const hotelCost = hotelMeals.reduce((sum, meal) =>
+            sum + (parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0), 0);
+
+        // Estimate potential savings: assume each home meal saves ₹150 on average
+        const potentialSavings = homeMeals.length * 150;
+        return Math.max(0, potentialSavings - homeCost);
+    }
+
+    getWeeklyWorkoutCount(workouts) {
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        return workouts.filter(workout => new Date(workout.createdAt) >= weekAgo).length;
+    }
+
+    calculateTotalCaloriesBurned(workouts) {
+        return workouts.reduce((sum, workout) => sum + (workout.calories || 0), 0);
+    }
+
+    calculateStressTrend(moods) {
+        if (moods.length === 0) return 'stable';
+
+        const recentMoods = moods.slice(-7); // Last 7 entries
+        if (recentMoods.length < 2) return 'stable';
+
+        const moodValues = {
+            'very-stressed': 1,
+            'stressed': 2,
+            'neutral': 3,
+            'happy': 4,
+            'very-happy': 5
+        };
+
+        const firstHalf = recentMoods.slice(0, Math.floor(recentMoods.length / 2));
+        const secondHalf = recentMoods.slice(Math.floor(recentMoods.length / 2));
+
+        const firstAvg = firstHalf.reduce((sum, m) => sum + (moodValues[m.mood] || 3), 0) / firstHalf.length;
+        const secondAvg = secondHalf.reduce((sum, m) => sum + (moodValues[m.mood] || 3), 0) / secondHalf.length;
+
+        if (secondAvg > firstAvg + 0.5) return 'improving';
+        if (secondAvg < firstAvg - 0.5) return 'declining';
+        return 'stable';
+    }
+
+    calculateOverallHealthScore(data) {
+        let score = 0;
+        let maxScore = 100;
+
+        // Task completion (20 points)
+        const taskRate = this.calculateTaskCompletionRate(data.tasks);
+        score += (taskRate / 100) * 20;
+
+        // Home cooking (20 points)
+        const cookingRate = this.calculateHomeCookingPercentage(data.meals);
+        score += (cookingRate / 100) * 20;
+
+        // Workout consistency (20 points)
+        const workoutStreak = window.storage.getWorkoutStreak();
+        score += Math.min(workoutStreak / 7, 1) * 20;
+
+        // Mood stability (20 points)
+        const stressTrend = this.calculateStressTrend(data.moods);
+        if (stressTrend === 'improving') score += 20;
+        else if (stressTrend === 'stable') score += 15;
+        else score += 10;
+
+        // Games engagement (20 points)
+        const gamesPlayed = data.games.totalGamesPlayed || 0;
+        score += Math.min(gamesPlayed / 10, 1) * 20;
+
+        return Math.round(score);
+    }
+
+    // Food analytics helpers
+    categorizeMealsByType(meals) {
+        const types = {};
+        meals.forEach(meal => {
+            const type = meal.type || 'unknown';
+            types[type] = (types[type] || 0) + 1;
+        });
+        return types;
+    }
+
+    calculateNutritionTrends(meals) {
+        const last30Days = meals.filter(meal => {
+            const mealDate = new Date(meal.date);
+            const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+            return mealDate >= thirtyDaysAgo;
+        });
+
+        const weeklyData = [];
+        for (let i = 0; i < 4; i++) {
+            const weekStart = new Date(Date.now() - (i + 1) * 7 * 24 * 60 * 60 * 1000);
+            const weekEnd = new Date(Date.now() - i * 7 * 24 * 60 * 1000);
+
+            const weekMeals = last30Days.filter(meal => {
+                const mealDate = new Date(meal.date);
+                return mealDate >= weekStart && mealDate <= weekEnd;
+            });
+
+            weeklyData.unshift({
+                week: i + 1,
+                homeMeals: weekMeals.filter(m => m.source === 'home').length,
+                hotelMeals: weekMeals.filter(m => m.source === 'hotel').length,
+                totalCalories: weekMeals.reduce((sum, m) => sum + (m.calories || 0), 0)
+            });
+        }
+
+        return weeklyData;
+    }
+
+    // Fitness analytics helpers
+    categorizeWorkoutsByType(workouts) {
+        const types = {};
+        workouts.forEach(workout => {
+            const type = workout.type || 'general';
+            types[type] = (types[type] || 0) + 1;
+        });
+        return types;
+    }
+
+    calculateAverageWorkoutDuration(workouts) {
+        if (workouts.length === 0) return 0;
+        const totalDuration = workouts.reduce((sum, w) => sum + (w.duration || 0), 0);
+        return Math.round(totalDuration / workouts.length);
+    }
+
+    calculateWorkoutTrends(workouts) {
+        const weeklyData = [];
+        for (let i = 0; i < 4; i++) {
+            const weekStart = new Date(Date.now() - (i + 1) * 7 * 24 * 60 * 60 * 1000);
+            const weekEnd = new Date(Date.now() - i * 7 * 24 * 60 * 60 * 1000);
+
+            const weekWorkouts = workouts.filter(workout => {
+                const workoutDate = new Date(workout.createdAt);
+                return workoutDate >= weekStart && workoutDate <= weekEnd;
+            });
+
+            weeklyData.unshift({
+                week: i + 1,
+                count: weekWorkouts.length,
+                calories: weekWorkouts.reduce((sum, w) => sum + (w.calories || 0), 0)
+            });
+        }
+
+        return weeklyData;
+    }
+
+    // Stress analytics helpers
+    calculateMoodDistribution(moods) {
+        const distribution = {};
+        moods.forEach(mood => {
+            const moodType = mood.mood || 'neutral';
+            distribution[moodType] = (distribution[moodType] || 0) + 1;
+        });
+        return distribution;
+    }
+
+    calculateStressTrends(moods) {
+        return this.calculateNutritionTrends(moods); // Similar pattern for trends
+    }
+
+    analyzeMoodPatterns(moods) {
+        const patterns = {
+            morningMoods: {},
+            eveningMoods: {},
+            weekdayMoods: {},
+            weekendMoods: {}
+        };
+
+        moods.forEach(mood => {
+            const date = new Date(mood.date);
+            const hour = date.getHours();
+            const dayOfWeek = date.getDay();
+
+            // Time-based patterns
+            if (hour < 12) {
+                patterns.morningMoods[mood.mood] = (patterns.morningMoods[mood.mood] || 0) + 1;
+            } else {
+                patterns.eveningMoods[mood.mood] = (patterns.eveningMoods[mood.mood] || 0) + 1;
+            }
+
+            // Day-based patterns
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                patterns.weekendMoods[mood.mood] = (patterns.weekendMoods[mood.mood] || 0) + 1;
+            } else {
+                patterns.weekdayMoods[mood.mood] = (patterns.weekdayMoods[mood.mood] || 0) + 1;
+            }
+        });
+
+        return patterns;
+    }
+
+    // Games analytics helpers
+    getMostPlayedGame(gameStats) {
+        let mostPlayed = '';
+        let maxAttempts = 0;
+
+        Object.entries(gameStats).forEach(([game, stats]) => {
+            const attempts = stats.attempts || stats.completed || 0;
+            if (attempts > maxAttempts) {
+                maxAttempts = attempts;
+                mostPlayed = game;
+            }
+        });
+
+        return mostPlayed || 'None';
+    }
+
+    getAverageScorePerGame(recentGames) {
+        if (recentGames.length === 0) return 0;
+        const totalScore = recentGames.reduce((sum, game) => sum + (game.result?.score || 0), 0);
+        return Math.round(totalScore / recentGames.length);
+    }
+
+    calculateImprovementTrend(recentGames) {
+        if (recentGames.length < 3) return 'insufficient_data';
+
+        const scores = recentGames.map(game => game.result?.score || 0);
+        const firstHalf = scores.slice(0, Math.floor(scores.length / 2));
+        const secondHalf = scores.slice(Math.floor(scores.length / 2));
+
+        const firstAvg = firstHalf.reduce((sum, score) => sum + score, 0) / firstHalf.length;
+        const secondAvg = secondHalf.reduce((sum, score) => sum + score, 0) / secondHalf.length;
+
+        if (secondAvg > firstAvg * 1.1) return 'improving';
+        if (secondAvg < firstAvg * 0.9) return 'declining';
+        return 'stable';
+    }
+
+    calculateCompletionRates(gameStats) {
+        const rates = {};
+        Object.entries(gameStats).forEach(([game, stats]) => {
+            const completed = stats.completed || 0;
+            const attempts = stats.attempts || completed || 1;
+            rates[game] = Math.round((completed / attempts) * 100);
+        });
+        return rates;
+    }
+
+    calculateTimeSpentGaming(recentGames) {
+        return recentGames.reduce((sum, game) => sum + (game.elapsed || 0), 0);
     }
 }
 
