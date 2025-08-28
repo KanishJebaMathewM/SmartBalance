@@ -581,6 +581,113 @@ class EightQueensWithColors {
         return "🎉 You're doing great! Keep placing queens while following the rules.";
     }
 
+    // Find best next position for queen placement
+    findBestNextPosition() {
+        const usedColors = this.queens.map(q => this.getQueenColor(q, this.boardColors, this.indexBase));
+        const usedRows = this.queens.map(q => q.row);
+        const usedCols = this.queens.map(q => q.col);
+
+        // Try to find a safe position
+        for (let row = 1; row <= 8; row++) {
+            if (usedRows.includes(row)) continue;
+
+            for (let col = 1; col <= 8; col++) {
+                if (usedCols.includes(col)) continue;
+
+                const testQueen = { row, col };
+                const testColor = this.getQueenColor(testQueen, this.boardColors, this.indexBase);
+
+                // Skip if color is already used
+                if (usedColors.includes(testColor)) continue;
+
+                // Check if this position conflicts with existing queens
+                const hasConflict = this.queens.some(q =>
+                    this.checkQueenConflicts(testQueen, q, this.boardColors, this.indexBase).length > 0
+                );
+
+                if (!hasConflict) {
+                    return { row, col };
+                }
+            }
+        }
+
+        return null;
+    }
+
+    // Highlight hint position on the board
+    highlightHintPosition() {
+        if (this.hintPosition) {
+            const row = this.hintPosition.row - this.indexBase;
+            const col = this.hintPosition.col - this.indexBase;
+            const square = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            if (square) {
+                square.classList.add('hint-suggestion');
+            }
+        }
+
+        if (this.highlightMistake) {
+            const row = this.highlightMistake.row - this.indexBase;
+            const col = this.highlightMistake.col - this.indexBase;
+            const square = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            if (square) {
+                square.classList.add('hint-mistake');
+            }
+        }
+    }
+
+    // Clear hint highlights from the board
+    clearHintHighlights() {
+        document.querySelectorAll('.hint-suggestion').forEach(el => {
+            el.classList.remove('hint-suggestion');
+        });
+        document.querySelectorAll('.hint-mistake').forEach(el => {
+            el.classList.remove('hint-mistake');
+        });
+        this.hintPosition = null;
+        this.highlightMistake = null;
+    }
+
+    // Generate random board layout for variety
+    generateRandomBoard() {
+        const patterns = [
+            // Standard pattern
+            [
+                ["red","blue","green","yellow","purple","orange","cyan","gray"],
+                ["blue","green","yellow","purple","orange","cyan","gray","red"],
+                ["green","yellow","purple","orange","cyan","gray","red","blue"],
+                ["yellow","purple","orange","cyan","gray","red","blue","green"],
+                ["purple","orange","cyan","gray","red","blue","green","yellow"],
+                ["orange","cyan","gray","red","blue","green","yellow","purple"],
+                ["cyan","gray","red","blue","green","yellow","purple","orange"],
+                ["gray","red","blue","green","yellow","purple","orange","cyan"]
+            ],
+            // Rotated pattern
+            [
+                ["purple","orange","cyan","gray","red","blue","green","yellow"],
+                ["orange","cyan","gray","red","blue","green","yellow","purple"],
+                ["cyan","gray","red","blue","green","yellow","purple","orange"],
+                ["gray","red","blue","green","yellow","purple","orange","cyan"],
+                ["red","blue","green","yellow","purple","orange","cyan","gray"],
+                ["blue","green","yellow","purple","orange","cyan","gray","red"],
+                ["green","yellow","purple","orange","cyan","gray","red","blue"],
+                ["yellow","purple","orange","cyan","gray","red","blue","green"]
+            ],
+            // Shifted pattern
+            [
+                ["cyan","gray","red","blue","green","yellow","purple","orange"],
+                ["gray","red","blue","green","yellow","purple","orange","cyan"],
+                ["red","blue","green","yellow","purple","orange","cyan","gray"],
+                ["blue","green","yellow","purple","orange","cyan","gray","red"],
+                ["green","yellow","purple","orange","cyan","gray","red","blue"],
+                ["yellow","purple","orange","cyan","gray","red","blue","green"],
+                ["purple","orange","cyan","gray","red","blue","green","yellow"],
+                ["orange","cyan","gray","red","blue","green","yellow","purple"]
+            ]
+        ];
+
+        this.boardColors = patterns[Math.floor(Math.random() * patterns.length)];
+    }
+
     // Setup event listeners
     setupEventListeners() {
         // Reset button
