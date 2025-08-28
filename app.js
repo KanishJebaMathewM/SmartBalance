@@ -4842,7 +4842,7 @@ class WorkLifeBalanceApp {
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
-            'education': '��',
+            'education': '📚',
             'fitness': '💪',
             'subscriptions': '📺',
             'groceries': '🛒',
@@ -9241,7 +9241,7 @@ class WorkLifeBalanceApp {
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
             { name: 'Productivity', score: scores.productivity, icon: '💼' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
-            { name: 'Wellness', score: scores.wellness, icon: '����' }
+            { name: 'Wellness', score: scores.wellness, icon: '🧘' }
         ];
 
         const lowAreas = areas.filter(area => area.score < 60).sort((a, b) => a.score - b.score);
@@ -11218,7 +11218,7 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '��️ Travel & Transport',
+            'travel': '✈️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '📚 Education',
