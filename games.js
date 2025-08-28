@@ -161,10 +161,6 @@ class GamesManager {
                 if (result.score && result.score > gameStats.bestScore) {
                     gameStats.bestScore = result.score;
                 }
-            } else if (gameType === 'tango') {
-                if (result.wordsFound > gameStats.wordsFound) {
-                    gameStats.wordsFound = result.wordsFound;
-                }
             } else if (gameType === '2048') {
                 if (result.bestTile > gameStats.bestTile) {
                     gameStats.bestTile = result.bestTile;
