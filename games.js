@@ -976,17 +976,22 @@ class ColorPatternGame {
             }
         };
 
-        setTimeout(playNext, 500);
+        this.sequenceTimeout = setTimeout(playNext, 500);
     }
 
     flashButton(colorIndex, callback) {
         const button = document.querySelector(`[data-color="${colorIndex}"]`);
-        if (!button) return;
+        if (!button) {
+            if (callback) callback();
+            return;
+        }
 
         button.classList.add('active');
+        button.style.pointerEvents = 'none'; // Prevent clicks during flash
 
         setTimeout(() => {
             button.classList.remove('active');
+            button.style.pointerEvents = 'auto'; // Re-enable clicks
             if (callback) callback();
         }, 400);
     }
@@ -1010,7 +1015,7 @@ class ColorPatternGame {
             this.level++;
             this.updateDisplay();
 
-            setTimeout(() => {
+            this.levelTimeout = setTimeout(() => {
                 this.nextLevel();
             }, 1000);
         }
@@ -1019,6 +1024,9 @@ class ColorPatternGame {
     gameOver() {
         this.isPlaying = false;
         this.isPlayerTurn = false;
+
+        // Clear any pending timeouts
+        this.clearTimeouts();
 
         const result = {
             won: this.level > 1,
@@ -1032,15 +1040,44 @@ class ColorPatternGame {
         this.updateDisplay();
     }
 
+    clearTimeouts() {
+        // Clear any stored timeout IDs
+        if (this.sequenceTimeout) {
+            clearTimeout(this.sequenceTimeout);
+            this.sequenceTimeout = null;
+        }
+        if (this.levelTimeout) {
+            clearTimeout(this.levelTimeout);
+            this.levelTimeout = null;
+        }
+    }
+
     setupEventListeners() {
+        // Remove existing listeners to prevent duplicates
+        this.removeEventListeners();
+
         document.getElementById('colorPatternStartBtn').onclick = () => this.startGame();
 
-        document.querySelectorAll('#colorPatternGameModal .color-button').forEach(button => {
-            button.addEventListener('click', () => {
+        // Store reference to event handler for proper cleanup
+        this.buttonClickHandler = (e) => {
+            const button = e.target.closest('.color-button');
+            if (button) {
                 const colorIndex = parseInt(button.dataset.color);
                 this.handlePlayerInput(colorIndex);
-            });
-        });
+            }
+        };
+
+        const boardElement = document.getElementById('colorPatternBoard');
+        if (boardElement) {
+            boardElement.addEventListener('click', this.buttonClickHandler);
+        }
+    }
+
+    removeEventListeners() {
+        const boardElement = document.getElementById('colorPatternBoard');
+        if (boardElement && this.buttonClickHandler) {
+            boardElement.removeEventListener('click', this.buttonClickHandler);
+        }
     }
 }
 
