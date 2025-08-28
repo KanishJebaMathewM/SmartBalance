@@ -397,8 +397,23 @@ class MemoriesManager {
         });
     }
 
+    getValidDate(dateInput) {
+        if (!dateInput) return null;
+
+        const date = new Date(dateInput);
+
+        // Check if the date is valid
+        if (isNaN(date.getTime())) {
+            return null;
+        }
+
+        return date;
+    }
+
     formatMemoryDate(dateString) {
-        const date = new Date(dateString);
+        const date = this.getValidDate(dateString);
+        if (!date) return 'Unknown date';
+
         const now = new Date();
         const diffTime = Math.abs(now - date);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
