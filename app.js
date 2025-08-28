@@ -858,6 +858,9 @@ class WorkLifeBalanceApp {
             case 'games':
                 this.loadGamesSection();
                 break;
+            case 'memories':
+                this.loadMemoriesSection();
+                break;
             case 'report':
                 this.generateWeeklyReport();
                 break;
