@@ -287,6 +287,7 @@ class GamesManager {
         const names = {
             '8queens': '8 Queens',
             'sudoku': 'Sudoku',
+            'colorpattern': 'Color Pattern',
             '2048': '2048',
             'memory': 'Memory Cards',
             'snake': 'Snake'
