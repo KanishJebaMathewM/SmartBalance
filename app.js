@@ -4311,7 +4311,51 @@ class WorkLifeBalanceApp {
                 // Re-initialize expense checkbox functionality
                 setTimeout(() => this.initializeExpenseCheckbox(), 100);
             }
+
+            // Special handling for food modal (add/edit pantry item)
+            if (modalId === 'foodModal') {
+                const titleEl = document.querySelector('#foodModal h2');
+                const submitBtn = document.querySelector('#foodForm .btn-primary');
+                const form = document.getElementById('foodForm');
+
+                if (!this.editingFoodItemId) {
+                    // Add mode
+                    if (titleEl) titleEl.textContent = 'Add Food Item to Pantry';
+                    if (submitBtn) submitBtn.textContent = 'Add to Pantry';
+                    if (form) form.reset();
+                } else {
+                    // Edit mode will be prepared by editFoodItem()
+                    if (titleEl) titleEl.textContent = 'Edit Food Item';
+                    if (submitBtn) submitBtn.textContent = 'Save Changes';
+                }
+            }
         }
+    }
+
+    editFoodItem(itemId) {
+        const item = (window.storage.getFoodItems() || []).find(i => i.id === itemId);
+        if (!item) {
+            Utils.showNotification('Item not found', 'error');
+            return;
+        }
+        this.editingFoodItemId = itemId;
+        // Prefill form
+        const nameEl = document.getElementById('foodName');
+        const qtyEl = document.getElementById('foodQuantity');
+        const unitEl = document.getElementById('foodUnit');
+        const expEl = document.getElementById('foodExpiry');
+        if (nameEl) nameEl.value = item.name || '';
+        if (qtyEl) qtyEl.value = item.quantity || '';
+        if (unitEl) unitEl.value = item.unit || 'kg';
+        if (expEl) expEl.value = item.expiry || '';
+
+        // Update modal texts
+        const titleEl = document.querySelector('#foodModal h2');
+        const submitBtn = document.querySelector('#foodForm .btn-primary');
+        if (titleEl) titleEl.textContent = 'Edit Food Item';
+        if (submitBtn) submitBtn.textContent = 'Save Changes';
+
+        this.openModal('foodModal');
     }
 
     closeModal(modalId) {
