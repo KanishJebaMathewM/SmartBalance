@@ -12,7 +12,7 @@ class GamesManager {
                 averageTime: 0
             },
             games: {
-                '8queens': { bestTime: null, attempts: 0, completed: 0 },
+                '8queens': { bestScore: 0, attempts: 0, completed: 0 },
                 'sudoku': { completed: 0, bestTime: null },
                 'tango': { bestScore: 0, wordsFound: 0 },
                 '2048': { highScore: 0, bestTile: 0 },
@@ -206,10 +206,14 @@ class GamesManager {
         document.getElementById('averageTime').textContent = this.formatTime(stats.averageTime);
 
         // Update individual game stats
-        document.getElementById('queens-best-time').textContent = 
-            `Best: ${games['8queens'].bestTime ? this.formatTime(games['8queens'].bestTime) : '--'}`;
-        document.getElementById('queens-attempts').textContent = 
-            `Attempts: ${games['8queens'].attempts}`;
+        const queensBestScoreEl = document.getElementById('queens-best-score');
+        if (queensBestScoreEl) {
+            queensBestScoreEl.textContent = `Best Score: ${games['8queens'].bestScore || '--'}`;
+        }
+        const queensAttemptsEl = document.getElementById('queens-attempts');
+        if (queensAttemptsEl) {
+            queensAttemptsEl.textContent = `Attempts: ${games['8queens'].attempts}`;
+        }
 
         document.getElementById('sudoku-completed').textContent = 
             `Completed: ${games.sudoku.completed}`;
