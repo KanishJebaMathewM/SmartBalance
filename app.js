@@ -1400,7 +1400,7 @@ class WorkLifeBalanceApp {
                     <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
                     <div class="expense-actions">
                         <button onclick="app.editExpense(${expense.id})" title="Edit">✏️</button>
-                        <button onclick="app.deleteExpense(${expense.id})" title="Delete">�����️</button>
+                        <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
                     </div>
                 </div>
             `).join('')}
