@@ -2616,16 +2616,23 @@ class WorkLifeBalanceApp {
     }
 
     generateWeeklyReport() {
+        // Get comprehensive data including games
+        const comprehensiveData = this.generateComprehensiveReport();
+
+        // Also get the basic data structure for backward compatibility
         const data = {
-            tasks: window.storage.getTasks(),
-            expenses: window.storage.getExpenses(),
-            workouts: window.storage.getWorkouts(),
-            moods: window.storage.getMoods()
+            tasks: comprehensiveData.tasks,
+            expenses: comprehensiveData.expenses,
+            meals: comprehensiveData.meals,
+            workouts: comprehensiveData.workouts,
+            moods: comprehensiveData.moods,
+            games: comprehensiveData.games
         };
-        
-        this.updateReportStats(data);
-        this.generatePersonalizedAdvice(data);
+
+        this.updateReportStats(comprehensiveData);
+        this.generatePersonalizedAdvice(comprehensiveData);
         this.loadTrendsChart(data);
+        this.updateGamesStats(comprehensiveData.games);
     }
 
     updateReportStats(data) {
@@ -9149,7 +9156,7 @@ class WorkLifeBalanceApp {
         container.innerHTML = metrics.map(metric => {
             const change = metric.current - metric.previous;
             const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
-            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '➡️';
+            const changeIcon = change > 0 ? '���️' : change < 0 ? '↘️' : '➡️';
 
             return `
                 <div class="progress-metric">
