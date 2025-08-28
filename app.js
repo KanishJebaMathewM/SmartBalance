@@ -3263,7 +3263,7 @@ class WorkLifeBalanceApp {
             bills: '📧',
             shopping: '🛍️',
             travel: '✈️',
-            entertainment: '���',
+            entertainment: '🎬',
             healthcare: '🏥',
             education: '📚',
             other: '📦'
@@ -8454,7 +8454,7 @@ class WorkLifeBalanceApp {
         const fitnessStressCorrelation = this.analyzeFitnessStressCorrelation(data.workouts, data.moods);
         if (fitnessStressCorrelation.correlation > 0.3) {
             correlationInsights.push({
-                title: '💪 Fitness Boost',
+                title: '���� Fitness Boost',
                 insight: `Your mood is ${Math.round(fitnessStressCorrelation.correlation * 100)}% better on workout days!`,
                 strength: fitnessStressCorrelation.correlation
             });
