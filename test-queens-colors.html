@@ -95,11 +95,11 @@
                 <div class="game-progress">
                     <div class="progress-stat">
                         <span class="stat-label">Queens placed:</span>
-                        <span id="testQueensPlaced">0</span>/8
+                        <span id="testQueensPlaced">0</span>/5
                     </div>
                     <div class="progress-stat">
                         <span class="stat-label">Unique colors:</span>
-                        <span id="testUniqueColors">0</span>/8
+                        <span id="testUniqueColors">0</span>/5
                     </div>
                     <div class="progress-stat">
                         <span class="stat-label">Conflicts:</span>
@@ -174,7 +174,7 @@
         
         // Initialize test when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            testPuzzle = new EightQueensWithColors();
+            testPuzzle = new FiveQueensWithColors();
             setupTestBoard();
         });
 
