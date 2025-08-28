@@ -590,9 +590,40 @@ class SudokuGame {
 
     selectCell(row, col) {
         if (this.given[row][col]) return;
-        
+
         this.selectedCell = { row, col };
+        this.highlightRelatedCells(row, col);
         this.renderBoard();
+    }
+
+    highlightRelatedCells(row, col) {
+        // Clear previous highlights
+        document.querySelectorAll('.sudoku-cell.related').forEach(cell => {
+            cell.classList.remove('related');
+        });
+
+        // Highlight row, column, and 3x3 box
+        for (let i = 0; i < 9; i++) {
+            // Highlight row
+            const rowCell = document.querySelector(`[data-row="${row}"][data-col="${i}"]`);
+            if (rowCell && i !== col) rowCell.classList.add('related');
+
+            // Highlight column
+            const colCell = document.querySelector(`[data-row="${i}"][data-col="${col}"]`);
+            if (colCell && i !== row) colCell.classList.add('related');
+        }
+
+        // Highlight 3x3 box
+        const boxRow = Math.floor(row / 3) * 3;
+        const boxCol = Math.floor(col / 3) * 3;
+        for (let r = boxRow; r < boxRow + 3; r++) {
+            for (let c = boxCol; c < boxCol + 3; c++) {
+                if (r !== row || c !== col) {
+                    const boxCell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+                    if (boxCell) boxCell.classList.add('related');
+                }
+            }
+        }
     }
 
     enterNumber(num) {
