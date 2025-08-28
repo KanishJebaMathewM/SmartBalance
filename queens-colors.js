@@ -587,12 +587,9 @@ class EightQueensWithColors {
         this.validationResult = null;
         this.renderBoard();
         this.updateGameState();
-        
-        // Hide validation results
-        const resultsElement = document.getElementById('validationResults');
-        if (resultsElement) {
-            resultsElement.style.display = 'none';
-        }
+
+        // Hide hints
+        this.hideHint();
     }
 
     // Removed loadExample and loadTestInput methods to simplify interface
