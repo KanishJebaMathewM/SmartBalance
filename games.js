@@ -723,21 +723,37 @@ class SudokuGame {
         document.querySelectorAll('.sudoku-cell').forEach(cell => {
             cell.classList.remove('error');
         });
-        
+
         for (let row = 0; row < 9; row++) {
             for (let col = 0; col < 9; col++) {
                 if (this.board[row][col] !== 0 && !this.isValidMove(row, col, this.board[row][col])) {
                     const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-                    cell.classList.add('error');
-                    errors++;
+                    if (cell) {
+                        cell.classList.add('error');
+                        errors++;
+                    }
                 }
             }
         }
-        
+
+        // Show results with better feedback
         if (errors === 0) {
-            alert('No errors found!');
+            // Flash all cells green briefly
+            document.querySelectorAll('.sudoku-cell').forEach(cell => {
+                cell.style.background = '#d5f4e6';
+            });
+            setTimeout(() => {
+                this.renderBoard();
+            }, 500);
+            alert('🎉 Perfect! No errors found!');
         } else {
-            alert(`Found ${errors} error(s). Check the highlighted cells.`);
+            alert(`⚠️ Found ${errors} error(s). Check the highlighted red cells.`);
+            // Remove error highlighting after 5 seconds
+            setTimeout(() => {
+                document.querySelectorAll('.sudoku-cell.error').forEach(cell => {
+                    cell.classList.remove('error');
+                });
+            }, 5000);
         }
     }
 
