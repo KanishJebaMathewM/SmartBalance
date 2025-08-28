@@ -2371,6 +2371,15 @@ class WorkLifeBalanceApp {
         }
     }
 
+    // Global method for starting games (called from HTML)
+    startGame(gameType) {
+        if (window.gamesManager) {
+            window.gamesManager.startGame(gameType);
+        } else {
+            console.error('Games manager not initialized');
+        }
+    }
+
     updateFitnessStats() {
         const workouts = window.storage.getWorkouts();
         const streak = window.storage.getWorkoutStreak();
