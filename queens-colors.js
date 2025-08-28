@@ -756,10 +756,10 @@ class EightQueensWithColors {
     }
 }
 
-// Enhanced Games Manager for 8 Queens with Colors
+// Enhanced Games Manager for 5 Queens with Colors
 if (typeof window !== 'undefined') {
     // Override the original EightQueensGame in games.js
-    class EightQueensGameEnhanced extends EightQueensWithColors {
+    class FiveQueensGameEnhanced extends FiveQueensWithColors {
         constructor() {
             super();
             this.gameStartTime = null;
@@ -772,7 +772,7 @@ if (typeof window !== 'undefined') {
             this.elapsedTime = 0;
             this.resetGame();
             this.startTimer();
-            console.log('8 Queens with Colors game started');
+            console.log('5 Queens with Colors game started');
         }
 
         startTimer() {
@@ -844,19 +844,23 @@ if (typeof window !== 'undefined') {
     }
 
     // Global instance for the games system
-    window.EightQueensWithColors = EightQueensWithColors;
-    window.EightQueensGameEnhanced = EightQueensGameEnhanced;
+    window.FiveQueensWithColors = FiveQueensWithColors;
+    window.FiveQueensGameEnhanced = FiveQueensGameEnhanced;
+
+    // Keep backward compatibility
+    window.EightQueensWithColors = FiveQueensWithColors;
+    window.EightQueensGameEnhanced = FiveQueensGameEnhanced;
 
     // Initialize when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
         // Override the original 8queens game in the games manager
         if (window.gamesManager && window.gamesManager.queens) {
-            window.gamesManager.queens = new EightQueensGameEnhanced();
+            window.gamesManager.queens = new FiveQueensGameEnhanced();
         }
     });
 }
 
 // Export for Node.js environments (testing)
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = EightQueensWithColors;
+    module.exports = FiveQueensWithColors;
 }
