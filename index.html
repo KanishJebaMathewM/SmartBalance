@@ -718,7 +718,7 @@
                                     <option value="education">📚 Education</option>
                                     <option value="fitness">💪 Fitness & Sports</option>
                                     <option value="subscriptions">📺 Subscriptions</option>
-                                    <option value="groceries">🛒 Groceries</option>
+                                    <option value="groceries">�� Groceries</option>
                                     <option value="clothing">👕 Clothing</option>
                                     <option value="other">📦 Other</option>
                                 </select>
@@ -737,7 +737,7 @@
                                     <option value="cash">💵 Cash</option>
                                     <option value="card">💳 Card</option>
                                     <option value="upi">📱 UPI</option>
-                                    <option value="bank">🏦 Bank Transfer</option>
+                                    <option value="bank">��� Bank Transfer</option>
                                     <option value="wallet">📱 Digital Wallet</option>
                                 </select>
                             </div>
@@ -830,7 +830,7 @@
                 <div id="recurringModal" class="modal">
                     <div class="modal-content wide-modal">
                         <span class="close">&times;</span>
-                        <h2>🔄 Manage Recurring Expenses</h2>
+                        <h2>��� Manage Recurring Expenses</h2>
 
                         <div class="recurring-tabs">
                             <button class="tab-btn active" data-tab="active-recurring">Active</button>
@@ -2421,6 +2421,48 @@
                         <span class="close">&times;</span>
                         <div class="memory-view-content" id="memoryViewContent">
                             <!-- Memory details will be shown here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slideshow Modal -->
+                <div id="slideshowModal" class="modal slideshow-modal">
+                    <div class="slideshow-container">
+                        <div class="slideshow-header">
+                            <div class="slideshow-title" id="slideshowTitle">Memory Slideshow</div>
+                            <div class="slideshow-controls-top">
+                                <button class="slideshow-btn" id="slideshowPlayPause" title="Play/Pause">⏸️</button>
+                                <button class="slideshow-btn" id="slideshowSpeed" title="Speed: 3s">⏱️</button>
+                                <button class="slideshow-btn" id="slideshowFullscreen" title="Fullscreen">⛶</button>
+                                <button class="slideshow-btn close-slideshow" title="Exit">&times;</button>
+                            </div>
+                        </div>
+
+                        <div class="slideshow-content">
+                            <div class="slideshow-image-container">
+                                <img id="slideshowImage" class="slideshow-image" alt="Memory">
+                                <div class="slideshow-loading" id="slideshowLoading">Loading...</div>
+                            </div>
+
+                            <div class="slideshow-navigation">
+                                <button class="nav-btn prev-btn" id="slideshowPrev" title="Previous">❮</button>
+                                <button class="nav-btn next-btn" id="slideshowNext" title="Next">❯</button>
+                            </div>
+                        </div>
+
+                        <div class="slideshow-footer">
+                            <div class="slideshow-info">
+                                <div class="slideshow-memory-title" id="slideshowMemoryTitle">Memory Title</div>
+                                <div class="slideshow-memory-description" id="slideshowMemoryDescription">Memory description will appear here</div>
+                                <div class="slideshow-memory-date" id="slideshowMemoryDate">Date</div>
+                            </div>
+
+                            <div class="slideshow-progress">
+                                <div class="slideshow-counter" id="slideshowCounter">1 / 10</div>
+                                <div class="slideshow-progress-bar">
+                                    <div class="slideshow-progress-fill" id="slideshowProgressFill"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
