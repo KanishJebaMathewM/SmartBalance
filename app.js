@@ -2361,6 +2361,16 @@ class WorkLifeBalanceApp {
         this.updateBadges();
     }
 
+    loadGamesSection() {
+        // Initialize games manager if not already done
+        if (window.gamesManager) {
+            window.gamesManager.updateGameStatsDisplay();
+            window.gamesManager.loadRecentGames();
+        } else {
+            console.log('Games manager not yet initialized, will load when ready');
+        }
+    }
+
     updateFitnessStats() {
         const workouts = window.storage.getWorkouts();
         const streak = window.storage.getWorkoutStreak();
