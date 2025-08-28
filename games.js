@@ -628,11 +628,29 @@ class SudokuGame {
 
     enterNumber(num) {
         if (!this.selectedCell) return;
-        
+
         const { row, col } = this.selectedCell;
         if (this.given[row][col]) return;
-        
+
+        // Clear error highlights from previous attempt
+        document.querySelectorAll('.sudoku-cell.error').forEach(cell => {
+            cell.classList.remove('error');
+        });
+
         this.board[row][col] = num;
+
+        // Check if this move creates conflicts
+        if (num !== 0 && !this.isValidMove(row, col, num)) {
+            const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            if (cell) {
+                cell.classList.add('error');
+                // Remove error class after animation
+                setTimeout(() => {
+                    cell.classList.remove('error');
+                }, 2000);
+            }
+        }
+
         this.renderBoard();
         this.checkWin();
     }
