@@ -13,9 +13,11 @@ class Storage {
             habits: 'wlb_habits',
             habitCompletions: 'wlb_habit_completions',
             habitSkips: 'wlb_habit_skips',
-            goals: 'wlb_goals'
+            goals: 'wlb_goals',
+            users: 'wlb_users',
+            currentUser: 'wlb_current_user'
         };
-        
+
         this.initializeData();
     }
 
@@ -130,7 +132,8 @@ class Storage {
         }
     }
 
-    set(key, value) {
+    // Raw accessors (no user scoping)
+    setRaw(key, value) {
         try {
             localStorage.setItem(key, JSON.stringify(value));
             return true;
@@ -140,7 +143,7 @@ class Storage {
         }
     }
 
-    get(key) {
+    getRaw(key) {
         try {
             const item = localStorage.getItem(key);
             return item ? JSON.parse(item) : null;
@@ -148,6 +151,73 @@ class Storage {
             console.error('Error reading from localStorage:', error);
             return null;
         }
+    }
+
+    // User scoping helpers
+    isAuthKey(key) {
+        return key === this.keys.users || key === this.keys.currentUser;
+    }
+
+    scopedKey(key) {
+        if (this.isAuthKey(key)) return key;
+        const current = this.getRaw(this.keys.currentUser);
+        const userId = current && current.id ? current.id : 'guest';
+        return `${key}__${userId}`;
+    }
+
+    // Scoped accessors (default for all app data)
+    set(key, value) {
+        try {
+            localStorage.setItem(this.scopedKey(key), JSON.stringify(value));
+            return true;
+        } catch (error) {
+            console.error('Error saving to localStorage:', error);
+            return false;
+        }
+    }
+
+    get(key) {
+        try {
+            const item = localStorage.getItem(this.scopedKey(key));
+            return item ? JSON.parse(item) : null;
+        } catch (error) {
+            console.error('Error reading from localStorage:', error);
+            return null;
+        }
+    }
+
+    // Auth and user management
+    getUsers() {
+        return this.getRaw(this.keys.users) || [];
+    }
+
+    addUser(user) {
+        const users = this.getUsers();
+        user.id = user.id || Date.now().toString();
+        user.createdAt = new Date().toISOString();
+        users.push(user);
+        this.setRaw(this.keys.users, users);
+        return user;
+    }
+
+    findUserByUsername(username) {
+        const users = this.getUsers();
+        return users.find(u => u.username && u.username.toLowerCase() === String(username).toLowerCase());
+    }
+
+    getCurrentUser() {
+        return this.getRaw(this.keys.currentUser);
+    }
+
+    setCurrentUser(user) {
+        this.setRaw(this.keys.currentUser, { id: user.id, username: user.username });
+        // Initialize default scoped data for this user if not present
+        this.initializeData();
+        return true;
+    }
+
+    logout() {
+        this.setRaw(this.keys.currentUser, null);
     }
 
     // Tasks methods
