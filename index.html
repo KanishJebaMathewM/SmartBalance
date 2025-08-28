@@ -21,21 +21,93 @@
 <body>
     <div id="authOverlay" class="auth-overlay hidden">
         <div class="auth-card">
-            <h2>Welcome</h2>
+            <div class="auth-header">
+                <div class="logo-mark">💼</div>
+                <div>
+                    <h2>WLB Companion</h2>
+                    <div class="auth-subtitle">Sign in to access your personal dashboard</div>
+                </div>
+            </div>
             <div class="auth-tabs">
                 <button id="showLoginBtn" class="tab-btn active">Login</button>
                 <button id="showSignupBtn" class="tab-btn">Sign Up</button>
             </div>
+
             <form id="loginForm" class="auth-form">
-                <input type="text" id="loginUsername" placeholder="Username" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
-                <button type="submit" class="btn-primary">Login</button>
+                <div class="input-control">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="loginUsername" placeholder="Username" autocomplete="username" required>
+                </div>
+                <div class="input-control">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required>
+                    <button type="button" class="toggle-visibility" data-target="loginPassword" aria-label="Toggle password">👁️</button>
+                </div>
+                <div class="auth-actions">
+                    <label class="remember"><input type="checkbox" id="rememberMe"> Remember me</label>
+                    <button id="forgotPasswordLink" type="button" class="link-muted">Forgot password?</button>
+                </div>
+                <div id="loginFeedback" class="feedback"></div>
+                <button type="submit" class="auth-submit">Login</button>
             </form>
+
             <form id="signupForm" class="auth-form" style="display:none">
-                <input type="text" id="signupUsername" placeholder="Username" required>
-                <input type="password" id="signupPassword" placeholder="Password" required>
-                <input type="password" id="signupPasswordConfirm" placeholder="Confirm Password" required>
-                <button type="submit" class="btn-primary">Create Account</button>
+                <div class="input-control">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="signupUsername" placeholder="Choose a username" autocomplete="username" required>
+                </div>
+                <div class="input-control">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="signupPassword" placeholder="Create a password" autocomplete="new-password" required>
+                    <button type="button" class="toggle-visibility" data-target="signupPassword" aria-label="Toggle password">👁️</button>
+                </div>
+                <div class="password-strength" id="passwordStrength">
+                    <div class="bar"><div class="fill" id="passwordStrengthBar"></div></div>
+                    <div class="label" id="passwordStrengthText">Weak</div>
+                </div>
+                <div class="input-control">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="signupPasswordConfirm" placeholder="Confirm password" autocomplete="new-password" required>
+                    <button type="button" class="toggle-visibility" data-target="signupPasswordConfirm" aria-label="Toggle password">👁️</button>
+                </div>
+                <div class="input-row">
+                    <div class="input-control" style="flex:1">
+                        <input type="text" id="recoveryQuestion" placeholder="Recovery question (e.g., Favorite dish?)" required>
+                    </div>
+                    <div class="input-control" style="flex:1">
+                        <input type="text" id="recoveryAnswer" placeholder="Recovery answer" required>
+                    </div>
+                </div>
+                <div id="signupFeedback" class="feedback"></div>
+                <button type="submit" class="auth-submit">Create Account</button>
+                <div class="small-note">By creating an account you agree to local storage of your data on this device.</div>
+            </form>
+
+            <form id="forgotForm" class="auth-form" style="display:none">
+                <div class="input-control">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="forgotUsername" placeholder="Your username" required>
+                </div>
+                <div class="helper" id="recoveryQuestionDisplay"></div>
+                <div class="input-control">
+                    <span class="input-icon">❓</span>
+                    <input type="text" id="forgotRecoveryAnswer" placeholder="Answer to recovery question" required>
+                </div>
+                <div class="input-control">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="forgotNewPassword" placeholder="New password" required>
+                    <button type="button" class="toggle-visibility" data-target="forgotNewPassword" aria-label="Toggle password">👁️</button>
+                </div>
+                <div class="input-control">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="forgotNewPasswordConfirm" placeholder="Confirm new password" required>
+                    <button type="button" class="toggle-visibility" data-target="forgotNewPasswordConfirm" aria-label="Toggle password">👁️</button>
+                </div>
+                <div id="forgotFeedback" class="feedback"></div>
+                <div class="input-row">
+                    <button id="backToLoginBtn" type="button" class="btn-secondary" style="flex:1">Back</button>
+                    <button type="submit" class="auth-submit" style="flex:1">Reset Password</button>
+                </div>
             </form>
         </div>
     </div>
