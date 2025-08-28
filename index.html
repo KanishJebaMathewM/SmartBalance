@@ -1499,7 +1499,7 @@
                             <small>Stay within budget for a month</small>
                         </div>
                         <div class="badge locked" data-badge="savingsChampion">
-                            <span>💰</span>
+                            <span>���</span>
                             <p>Savings Champion</p>
                             <small>Save 20% of income</small>
                         </div>
@@ -1642,22 +1642,46 @@
             <!-- Stress & Mood Section -->
             <section id="stress" class="section">
                 <div class="section-header">
-                    <h1>😌 Stress & Mood Tracker</h1>
+                    <h1>🤖 Automated Stress & Mood Tracker</h1>
                     <div class="header-actions">
                         <button class="btn-secondary export-btn" data-section="stress" data-format="csv">📊 Export CSV</button>
                         <button class="btn-secondary export-btn" data-section="stress" data-format="json">📄 Export JSON</button>
-                        <button class="btn-primary" id="moodCheckBtn">Check-in Today</button>
                     </div>
                 </div>
 
-                <div class="mood-checkin">
-                    <h3>How are you feeling today?</h3>
-                    <div class="mood-options">
-                        <button class="mood-btn" data-mood="very-happy">😃</button>
-                        <button class="mood-btn" data-mood="happy">😊</button>
-                        <button class="mood-btn" data-mood="neutral">😐</button>
-                        <button class="mood-btn" data-mood="stressed">😓</button>
-                        <button class="mood-btn" data-mood="very-stressed">😭</button>
+                <div class="mood-automated-info">
+                    <div class="automated-mood-card">
+                        <h3>🧠 AI-Powered Mood Analysis</h3>
+                        <p>Your mood and stress levels are automatically calculated daily at midnight based on your activities:</p>
+                        <div class="mood-factors">
+                            <div class="factor-item">
+                                <span class="factor-icon">✅</span>
+                                <span>Task completion rate</span>
+                            </div>
+                            <div class="factor-item">
+                                <span class="factor-icon">🏋️</span>
+                                <span>Workout frequency</span>
+                            </div>
+                            <div class="factor-item">
+                                <span class="factor-icon">💰</span>
+                                <span>Spending patterns</span>
+                            </div>
+                            <div class="factor-item">
+                                <span class="factor-icon">🍳</span>
+                                <span>Home cooking habits</span>
+                            </div>
+                            <div class="factor-item">
+                                <span class="factor-icon">📅</span>
+                                <span>Day of the week</span>
+                            </div>
+                        </div>
+                        <div class="current-mood-display">
+                            <h4>Today's Calculated Mood:</h4>
+                            <div class="current-mood" id="currentMoodDisplay">
+                                <span class="mood-emoji" id="currentStress">😐</span>
+                                <span class="mood-text" id="currentMoodText">Calculating...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
