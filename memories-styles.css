@@ -40,10 +40,21 @@
 /* Memories Filters */
 .memories-filters {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.search-container {
+    margin-left: auto;
 }
 
 .search-input {
@@ -53,12 +64,19 @@
     font-size: 0.875rem;
     min-width: 250px;
     background: var(--card-bg, #ffffff);
+    transition: all 0.3s ease;
 }
 
 .search-input:focus {
     outline: none;
     border-color: var(--primary-color, #3b82f6);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: scale(1.02);
+}
+
+.search-input::placeholder {
+    color: var(--text-secondary, #6b7280);
+    font-style: italic;
 }
 
 /* Memories Gallery Grid */
@@ -420,26 +438,122 @@
     color: var(--text-secondary, #6b7280);
 }
 
+/* Help Section Styles */
+.help-instructions-section {
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e1e5e9);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.help-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--bg-secondary, #f8fafc);
+    border-radius: 0.5rem;
+}
+
+.help-page {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+}
+
+.help-page.active {
+    display: block;
+}
+
+.help-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.help-page h4 {
+    color: var(--primary-color, #3b82f6);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.help-page ul {
+    text-align: left;
+    max-width: 600px;
+    margin: 0 auto 1.5rem auto;
+    line-height: 1.6;
+}
+
+.help-page li {
+    margin-bottom: 0.5rem;
+}
+
+.contact-info {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-radius: 0.75rem;
+    border: 1px solid #bae6fd;
+}
+
+.contact-details {
+    margin: 1rem 0;
+}
+
+.support-tips {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--card-bg, #ffffff);
+    border-radius: 0.5rem;
+}
+
+.support-tips ul {
+    margin-top: 0.5rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .memories-gallery-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .birthdays-section {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .memories-filters {
         flex-direction: column;
         align-items: stretch;
+        gap: 1rem;
     }
-    
+
+    .filter-buttons {
+        justify-content: center;
+    }
+
+    .search-container {
+        margin-left: 0;
+    }
+
     .search-input {
         min-width: auto;
         width: 100%;
+    }
+
+    .help-instructions-section {
+        padding: 1rem;
+    }
+
+    .help-navigation {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .help-page {
+        padding: 1rem;
     }
     
     .add-birthday-btn {
