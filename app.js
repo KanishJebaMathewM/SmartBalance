@@ -207,7 +207,7 @@ class WorkLifeBalanceApp {
         console.log('✅ Enhanced startExercise method:', typeof this.startExercise === 'function');
         console.log('✅ Enhanced completeExercise method:', typeof this.completeExercise === 'function');
         console.log('✅ Enhanced loadFitnessData method:', typeof this.loadFitnessData === 'function');
-        console.log('✅ Enhanced updateFitnessStats method:', typeof this.updateFitnessStats === 'function');
+        console.log('��� Enhanced updateFitnessStats method:', typeof this.updateFitnessStats === 'function');
 
         // Check if DOM elements exist
         const elements = [
@@ -3639,7 +3639,7 @@ class WorkLifeBalanceApp {
                 <input type="checkbox" class="habit-checkbox" ${habit.completed ? 'checked' : ''} readonly>
                 <div class="habit-info">
                     <h4>${Utils.sanitizeInput(habit.name)}</h4>
-                    <p>${habit.target || 'Complete once'} ��� ${habit.category}</p>
+                    <p>${habit.target || 'Complete once'} • ${habit.category}</p>
                 </div>
                 <div class="habit-streak">
                     <div class="streak-number">${habit.currentStreak || 0}��</div>
@@ -5107,7 +5107,7 @@ class WorkLifeBalanceApp {
 
         localStorage.setItem('meal_plans', JSON.stringify(savedMealPlans));
 
-        Utils.showNotification('����� Meal plan saved!', 'success');
+        Utils.showNotification('������� Meal plan saved!', 'success');
     }
 
     saveMealToStorage(mealType, mealName, calories, cost) {
