@@ -1432,7 +1432,7 @@
                             <small>Complete your first exercise</small>
                         </div>
                         <div class="badge locked" data-badge="sevenDayStreak">
-                            <span>🔥</span>
+                            <span>��</span>
                             <p>7-Day Streak</p>
                             <small>Workout for 7 consecutive days</small>
                         </div>
@@ -1738,18 +1738,18 @@
 
                 <!-- Games Grid -->
                 <div class="games-grid">
-                    <!-- 8 Queens Puzzle -->
+                    <!-- 8 Queens with Colors Puzzle -->
                     <div class="game-card" data-game="8queens">
-                        <div class="game-icon">♛</div>
+                        <div class="game-icon">🌈♛</div>
                         <div class="game-info">
-                            <h3>8 Queens Puzzle</h3>
-                            <p>Place 8 queens on a chessboard so none attack each other</p>
+                            <h3>8 Queens with Colors</h3>
+                            <p>Place 8 queens on colored squares with special diagonal rules and color constraints</p>
                             <div class="game-meta">
-                                <span class="difficulty">🟡 Medium</span>
-                                <span class="play-time">⏱️ 5-15 min</span>
+                                <span class="difficulty">🔴 Hard</span>
+                                <span class="play-time">⏱️ 10-30 min</span>
                             </div>
                             <div class="game-stats">
-                                <span id="queens-best-time">Best: --</span>
+                                <span id="queens-best-score">Best Score: --</span>
                                 <span id="queens-attempts">Attempts: 0</span>
                             </div>
                         </div>
@@ -1849,7 +1849,7 @@
 
                 <!-- Help Instructions Section -->
                 <div class="help-instructions-section">
-                    <h3>��� How to Use This App</h3>
+                    <h3>����� How to Use This App</h3>
 
                     <div class="help-navigation">
                         <button class="btn-secondary" id="prevHelpBtn" onclick="app.showPreviousHelp()">⬅️ Previous</button>
@@ -2016,31 +2016,68 @@
 
                 <!-- Game Modals -->
 
-                <!-- 8 Queens Game Modal -->
+                <!-- 8 Queens with Colors Game Modal -->
                 <div id="queensGameModal" class="modal game-modal">
                     <div class="modal-content game-modal-content">
                         <span class="close">&times;</span>
                         <div class="game-header">
-                            <h2>♛ 8 Queens Puzzle</h2>
+                            <h2>🌈♛ 8 Queens with Colors</h2>
                             <div class="game-controls">
-                                <span id="queensTimer">00:00</span>
-                                <button class="btn-secondary" id="queensHintBtn">💡 Hint</button>
+                                <span id="queensScore">Score: 100</span>
+                                <span id="queensStatus" class="status-badge status-ready">Ready</span>
+                                <button class="btn-secondary" id="queensValidateBtn">🔍 Validate</button>
                                 <button class="btn-secondary" id="queensResetBtn">🔄 Reset</button>
-                                <button class="btn-secondary" id="queensSolveBtn">🤖 Auto Solve</button>
+                                <button class="btn-secondary" id="queensExampleBtn">📋 Load Example</button>
                             </div>
                         </div>
                         <div class="game-area">
-                            <div id="queensBoard" class="queens-board">
-                                <!-- 8x8 chessboard will be generated here -->
+                            <div class="board-container">
+                                <div id="queensBoard" class="queens-colored-board">
+                                    <!-- 8x8 colored chessboard will be generated here -->
+                                </div>
+                                <div class="board-legend">
+                                    <h4>Color Legend</h4>
+                                    <div id="colorLegend" class="color-legend-grid">
+                                        <!-- Color legend will be generated here -->
+                                    </div>
+                                </div>
                             </div>
                             <div class="game-sidebar">
                                 <div class="game-info">
-                                    <p><strong>Goal:</strong> Place 8 queens on the board so that no two queens can attack each other.</p>
-                                    <p><strong>Rules:</strong> Queens can move horizontally, vertically, and diagonally.</p>
+                                    <h4>🎯 Rules</h4>
+                                    <ul>
+                                        <li>Place 8 queens on different colored squares</li>
+                                        <li>No two queens on same row/column</li>
+                                        <li>Each queen must be on a unique color</li>
+                                        <li>No adjacent diagonal attacks (distance = 1)</li>
+                                        <li>Far diagonal attacks (distance ≥ 2) are allowed</li>
+                                    </ul>
                                 </div>
                                 <div class="game-progress">
-                                    <p>Queens placed: <span id="queensPlaced">0</span>/8</p>
-                                    <p>Conflicts: <span id="queensConflicts">0</span></p>
+                                    <div class="progress-stat">
+                                        <span class="stat-label">Queens placed:</span>
+                                        <span id="queensPlaced">0</span>/8
+                                    </div>
+                                    <div class="progress-stat">
+                                        <span class="stat-label">Unique colors:</span>
+                                        <span id="uniqueColors">0</span>/8
+                                    </div>
+                                    <div class="progress-stat">
+                                        <span class="stat-label">Conflicts:</span>
+                                        <span id="queensConflicts">0</span>
+                                    </div>
+                                    <div class="progress-stat">
+                                        <span class="stat-label">Score:</span>
+                                        <span id="currentScore">100</span>
+                                    </div>
+                                </div>
+                                <div class="validation-results" id="validationResults">
+                                    <!-- Validation results will appear here -->
+                                </div>
+                                <div class="input-section">
+                                    <h4>🔧 Test Input</h4>
+                                    <textarea id="testInput" placeholder="Paste JSON input to test..." rows="8"></textarea>
+                                    <button class="btn-primary" id="loadInputBtn">Load & Validate</button>
                                 </div>
                             </div>
                         </div>
