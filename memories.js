@@ -390,7 +390,7 @@ class MemoriesManager {
         }
 
         // Sort by date (newest first) with robust date handling
-        return memories.sort((a, b) => {
+        const sortedMemories = memories.sort((a, b) => {
             // Get dates and handle fallbacks
             const dateA = this.getValidDate(a.date) || this.getValidDate(a.createdAt) || new Date(0);
             const dateB = this.getValidDate(b.date) || this.getValidDate(b.createdAt) || new Date(0);
@@ -398,6 +398,17 @@ class MemoriesManager {
             // Sort newest first (b - a for descending order)
             return dateB.getTime() - dateA.getTime();
         });
+
+        // Debug logging to verify sorting
+        if (sortedMemories.length > 1) {
+            console.log('📸 Memories sorted by date (newest first):');
+            sortedMemories.slice(0, 3).forEach((memory, index) => {
+                const displayDate = this.getValidDate(memory.date) || this.getValidDate(memory.createdAt);
+                console.log(`${index + 1}. "${memory.title}" - ${displayDate ? displayDate.toLocaleDateString() : 'No valid date'}`);
+            });
+        }
+
+        return sortedMemories;
     }
 
     getValidDate(dateInput) {
