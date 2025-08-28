@@ -482,6 +482,26 @@ class WorkLifeBalanceApp {
         }
     }
 
+    // Simple fallback updaters to keep dashboard minimal and error-free
+    updateDashboardInsights() {
+        // Reuse the clean insights renderer
+        this.updateCleanInsights();
+    }
+
+    updateProgressRings() {
+        // Reuse the simple progress renderer
+        this.updateSimpleProgress();
+    }
+
+    updateQuickActions() {
+        // Hide or clear quick actions if present (keeps layout simple)
+        const el = document.getElementById('quickActions');
+        if (el) {
+            el.innerHTML = '';
+            el.style.display = 'none';
+        }
+    }
+
     createDailyGoals() {
         const dashboard = document.getElementById('dashboard');
         if (!dashboard) return;
