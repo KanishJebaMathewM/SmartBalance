@@ -174,12 +174,16 @@ class WorkLifeBalanceApp {
         // Initialize automated mood tracking
         this.initializeAutomatedMoodTracking();
 
-        // Update dashboard every minute with enhanced features
-        setInterval(() => {
+        // Update dashboard every minute with enhanced features (debounced)
+        this.debouncedDashboardUpdate = Utils.debounce(() => {
             if (this.currentSection === 'dashboard') {
                 this.updateDashboard();
                 this.updateLiveMetrics();
             }
+        }, 500);
+
+        setInterval(() => {
+            this.debouncedDashboardUpdate();
         }, 60000);
 
         // Update live metrics every 30 seconds
@@ -188,6 +192,9 @@ class WorkLifeBalanceApp {
                 this.updateLiveMetrics();
             }
         }, 30000);
+
+        // Performance optimization: Only update visible sections
+        this.setupVisibilityOptimizations();
 
             // Override old methods with enhanced versions
         this.overrideMethodsWithEnhancedVersions();
@@ -7183,7 +7190,7 @@ class WorkLifeBalanceApp {
         if (avgHomeCost > 0 && avgHotelCost > 0) {
             const savings = avgHotelCost - avgHomeCost;
             insights.push({
-                icon: '💰',
+                icon: '��',
                 title: 'Cost Comparison',
                 description: `On average, home cooking saves you ${Utils.formatCurrency(savings)} per meal compared to ordering out.`
             });
@@ -9194,7 +9201,7 @@ class WorkLifeBalanceApp {
             return workoutDate >= thirtyDaysAgo;
         });
 
-        const workoutsPerWeek = (last30DaysWorkouts.length / 4.3); // 30 days ≈ 4.3 weeks
+        const workoutsPerWeek = (last30DaysWorkouts.length / 4.3); // 30 days �� 4.3 weeks
         const fitnessScore = Math.min(workoutsPerWeek * 20, 100); // 5 workouts/week = 100%
 
         return {
@@ -10530,7 +10537,7 @@ class WorkLifeBalanceApp {
                 <button class="period-btn" data-period="month" onclick="app.generateReport('month')">1 Month</button>
             </div>
             <div class="export-options">
-                <button class="btn-secondary export-btn" data-section="report" data-format="csv" onclick="app.exportSectionData('report', 'csv')">📊 Export CSV</button>
+                <button class="btn-secondary export-btn" data-section="report" data-format="csv" onclick="app.exportSectionData('report', 'csv')">��� Export CSV</button>
                 <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">📄 Export JSON</button>
             </div>
         `;
