@@ -285,6 +285,28 @@
   50% { box-shadow: 0 0 16px rgba(180, 120, 0, 0.8); }
 }
 
+@keyframes pulse-hint-suggestion {
+  0%, 100% {
+    box-shadow: 0 0 16px rgba(0, 255, 255, 0.7);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(0, 255, 255, 1);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulse-hint-mistake {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 32px rgba(255, 69, 0, 1);
+    transform: scale(1.08);
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .queens-colored-board {
