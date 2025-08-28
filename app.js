@@ -568,7 +568,6 @@ class WorkLifeBalanceApp {
             'addExpenseBtn': 'expenseModal',
             'addFoodBtn': 'foodModal',
             'addMealBtn': 'mealModal',
-            'moodCheckBtn': 'moodModal',
             'breathingBtn': 'breathingModal',
             'setIncomeBtn': 'incomeModal',
             'viewMealCalendarBtn': () => this.viewMealCalendar()
@@ -719,13 +718,7 @@ class WorkLifeBalanceApp {
             }
         });
 
-        // Mood buttons
-        document.querySelectorAll('.mood-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mood = btn.dataset.mood;
-                this.selectMood(mood);
-            });
-        });
+        // Note: Mood tracking is now automated - no manual buttons needed
 
         // Budget and savings goal buttons
         const setBudgetBtn = document.getElementById('setBudgetBtn');
@@ -2779,22 +2772,7 @@ class WorkLifeBalanceApp {
         }
     }
 
-    selectMood(mood) {
-        // Update UI
-        document.querySelectorAll('.mood-btn').forEach(btn => {
-            btn.classList.remove('selected');
-        });
-        document.querySelector(`[data-mood="${mood}"]`).classList.add('selected');
-        
-        // Save mood
-        window.storage.addMood({ mood });
-        Utils.showNotification('Mood recorded! 😊', 'success');
-        
-        if (this.currentSection === 'stress') {
-            this.loadStressData();
-        }
-        this.updateDashboard();
-    }
+    // Note: selectMood method removed - mood tracking is now automated
 
     startMeditation() {
         Utils.showNotification('🧘 Take 5 minutes to meditate. Find a quiet space and focus on your breathing.', 'info', 5000);
@@ -7130,7 +7108,7 @@ class WorkLifeBalanceApp {
                             if (meal) {
                                 return `<span class="meal-dot ${meal.status === 'eaten' ? 'eaten' : 'planned'}" title="${meal.name}">•</span>`;
                             }
-                            return `<span class="meal-dot empty">•</span>`;
+                            return `<span class="meal-dot empty">���</span>`;
                         }).join('')}
                     </div>
                 </div>`;
@@ -11166,7 +11144,7 @@ class WorkLifeBalanceApp {
             'travel': '�������️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
-            'education': '���� Education',
+            'education': '����� Education',
             'fitness': '💪 Fitness & Sports',
             'subscriptions': '📺 Subscriptions',
             'groceries': '🛒 Groceries',
