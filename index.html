@@ -708,7 +708,7 @@
                                     <option value="bills">📧 Bills & Utilities</option>
                                     <option value="shopping">🛍�� Shopping</option>
                                     <option value="travel">✈️ Travel & Transport</option>
-                                    <option value="entertainment">🎬 Entertainment</option>
+                                    <option value="entertainment">���� Entertainment</option>
                                     <option value="healthcare">🏥 Healthcare</option>
                                     <option value="education">📚 Education</option>
                                     <option value="fitness">💪 Fitness & Sports</option>
@@ -2122,6 +2122,34 @@
                     </div>
                 </div>
 
+                <!-- Color Pattern Game Modal -->
+                <div id="colorPatternGameModal" class="modal game-modal">
+                    <div class="modal-content game-modal-content">
+                        <span class="close">&times;</span>
+                        <div class="game-header">
+                            <h2>🌈 Color Pattern</h2>
+                            <div class="game-controls">
+                                <span id="colorPatternLevel">Level: 1</span>
+                                <span id="colorPatternScore">Score: 0</span>
+                                <button class="btn-secondary" id="colorPatternStartBtn">🎲 New Game</button>
+                            </div>
+                        </div>
+                        <div class="game-area">
+                            <div class="color-pattern-game">
+                                <div class="game-status">
+                                    <h3 id="colorPatternStatus">Press Start to play</h3>
+                                </div>
+                                <div id="colorPatternBoard" class="color-pattern-board">
+                                    <!-- Color buttons will be generated here -->
+                                </div>
+                                <div class="game-instructions">
+                                    <p><strong>How to play:</strong> Watch the sequence of colors, then click them in the same order!</p>
+                                    <p>Each level adds one more color to remember. How far can you get?</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- 2048 Game Modal -->
                 <div id="2048GameModal" class="modal game-modal">
