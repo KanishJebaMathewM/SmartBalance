@@ -1828,6 +1828,130 @@ class WorkLifeBalanceApp {
         }
     }
 
+    // Enhanced methods that might be missing
+    startExercise(exerciseType) {
+        console.log(`Starting exercise: ${exerciseType}`);
+        const exerciseData = Utils.getExerciseInstructions(exerciseType);
+
+        if (!exerciseData) {
+            Utils.showNotification('Exercise type not found', 'error');
+            return;
+        }
+
+        // Create or show exercise modal
+        this.showExerciseModal(exerciseData);
+
+        // Track the workout start
+        this.currentExercise = {
+            type: exerciseType,
+            startTime: new Date(),
+            data: exerciseData
+        };
+    }
+
+    showExerciseModal(exerciseData) {
+        // Create a simple exercise modal if it doesn't exist
+        let modal = document.getElementById('exerciseModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'exerciseModal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <div id="exerciseContent"></div>
+                    <div class="exercise-actions">
+                        <button id="completeExerciseBtn" class="btn-primary">Complete Exercise</button>
+                        <button id="skipExerciseBtn" class="btn-secondary">Skip</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Add event listeners
+            modal.querySelector('.close').addEventListener('click', () => {
+                this.closeModal('exerciseModal');
+            });
+
+            modal.querySelector('#completeExerciseBtn').addEventListener('click', () => {
+                this.completeExercise();
+            });
+
+            modal.querySelector('#skipExerciseBtn').addEventListener('click', () => {
+                this.closeModal('exerciseModal');
+            });
+        }
+
+        // Update exercise content
+        const content = modal.querySelector('#exerciseContent');
+        content.innerHTML = `
+            <h2>${exerciseData.title}</h2>
+            <div class="exercise-info">
+                <span><strong>Duration:</strong> ${exerciseData.duration}</span>
+                <span><strong>Calories:</strong> ${exerciseData.calories} kcal</span>
+            </div>
+            <div class="exercise-instructions">
+                <h4>Instructions:</h4>
+                <ol>
+                    ${exerciseData.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+                </ol>
+            </div>
+        `;
+
+        this.openModal('exerciseModal');
+    }
+
+    completeExercise() {
+        if (!this.currentExercise) {
+            Utils.showNotification('No active exercise found', 'error');
+            return;
+        }
+
+        const endTime = new Date();
+        const duration = Math.floor((endTime - this.currentExercise.startTime) / 1000 / 60);
+
+        // Save workout to storage
+        const workout = {
+            type: this.currentExercise.type,
+            duration: duration,
+            calories: this.currentExercise.data.calories,
+            createdAt: this.currentExercise.startTime.toISOString(),
+            completedAt: endTime.toISOString()
+        };
+
+        window.storage.addWorkout(workout);
+
+        Utils.showNotification(`Great job! You completed ${this.currentExercise.data.title}`, 'success');
+
+        // Update dashboard
+        this.updateDashboard();
+
+        // Close modal
+        this.closeModal('exerciseModal');
+
+        // Clear current exercise
+        this.currentExercise = null;
+
+        // Check for badges
+        Utils.checkBadgeEligibility({ workouts: window.storage.getWorkouts() });
+    }
+
+    openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
     // Enhanced expense loading
     loadExpenseSection() {
         this.loadExpenseTabs();
@@ -4284,7 +4408,7 @@ class WorkLifeBalanceApp {
                 <div class="suggestion-header">💡 Common amounts for ${this.getCategoryDisplayName(selectedCategory)}:</div>
                 <div class="suggestion-buttons">
                     ${suggestions.slice(0, 4).map(amount =>
-                        `<button type="button" onclick="app.applyAmountSuggestion(${amount})" class="btn-suggestion">₹${amount}</button>`
+                        `<button type="button" onclick="app.applyAmountSuggestion(${amount})" class="btn-suggestion">��${amount}</button>`
                     ).join('')}
                 </div>
             `;
@@ -10648,7 +10772,7 @@ class WorkLifeBalanceApp {
             <div class="breakdown-list">
                 ${tasks.map(task => `
                     <div class="breakdown-item ${task.completed ? 'completed' : 'pending'}">
-                        <span class="item-status">${task.completed ? '���' : '⏳'}</span>
+                        <span class="item-status">${task.completed ? '✅' : '⏳'}</span>
                         <span class="item-title">${task.title}</span>
                         <span class="item-category">${task.category}</span>
                         <span class="item-date">${Utils.formatDate(task.createdAt)}</span>
