@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="queens-colors-styles.css">
     <link rel="stylesheet" href="automated-mood-styles.css">
     <link rel="stylesheet" href="memories-styles.css">
+    <link rel="stylesheet" href="dashboard-enhanced.css">
 </head>
 <body>
     <div class="app-container">
@@ -2617,5 +2618,27 @@
     <script src="games.js"></script>
     <script src="queens-colors.js"></script>
     <script src="memories.js"></script>
+
+    <!-- Session Info -->
+    <div class="session-info">
+        <div>Session: <span id="sessionDuration" class="live-time">0 min</span></div>
+    </div>
+
+    <script>
+        // Initialize enhanced dashboard features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial last updated timestamp
+            const lastUpdatedEl = document.getElementById('lastUpdated');
+            if (lastUpdatedEl) {
+                lastUpdatedEl.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+            }
+
+            // Add animation delays to widgets
+            const widgets = document.querySelectorAll('.animate-slide-in');
+            widgets.forEach((widget, index) => {
+                widget.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
 </body>
 </html>
