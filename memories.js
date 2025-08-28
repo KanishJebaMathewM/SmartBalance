@@ -725,8 +725,13 @@ class MemoriesManager {
     // Data Loading and Stats
     loadMemoriesData() {
         this.updateMemoriesStats();
+        // Always render memories when data is loaded to ensure proper sorting
         if (this.currentTab === 'memories-gallery') {
             this.renderMemories();
+        }
+        // Also refresh slideshow memories if slideshow is active
+        if (this.slideshow.isActive) {
+            this.slideshow.memories = this.getFilteredMemories();
         }
     }
 
