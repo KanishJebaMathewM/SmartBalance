@@ -771,7 +771,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ` �� ���� Expense: ${Utils.formatCurrency(task.amount)}` : ''}
+                        ${task.expenseRelated ? ` ��� ���� Expense: ${Utils.formatCurrency(task.amount)}` : ''}
                         ${task.completed && task.expenseRelated ? ' • ✅ Added to expenses' : ''}
                     </div>
                 </div>
@@ -3457,7 +3457,7 @@ class WorkLifeBalanceApp {
             'healthcare': '🏥',
             'education': '📚',
             'fitness': '💪',
-            'subscriptions': '📺',
+            'subscriptions': '����',
             'groceries': '🛒',
             'clothing': '👕',
             'other': '📦'
@@ -3843,7 +3843,7 @@ class WorkLifeBalanceApp {
         const newStreak = this.calculateIndividualHabitStreak(habit);
         window.storage.updateHabit(habitId, { currentStreak: newStreak });
 
-        Utils.showNotification(`���� Habit completed! Streak: ${newStreak} days`, 'success');
+        Utils.showNotification(`🎉 Habit completed! Streak: ${newStreak} days`, 'success');
 
         // Check for badges
         this.checkHabitBadges(habit, newStreak);
@@ -4526,7 +4526,7 @@ class WorkLifeBalanceApp {
             'education': '📚',
             'fitness': '💪',
             'subscriptions': '📺',
-            'groceries': '����',
+            'groceries': '�����',
             'clothing': '👕',
             'healthcare': '��',
             'reminder': '⏰',
@@ -10567,7 +10567,7 @@ class WorkLifeBalanceApp {
             'travel': '✈️',
             'entertainment': '🎬',
             'healthcare': '🏥',
-            'education': '📚',
+            'education': '��',
             'fitness': '💪',
             'subscriptions': '📺',
             'groceries': '🛒',
