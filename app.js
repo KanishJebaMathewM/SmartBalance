@@ -5230,7 +5230,7 @@ class WorkLifeBalanceApp {
             '💪 Working out significantly improves your mood!' :
             correlation < -0.3 ?
             '😰 High workout intensity might be causing stress' :
-            '📊 Moderate correlation - keep tracking for better insights';
+            '�� Moderate correlation - keep tracking for better insights';
 
         this.updateCorrelationDisplay('fitnessStressCorrelation', percentage, insight);
     }
@@ -5832,7 +5832,7 @@ class WorkLifeBalanceApp {
             'groceries': '🛒',
             'clothing': '👕',
             'healthcare': '🏥',
-            'reminder': '⏰',
+            'reminder': '���',
             'other': '📦'
         };
         return icons[category] || '📦';
@@ -8237,7 +8237,9 @@ class WorkLifeBalanceApp {
     }
 
     addMealForDate(date) {
-        this.currentPlanDate = new Date(date);
+        const adjusted = new Date(date);
+        adjusted.setDate(adjusted.getDate() + 1);
+        this.currentPlanDate = adjusted;
         this.closeModal('mealCalendarModal');
         this.addCustomMeal();
     }
