@@ -356,6 +356,105 @@
 }
 
 
+/* Color Pattern Game Styles */
+.color-pattern-game {
+    text-align: center;
+    padding: 1rem;
+}
+
+.game-status h3 {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    color: #333;
+    min-height: 1.5rem;
+}
+
+.color-pattern-board {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 300px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.color-button {
+    width: 120px;
+    height: 120px;
+    border: 3px solid #333;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    transition: all 0.3s ease;
+    user-select: none;
+    position: relative;
+}
+
+.color-button:hover {
+    transform: scale(1.05);
+    border-width: 4px;
+}
+
+.color-button.active {
+    transform: scale(1.15);
+    border-color: #fff;
+    border-width: 5px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+}
+
+.color-name {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game-instructions {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.game-instructions p {
+    margin: 0.5rem 0;
+}
+
+/* Color Pattern Game Responsive */
+@media (max-width: 768px) {
+    .color-pattern-board {
+        max-width: 250px;
+        gap: 0.75rem;
+    }
+
+    .color-button {
+        width: 100px;
+        height: 100px;
+        font-size: 0.85rem;
+    }
+
+    .color-name {
+        font-size: 0.8rem;
+    }
+}
+
+/* Dark Mode Support for Color Pattern */
+body.dark-mode .game-status h3 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .game-instructions {
+    background: #2d3748;
+    color: #e2e8f0;
+}
+
 /* 2048 Game Styles */
 .game-2048-board {
     display: grid;
