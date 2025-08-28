@@ -195,9 +195,25 @@ class Storage {
         const users = this.getUsers();
         user.id = user.id || Date.now().toString();
         user.createdAt = new Date().toISOString();
-        users.push(user);
+        users.push({
+            id: user.id,
+            username: user.username,
+            passwordHash: user.passwordHash,
+            recoveryQuestion: user.recoveryQuestion || 'Recovery question',
+            recoveryAnswerHash: user.recoveryAnswerHash || '',
+            createdAt: user.createdAt
+        });
         this.setRaw(this.keys.users, users);
         return user;
+    }
+
+    updateUser(id, updates) {
+        const users = this.getUsers();
+        const idx = users.findIndex(u => u.id === id);
+        if (idx === -1) return null;
+        users[idx] = { ...users[idx], ...updates };
+        this.setRaw(this.keys.users, users);
+        return users[idx];
     }
 
     findUserByUsername(username) {
