@@ -210,6 +210,131 @@ class WorkLifeBalanceApp {
         this.ensureGlobalAccess();
     }
 
+    // Authentication
+    initializeAuth() {
+        try {
+            this.bindAuthHandlers();
+        } catch (_) {}
+        const user = window.storage.getCurrentUser();
+        const appContainer = document.querySelector('.app-container');
+        const overlay = document.getElementById('authOverlay');
+        if (!user) {
+            if (appContainer) appContainer.style.display = 'none';
+            if (overlay) overlay.classList.remove('hidden');
+            return false;
+        }
+        if (overlay) overlay.classList.add('hidden');
+        if (appContainer) appContainer.style.display = '';
+        const display = document.getElementById('currentUserDisplay');
+        if (display && user.username) display.textContent = `Signed in as @${user.username}`;
+        return true;
+    }
+
+    async hashPassword(text) {
+        const enc = new TextEncoder().encode(text);
+        if (window.crypto && window.crypto.subtle) {
+            const buf = await window.crypto.subtle.digest('SHA-256', enc);
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        // Fallback simple hash
+        let h = 0;
+        for (let i = 0; i < text.length; i++) h = (h << 5) - h + text.charCodeAt(i), h |= 0;
+        return String(h);
+    }
+
+    bindAuthHandlers() {
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const showLoginBtn = document.getElementById('showLoginBtn');
+        const showSignupBtn = document.getElementById('showSignupBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        if (showLoginBtn && showSignupBtn && loginForm && signupForm) {
+            showLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showLoginBtn.classList.add('active');
+                showSignupBtn.classList.remove('active');
+                loginForm.style.display = 'flex';
+                signupForm.style.display = 'none';
+            });
+            showSignupBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSignupBtn.classList.add('active');
+                showLoginBtn.classList.remove('active');
+                signupForm.style.display = 'flex';
+                loginForm.style.display = 'none';
+            });
+        }
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = (document.getElementById('loginUsername') || {}).value;
+                const password = (document.getElementById('loginPassword') || {}).value;
+                if (!username || !password) return;
+                const user = window.storage.findUserByUsername(username);
+                if (!user) { Utils.showNotification('User not found', 'error'); return; }
+                const hash = await this.hashPassword(password);
+                if (user.passwordHash !== hash) { Utils.showNotification('Invalid credentials', 'error'); return; }
+                window.storage.setCurrentUser(user);
+                this.onLoginSuccess(user);
+            });
+        }
+
+        if (signupForm) {
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = (document.getElementById('signupUsername') || {}).value;
+                const password = (document.getElementById('signupPassword') || {}).value;
+                const confirm = (document.getElementById('signupPasswordConfirm') || {}).value;
+                if (!username || !password) return;
+                if (password !== confirm) { Utils.showNotification('Passwords do not match', 'error'); return; }
+                if (window.storage.findUserByUsername(username)) { Utils.showNotification('Username already taken', 'error'); return; }
+                const hash = await this.hashPassword(password);
+                const user = window.storage.addUser({ username, passwordHash: hash });
+                window.storage.setCurrentUser(user);
+                // Set default display name for this user
+                window.storage.updateSettings({ userName: username });
+                this.onLoginSuccess(user);
+            });
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.storage.logout();
+                const appContainer = document.querySelector('.app-container');
+                const overlay = document.getElementById('authOverlay');
+                if (appContainer) appContainer.style.display = 'none';
+                if (overlay) overlay.classList.remove('hidden');
+                const display = document.getElementById('currentUserDisplay');
+                if (display) display.textContent = 'Not signed in';
+            });
+        }
+    }
+
+    onLoginSuccess(user) {
+        const overlay = document.getElementById('authOverlay');
+        const appContainer = document.querySelector('.app-container');
+        if (overlay) overlay.classList.add('hidden');
+        if (appContainer) appContainer.style.display = '';
+        const display = document.getElementById('currentUserDisplay');
+        if (display && user.username) display.textContent = `Signed in as @${user.username}`;
+        // Resume app initialization pieces
+        try {
+            this.loadSettings();
+            this.showSection('dashboard');
+            this.updateDashboard();
+            this.setGreeting();
+            this.initializeAutomatedMoodTracking();
+            this.setupVisibilityOptimizations();
+            this.overrideMethodsWithEnhancedVersions();
+            this.sessionStart = new Date();
+            this.verifyFitnessFunctionality();
+            this.ensureGlobalAccess();
+        } catch (_) {}
+    }
+
     overrideMethodsWithEnhancedVersions() {
         // Override methods that might need enhancement
         // For now, we'll use the existing methods
@@ -10575,7 +10700,7 @@ class WorkLifeBalanceApp {
         container.innerHTML = metrics.map(metric => {
             const change = metric.current - metric.previous;
             const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
-            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘��' : '➡️';
+            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '➡️';
 
             return `
                 <div class="progress-metric">
@@ -12227,7 +12352,7 @@ class WorkLifeBalanceApp {
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '📚 Education',
-            'fitness': '�� Fitness & Sports',
+            'fitness': '💪 Fitness & Sports',
             'subscriptions': '📺 Subscriptions',
             'groceries': '🛒 Groceries',
             'clothing': '👕 Clothing',
