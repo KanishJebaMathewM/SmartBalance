@@ -1250,17 +1250,22 @@ class WorkLifeBalanceApp {
     }
 
     updateDashboard() {
-        this.updateTasksWidget();
-        this.updateExpensesWidget();
-        this.updateMealWidget();
-        this.updateWorkoutWidget();
-        this.updateStressWidget();
-        this.updateSummaryWidget();
-        this.updateQuickActions();
-        this.updateDashboardInsights();
-        this.updateProgressRings();
-        this.updateStreakWidgets();
-        this.checkDailyGoals();
+        try {
+            this.updateTasksWidget();
+            this.updateExpensesWidget();
+            this.updateMealWidget();
+            this.updateWorkoutWidget();
+            this.updateStressWidget();
+            this.updateSummaryWidget();
+            this.updateQuickActions();
+            this.updateDashboardInsights();
+            this.updateProgressRings();
+            this.updateStreakWidgets();
+            this.checkDailyGoals();
+        } catch (error) {
+            console.error('Error updating dashboard:', error);
+            Utils.showNotification('Dashboard update failed', 'error');
+        }
     }
 
     updateTasksWidget() {
@@ -4408,7 +4413,7 @@ class WorkLifeBalanceApp {
                 <div class="suggestion-header">💡 Common amounts for ${this.getCategoryDisplayName(selectedCategory)}:</div>
                 <div class="suggestion-buttons">
                     ${suggestions.slice(0, 4).map(amount =>
-                        `<button type="button" onclick="app.applyAmountSuggestion(${amount})" class="btn-suggestion">��${amount}</button>`
+                        `<button type="button" onclick="app.applyAmountSuggestion(${amount})" class="btn-suggestion">₹${amount}</button>`
                     ).join('')}
                 </div>
             `;
