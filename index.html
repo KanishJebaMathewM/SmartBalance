@@ -729,7 +729,7 @@
                                 <select id="expensePaymentMethod">
                                     <option value="cash">💵 Cash</option>
                                     <option value="card">💳 Card</option>
-                                    <option value="upi">📱 UPI</option>
+                                    <option value="upi">���� UPI</option>
                                     <option value="bank">🏦 Bank Transfer</option>
                                     <option value="wallet">📱 Digital Wallet</option>
                                 </select>
@@ -1409,7 +1409,7 @@
                             <button class="btn-secondary">Start Exercise</button>
                         </div>
                         <div class="exercise-card" data-exercise="ankle-pumps">
-                            <h4>🦶 Ankle Pumps</h4>
+                            <h4>��� Ankle Pumps</h4>
                             <p>Combat sitting all day</p>
                             <button class="btn-secondary">Start Exercise</button>
                         </div>
@@ -1713,14 +1713,24 @@
                 </div>
 
                 <!-- Life Balance Overview -->
-                <div class="life-balance-overview">
-                    <div class="balance-score-container">
-                        <div class="balance-score-circle">
-                            <div class="balance-score-value" id="lifeBalanceScore">0</div>
-                            <div class="balance-score-label">Life Balance Score</div>
+                <!-- Game Statistics Overview -->
+                <div class="game-stats-overview">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span id="totalGamesPlayed">0</span>
+                            <label>Games Played</label>
                         </div>
-                        <div class="balance-breakdown" id="balanceBreakdown">
-                            <!-- Balance breakdown will be shown here -->
+                        <div class="stat-card">
+                            <span id="gameStreak">0</span>
+                            <label>Daily Streak</label>
+                        </div>
+                        <div class="stat-card">
+                            <span id="totalScore">0</span>
+                            <label>Total Score</label>
+                        </div>
+                        <div class="stat-card">
+                            <span id="averageTime">0:00</span>
+                            <label>Avg Time</label>
                         </div>
                     </div>
                 </div>
