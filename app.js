@@ -644,6 +644,7 @@ class WorkLifeBalanceApp {
     // Calculate today's mood if not already calculated
     calculateTodaysMoodIfNeeded() {
         const moods = window.storage.getMoods();
+        if (!this.hasUserActivity()) return;
         const today = new Date().toISOString().split('T')[0];
 
         const todaysMood = moods.find(m => {
@@ -2135,7 +2136,7 @@ class WorkLifeBalanceApp {
                 <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
                     <button onclick="app.editExpense(${expense.id})" title="Edit">✏️</button>
-                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">����️</button>
+                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
                 </div>
             </div>
         `).join('');
@@ -5111,7 +5112,7 @@ class WorkLifeBalanceApp {
         // 7-day habit streak
         if (!badges.habitStreak7 && streak >= 7) {
             newBadges.habitStreak7 = true;
-            badgesEarned.push('��� 7-Day Habit Streak');
+            badgesEarned.push('🔥 7-Day Habit Streak');
         }
 
         // 30-day habit streak
@@ -5739,7 +5740,7 @@ class WorkLifeBalanceApp {
     // Enhanced task and expense category methods
     getCategoryIcon(category) {
         const icons = {
-            'work': '����',
+            'work': '💼',
             'personal': '👤',
             'health': '🏥',
             'food': '🍕',
