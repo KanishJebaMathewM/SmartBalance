@@ -219,7 +219,7 @@ class WorkLifeBalanceApp {
         console.log('✅ Fitness functionality verification:');
         console.log('✅ Enhanced startExercise method:', typeof this.startExercise === 'function');
         console.log('✅ Enhanced completeExercise method:', typeof this.completeExercise === 'function');
-        console.log('�� Enhanced loadFitnessData method:', typeof this.loadFitnessData === 'function');
+        console.log('✅ Enhanced loadFitnessData method:', typeof this.loadFitnessData === 'function');
         console.log('✅ Enhanced updateFitnessStats method:', typeof this.updateFitnessStats === 'function');
 
         // Check if DOM elements exist
@@ -1466,7 +1466,75 @@ class WorkLifeBalanceApp {
         }
     }
 
-    // Helper methods for enhanced dashboard
+    // Helper methods for clean dashboard - stats only
+    generateCleanInsights() {
+        const tasks = window.storage.getTasks();
+        const expenses = window.storage.getExpenses();
+        const workouts = window.storage.getWorkouts();
+        const meals = window.storage.getMeals();
+
+        const today = new Date().toDateString();
+
+        // Task stats
+        const todayTasks = tasks.filter(task =>
+            new Date(task.createdAt).toDateString() === today
+        );
+        const completedToday = todayTasks.filter(task => task.completed).length;
+
+        // Expense stats
+        const todayExpenses = expenses.filter(expense =>
+            Utils.isToday(expense.date || expense.createdAt)
+        ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
+
+        // Workout stats
+        const todayWorkouts = workouts.filter(workout =>
+            Utils.isToday(workout.createdAt)
+        ).length;
+
+        // Meal stats
+        const todayMeals = meals.filter(meal =>
+            Utils.isToday(meal.date)
+        ).length;
+
+        // Weekly stats
+        const weeklyExpenses = window.storage.getWeeklyExpenses();
+        const workoutStreak = window.storage.getWorkoutStreak();
+
+        return [
+            {
+                icon: '📋',
+                value: `${completedToday}/${todayTasks.length}`,
+                label: 'Tasks Done'
+            },
+            {
+                icon: '💰',
+                value: Utils.formatCurrency(todayExpenses),
+                label: 'Today\'s Spending'
+            },
+            {
+                icon: '💪',
+                value: todayWorkouts,
+                label: 'Workouts Today'
+            },
+            {
+                icon: '🍽️',
+                value: todayMeals,
+                label: 'Meals Logged'
+            },
+            {
+                icon: '📊',
+                value: Utils.formatCurrency(weeklyExpenses),
+                label: 'Weekly Spending'
+            },
+            {
+                icon: '🔥',
+                value: `${workoutStreak} days`,
+                label: 'Workout Streak'
+            }
+        ];
+    }
+
+    // Keep original method for other sections that might need it
     generateSmartInsights() {
         const insights = [];
         const tasks = window.storage.getTasks();
@@ -2896,7 +2964,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[���📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -10036,7 +10104,7 @@ class WorkLifeBalanceApp {
         const areas = [
             { name: 'Fitness', score: scores.fitness, icon: '💪' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
-            { name: 'Productivity', score: scores.productivity, icon: '��' },
+            { name: 'Productivity', score: scores.productivity, icon: '💼' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
             { name: 'Wellness', score: scores.wellness, icon: '🧘' }
         ];
@@ -10374,7 +10442,7 @@ class WorkLifeBalanceApp {
         container.innerHTML = metrics.map(metric => {
             const change = metric.current - metric.previous;
             const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
-            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘��' : '➡️';
+            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '➡️';
 
             return `
                 <div class="progress-metric">
