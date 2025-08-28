@@ -29,7 +29,7 @@ function toggleExpenseDetails(checkbox) {
             expenseDetails.style.setProperty('display', 'block', 'important');
             expenseDetails.style.setProperty('visibility', 'visible', 'important');
             expenseDetails.style.setProperty('opacity', '1', 'important');
-            console.log('���� Set individual CSS properties with important');
+            console.log('🔧 Set individual CSS properties with important');
 
             // Method 4: Direct manipulation
             expenseDetails.hidden = false;
@@ -621,6 +621,7 @@ class WorkLifeBalanceApp {
     // Check for any pending mood calculations from previous days
     checkPendingMoodCalculations() {
         const moods = window.storage.getMoods();
+        if (!this.hasUserActivity()) return;
         const now = new Date();
 
         // Check last 7 days for missing mood entries
@@ -2134,7 +2135,7 @@ class WorkLifeBalanceApp {
                 <div class="expense-amount-display">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
                     <button onclick="app.editExpense(${expense.id})" title="Edit">✏️</button>
-                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
+                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">����️</button>
                 </div>
             </div>
         `).join('');
@@ -3907,7 +3908,7 @@ class WorkLifeBalanceApp {
         // Add games insights
         if (games.totalGamesPlayed > 0) {
             if (games.analytics?.improvementTrend === 'improving') {
-                insights.push('�� Your gaming skills are improving! Keep practicing.');
+                insights.push('🎮 Your gaming skills are improving! Keep practicing.');
             } else if (games.totalGamesPlayed >= 10) {
                 insights.push('🎮 You\'re an active gamer! Mental challenges help keep your mind sharp.');
             }
@@ -5110,7 +5111,7 @@ class WorkLifeBalanceApp {
         // 7-day habit streak
         if (!badges.habitStreak7 && streak >= 7) {
             newBadges.habitStreak7 = true;
-            badgesEarned.push('🔥 7-Day Habit Streak');
+            badgesEarned.push('��� 7-Day Habit Streak');
         }
 
         // 30-day habit streak
@@ -5738,7 +5739,7 @@ class WorkLifeBalanceApp {
     // Enhanced task and expense category methods
     getCategoryIcon(category) {
         const icons = {
-            'work': '💼',
+            'work': '����',
             'personal': '👤',
             'health': '🏥',
             'food': '🍕',
@@ -12129,7 +12130,7 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '���️ Travel & Transport',
+            'travel': '✈️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '📚 Education',
