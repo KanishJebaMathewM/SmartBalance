@@ -347,23 +347,37 @@ class MemoriesManager {
             return;
         }
 
-        memoriesContainer.innerHTML = memories.map(memory => `
-            <div class="memory-card" onclick="memoriesManager.viewMemory(${memory.id})">
-                <img src="${memory.imageData}" alt="${memory.title}" class="memory-image">
-                <div class="memory-content">
-                    <div class="memory-title">${Utils.sanitizeInput(memory.title)}</div>
-                    <div class="memory-description">${Utils.sanitizeInput(memory.description || '')}</div>
-                    <div class="memory-meta">
-                        <div class="memory-date">${this.formatMemoryDate(memory.date)}</div>
-                        <div class="memory-actions">
-                            ${memory.favorite ? '<span class="memory-favorite">⭐</span>' : ''}
-                            <button onclick="event.stopPropagation(); memoriesManager.editMemory(${memory.id})" title="Edit">✏️</button>
-                            <button onclick="event.stopPropagation(); memoriesManager.deleteMemory(${memory.id})" title="Delete">🗑️</button>
+        memoriesContainer.innerHTML = memories.map(memory => {
+            const fullDate = this.getValidDate(memory.date) ?
+                this.getValidDate(memory.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }) : 'Date unknown';
+
+            return `
+                <div class="memory-card" onclick="memoriesManager.viewMemory(${memory.id})">
+                    <div class="memory-image-container" onclick="event.stopPropagation(); memoriesManager.showImageDate('${fullDate}')">
+                        <img src="${memory.imageData}" alt="${memory.title}" class="memory-image" title="Click to see date: ${fullDate}">
+                        <div class="image-date-overlay">
+                            <span class="date-text">📅 ${fullDate}</span>
+                        </div>
+                    </div>
+                    <div class="memory-content">
+                        <div class="memory-title">${Utils.sanitizeInput(memory.title)}</div>
+                        <div class="memory-description">${Utils.sanitizeInput(memory.description || '')}</div>
+                        <div class="memory-meta">
+                            <div class="memory-date">${this.formatMemoryDate(memory.date)}</div>
+                            <div class="memory-actions">
+                                ${memory.favorite ? '<span class="memory-favorite">⭐</span>' : ''}
+                                <button onclick="event.stopPropagation(); memoriesManager.editMemory(${memory.id})" title="Edit">✏️</button>
+                                <button onclick="event.stopPropagation(); memoriesManager.deleteMemory(${memory.id})" title="Delete">🗑️</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     getFilteredMemories() {
@@ -446,12 +460,25 @@ class MemoriesManager {
         const modalContent = document.getElementById('memoryViewContent');
         if (!modalContent) return;
 
+        // Format the date prominently
+        const formattedDate = this.getValidDate(memory.date) ?
+            this.getValidDate(memory.date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }) : 'Date unknown';
+
         modalContent.innerHTML = `
-            <img src="${memory.imageData}" alt="${memory.title}" class="memory-view-image">
+            <div class="memory-date-header">
+                <span class="memory-date-icon">📅</span>
+                <span class="memory-date-text">${formattedDate}</span>
+            </div>
+            <img src="${memory.imageData}" alt="${memory.title}" class="memory-view-image" onclick="memoriesManager.showImageDate('${formattedDate}')">
             <div class="memory-view-title">${Utils.sanitizeInput(memory.title)}</div>
             <div class="memory-view-description">${Utils.sanitizeInput(memory.description || '')}</div>
             <div class="memory-view-meta">
-                <div class="memory-date">${Utils.formatDate(memory.date)}</div>
+                <div class="memory-relative-date">${this.formatMemoryDate(memory.date)}</div>
                 <div class="memory-actions">
                     ${memory.favorite ? '<span class="memory-favorite">⭐ Favorite</span>' : ''}
                     <button onclick="memoriesManager.editMemory(${memory.id})" class="btn-secondary">Edit</button>
@@ -1008,6 +1035,43 @@ class MemoriesManager {
                 fullscreenBtn.textContent = '⛶';
                 fullscreenBtn.title = 'Fullscreen';
             }
+        }
+    }
+
+    showImageDate(dateText) {
+        // Create and show a temporary tooltip/notification with the date
+        const dateTooltip = document.createElement('div');
+        dateTooltip.className = 'date-tooltip';
+        dateTooltip.innerHTML = `
+            <div class="date-tooltip-content">
+                <span class="date-icon">📅</span>
+                <span class="date-text">${dateText}</span>
+            </div>
+        `;
+
+        document.body.appendChild(dateTooltip);
+
+        // Position the tooltip near the cursor or center of screen
+        const rect = event.target.getBoundingClientRect();
+        dateTooltip.style.left = `${rect.left + (rect.width / 2)}px`;
+        dateTooltip.style.top = `${rect.top - 60}px`;
+
+        // Show with animation
+        setTimeout(() => dateTooltip.classList.add('show'), 10);
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            dateTooltip.classList.remove('show');
+            setTimeout(() => {
+                if (dateTooltip.parentNode) {
+                    dateTooltip.parentNode.removeChild(dateTooltip);
+                }
+            }, 300);
+        }, 3000);
+
+        // Also show a notification
+        if (window.Utils && Utils.showNotification) {
+            Utils.showNotification(`📅 ${dateText}`, 'info', 2000);
         }
     }
 
