@@ -150,7 +150,7 @@ class WorkLifeBalanceApp {
 
         // Help navigation state
         this.currentHelpPage = 1;
-        this.totalHelpPages = 6;
+        this.totalHelpPages = 8;
 
         // Report period navigation state
         this.currentReportPeriod = 'month'; // 'month', 'quarter', 'year', 'week', 'all', 'custom'
@@ -860,6 +860,9 @@ class WorkLifeBalanceApp {
                 break;
             case 'memories':
                 this.loadMemoriesSection();
+                break;
+            case 'help':
+                this.loadHelpSection();
                 break;
             case 'report':
                 this.generateWeeklyReport();
@@ -10748,6 +10751,13 @@ class WorkLifeBalanceApp {
             homeCost: Math.round(homeCost),
             hotelCost: Math.round(hotelCost)
         };
+    }
+
+    // Help section loader
+    loadHelpSection() {
+        // Initialize help section when first loaded
+        this.updateHelpDisplay();
+        console.log('✅ Help section loaded successfully');
     }
 
     // Help Navigation Methods
