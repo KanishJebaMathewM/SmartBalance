@@ -299,6 +299,38 @@
   }
 }
 
+/* Hints Section */
+.hints-section {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #e3f2fd;
+  border-radius: 8px;
+  border-left: 4px solid #2196f3;
+}
+
+.hints-section h4 {
+  margin: 0 0 0.5rem 0;
+  color: #1976d2;
+}
+
+.hint-message {
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* Timer Styling */
+#queensTimer {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  background: #f0f0f0;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  border: 2px solid #ddd;
+}
+
 /* Dark Mode Support */
 body.dark-mode .validation-results {
   background: #2d3748;
@@ -319,10 +351,23 @@ body.dark-mode .suggestion-item:hover {
   background: #4a5568;
 }
 
-body.dark-mode .input-section textarea {
+body.dark-mode .hints-section {
   background: #2d3748;
+  border-left-color: #63b3ed;
+}
+
+body.dark-mode .hints-section h4 {
+  color: #63b3ed;
+}
+
+body.dark-mode .hint-message {
   color: #e2e8f0;
-  border-color: #4a5568;
+}
+
+body.dark-mode #queensTimer {
+  background: #4a5568;
+  color: #e2e8f0;
+  border-color: #2d3748;
 }
 
 body.dark-mode .progress-stat {
