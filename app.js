@@ -174,12 +174,20 @@ class WorkLifeBalanceApp {
         // Initialize automated mood tracking
         this.initializeAutomatedMoodTracking();
 
-        // Update dashboard every minute
+        // Update dashboard every minute with enhanced features
         setInterval(() => {
             if (this.currentSection === 'dashboard') {
                 this.updateDashboard();
+                this.updateLiveMetrics();
             }
         }, 60000);
+
+        // Update live metrics every 30 seconds
+        setInterval(() => {
+            if (this.currentSection === 'dashboard') {
+                this.updateLiveMetrics();
+            }
+        }, 30000);
 
         // Override old methods with enhanced versions
         this.overrideMethodsWithEnhancedVersions();
@@ -884,6 +892,11 @@ class WorkLifeBalanceApp {
         this.updateWorkoutWidget();
         this.updateStressWidget();
         this.updateSummaryWidget();
+        this.updateQuickActions();
+        this.updateDashboardInsights();
+        this.updateProgressRings();
+        this.updateStreakWidgets();
+        this.checkDailyGoals();
     }
 
     updateTasksWidget() {
@@ -983,18 +996,18 @@ class WorkLifeBalanceApp {
         const expenses = window.storage.getExpenses();
         const workouts = window.storage.getWorkouts();
         const moods = window.storage.getMoods();
-        
+
         const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        
+
         // Weekly stats
         const weeklyTasks = tasks.filter(t => new Date(t.createdAt) >= weekAgo);
         const completedWeekly = weeklyTasks.filter(t => t.completed).length;
         const taskPercentage = weeklyTasks.length > 0 ? Math.round((completedWeekly / weeklyTasks.length) * 100) : 0;
-        
+
         const weeklyExpenseAmount = window.storage.getWeeklyExpenses();
-        
+
         const weeklyWorkouts = workouts.filter(w => new Date(w.createdAt) >= weekAgo);
-        
+
         const stressedDays = moods.filter(m =>
             new Date(m.date) >= weekAgo &&
             ['stressed', 'very-stressed'].includes(m.mood)
@@ -1003,11 +1016,25 @@ class WorkLifeBalanceApp {
         const weeklyStats = window.storage.getWeeklyMealStats();
         const homeCookingPercentage = weeklyStats.totalMeals > 0 ? Math.round((weeklyStats.homeMeals / weeklyStats.totalMeals) * 100) : 0;
 
-        const summaryText = `You completed ${taskPercentage}% of tasks, spent ${Utils.formatCurrency(weeklyExpenseAmount)}, cooked ${homeCookingPercentage}% of meals at home, did ${weeklyWorkouts.length} workouts, stress was high on ${stressedDays} days.`;
-        
+        // Enhanced summary with smart insights
+        const insights = this.generateWeeklyInsights({
+            taskPercentage,
+            weeklyExpenseAmount,
+            homeCookingPercentage,
+            workoutCount: weeklyWorkouts.length,
+            stressedDays
+        });
+
+        const summaryText = insights.summary;
+
         const weeklySummaryEl = document.getElementById('weeklySummary');
         if (weeklySummaryEl) {
-            weeklySummaryEl.textContent = summaryText;
+            weeklySummaryEl.innerHTML = `
+                <div class="summary-text">${summaryText}</div>
+                <div class="insights-preview">
+                    ${insights.topInsight ? `<span class="insight-item">💡 ${insights.topInsight}</span>` : ''}
+                </div>
+            `;
         }
     }
 
