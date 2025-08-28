@@ -3477,6 +3477,7 @@ class WorkLifeBalanceApp {
                     <div class="pantry-expiry">Expires: ${Utils.formatDate(item.expiry)}</div>
                 </div>
                 <div class="pantry-actions">
+                    <button onclick="app.editFoodItem(${item.id})" title="Edit">✏️</button>
                     <button onclick="app.deleteFoodItem(${item.id})" title="Delete">🗑️</button>
                 </div>
             </div>
@@ -10483,7 +10484,7 @@ class WorkLifeBalanceApp {
                 title: 'Nutrition Progress',
                 current: currentScores.nutrition,
                 previous: previousScores.nutrition,
-                icon: '🍎'
+                icon: '���'
             },
             {
                 title: 'Productivity Progress',
@@ -12172,7 +12173,7 @@ class WorkLifeBalanceApp {
     getCategoryIcon(category) {
         const categoryIcons = {
             'food': '🍕',
-            'bills': '📧',
+            'bills': '����',
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
