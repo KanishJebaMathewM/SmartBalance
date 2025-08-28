@@ -836,7 +836,7 @@ if (typeof window !== 'undefined') {
             
             if (this.validationResult && this.validationResult.summary.status === 'perfect') {
                 setTimeout(() => {
-                    alert('���� Congratulations! You solved the 8 Queens with Colors puzzle!');
+                    alert('���� Congratulations! You solved the 5 Queens with Colors puzzle!');
                     this.completeGame(true);
                 }, 500);
             }
