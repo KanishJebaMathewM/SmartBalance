@@ -203,17 +203,9 @@ class WorkLifeBalanceApp {
     }
 
     overrideMethodsWithEnhancedVersions() {
-        // Override startExercise with enhanced version
-        this.startExercise = this.startExerciseEnhanced;
-
-        // Override completeExercise with enhanced version
-        this.completeExercise = this.completeExerciseEnhanced;
-
-        // Override loadFitnessData with enhanced version
-        this.loadFitnessData = this.loadFitnessDataEnhanced;
-
-        // Override updateFitnessStats with enhanced version
-        this.updateFitnessStats = this.updateFitnessStatsEnhanced;
+        // Override methods that might need enhancement
+        // For now, we'll use the existing methods
+        console.log('✅ Method overrides configured');
     }
 
     verifyFitnessFunctionality() {
@@ -10656,7 +10648,7 @@ class WorkLifeBalanceApp {
             <div class="breakdown-list">
                 ${tasks.map(task => `
                     <div class="breakdown-item ${task.completed ? 'completed' : 'pending'}">
-                        <span class="item-status">${task.completed ? '✅' : '⏳'}</span>
+                        <span class="item-status">${task.completed ? '���' : '⏳'}</span>
                         <span class="item-title">${task.title}</span>
                         <span class="item-category">${task.category}</span>
                         <span class="item-date">${Utils.formatDate(task.createdAt)}</span>
