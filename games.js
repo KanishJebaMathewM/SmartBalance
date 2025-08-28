@@ -1167,19 +1167,23 @@ class Game2048 {
             this.updateScore();
             
             if (this.checkWin()) {
-                alert('Congratulations! You reached 2048!');
-                window.gamesManager.onGameComplete('2048', { 
-                    won: true, 
-                    score: this.score,
-                    bestTile: this.getHighestTile()
-                });
+                setTimeout(() => {
+                    alert('Congratulations! You reached 2048!');
+                    window.gamesManager.onGameComplete('2048', {
+                        won: true,
+                        score: this.score,
+                        bestTile: this.getHighestTile()
+                    });
+                }, 100);
             } else if (this.checkGameOver()) {
-                alert('Game Over!');
-                window.gamesManager.onGameComplete('2048', { 
-                    won: false, 
-                    score: this.score,
-                    bestTile: this.getHighestTile()
-                });
+                setTimeout(() => {
+                    alert('Game Over!');
+                    window.gamesManager.onGameComplete('2048', {
+                        won: false,
+                        score: this.score,
+                        bestTile: this.getHighestTile()
+                    });
+                }, 100);
             }
         }
     }
@@ -1294,7 +1298,7 @@ class Game2048 {
                 if (this.board[row][col] === 0) return false;
             }
         }
-        
+
         // Check for possible merges
         for (let row = 0; row < 4; row++) {
             for (let col = 0; col < 4; col++) {
@@ -1305,8 +1309,13 @@ class Game2048 {
                 }
             }
         }
-        
+
         return true;
+    }
+
+    // Stop the game and clean up
+    stopGame() {
+        this.removeEventListeners();
     }
 
     undo() {
@@ -1320,11 +1329,14 @@ class Game2048 {
     }
 
     setupEventListeners() {
+        // Remove existing listeners to prevent duplicates
+        this.removeEventListeners();
+
         document.getElementById('2048NewBtn').onclick = () => this.startGame();
         document.getElementById('2048UndoBtn').onclick = () => this.undo();
-        
+
         // Keyboard controls
-        document.addEventListener('keydown', (e) => {
+        this.keydownHandler = (e) => {
             if (document.getElementById('2048GameModal').style.display === 'block') {
                 switch (e.key) {
                     case 'ArrowLeft':
@@ -1345,7 +1357,15 @@ class Game2048 {
                         break;
                 }
             }
-        });
+        };
+
+        document.addEventListener('keydown', this.keydownHandler);
+    }
+
+    removeEventListeners() {
+        if (this.keydownHandler) {
+            document.removeEventListener('keydown', this.keydownHandler);
+        }
     }
 }
 
