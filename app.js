@@ -4842,7 +4842,7 @@ class WorkLifeBalanceApp {
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
-            'education': '📚',
+            'education': '��',
             'fitness': '💪',
             'subscriptions': '📺',
             'groceries': '🛒',
@@ -9241,7 +9241,7 @@ class WorkLifeBalanceApp {
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
             { name: 'Productivity', score: scores.productivity, icon: '💼' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
-            { name: 'Wellness', score: scores.wellness, icon: '😌' }
+            { name: 'Wellness', score: scores.wellness, icon: '����' }
         ];
 
         const lowAreas = areas.filter(area => area.score < 60).sort((a, b) => a.score - b.score);
@@ -9552,13 +9552,13 @@ class WorkLifeBalanceApp {
                 title: 'Nutrition Progress',
                 current: currentScores.nutrition,
                 previous: previousScores.nutrition,
-                icon: '����'
+                icon: '🍎'
             },
             {
                 title: 'Productivity Progress',
                 current: currentScores.productivity,
                 previous: previousScores.productivity,
-                icon: '����'
+                icon: '💼'
             },
             {
                 title: 'Financial Progress',
@@ -9708,7 +9708,7 @@ class WorkLifeBalanceApp {
             </div>
             <div class="export-options">
                 <button class="btn-secondary export-btn" data-section="report" data-format="csv" onclick="app.exportSectionData('report', 'csv')">📊 Export CSV</button>
-                <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">����� Export JSON</button>
+                <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">📄 Export JSON</button>
             </div>
         `;
 
@@ -9793,7 +9793,7 @@ class WorkLifeBalanceApp {
 
             <div class="report-details">
                 <div class="report-section">
-                    <h3>�� Trends & Analytics</h3>
+                    <h3>📊 Trends & Analytics</h3>
                     <div class="chart-container">
                         <canvas id="reportTrendsChart" width="600" height="300"></canvas>
                     </div>
@@ -9903,7 +9903,7 @@ class WorkLifeBalanceApp {
         });
 
         const avgMood = moodScores.reduce((sum, score) => sum + score, 0) / moodScores.length;
-        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '����' : '����';
+        const moodEmoji = avgMood >= 4 ? '😃' : avgMood >= 3 ? '🙂' : '😐';
 
         return `
             <div class="summary-card">
@@ -9970,7 +9970,7 @@ class WorkLifeBalanceApp {
         // Task recommendations
         const taskCompletion = data.tasks.length > 0 ? (data.tasks.filter(t => t.completed).length / data.tasks.length) * 100 : 0;
         if (taskCompletion < 70) {
-            recommendations.push('�������� Focus on completing more tasks for better productivity');
+            recommendations.push('💼 Focus on completing more tasks for better productivity');
         }
 
         // Fitness recommendations
@@ -11218,7 +11218,7 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '✈️ Travel & Transport',
+            'travel': '��️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '📚 Education',
@@ -11896,7 +11896,7 @@ class WorkLifeBalanceApp {
         const hotelCost = hotelMeals.reduce((sum, meal) =>
             sum + (parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0), 0);
 
-        // Estimate potential savings: assume each home meal saves ���150 on average
+        // Estimate potential savings: assume each home meal saves ₹150 on average
         const potentialSavings = homeMeals.length * 150;
         return Math.max(0, potentialSavings - homeCost);
     }
