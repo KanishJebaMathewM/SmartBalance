@@ -613,6 +613,8 @@ class WorkLifeBalanceApp {
                 if (moods.length > 0 && moods.every(m => m.automated === true)) {
                     window.storage.set(window.storage.keys.moods, []);
                     console.log('🧹 Cleared automated mood history for new user.');
+                    // Ensure UI reflects cleared streaks immediately
+                    try { this.updateDashboard(); } catch (_) {}
                 }
             } catch (e) { /* no-op */ }
             return;
@@ -4640,7 +4642,7 @@ class WorkLifeBalanceApp {
                 insights.push({
                     type: 'danger',
                     icon: '🚨',
-                    text: `This will exceed your ${this.getCategoryDisplayName(category)} budget by ���${Math.abs(remaining)}`
+                    text: `This will exceed your ${this.getCategoryDisplayName(category)} budget by ₹${Math.abs(remaining)}`
                 });
             } else if (remaining < budget * 0.2) {
                 insights.push({
