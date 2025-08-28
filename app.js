@@ -165,6 +165,7 @@ class WorkLifeBalanceApp {
     }
 
     init() {
+        if (!this.initializeAuth()) return;
         this.initializeEventListeners();
         this.loadSettings();
         this.showSection('dashboard');
@@ -10574,7 +10575,7 @@ class WorkLifeBalanceApp {
         container.innerHTML = metrics.map(metric => {
             const change = metric.current - metric.previous;
             const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
-            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '➡️';
+            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘��' : '➡️';
 
             return `
                 <div class="progress-metric">
@@ -12226,7 +12227,7 @@ class WorkLifeBalanceApp {
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '📚 Education',
-            'fitness': '💪 Fitness & Sports',
+            'fitness': '�� Fitness & Sports',
             'subscriptions': '📺 Subscriptions',
             'groceries': '🛒 Groceries',
             'clothing': '👕 Clothing',
