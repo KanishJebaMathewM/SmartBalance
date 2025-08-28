@@ -707,6 +707,12 @@ class EightQueensWithColors {
     resetGame() {
         this.queens = [];
         this.validationResult = null;
+        this.hintPosition = null;
+        this.highlightMistake = null;
+
+        // Generate new random board layout for variety
+        this.generateRandomBoard();
+
         this.renderBoard();
         this.updateGameState();
 
