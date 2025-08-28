@@ -2364,6 +2364,182 @@
                 </div>
             </section>
 
+            <!-- Help Section -->
+            <section id="help" class="section">
+                <div class="section-header">
+                    <h1>❓ Help & Guide</h1>
+                    <div class="header-actions">
+                        <button class="btn-secondary" id="contactBtn">📧 Contact Support</button>
+                    </div>
+                </div>
+
+                <!-- Help Instructions Section -->
+                <div class="help-instructions-section">
+                    <h3>❓ How to Use This App</h3>
+
+                    <div class="help-navigation">
+                        <button class="btn-secondary" id="prevHelpBtn" onclick="app.showPreviousHelp()">⬅️ Previous</button>
+                        <span id="helpPageIndicator">1 / 8</span>
+                        <button class="btn-secondary" id="nextHelpBtn" onclick="app.showNextHelp()">Next ➡️</button>
+                    </div>
+
+                    <div class="help-content">
+                        <!-- Help Page 1: Dashboard -->
+                        <div class="help-page active" id="helpPage1">
+                            <div class="help-icon">🏠</div>
+                            <h4>Dashboard Overview</h4>
+                            <p>Your dashboard provides a quick summary of your daily activities:</p>
+                            <ul>
+                                <li><strong>Tasks:</strong> Track and complete your daily to-do items</li>
+                                <li><strong>Expenses:</strong> Monitor your weekly spending patterns</li>
+                                <li><strong>Meals:</strong> View suggested healthy meal options</li>
+                                <li><strong>Workouts:</strong> Keep track of your fitness streak</li>
+                                <li><strong>Mood:</strong> Check in with your emotional well-being</li>
+                                <li><strong>Memories:</strong> Capture and organize your precious moments</li>
+                            </ul>
+                            <p>The Life Balance Score shows your overall wellness across all areas.</p>
+                        </div>
+
+                        <!-- Help Page 2: Tasks -->
+                        <div class="help-page" id="helpPage2">
+                            <div class="help-icon">📑</div>
+                            <h4>Task Management</h4>
+                            <p>Organize your daily productivity:</p>
+                            <ul>
+                                <li>Click <strong>"+ Add Task"</strong> to create new tasks</li>
+                                <li>Choose categories like work, personal, health, etc.</li>
+                                <li>Set due dates for important deadlines</li>
+                                <li>Mark tasks as expense-related if they involve spending</li>
+                                <li>Filter tasks by status: All, Today, Upcoming, Completed</li>
+                                <li>Build productivity streaks by completing tasks daily</li>
+                            </ul>
+                            <p>Smart expense tracking automatically adds costs when you complete expense-related tasks!</p>
+                        </div>
+
+                        <!-- Help Page 3: Expenses -->
+                        <div class="help-page" id="helpPage3">
+                            <div class="help-icon">💰</div>
+                            <h4>Expense Tracking</h4>
+                            <p>Keep your finances organized:</p>
+                            <ul>
+                                <li><strong>Overview:</strong> See recent expenses and budget tracking</li>
+                                <li><strong>Calendar:</strong> View expenses by date with color coding</li>
+                                <li><strong>Analytics:</strong> Analyze spending trends and patterns</li>
+                                <li><strong>Insights:</strong> Get financial health scores and predictions</li>
+                                <li><strong>Reports:</strong> Generate comprehensive financial reports</li>
+                                <li>Set monthly budgets and income to track savings</li>
+                                <li>Use different payment methods and categorize expenses</li>
+                            </ul>
+                            <p>Advanced AI predictions help forecast future spending and savings goals.</p>
+                        </div>
+
+                        <!-- Help Page 4: Food & Nutrition -->
+                        <div class="help-page" id="helpPage4">
+                            <div class="help-icon">🍲</div>
+                            <h4>Food & Nutrition Planning</h4>
+                            <p>Manage your meals and nutrition:</p>
+                            <ul>
+                                <li>Track meals as either home-cooked or ordered</li>
+                                <li>Log calories for each meal you consume</li>
+                                <li>Plan daily meals with the meal planner</li>
+                                <li>Compare costs between cooking and ordering</li>
+                                <li>View meal calendar to plan ahead</li>
+                                <li>Manage your pantry inventory</li>
+                                <li>Get cost savings analysis for home cooking</li>
+                            </ul>
+                            <p>Cooking at home more often improves both health and savings!</p>
+                        </div>
+
+                        <!-- Help Page 5: Fitness & Wellness -->
+                        <div class="help-page" id="helpPage5">
+                            <div class="help-icon">🏋️</div>
+                            <h4>Fitness & Wellness</h4>
+                            <p>Stay active and manage stress:</p>
+                            <ul>
+                                <li><strong>Fitness:</strong> Try home exercises like desk stretches, yoga, breathing</li>
+                                <li><strong>Stress & Mood:</strong> Daily mood check-ins and stress relief</li>
+                                <li>Mark workouts complete to build your fitness streak</li>
+                                <li>Use guided breathing exercises for stress relief</li>
+                                <li>Track your mood trends over time</li>
+                                <li>Get automated mood analysis and wellness insights</li>
+                            </ul>
+                            <p>Regular exercise and mood tracking help maintain mental and physical health.</p>
+                        </div>
+
+                        <!-- Help Page 6: Games -->
+                        <div class="help-page" id="helpPage6">
+                            <div class="help-icon">🎮</div>
+                            <h4>Games & Brain Training</h4>
+                            <p>Exercise your mind with fun puzzles:</p>
+                            <ul>
+                                <li><strong>5 Queens with Colors:</strong> Strategic placement puzzle with hints</li>
+                                <li><strong>Sudoku:</strong> Classic number puzzles with multiple difficulty levels</li>
+                                <li><strong>Memory Games:</strong> Improve cognitive skills with card matching</li>
+                                <li><strong>Color Pattern:</strong> Test and improve your memory</li>
+                                <li><strong>2048:</strong> Number sliding puzzle game</li>
+                                <li><strong>Snake:</strong> Classic arcade-style game</li>
+                                <li>Track your game statistics and improvement over time</li>
+                            </ul>
+                            <p>Regular brain training games help maintain cognitive health and provide stress relief.</p>
+                        </div>
+
+                        <!-- Help Page 7: Memories -->
+                        <div class="help-page" id="helpPage7">
+                            <div class="help-icon">📸</div>
+                            <h4>Memories & Life Moments</h4>
+                            <p>Capture and organize your precious moments:</p>
+                            <ul>
+                                <li><strong>Photo Memories:</strong> Upload and organize photos with dates and descriptions</li>
+                                <li><strong>Slideshow:</strong> View your memories in a beautiful slideshow presentation</li>
+                                <li><strong>Search & Filter:</strong> Find memories by title, description, or date</li>
+                                <li><strong>Birthday Tracking:</strong> Remember important dates and get reminders</li>
+                                <li>Click on photos to see their exact dates</li>
+                                <li>Mark favorites for easy access</li>
+                                <li>Storage management with file size tracking</li>
+                            </ul>
+                            <p>Preserve your life's precious moments with organized photo storage and birthday reminders.</p>
+                        </div>
+
+                        <!-- Help Page 8: Reports & Export -->
+                        <div class="help-page" id="helpPage8">
+                            <div class="help-icon">📊</div>
+                            <h4>Reports & Data Export</h4>
+                            <p>Analyze your progress and export data:</p>
+                            <ul>
+                                <li>Generate comprehensive weekly and monthly reports</li>
+                                <li>Export data in CSV or JSON format from any section</li>
+                                <li>View detailed analysis of all life areas</li>
+                                <li>Track progress over time with trends and charts</li>
+                                <li>Get personalized advice based on your patterns</li>
+                                <li>Download complete data backups</li>
+                                <li>Correlation analysis between different life aspects</li>
+                            </ul>
+                            <p>Regular review of your data helps identify patterns and areas for improvement.</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="contact-info">
+                        <h3>📧 Need Help or Have Suggestions?</h3>
+                        <p>If you have any questions, encounter issues, or want to suggest improvements, we're here to help!</p>
+                        <div class="contact-details">
+                            <p><strong>Email:</strong> <a href="mailto:kanishjebamathew.m@gmail.com">kanishjebamathew.m@gmail.com</a></p>
+                            <p><strong>Response Time:</strong> Usually within 24 hours</p>
+                        </div>
+
+                        <div class="support-tips">
+                            <h4>💡 Quick Tips:</h4>
+                            <ul>
+                                <li>Try refreshing the page if something doesn't work</li>
+                                <li>Check your browser's storage if data seems missing</li>
+                                <li>Export your data regularly as backup</li>
+                                <li>Use the latest version of Chrome or Firefox for best experience</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Report Generator Section -->
             <section id="report" class="section">
                 <div class="section-header">
