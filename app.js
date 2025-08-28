@@ -3149,7 +3149,7 @@ class WorkLifeBalanceApp {
             // Handle calendar navigation for expenses
             if (e.target.id === 'prevMonthBtn' && this.currentSection === 'expenses' && this.currentExpenseTab === 'calendar') {
                 e.preventDefault();
-                console.log('��� Navigating to previous month');
+                console.log('📅 Navigating to previous month');
                 this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
                 this.updateCalendarHeader();
                 this.renderExpenseCalendar();
@@ -5379,7 +5379,7 @@ class WorkLifeBalanceApp {
         document.getElementById('dinnerMeal').textContent = suggestions.dinner;
         const dinnerCalories = Utils.calculateCalories(suggestions.dinner);
         document.getElementById('dinnerCalories').textContent = `${dinnerCalories} cal`;
-        document.getElementById('dinnerCost').textContent = `₹${this.estimateMealCost(suggestions.dinner)}`;
+        document.getElementById('dinnerCost').textContent = `��${this.estimateMealCost(suggestions.dinner)}`;
 
         Utils.showNotification('🍽️ New meal plan generated!', 'success');
 
@@ -7680,9 +7680,27 @@ class WorkLifeBalanceApp {
 
     // Display mood calculation factors
     displayMoodFactors(factors) {
-        // This could be enhanced to show a detailed breakdown
-        // For now, we'll just log it for debugging
         console.log('📊 Mood calculation factors:', factors);
+
+        // Update the mood insight text with factor details
+        const currentMoodTextEl = document.getElementById('currentMoodText');
+        if (currentMoodTextEl && factors) {
+            let factorText = currentMoodTextEl.textContent;
+
+            // Add key contributing factors
+            const keyFactors = [];
+            if (factors.taskCompletionRate >= 0.8) keyFactors.push('high productivity');
+            else if (factors.taskCompletionRate < 0.3) keyFactors.push('low task completion');
+
+            if (factors.workoutCount >= 1) keyFactors.push('exercised');
+            if (factors.totalSpending > 1000) keyFactors.push('high spending');
+            if (factors.homeCookingRate >= 0.7) keyFactors.push('home cooking');
+
+            if (keyFactors.length > 0) {
+                factorText += ` | Key factors: ${keyFactors.join(', ')}`;
+                currentMoodTextEl.textContent = factorText;
+            }
+        }
     }
 
     loadMoodChart() {
@@ -11236,7 +11254,7 @@ class WorkLifeBalanceApp {
             'cash': '💵 Cash',
             'card': '💳 Card',
             'upi': '📱 UPI',
-            'bank': '������� Bank Transfer',
+            'bank': '������ Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
         return paymentMethods[method] || '��� Cash';
