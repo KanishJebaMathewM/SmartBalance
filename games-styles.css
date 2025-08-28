@@ -322,7 +322,9 @@
 .sudoku-cell.selected {
     background: #3498db;
     color: white;
+    font-weight: bold;
     box-shadow: 0 0 8px rgba(52, 152, 219, 0.6);
+    z-index: 10;
 }
 
 .sudoku-cell.error {
@@ -353,7 +355,67 @@
 
 /* Add subtle highlighting for related cells */
 .sudoku-cell.related {
-    background: #f0f8ff;
+    background: #e8f4fd;
+    border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+/* Box highlighting - stronger than row/column */
+.sudoku-cell.box-highlight {
+    background: #fff3cd;
+    border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+/* Same number highlighting */
+.sudoku-cell.same-number {
+    background: #d1ecf1;
+    border: 2px solid #bee5eb;
+    font-weight: bold;
+}
+
+/* Valid user input */
+.sudoku-cell.valid-user {
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Invalid user input */
+.sudoku-cell.invalid {
+    color: #dc3545;
+    background: #fff5f5;
+    font-weight: bold;
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Message styling */
+.sudoku-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.sudoku-message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.sudoku-message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.sudoku-message.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
 }
 
 /* Animation for errors */
