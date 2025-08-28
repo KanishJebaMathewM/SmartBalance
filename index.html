@@ -44,6 +44,9 @@
                 <li><a href="#" data-section="games" class="nav-link">
                     <span class="icon">🎮</span> Games
                 </a></li>
+                <li><a href="#" data-section="memories" class="nav-link">
+                    <span class="icon">📸</span> Memories
+                </a></li>
                 <li><a href="#" data-section="report" class="nav-link">
                     <span class="icon">📊</span> Report Generator
                 </a></li>
@@ -2241,13 +2244,184 @@
                                 <p><strong>Controls:</strong> Use arrow keys to control the snake</p>
                                 <p>Eat food (🟡) to grow longer and increase your score!</p>
                                 <div class="controls-info">
-                                    <p>🔼 ↑ Up | 🔽 ↓ Down | ◀️ ← Left | ▶️ → Right</p>
+                                    <p>🔼 ↑ Up | 🔽 ↓ Down | ◀��� ← Left | ▶️ → Right</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+            </section>
+
+            <!-- Memories Section -->
+            <section id="memories" class="section">
+                <div class="section-header">
+                    <h1>📸 Memories</h1>
+                    <div class="header-actions">
+                        <button class="btn-secondary" id="viewMemoriesGridBtn">🖼️ Grid View</button>
+                        <button class="btn-primary" id="addMemoryBtn">+ Add Memory</button>
+                    </div>
+                </div>
+
+                <div class="memories-stats">
+                    <div class="stat-card">
+                        <span id="totalMemories">0</span>
+                        <label>Total Memories</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="memoriesThisMonth">0</span>
+                        <label>This Month</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="upcomingBirthdays">0</span>
+                        <label>Upcoming Birthdays</label>
+                    </div>
+                    <div class="stat-card">
+                        <span id="memoriesSize">0 MB</span>
+                        <label>Storage Used</label>
+                    </div>
+                </div>
+
+                <!-- Memories Tabs -->
+                <div class="memories-tabs">
+                    <button class="tab-btn active" data-tab="memories-gallery">📷 Photos</button>
+                    <button class="tab-btn" data-tab="birthdays-list">🎂 Birthdays</button>
+                </div>
+
+                <!-- Photos Gallery Tab -->
+                <div id="memories-gallery" class="tab-content active">
+                    <div class="memories-filters">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="recent">Recent</button>
+                        <button class="filter-btn" data-filter="favorites">Favorites</button>
+                        <input type="text" id="memorySearch" placeholder="Search memories..." class="search-input">
+                    </div>
+
+                    <div class="memories-gallery-grid" id="memoriesGallery">
+                        <!-- Memory cards will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Birthdays Tab -->
+                <div id="birthdays-list" class="tab-content">
+                    <div class="birthdays-section">
+                        <div class="upcoming-birthdays">
+                            <h3>🔔 Upcoming Birthdays</h3>
+                            <div class="upcoming-birthdays-list" id="upcomingBirthdaysList">
+                                <!-- Upcoming birthdays will be listed here -->
+                            </div>
+                        </div>
+
+                        <div class="all-birthdays">
+                            <h3>📅 All Birthdays</h3>
+                            <div class="birthdays-list" id="allBirthdaysList">
+                                <!-- All birthdays will be listed here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary add-birthday-btn" id="addBirthdayBtn">+ Add Birthday</button>
+                </div>
+
+                <!-- Add Memory Modal -->
+                <div id="memoryModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Add Memory</h2>
+                        <form id="memoryForm">
+                            <div class="form-group">
+                                <label for="memoryImage">Select Image</label>
+                                <input type="file" id="memoryImage" accept="image/*" required>
+                                <div class="image-preview" id="imagePreview"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="memoryTitle">Title</label>
+                                <input type="text" id="memoryTitle" placeholder="Give your memory a title" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="memoryDescription">Description</label>
+                                <textarea id="memoryDescription" placeholder="What makes this memory special?" rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="memoryDate">Date</label>
+                                <input type="date" id="memoryDate" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="memoryFavorite">
+                                    <span class="checkmark"></span>
+                                    Mark as favorite
+                                </label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="app.closeModal('memoryModal')">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Memory</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Add Birthday Modal -->
+                <div id="birthdayModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Add Birthday</h2>
+                        <form id="birthdayForm">
+                            <div class="form-group">
+                                <label for="birthdayName">Name</label>
+                                <input type="text" id="birthdayName" placeholder="Person's name" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="birthdayDate">Birthday Date</label>
+                                <input type="date" id="birthdayDate" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="birthdayRelation">Relationship</label>
+                                <select id="birthdayRelation">
+                                    <option value="family">👨‍👩‍👧‍👦 Family</option>
+                                    <option value="friend">👫 Friend</option>
+                                    <option value="colleague">💼 Colleague</option>
+                                    <option value="other">👤 Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="birthdayNotes">Notes (Optional)</label>
+                                <textarea id="birthdayNotes" placeholder="Gift ideas, special notes..." rows="3"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="birthdayReminder" checked>
+                                    <span class="checkmark"></span>
+                                    Enable reminders
+                                </label>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="app.closeModal('birthdayModal')">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Birthday</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Memory View Modal -->
+                <div id="memoryViewModal" class="modal">
+                    <div class="modal-content wide-modal">
+                        <span class="close">&times;</span>
+                        <div class="memory-view-content" id="memoryViewContent">
+                            <!-- Memory details will be shown here -->
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- Report Generator Section -->
