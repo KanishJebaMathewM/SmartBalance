@@ -1009,3 +1009,443 @@
 .memory-image-container:hover::after {
     opacity: 1;
 }
+
+/* ========================================= */
+/* COMPREHENSIVE DARK MODE SUPPORT */
+/* ========================================= */
+
+/* Memories Stats - Dark Mode */
+.dark-mode .memories-stats {
+    background: #1f2937;
+}
+
+.dark-mode .stat-card {
+    background: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
+}
+
+.dark-mode .stat-card span {
+    color: #60a5fa;
+}
+
+.dark-mode .stat-card label {
+    color: #9ca3af;
+}
+
+/* Memories Tabs - Dark Mode */
+.dark-mode .memories-tabs {
+    border-bottom-color: #374151;
+}
+
+.dark-mode .memories-tabs .tab-btn {
+    color: #9ca3af;
+    background: #1f2937;
+}
+
+.dark-mode .memories-tabs .tab-btn:hover {
+    color: #60a5fa;
+    background: #374151;
+}
+
+.dark-mode .memories-tabs .tab-btn.active {
+    color: #60a5fa;
+    border-bottom-color: #60a5fa;
+}
+
+/* Memories Filters - Dark Mode */
+.dark-mode .filter-btn {
+    background: #374151;
+    color: #f9fafb;
+    border-color: #4b5563;
+}
+
+.dark-mode .filter-btn:hover {
+    background: #4b5563;
+    color: #60a5fa;
+}
+
+.dark-mode .filter-btn.active {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.dark-mode .search-input {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.dark-mode .search-input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+.dark-mode .search-input::placeholder {
+    color: #9ca3af;
+}
+
+/* Memory Cards - Dark Mode */
+.dark-mode .memory-card {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark-mode .memory-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+.dark-mode .memory-title {
+    color: #f9fafb;
+}
+
+.dark-mode .memory-description {
+    color: #9ca3af;
+}
+
+.dark-mode .memory-date {
+    color: #9ca3af;
+}
+
+.dark-mode .memory-meta {
+    border-top-color: #374151;
+}
+
+.dark-mode .memory-actions button:hover {
+    background: #4b5563;
+    color: #f9fafb;
+}
+
+/* Birthday Items - Dark Mode */
+.dark-mode .upcoming-birthdays,
+.dark-mode .all-birthdays {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark-mode .upcoming-birthdays h3,
+.dark-mode .all-birthdays h3 {
+    color: #f9fafb;
+}
+
+.dark-mode .birthday-item {
+    border-color: #374151;
+}
+
+.dark-mode .birthday-item:hover {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.dark-mode .birthday-item.upcoming {
+    background: #451a03;
+    border-color: #f59e0b;
+}
+
+.dark-mode .birthday-item.today {
+    background: #7f1d1d;
+    border-color: #ef4444;
+}
+
+.dark-mode .birthday-name {
+    color: #f9fafb;
+}
+
+.dark-mode .birthday-date,
+.dark-mode .birthday-days-left {
+    color: #9ca3af;
+}
+
+.dark-mode .birthday-actions button:hover {
+    background: #4b5563;
+    color: #f9fafb;
+}
+
+/* Memory View Modal - Dark Mode */
+.dark-mode .memory-date-header {
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    color: white;
+}
+
+.dark-mode .memory-view-title {
+    color: #f9fafb;
+}
+
+.dark-mode .memory-view-description {
+    color: #9ca3af;
+}
+
+.dark-mode .memory-view-meta {
+    border-top-color: #374151;
+}
+
+.dark-mode .memory-relative-date {
+    color: #9ca3af;
+}
+
+/* Help Section - Dark Mode */
+.dark-mode .help-instructions-section {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark-mode .help-instructions-section h3 {
+    color: #f9fafb;
+}
+
+.dark-mode .help-navigation {
+    background: #374151;
+}
+
+.dark-mode .help-navigation button {
+    background: #4b5563;
+    color: #f9fafb;
+    border-color: #6b7280;
+}
+
+.dark-mode .help-navigation button:hover:not(:disabled) {
+    background: #6b7280;
+    border-color: #9ca3af;
+}
+
+.dark-mode .help-navigation button:disabled {
+    opacity: 0.4;
+    background: #374151;
+}
+
+.dark-mode .help-navigation span {
+    color: #9ca3af;
+}
+
+.dark-mode .help-page h4 {
+    color: #60a5fa;
+}
+
+.dark-mode .help-page p,
+.dark-mode .help-page li {
+    color: #e5e7eb;
+}
+
+.dark-mode .help-page strong {
+    color: #f9fafb;
+}
+
+.dark-mode .contact-info {
+    background: linear-gradient(135deg, #1e3a8a, #1e40af);
+    border-color: #3b82f6;
+}
+
+.dark-mode .contact-info h3 {
+    color: white;
+}
+
+.dark-mode .contact-info p {
+    color: #e0f2fe;
+}
+
+.dark-mode .contact-info a {
+    color: #93c5fd;
+}
+
+.dark-mode .contact-info a:hover {
+    color: #dbeafe;
+}
+
+.dark-mode .support-tips {
+    background: #374151;
+    border: 1px solid #4b5563;
+}
+
+.dark-mode .support-tips h4 {
+    color: #f9fafb;
+}
+
+.dark-mode .support-tips li {
+    color: #d1d5db;
+}
+
+/* Empty States - Dark Mode */
+.dark-mode .empty-memories {
+    color: #9ca3af;
+}
+
+.dark-mode .empty-memories h3 {
+    color: #f9fafb;
+}
+
+.dark-mode .empty-birthdays {
+    color: #9ca3af;
+}
+
+/* Image Preview - Dark Mode */
+.dark-mode .image-preview {
+    border-color: #4b5563;
+    background: #374151;
+}
+
+.dark-mode .image-preview.empty {
+    color: #9ca3af;
+}
+
+/* Modals - Dark Mode */
+.dark-mode .modal-content {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark-mode .modal-content h2 {
+    color: #f9fafb;
+}
+
+.dark-mode .form-group label {
+    color: #d1d5db;
+}
+
+.dark-mode .form-group input,
+.dark-mode .form-group select,
+.dark-mode .form-group textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.dark-mode .form-group input:focus,
+.dark-mode .form-group select:focus,
+.dark-mode .form-group textarea:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+.dark-mode .form-group input::placeholder,
+.dark-mode .form-group textarea::placeholder {
+    color: #9ca3af;
+}
+
+.dark-mode .checkbox-group .checkmark {
+    border-color: #4b5563;
+    background: #374151;
+}
+
+.dark-mode .checkbox-group input[type="checkbox"]:checked + .checkmark {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.dark-mode .form-actions {
+    border-top-color: #374151;
+}
+
+/* Date Tooltip - Dark Mode Support (already dark by design) */
+.dark-mode .date-tooltip-content {
+    background: rgba(0, 0, 0, 0.95);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Memory Card Interactions - Dark Mode */
+.dark-mode .memory-card::before {
+    background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(59, 130, 246, 0.1));
+}
+
+.dark-mode .memory-card:hover .memory-title {
+    color: #60a5fa;
+}
+
+/* Image Date Overlay - Dark Mode */
+.dark-mode .image-date-overlay .date-text {
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+}
+
+/* Loading States - Dark Mode */
+.dark-mode .memory-card.loading .memory-image {
+    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+}
+
+/* Slideshow - Dark Mode Support (already optimized for dark) */
+.dark-mode .slideshow-modal {
+    background: rgba(0, 0, 0, 0.98);
+}
+
+/* Responsive Dark Mode Fixes */
+@media (max-width: 768px) {
+    .dark-mode .help-instructions-section {
+        background: #1f2937;
+    }
+
+    .dark-mode .help-navigation {
+        background: #374151;
+    }
+
+    .dark-mode .memory-view-content {
+        background: #1f2937;
+    }
+}
+
+/* Button Variants - Dark Mode */
+.dark-mode .btn-primary {
+    background: #3b82f6;
+    color: white;
+}
+
+.dark-mode .btn-primary:hover {
+    background: #2563eb;
+}
+
+.dark-mode .btn-secondary {
+    background: #374151;
+    color: #f9fafb;
+    border-color: #4b5563;
+}
+
+.dark-mode .btn-secondary:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+}
+
+.dark-mode .btn-danger {
+    background: #dc2626;
+    color: white;
+}
+
+.dark-mode .btn-danger:hover {
+    background: #b91c1c;
+}
+
+/* Special Dark Mode Improvements */
+.dark-mode .add-birthday-btn {
+    background: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.dark-mode .add-birthday-btn:hover {
+    background: #2563eb;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Memory Image Container Dark Mode */
+.dark-mode .memory-image-container::after {
+    background: rgba(0, 0, 0, 0.8);
+    color: #e5e7eb;
+}
+
+/* Progress and Status Indicators - Dark Mode */
+.dark-mode .progress-bar {
+    background: #374151;
+}
+
+.dark-mode .status-good {
+    background: #064e3b;
+    color: #6ee7b7;
+}
+
+.dark-mode .status-warning {
+    background: #451a03;
+    color: #fbbf24;
+}
+
+.dark-mode .status-danger {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
