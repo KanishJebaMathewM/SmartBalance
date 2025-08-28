@@ -1846,7 +1846,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥���💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -4528,7 +4528,7 @@ class WorkLifeBalanceApp {
             'subscriptions': '📺',
             'groceries': '🛒',
             'clothing': '👕',
-            'healthcare': '��',
+            'healthcare': '🏥',
             'reminder': '⏰',
             'other': '📦'
         };
