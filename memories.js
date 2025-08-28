@@ -10,6 +10,7 @@ class MemoriesManager {
 
     init() {
         this.initializeEventListeners();
+        this.initializeSlideshowListeners();
         this.loadMemoriesData();
         this.loadBirthdaysData();
         console.log('✅ Memories Manager initialized');
