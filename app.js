@@ -64,7 +64,7 @@ function toggleExpenseDetails(checkbox) {
             setTimeout(() => {
                 amountField.focus();
                 amountField.placeholder = "Enter expected amount (₹) - Required *";
-                console.log('🎯 Amount field focused and placeholder updated');
+                console.log('�� Amount field focused and placeholder updated');
             }, 200);
 
             // Show notification if Utils is available
@@ -100,7 +100,7 @@ window.testExpenseToggle = function() {
     if (checkbox && details) {
         // Force check the checkbox first
         checkbox.checked = true;
-        console.log('🔧 Forced checkbox to checked');
+        console.log('��� Forced checkbox to checked');
 
         // Apply all methods to show
         details.removeAttribute('style');
@@ -170,7 +170,10 @@ class WorkLifeBalanceApp {
         this.showSection('dashboard');
         this.updateDashboard();
         this.setGreeting();
-        
+
+        // Initialize automated mood tracking
+        this.initializeAutomatedMoodTracking();
+
         // Update dashboard every minute
         setInterval(() => {
             if (this.currentSection === 'dashboard') {
@@ -8107,7 +8110,7 @@ class WorkLifeBalanceApp {
         const nutritionProductivityCorrelation = this.analyzeNutritionProductivityCorrelation(data.meals, data.tasks);
         if (nutritionProductivityCorrelation.correlation > 0.3) {
             correlationInsights.push({
-                title: '��� Nutrition Impact',
+                title: '���� Nutrition Impact',
                 insight: `Home cooking correlates with ${Math.round(nutritionProductivityCorrelation.correlation * 100)}% higher task completion`,
                 strength: nutritionProductivityCorrelation.correlation
             });
@@ -10861,7 +10864,7 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '�����️ Travel & Transport',
+            'travel': '�������️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '���� Education',
