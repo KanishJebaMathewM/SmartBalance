@@ -605,9 +605,8 @@ class WorkLifeBalanceApp {
             case 'stress':
                 this.loadStressData();
                 break;
-            case 'habits':
-                this.loadHabitsSection();
-                this.updateHelpDisplay(); // Initialize help navigation
+            case 'games':
+                this.loadGamesSection();
                 break;
             case 'report':
                 this.generateWeeklyReport();
@@ -4507,7 +4506,7 @@ class WorkLifeBalanceApp {
             'subscriptions': '📺',
             'groceries': '����',
             'clothing': '👕',
-            'healthcare': '🏥',
+            'healthcare': '��',
             'reminder': '⏰',
             'other': '📦'
         };
@@ -9521,7 +9520,7 @@ class WorkLifeBalanceApp {
         // Task recommendations
         const taskCompletion = data.tasks.length > 0 ? (data.tasks.filter(t => t.completed).length / data.tasks.length) * 100 : 0;
         if (taskCompletion < 70) {
-            recommendations.push('������ Focus on completing more tasks for better productivity');
+            recommendations.push('�������� Focus on completing more tasks for better productivity');
         }
 
         // Fitness recommendations
