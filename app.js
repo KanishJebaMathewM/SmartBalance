@@ -2491,7 +2491,7 @@ class WorkLifeBalanceApp {
             date: new Date().toISOString()
         });
         
-        Utils.showNotification(`${exercise.title} completed! �����`, 'success');
+        Utils.showNotification(`${exercise.title} completed! 💪`, 'success');
         this.closeModal('exerciseModal');
         
         if (this.currentSection === 'fitness') {
