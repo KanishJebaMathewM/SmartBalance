@@ -88,6 +88,21 @@
   animation: pulse-warning 1.5s infinite;
 }
 
+/* Hint Highlighting */
+.queens-colored-square.hint-suggestion {
+  outline: 4px solid rgba(0, 255, 255, 0.9);
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.7);
+  animation: pulse-hint-suggestion 1s infinite;
+  z-index: 10;
+}
+
+.queens-colored-square.hint-mistake {
+  outline: 4px solid rgba(255, 69, 0, 0.95);
+  box-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
+  animation: pulse-hint-mistake 0.8s infinite;
+  z-index: 10;
+}
+
 /* Hover Effects */
 .queens-colored-square:hover {
   transform: scale(1.05);
