@@ -219,7 +219,7 @@ class WorkLifeBalanceApp {
         console.log('✅ Fitness functionality verification:');
         console.log('✅ Enhanced startExercise method:', typeof this.startExercise === 'function');
         console.log('✅ Enhanced completeExercise method:', typeof this.completeExercise === 'function');
-        console.log('✅ Enhanced loadFitnessData method:', typeof this.loadFitnessData === 'function');
+        console.log('�� Enhanced loadFitnessData method:', typeof this.loadFitnessData === 'function');
         console.log('✅ Enhanced updateFitnessStats method:', typeof this.updateFitnessStats === 'function');
 
         // Check if DOM elements exist
@@ -241,122 +241,34 @@ class WorkLifeBalanceApp {
         console.log('✅ Fitness functionality verification complete!');
     }
 
-    // Enhanced Dashboard Methods
-    updateQuickActions() {
-        const quickActionsEl = document.getElementById('quickActions');
-        if (!quickActionsEl) {
-            // Create quick actions panel if it doesn't exist
-            this.createQuickActionsPanel();
-            return;
-        }
-
-        const tasks = window.storage.getTasks();
-        const today = new Date().toDateString();
-        const todayTasks = tasks.filter(task =>
-            new Date(task.createdAt).toDateString() === today
-        );
-        const pendingTasks = todayTasks.filter(task => !task.completed).length;
-
-        const expenses = window.storage.getExpenses();
-        const todayExpenses = expenses.filter(expense =>
-            Utils.isToday(expense.date || expense.createdAt)
-        ).length;
-
-        const workouts = window.storage.getWorkouts();
-        const todayWorkouts = workouts.filter(workout =>
-            Utils.isToday(workout.createdAt)
-        ).length;
-
-        const actions = [
-            {
-                id: 'addTask',
-                icon: '➕',
-                label: 'Add Task',
-                badge: pendingTasks > 0 ? pendingTasks : null,
-                action: () => this.openModal('taskModal')
-            },
-            {
-                id: 'addExpense',
-                icon: '💳',
-                label: 'Log Expense',
-                badge: todayExpenses === 0 ? '!' : null,
-                action: () => this.openModal('expenseModal')
-            },
-            {
-                id: 'addMeal',
-                icon: '🍽️',
-                label: 'Add Meal',
-                badge: null,
-                action: () => this.openModal('mealModal')
-            },
-            {
-                id: 'quickWorkout',
-                icon: '💪',
-                label: 'Quick Exercise',
-                badge: todayWorkouts === 0 ? '!' : null,
-                action: () => this.startExercise('desk-stretches')
-            },
-            {
-                id: 'viewAnalytics',
-                icon: '📊',
-                label: 'Analytics',
-                badge: null,
-                action: () => this.showSection('expenses')
-            }
-        ];
-
-        quickActionsEl.innerHTML = actions.map((action, index) => `
-            <button class="quick-action-btn" id="quickAction${index}" title="${action.label}">
-                <span class="action-icon">${action.icon}</span>
-                <span class="action-label">${action.label}</span>
-                ${action.badge ? `<span class="action-badge">${action.badge}</span>` : ''}
-            </button>
-        `).join('');
-
-        // Add click event listeners
-        actions.forEach((action, index) => {
-            const button = document.getElementById(`quickAction${index}`);
-            if (button) {
-                button.addEventListener('click', action.action);
-            }
-        });
-    }
-
-    updateDashboardInsights() {
+    // Clean Dashboard Methods - Stats Only
+    updateCleanInsights() {
         const insightsEl = document.getElementById('dashboardInsights');
-        if (!insightsEl) {
-            this.createDashboardInsights();
-            return;
-        }
+        if (!insightsEl) return;
 
-        const insights = this.generateSmartInsights();
+        const insights = this.generateCleanInsights();
 
         insightsEl.innerHTML = `
-            <div class="insights-header">
-                <h3>💡 Smart Insights</h3>
-                <span class="insights-count">${insights.length} insights</span>
-            </div>
-            <div class="insights-list">
-                ${insights.slice(0, 3).map(insight => `
-                    <div class="insight-item ${insight.type}">
-                        <span class="insight-icon">${insight.icon}</span>
-                        <div class="insight-content">
-                            <div class="insight-title">${insight.title}</div>
-                            <div class="insight-description">${insight.description}</div>
+            <div class="clean-insights">
+                <h3>📈 Today's Overview</h3>
+                <div class="insights-grid">
+                    ${insights.map(insight => `
+                        <div class="insight-stat">
+                            <span class="insight-icon">${insight.icon}</span>
+                            <div class="insight-info">
+                                <div class="insight-value">${insight.value}</div>
+                                <div class="insight-label">${insight.label}</div>
+                            </div>
                         </div>
-                        ${insight.action ? `<button class="insight-action" onclick="${insight.action}">${insight.actionLabel}</button>` : ''}
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
             </div>
         `;
     }
 
-    updateProgressRings() {
+    updateSimpleProgress() {
         const progressEl = document.getElementById('progressRings');
-        if (!progressEl) {
-            this.createProgressRings();
-            return;
-        }
+        if (!progressEl) return;
 
         const today = new Date().toDateString();
         const tasks = window.storage.getTasks();
@@ -364,57 +276,42 @@ class WorkLifeBalanceApp {
         const workouts = window.storage.getWorkouts();
         const meals = window.storage.getMeals();
 
-        // Calculate progress percentages
+        // Calculate simple progress metrics
         const todayTasks = tasks.filter(task =>
             new Date(task.createdAt).toDateString() === today
         );
         const taskProgress = todayTasks.length > 0 ?
             (todayTasks.filter(task => task.completed).length / todayTasks.length) * 100 : 0;
 
-        const workoutProgress = workouts.filter(workout =>
+        const workoutCount = workouts.filter(workout =>
             Utils.isToday(workout.createdAt)
-        ).length > 0 ? 100 : 0;
+        ).length;
 
-        const mealProgress = Math.min(
-            (meals.filter(meal => Utils.isToday(meal.date)).length / 3) * 100, 100
-        );
+        const mealCount = meals.filter(meal => Utils.isToday(meal.date)).length;
 
-        const settings = window.storage.getSettings();
-        const dailyBudget = settings.dailyBudget || 1000;
         const todayExpenses = expenses.filter(expense =>
             Utils.isToday(expense.date || expense.createdAt)
         ).reduce((sum, expense) => sum + parseFloat(expense.amount), 0);
-        const budgetProgress = Math.min((todayExpenses / dailyBudget) * 100, 100);
 
-        const rings = [
-            { label: 'Tasks', progress: taskProgress, color: '#3b82f6', value: `${Math.round(taskProgress)}%` },
-            { label: 'Workout', progress: workoutProgress, color: '#10b981', value: workoutProgress > 0 ? '✅' : '⭕' },
-            { label: 'Meals', progress: mealProgress, color: '#f59e0b', value: `${Math.round(mealProgress)}%` },
-            { label: 'Budget', progress: 100 - budgetProgress, color: budgetProgress > 80 ? '#ef4444' : '#8b5cf6', value: Utils.formatCurrency(todayExpenses) }
+        const progress = [
+            { label: 'Tasks', value: `${Math.round(taskProgress)}%`, color: '#3b82f6' },
+            { label: 'Workouts', value: workoutCount, color: '#10b981' },
+            { label: 'Meals', value: mealCount, color: '#f59e0b' },
+            { label: 'Spent', value: Utils.formatCurrency(todayExpenses), color: '#8b5cf6' }
         ];
 
-        progressEl.innerHTML = rings.map(ring => `
-            <div class="progress-ring">
-                <svg class="ring-svg" width="80" height="80">
-                    <circle cx="40" cy="40" r="35" stroke="#e5e7eb" stroke-width="6" fill="none"/>
-                    <circle
-                        cx="40" cy="40" r="35"
-                        stroke="${ring.color}"
-                        stroke-width="6"
-                        fill="none"
-                        stroke-dasharray="${2 * Math.PI * 35}"
-                        stroke-dashoffset="${2 * Math.PI * 35 * (1 - ring.progress / 100)}"
-                        transform="rotate(-90 40 40)"
-                        class="progress-circle"
-                    />
-                </svg>
-                <div class="ring-content">
-                    <div class="ring-value">${ring.value}</div>
-                </div>
-                <div class="ring-label">${ring.label}</div>
+        progressEl.innerHTML = `
+            <div class="simple-progress-grid">
+                ${progress.map(item => `
+                    <div class="progress-item">
+                        <div class="progress-value" style="color: ${item.color}">${item.value}</div>
+                        <div class="progress-label">${item.label}</div>
+                    </div>
+                `).join('')}
             </div>
-        `).join('');
+        `;
     }
+
 
     updateStreakWidgets() {
         const streaksEl = document.getElementById('streakWidgets');
@@ -471,37 +368,6 @@ class WorkLifeBalanceApp {
         `).join('');
     }
 
-    checkDailyGoals() {
-        const goalsEl = document.getElementById('dailyGoals');
-        if (!goalsEl) {
-            this.createDailyGoals();
-            return;
-        }
-
-        const goals = this.getDailyGoals();
-        const completedGoals = goals.filter(goal => goal.completed).length;
-        const totalGoals = goals.length;
-        const progressPercentage = totalGoals > 0 ? (completedGoals / totalGoals) * 100 : 0;
-
-        goalsEl.innerHTML = `
-            <div class="goals-header">
-                <h3>🎯 Daily Goals</h3>
-                <span class="goals-progress">${completedGoals}/${totalGoals}</span>
-            </div>
-            <div class="goals-progress-bar">
-                <div class="goals-progress-fill" style="width: ${progressPercentage}%"></div>
-            </div>
-            <div class="goals-list">
-                ${goals.map(goal => `
-                    <div class="goal-item ${goal.completed ? 'completed' : ''}">
-                        <span class="goal-icon">${goal.completed ? '✅' : '⭕'}</span>
-                        <span class="goal-text">${goal.text}</span>
-                        ${goal.value ? `<span class="goal-value">${goal.value}</span>` : ''}
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
 
     updateLiveMetrics() {
         // Update timestamp
@@ -1264,11 +1130,9 @@ class WorkLifeBalanceApp {
             this.updateWorkoutWidget();
             this.updateStressWidget();
             this.updateSummaryWidget();
-            this.updateQuickActions();
-            this.updateDashboardInsights();
-            this.updateProgressRings();
+            this.updateCleanInsights();
+            this.updateSimpleProgress();
             this.updateStreakWidgets();
-            this.checkDailyGoals();
         } catch (error) {
             console.error('Error updating dashboard:', error);
             Utils.showNotification('Dashboard update failed', 'error');
@@ -3032,7 +2896,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[���📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -10172,7 +10036,7 @@ class WorkLifeBalanceApp {
         const areas = [
             { name: 'Fitness', score: scores.fitness, icon: '💪' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
-            { name: 'Productivity', score: scores.productivity, icon: '💼' },
+            { name: 'Productivity', score: scores.productivity, icon: '��' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
             { name: 'Wellness', score: scores.wellness, icon: '🧘' }
         ];
@@ -10510,7 +10374,7 @@ class WorkLifeBalanceApp {
         container.innerHTML = metrics.map(metric => {
             const change = metric.current - metric.previous;
             const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
-            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘️' : '➡️';
+            const changeIcon = change > 0 ? '↗️' : change < 0 ? '↘��' : '➡️';
 
             return `
                 <div class="progress-metric">
