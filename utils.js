@@ -790,7 +790,7 @@ class Utils {
             );
             if (stressReliefWorkouts.length >= 10) {
                 newBadges.wellnessWarrior = true;
-                badgesEarned.push('🧘‍♀️ Wellness Warrior');
+                badgesEarned.push('🧘 Wellness Warrior');
             }
         }
 
@@ -799,13 +799,13 @@ class Utils {
         // Iron Will badge (30-day workout streak)
         if (!badges.ironWill && workoutStreak >= 30) {
             newBadges.ironWill = true;
-            badgesEarned.push('🛡️ Iron Will');
+            badgesEarned.push('🛡 Iron Will');
         }
 
         // Marathon Warrior badge (complete 100 workouts total)
         if (!badges.marathonWarrior && data.workouts && data.workouts.length >= 100) {
             newBadges.marathonWarrior = true;
-            badgesEarned.push('🏃‍♂️ Marathon Warrior');
+            badgesEarned.push('🏃 Marathon Warrior');
         }
 
         // Fitness Zealot badge (work out every day for 60 days)
