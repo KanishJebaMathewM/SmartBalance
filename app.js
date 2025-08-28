@@ -3688,7 +3688,7 @@ class WorkLifeBalanceApp {
             if (amount > max) {
                 insights.push({
                     type: 'info',
-                    icon: '📊',
+                    icon: '����',
                     text: `This will be your highest ${this.getCategoryDisplayName(category)} expense`
                 });
             }
@@ -7195,7 +7195,7 @@ class WorkLifeBalanceApp {
                             <span class="meal-calories">${meal.calories} cal</span>
                         </div>
                         <div class="meal-status ${meal.status}">
-                            ${meal.status === 'eaten' ? '✅ Eaten' : '����� Planned'}
+                            ${meal.status === 'eaten' ? '✅ Eaten' : '������� Planned'}
                         </div>
                     </div>
                 `).join('');
@@ -7587,12 +7587,65 @@ class WorkLifeBalanceApp {
     }
 
     updateStressStats() {
-        const currentMood = window.storage.getWeeklyMoodAverage();
-        const currentStressEl = document.getElementById('currentStress');
+        const moods = window.storage.getMoods();
+        const today = new Date().toISOString().split('T')[0];
 
-        if (currentStressEl) {
-            currentStressEl.textContent = Utils.getMoodEmoji(currentMood);
+        // Find today's mood
+        const todaysMood = moods.find(m => {
+            const moodDate = new Date(m.date).toISOString().split('T')[0];
+            return moodDate === today;
+        });
+
+        const currentStressEl = document.getElementById('currentStress');
+        const currentMoodTextEl = document.getElementById('currentMoodText');
+
+        if (currentStressEl && currentMoodTextEl) {
+            if (todaysMood) {
+                currentStressEl.textContent = Utils.getMoodEmoji(todaysMood.mood);
+
+                // Show detailed mood information
+                const moodLabels = {
+                    'very-happy': 'Very Happy',
+                    'happy': 'Happy',
+                    'neutral': 'Neutral',
+                    'stressed': 'Stressed',
+                    'very-stressed': 'Very Stressed'
+                };
+
+                let moodText = moodLabels[todaysMood.mood] || 'Unknown';
+
+                if (todaysMood.automated) {
+                    moodText += ` (Auto-calculated)`;
+                    if (todaysMood.score) {
+                        moodText += ` - Score: ${Math.round(todaysMood.score)}/100`;
+                    }
+                }
+
+                currentMoodTextEl.textContent = moodText;
+
+                // Show calculation factors if available
+                if (todaysMood.factors) {
+                    this.displayMoodFactors(todaysMood.factors);
+                }
+            } else {
+                currentStressEl.textContent = '🤖';
+                currentMoodTextEl.textContent = 'Calculating mood based on today\'s activities...';
+            }
         }
+
+        // Also update the fallback element if it exists
+        const fallbackCurrentStress = document.getElementById('currentStress');
+        if (fallbackCurrentStress && !currentMoodTextEl) {
+            const currentMood = window.storage.getWeeklyMoodAverage();
+            fallbackCurrentStress.textContent = Utils.getMoodEmoji(currentMood);
+        }
+    }
+
+    // Display mood calculation factors
+    displayMoodFactors(factors) {
+        // This could be enhanced to show a detailed breakdown
+        // For now, we'll just log it for debugging
+        console.log('📊 Mood calculation factors:', factors);
     }
 
     loadMoodChart() {
