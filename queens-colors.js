@@ -508,13 +508,16 @@ class EightQueensWithColors {
         const hintMessage = document.getElementById('hintMessage');
 
         if (hintSection && hintMessage && hint) {
-            hintMessage.textContent = hint;
+            hintMessage.innerHTML = hint; // Use innerHTML to support HTML formatting
             hintSection.style.display = 'block';
 
-            // Hide hint after 5 seconds
+            // Highlight the suggested position if available
+            this.highlightHintPosition();
+
+            // Hide hint after 8 seconds for better readability
             setTimeout(() => {
                 this.hideHint();
-            }, 5000);
+            }, 8000);
         }
     }
 
