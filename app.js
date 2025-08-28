@@ -1964,6 +1964,109 @@ class WorkLifeBalanceApp {
         }
     }
 
+    // Performance optimization methods
+    setupVisibilityOptimizations() {
+        // Use Intersection Observer for lazy loading dashboard components
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        if (element.classList.contains('lazy-load')) {
+                            this.loadLazyComponent(element);
+                            observer.unobserve(element);
+                        }
+                    }
+                });
+            });
+
+            // Observe lazy-loadable elements
+            document.querySelectorAll('.lazy-load').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Optimize updates based on visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Pause expensive operations when tab is not visible
+                this.pauseUpdates = true;
+            } else {
+                // Resume updates when tab becomes visible
+                this.pauseUpdates = false;
+                if (this.currentSection === 'dashboard') {
+                    this.updateDashboard();
+                }
+            }
+        });
+    }
+
+    loadLazyComponent(element) {
+        // Implement lazy loading for heavy dashboard components
+        const componentType = element.dataset.component;
+
+        switch (componentType) {
+            case 'progress-rings':
+                this.updateProgressRings();
+                break;
+            case 'insights':
+                this.updateDashboardInsights();
+                break;
+            case 'streaks':
+                this.updateStreakWidgets();
+                break;
+            default:
+                console.log(`Loading lazy component: ${componentType}`);
+        }
+
+        element.classList.remove('lazy-load');
+        element.classList.add('loaded');
+    }
+
+    // Enhanced dashboard update with performance checks
+    updateDashboardWithPerformanceCheck() {
+        if (this.pauseUpdates) {
+            return; // Skip updates if tab is not visible
+        }
+
+        const startTime = performance.now();
+
+        try {
+            this.updateDashboard();
+        } catch (error) {
+            console.error('Dashboard update error:', error);
+        }
+
+        const endTime = performance.now();
+        const updateTime = endTime - startTime;
+
+        // Log performance for debugging
+        if (updateTime > 100) { // More than 100ms
+            console.warn(`Dashboard update took ${updateTime.toFixed(2)}ms`);
+        }
+    }
+
+    // Memory cleanup method
+    cleanup() {
+        // Clear intervals
+        if (this.dashboardInterval) {
+            clearInterval(this.dashboardInterval);
+        }
+        if (this.metricsInterval) {
+            clearInterval(this.metricsInterval);
+        }
+
+        // Remove event listeners
+        document.removeEventListener('visibilitychange', this.visibilityHandler);
+
+        // Clear timers
+        if (this.exerciseTimer) {
+            clearInterval(this.exerciseTimer);
+        }
+
+        console.log('✅ App cleanup completed');
+    }
+
     // Enhanced expense loading
     loadExpenseSection() {
         this.loadExpenseTabs();
@@ -7190,7 +7293,7 @@ class WorkLifeBalanceApp {
         if (avgHomeCost > 0 && avgHotelCost > 0) {
             const savings = avgHotelCost - avgHomeCost;
             insights.push({
-                icon: '��',
+                icon: '💰',
                 title: 'Cost Comparison',
                 description: `On average, home cooking saves you ${Utils.formatCurrency(savings)} per meal compared to ordering out.`
             });
@@ -9201,7 +9304,7 @@ class WorkLifeBalanceApp {
             return workoutDate >= thirtyDaysAgo;
         });
 
-        const workoutsPerWeek = (last30DaysWorkouts.length / 4.3); // 30 days �� 4.3 weeks
+        const workoutsPerWeek = (last30DaysWorkouts.length / 4.3); // 30 days ≈ 4.3 weeks
         const fitnessScore = Math.min(workoutsPerWeek * 20, 100); // 5 workouts/week = 100%
 
         return {
@@ -10537,7 +10640,7 @@ class WorkLifeBalanceApp {
                 <button class="period-btn" data-period="month" onclick="app.generateReport('month')">1 Month</button>
             </div>
             <div class="export-options">
-                <button class="btn-secondary export-btn" data-section="report" data-format="csv" onclick="app.exportSectionData('report', 'csv')">��� Export CSV</button>
+                <button class="btn-secondary export-btn" data-section="report" data-format="csv" onclick="app.exportSectionData('report', 'csv')">📊 Export CSV</button>
                 <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">📄 Export JSON</button>
             </div>
         `;
