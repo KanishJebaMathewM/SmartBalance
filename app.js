@@ -2640,6 +2640,16 @@ class WorkLifeBalanceApp {
         }
     }
 
+    loadMemoriesSection() {
+        // Initialize memories manager if not already done
+        if (window.memoriesManager) {
+            window.memoriesManager.loadMemoriesData();
+            window.memoriesManager.loadBirthdaysData();
+        } else {
+            console.log('Memories manager not yet initialized, will load when ready');
+        }
+    }
+
     // Global method for starting games (called from HTML)
     startGame(gameType) {
         if (window.gamesManager) {
@@ -3014,7 +3024,7 @@ class WorkLifeBalanceApp {
 
         // Add nutrition insights
         if (analytics.homeCookingPercentage >= 80) {
-            insights.push('🏠 Excellent home cooking habits! You\'re saving money and eating healthier.');
+            insights.push('��� Excellent home cooking habits! You\'re saving money and eating healthier.');
         } else if (analytics.homeCookingPercentage < 50) {
             insights.push('🍕 Consider cooking more meals at home to save money and improve nutrition.');
         }
@@ -4845,7 +4855,7 @@ class WorkLifeBalanceApp {
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
-            'education': '📚',
+            'education': '��',
             'fitness': '💪',
             'subscriptions': '📺',
             'groceries': '🛒',
