@@ -864,7 +864,7 @@ class Utils {
             const moodStreak = this.getMoodStreak(data.moods);
             if (moodStreak >= 100) {
                 newBadges.zenMaster = true;
-                badgesEarned.push('☯�� Zen Master');
+                badgesEarned.push('☯️ Zen Master');
             }
         }
 
