@@ -1578,7 +1578,7 @@ class WorkLifeBalanceApp {
                 label: 'Today\'s Spending'
             },
             {
-                icon: '���',
+                icon: '💪',
                 value: todayWorkouts,
                 label: 'Workouts Today'
             },
@@ -3035,7 +3035,7 @@ class WorkLifeBalanceApp {
         } else if (percentage > 25) {
             return {
                 type: 'info',
-                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍���✈️🎭🏥📚🎯📺🛒👕📦]/g, '').trim()}`
+                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         }
         return null;
@@ -3949,7 +3949,7 @@ class WorkLifeBalanceApp {
 
         // Add nutrition insights
         if (analytics.homeCookingPercentage >= 80) {
-            insights.push('��� Excellent home cooking habits! You\'re saving money and eating healthier.');
+            insights.push('🏆 Excellent home cooking habits! You\'re saving money and eating healthier.');
         } else if (analytics.homeCookingPercentage < 50) {
             insights.push('🍕 Consider cooking more meals at home to save money and improve nutrition.');
         }
@@ -5824,7 +5824,7 @@ class WorkLifeBalanceApp {
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
-            'education': '��',
+            'education': '📚',
             'fitness': '💪',
             'subscriptions': '📺',
             'groceries': '🛒',
