@@ -1221,47 +1221,106 @@ class Utils {
     static exportToCSV(data, filename = 'wlb-report.csv') {
         let csvContent = '';
 
-        // Handle different data types
-        if (data.expenses) {
-            csvContent = "Date,Category,Amount,Notes,Payment Method\n";
-            data.expenses.forEach(expense => {
-                csvContent += `${Utils.formatDate(expense.createdAt)},${expense.category},${expense.amount},"${expense.notes || ''}",${expense.paymentMethod || 'cash'}\n`;
-            });
-        } else if (data.tasks) {
-            csvContent = "Date,Title,Category,Status,Expense Related\n";
+        // Handle different data types based on what's available in the data
+        if (data.tasks && !data.meals && !data.workouts) {
+            // Pure tasks export
+            csvContent = "Date,Title,Category,Status,Expense Related,Amount\n";
             data.tasks.forEach(task => {
-                csvContent += `${Utils.formatDate(task.createdAt)},"${task.title}",${task.category},${task.completed ? 'Completed' : 'Pending'},${task.expenseRelated ? 'Yes' : 'No'}\n`;
+                csvContent += `${Utils.formatDate(task.createdAt)},"${(task.title || '').replace(/"/g, '""')}",${task.category},${task.completed ? 'Completed' : 'Pending'},${task.expenseRelated ? 'Yes' : 'No'},${task.amount || ''}\n`;
             });
-        } else if (data.meals) {
-            csvContent = "Date,Name,Type,Source,Calories,Cost\n";
+        } else if (data.meals && data.foodItems) {
+            // Food & Nutrition export with multiple sheets
+            csvContent = "Section,Date,Name,Type,Source,Calories,Cost,Notes\n";
+            // Add meals
             data.meals.forEach(meal => {
                 const cost = meal.source === 'home' ? (meal.ingredientCost || 0) : (meal.mealCost || 0);
-                csvContent += `${Utils.formatDate(meal.date)},"${meal.name}",${meal.type},${meal.source},${meal.calories},${cost}\n`;
+                csvContent += `Meals,${Utils.formatDate(meal.date)},"${(meal.name || '').replace(/"/g, '""')}",${meal.type},${meal.source},${meal.calories},${cost},"${(meal.notes || '').replace(/"/g, '""')}"\n`;
             });
-        } else if (data.workouts) {
-            csvContent = "Date,Type,Duration,Calories\n";
+            // Add food items
+            data.foodItems.forEach(item => {
+                csvContent += `Pantry,${Utils.formatDate(item.createdAt || new Date())},"${(item.name || '').replace(/"/g, '""')}",Food Item,Pantry,${item.caloriesPer100g || 0},0,"${item.quantity} ${item.unit}"\n`;
+            });
+            // Add analytics if available
+            if (data.analytics) {
+                csvContent += `Analytics,${new Date().toISOString().split('T')[0]},Weekly Stats,Summary,Analytics,${data.analytics.averageCaloriesPerDay || 0},${data.analytics.totalMoneySaved || 0},"Home Cooking: ${data.analytics.homeCookingPercentage}%"\n`;
+            }
+        } else if (data.workouts && data.analytics) {
+            // Fitness export
+            csvContent = "Date,Exercise Type,Duration (minutes),Calories Burned,Notes\n";
             data.workouts.forEach(workout => {
-                csvContent += `${Utils.formatDate(workout.createdAt)},${workout.type || 'General'},${workout.duration || 0},${workout.calories || 0}\n`;
+                csvContent += `${Utils.formatDate(workout.createdAt)},${workout.type || 'General'},${workout.duration || 0},${workout.calories || 0},"${(workout.notes || '').replace(/"/g, '""')}"\n`;
             });
-        } else if (data.moods) {
-            csvContent = "Date,Mood,Stress Level,Notes\n";
+            // Add summary row
+            csvContent += `Summary,Total Workouts: ${data.workouts.length},Total Duration: ${data.analytics.averageWorkoutDuration * data.workouts.length},Total Calories: ${data.analytics.caloriesBurned},"Streak: ${data.analytics.currentStreak} days"\n`;
+        } else if (data.moods && data.analytics) {
+            // Stress & Mood export
+            csvContent = "Date,Mood,Stress Level (1-5),Notes,Patterns\n";
             data.moods.forEach(mood => {
                 const stressLevel = { 'very-happy': 1, 'happy': 2, 'neutral': 3, 'stressed': 4, 'very-stressed': 5 }[mood.mood] || 3;
-                csvContent += `${Utils.formatDate(mood.date)},${mood.mood},${stressLevel},"${mood.notes || ''}"\n`;
+                csvContent += `${Utils.formatDate(mood.date)},${mood.mood},${stressLevel},"${(mood.notes || '').replace(/"/g, '""')}","${mood.tags ? mood.tags.join(', ') : ''}"\n`;
             });
-        } else if (data.habits) {
-            csvContent = "Name,Category,Status,Current Streak,Created Date\n";
-            data.habits.forEach(habit => {
-                csvContent += `"${habit.name}",${habit.category},${habit.active !== false ? 'Active' : 'Inactive'},${habit.currentStreak || 0},${Utils.formatDate(habit.createdAt)}\n`;
+            // Add analytics summary
+            csvContent += `Summary,Weekly Average: ${data.analytics.weeklyMoodAverage},Trend: ${data.analytics.stressTrends || 'Stable'},,"Total Entries: ${data.analytics.totalMoodEntries}"\n`;
+        } else if (data.totalGamesPlayed !== undefined || data.gameStats) {
+            // Games export
+            csvContent = "Game,Attempts,Completed,Success Rate %,Best Score,Best Time,Recent Activity\n";
+
+            if (data.gameStats && typeof data.gameStats === 'object') {
+                Object.entries(data.gameStats).forEach(([game, stats]) => {
+                    const successRate = stats.attempts > 0 ? Math.round((stats.completed / stats.attempts) * 100) : 0;
+                    const bestTime = stats.bestTime ? `${Math.floor(stats.bestTime / 60)}:${(stats.bestTime % 60).toString().padStart(2, '0')}` : 'N/A';
+                    csvContent += `${game},${stats.attempts || 0},${stats.completed || 0},${successRate},${stats.bestScore || stats.highScore || 0},${bestTime},${stats.lastPlayed || 'N/A'}\n`;
+                });
+            }
+
+            // Add recent games if available
+            if (data.recentGames && data.recentGames.length > 0) {
+                csvContent += "\nRecent Games\n";
+                csvContent += "Date,Game,Result,Score,Duration\n";
+                data.recentGames.forEach(game => {
+                    const duration = game.elapsed ? `${Math.floor(game.elapsed / 60)}:${(game.elapsed % 60).toString().padStart(2, '0')}` : 'N/A';
+                    csvContent += `${Utils.formatDate(game.timestamp)},${game.type},${game.result.won ? 'Won' : 'Lost'},${game.result.score || 0},${duration}\n`;
+                });
+            }
+
+            // Add summary
+            csvContent += `\nSummary\n`;
+            csvContent += `Total Games Played,${data.totalGamesPlayed || 0}\n`;
+            csvContent += `Total Score,${data.totalScore || 0}\n`;
+            csvContent += `Game Streak,${data.gameStreak || 0}\n`;
+            if (data.analytics) {
+                csvContent += `Most Played Game,${data.analytics.mostPlayedGame || 'None'}\n`;
+                csvContent += `Average Score,${data.analytics.averageScorePerGame || 0}\n`;
+                csvContent += `Improvement Trend,${data.analytics.improvementTrend || 'Stable'}\n`;
+            }
+        } else if (data.expenses) {
+            // Expenses export
+            csvContent = "Date,Category,Amount,Notes,Payment Method\n";
+            data.expenses.forEach(expense => {
+                csvContent += `${Utils.formatDate(expense.createdAt)},${expense.category},${expense.amount},"${(expense.notes || '').replace(/"/g, '""')}",${expense.paymentMethod || 'cash'}\n`;
             });
+        } else if (data.generatedAt && data.analytics) {
+            // Comprehensive report export
+            csvContent = "Section,Metric,Value,Details\n";
+            csvContent += `Report Info,Generated At,${Utils.formatDate(data.generatedAt)},Comprehensive Life Balance Report\n`;
+            csvContent += `Tasks,Completion Rate,${data.analytics.taskCompletionRate}%,${data.tasks ? data.tasks.length : 0} total tasks\n`;
+            csvContent += `Expenses,Total Amount,${data.analytics.totalExpenses},Weekly: ${data.analytics.weeklyExpenses}\n`;
+            csvContent += `Expenses,Daily Average,${data.analytics.dailyAverageExpense},Monthly: ${data.analytics.monthlyExpenses}\n`;
+            csvContent += `Food,Home Cooking Rate,${data.analytics.homeCookingPercentage}%,Money Saved: ${data.analytics.moneySavedCooking}\n`;
+            csvContent += `Food,Average Calories,${data.analytics.averageCaloriesPerDay},Per day\n`;
+            csvContent += `Fitness,Workout Streak,${data.analytics.workoutStreak} days,Weekly Count: ${data.analytics.weeklyWorkoutCount}\n`;
+            csvContent += `Fitness,Calories Burned,${data.analytics.totalCaloriesBurned},Total across all workouts\n`;
+            csvContent += `Mood,Average Mood,${data.analytics.averageMood},Stress Trend: ${data.analytics.stressTrend}\n`;
+            csvContent += `Games,Total Played,${data.games?.totalGamesPlayed || 0},Total Score: ${data.games?.totalScore || 0}\n`;
+            csvContent += `Overall,Health Score,${data.analytics.overallHealthScore}/100,Comprehensive wellness metric\n`;
         } else {
-            // Generic CSV for complex report data
+            // Generic CSV for unknown data structure
             csvContent = "Type,Value,Description\n";
             Object.entries(data).forEach(([key, value]) => {
                 if (Array.isArray(value)) {
                     csvContent += `${key},${value.length},"${key} records"\n`;
-                } else if (typeof value === 'object') {
-                    csvContent += `${key},"${JSON.stringify(value)}","${key} data"\n`;
+                } else if (typeof value === 'object' && value !== null) {
+                    csvContent += `${key},"${JSON.stringify(value).replace(/"/g, '""')}","${key} data"\n`;
                 } else {
                     csvContent += `${key},${value},"${key} value"\n`;
                 }
