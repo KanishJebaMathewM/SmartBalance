@@ -8643,7 +8643,7 @@ class WorkLifeBalanceApp {
         if (homeCookingRate >= 70) {
             insights.push('🍳 Excellent home cooking habits! Keep it up.');
         } else if (homeCookingRate >= 50) {
-            insights.push('������ Good balance of home cooking and dining out.');
+            insights.push('🍽️ Good balance of home cooking and dining out.');
         } else {
             insights.push('🏠 Try cooking more meals at home for better health and savings.');
         }
@@ -9190,11 +9190,11 @@ class WorkLifeBalanceApp {
 
         // Find top performing areas
         const areas = [
-            { name: 'Fitness', score: scores.fitness, icon: '���' },
+            { name: 'Fitness', score: scores.fitness, icon: '💪' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
             { name: 'Productivity', score: scores.productivity, icon: '💼' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
-            { name: 'Wellness', score: scores.wellness, icon: '����' }
+            { name: 'Wellness', score: scores.wellness, icon: '🧘' }
         ];
 
         const topAreas = areas.filter(area => area.score >= 70).sort((a, b) => b.score - a.score);
@@ -9452,7 +9452,7 @@ class WorkLifeBalanceApp {
         const priorityActions = [
             {
                 category: 'fitness',
-                categoryIcon: '�������',
+                categoryIcon: '💪',
                 title: 'Exercise Regularly',
                 description: 'Do at least 20 minutes of physical activity',
                 frequency: '3-4 times this week',
