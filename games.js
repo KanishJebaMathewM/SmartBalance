@@ -57,10 +57,6 @@ class GamesManager {
                 this.openModal('sudokuGameModal');
                 this.sudoku.startGame();
                 break;
-            case 'tango':
-                this.openModal('tangoGameModal');
-                this.tango.startGame();
-                break;
             case '2048':
                 this.openModal('2048GameModal');
                 this.game2048.startGame();
