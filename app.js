@@ -776,7 +776,7 @@ class WorkLifeBalanceApp {
                     </div>
                 </div>
                 <div class="task-actions">
-                    <button onclick="app.editTask(${task.id})" title="Edit">����️</button>
+                    <button onclick="app.editTask(${task.id})" title="Edit">✏️</button>
                     <button onclick="app.deleteTask(${task.id})" title="Delete">🗑️</button>
                 </div>
             </div>
@@ -1074,7 +1074,7 @@ class WorkLifeBalanceApp {
                 </div>
                 <div class="expense-amount">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
-                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑�����</button>
+                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑���</button>
                 </div>
             </div>
         `).join('');
@@ -6049,7 +6049,7 @@ class WorkLifeBalanceApp {
 
         if (weeklyStats.totalCalories > 0) {
             insights.push({
-                icon: '����',
+                icon: '���',
                 title: 'Weekly Calorie Intake',
                 description: `You consumed ${weeklyStats.totalCalories} calories this week, averaging ${Math.round(weeklyStats.avgCaloriesPerDay)} per day.`
             });
@@ -10585,7 +10585,7 @@ class WorkLifeBalanceApp {
             'bank': '������ Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
-        return paymentMethods[method] || '💵 Cash';
+        return paymentMethods[method] || '��� Cash';
     }
 
     // Export functionality
