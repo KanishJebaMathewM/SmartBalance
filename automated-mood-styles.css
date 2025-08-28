@@ -1,0 +1,142 @@
+/* Automated Mood Tracking Styles */
+
+.mood-automated-info {
+    margin: 20px 0;
+}
+
+.automated-mood-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.automated-mood-card h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.4em;
+    font-weight: 600;
+}
+
+.automated-mood-card p {
+    margin: 0 0 20px 0;
+    opacity: 0.9;
+    line-height: 1.5;
+}
+
+.mood-factors {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.factor-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 12px 15px;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.factor-icon {
+    font-size: 1.2em;
+    min-width: 24px;
+}
+
+.current-mood-display {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.current-mood-display h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+.current-mood {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.mood-emoji {
+    font-size: 3em;
+    line-height: 1;
+}
+
+.mood-text {
+    font-size: 1.1em;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .automated-mood-card {
+        background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .mood-factors {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .factor-item {
+        padding: 10px 12px;
+    }
+    
+    .current-mood {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .mood-emoji {
+        font-size: 2.5em;
+    }
+    
+    .automated-mood-card {
+        padding: 20px;
+        margin: 15px 0;
+    }
+}
+
+/* Animation for mood updates */
+.mood-emoji {
+    transition: transform 0.3s ease;
+}
+
+.mood-emoji:hover {
+    transform: scale(1.1);
+}
+
+.mood-text {
+    transition: all 0.3s ease;
+}
+
+/* Status indicators */
+.mood-status-automated::before {
+    content: "🤖";
+    margin-right: 5px;
+}
+
+.mood-status-manual::before {
+    content: "👤";
+    margin-right: 5px;
+}
