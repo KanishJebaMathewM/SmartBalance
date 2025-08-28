@@ -2737,10 +2737,48 @@ class WorkLifeBalanceApp {
         return labels[mood] || 'Medium';
     }
 
-    generatePersonalizedAdvice(data) {
-        const insights = Utils.generateWeeklyInsights(data);
+    generatePersonalizedAdvice(comprehensiveData) {
+        // Extract basic data structure for the insights function
+        const basicData = {
+            tasks: comprehensiveData.tasks,
+            expenses: comprehensiveData.expenses,
+            workouts: comprehensiveData.workouts,
+            moods: comprehensiveData.moods
+        };
+
+        const insights = Utils.generateWeeklyInsights(basicData);
+
+        // Add additional insights based on games and comprehensive analytics
+        const analytics = comprehensiveData.analytics;
+        const games = comprehensiveData.games;
+
+        // Add games insights
+        if (games.totalGamesPlayed > 0) {
+            if (games.analytics?.improvementTrend === 'improving') {
+                insights.push('🎮 Your gaming skills are improving! Keep practicing.');
+            } else if (games.totalGamesPlayed >= 10) {
+                insights.push('🎮 You\'re an active gamer! Mental challenges help keep your mind sharp.');
+            }
+        }
+
+        // Add nutrition insights
+        if (analytics.homeCookingPercentage >= 80) {
+            insights.push('🏠 Excellent home cooking habits! You\'re saving money and eating healthier.');
+        } else if (analytics.homeCookingPercentage < 50) {
+            insights.push('🍕 Consider cooking more meals at home to save money and improve nutrition.');
+        }
+
+        // Add overall health score insight
+        if (analytics.overallHealthScore >= 80) {
+            insights.push('⭐ Outstanding overall health score! You\'re maintaining excellent life balance.');
+        } else if (analytics.overallHealthScore >= 60) {
+            insights.push('👍 Good progress on your life balance. Keep focusing on consistent habits.');
+        } else {
+            insights.push('💪 There\'s room for improvement in your life balance. Focus on small, consistent changes.');
+        }
+
         const advice = insights.join(' ');
-        
+
         const personalizedAdviceEl = document.getElementById('personalizedAdvice');
         if (personalizedAdviceEl) {
             personalizedAdviceEl.innerHTML = `<p>${advice}</p>`;
@@ -2752,9 +2790,8 @@ class WorkLifeBalanceApp {
     }
 
     exportReport() {
-        const data = window.storage.exportData();
-        Utils.exportToJSON(data, 'work-life-balance-report.json');
-        Utils.showNotification('Report exported successfully!', 'success');
+        // Use the comprehensive export functionality
+        this.exportSectionData('report', 'json');
     }
 
     openModal(modalId) {
@@ -9737,7 +9774,7 @@ class WorkLifeBalanceApp {
         });
 
         if (weekendExpenses.length > data.expenses.length * 0.4) {
-            insights.push('���️ You spend significantly more on weekends. Consider planning weekend budgets.');
+            insights.push('🛍️ You spend significantly more on weekends. Consider planning weekend budgets.');
         }
 
         // Meal patterns
