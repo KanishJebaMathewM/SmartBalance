@@ -2024,11 +2024,10 @@
                         <div class="game-header">
                             <h2>🌈♛ 8 Queens with Colors</h2>
                             <div class="game-controls">
+                                <span id="queensTimer">00:00</span>
                                 <span id="queensScore">Score: 100</span>
-                                <span id="queensStatus" class="status-badge status-ready">Ready</span>
-                                <button class="btn-secondary" id="queensValidateBtn">🔍 Validate</button>
+                                <button class="btn-secondary" id="queensHintBtn">💡 Hint</button>
                                 <button class="btn-secondary" id="queensResetBtn">🔄 Reset</button>
-                                <button class="btn-secondary" id="queensExampleBtn">📋 Load Example</button>
                             </div>
                         </div>
                         <div class="game-area">
@@ -2072,13 +2071,11 @@
                                         <span id="currentScore">100</span>
                                     </div>
                                 </div>
-                                <div class="validation-results" id="validationResults">
-                                    <!-- Validation results will appear here -->
-                                </div>
-                                <div class="input-section">
-                                    <h4>🔧 Test Input</h4>
-                                    <textarea id="testInput" placeholder="Paste JSON input to test..." rows="8"></textarea>
-                                    <button class="btn-primary" id="loadInputBtn">Load & Validate</button>
+                                <div class="hints-section" id="hintsSection" style="display: none;">
+                                    <h4>💡 Hint</h4>
+                                    <div id="hintMessage" class="hint-message">
+                                        <!-- Hint will appear here -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
