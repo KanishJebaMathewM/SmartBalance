@@ -359,15 +359,18 @@ class Storage {
 
     addMood(mood) {
         const moods = this.getMoods();
-        const today = new Date().toDateString();
-        
-        // Remove existing mood for today if any
-        const filteredMoods = moods.filter(m => new Date(m.date).toDateString() !== today);
-        
-        mood.id = Date.now();
-        mood.date = new Date().toISOString();
+
+        // Use provided date or default to today
+        const moodDate = mood.date ? new Date(mood.date) : new Date();
+        const targetDateString = moodDate.toDateString();
+
+        // Remove existing mood for the target date if any
+        const filteredMoods = moods.filter(m => new Date(m.date).toDateString() !== targetDateString);
+
+        mood.id = mood.id || Date.now();
+        mood.date = mood.date || moodDate.toISOString();
         filteredMoods.push(mood);
-        
+
         this.set(this.keys.moods, filteredMoods);
         return mood;
     }
