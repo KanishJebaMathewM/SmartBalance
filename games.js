@@ -581,6 +581,15 @@ class SudokuGame {
                 if (this.selectedCell && this.selectedCell.row === row && this.selectedCell.col === col) {
                     cell.classList.add('selected');
                 }
+
+                // Add visual feedback for invalid numbers
+                if (!this.given[row][col] && this.board[row][col] !== 0) {
+                    if (!this.isValidMove(row, col, this.board[row][col])) {
+                        cell.classList.add('invalid');
+                    } else {
+                        cell.classList.add('valid-user');
+                    }
+                }
                 
                 cell.addEventListener('click', () => this.selectCell(row, col));
                 boardElement.appendChild(cell);
@@ -593,13 +602,14 @@ class SudokuGame {
 
         this.selectedCell = { row, col };
         this.highlightRelatedCells(row, col);
+        this.highlightSameNumbers(row, col);
         this.renderBoard();
     }
 
     highlightRelatedCells(row, col) {
         // Clear previous highlights
-        document.querySelectorAll('.sudoku-cell.related').forEach(cell => {
-            cell.classList.remove('related');
+        document.querySelectorAll('.sudoku-cell.related, .sudoku-cell.same-number, .sudoku-cell.box-highlight').forEach(cell => {
+            cell.classList.remove('related', 'same-number', 'box-highlight');
         });
 
         // Highlight row, column, and 3x3 box
@@ -613,14 +623,37 @@ class SudokuGame {
             if (colCell && i !== row) colCell.classList.add('related');
         }
 
-        // Highlight 3x3 box
+        // Highlight 3x3 box with stronger highlighting
         const boxRow = Math.floor(row / 3) * 3;
         const boxCol = Math.floor(col / 3) * 3;
         for (let r = boxRow; r < boxRow + 3; r++) {
             for (let c = boxCol; c < boxCol + 3; c++) {
                 if (r !== row || c !== col) {
                     const boxCell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
-                    if (boxCell) boxCell.classList.add('related');
+                    if (boxCell) {
+                        // Check if already highlighted as row/column
+                        if (!boxCell.classList.contains('related')) {
+                            boxCell.classList.add('box-highlight');
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Highlight cells with the same number as selected cell
+    highlightSameNumbers(row, col) {
+        const selectedNumber = this.board[row][col];
+        if (selectedNumber === 0) return;
+
+        // Find all cells with the same number
+        for (let r = 0; r < 9; r++) {
+            for (let c = 0; c < 9; c++) {
+                if (this.board[r][c] === selectedNumber && (r !== row || c !== col)) {
+                    const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+                    if (cell) {
+                        cell.classList.add('same-number');
+                    }
                 }
             }
         }
@@ -644,11 +677,16 @@ class SudokuGame {
             const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
             if (cell) {
                 cell.classList.add('error');
+                // Show error message briefly
+                this.showErrorMessage(`Invalid move! ${num} already exists in this row, column, or box.`);
                 // Remove error class after animation
                 setTimeout(() => {
                     cell.classList.remove('error');
                 }, 2000);
             }
+        } else if (num !== 0) {
+            // Valid move feedback
+            this.showSuccessMessage('Good move!');
         }
 
         this.renderBoard();
@@ -698,24 +736,79 @@ class SudokuGame {
                 this.enterNumber(num);
             });
         });
-        
+
         // Game control buttons
         document.getElementById('sudokuNewBtn').onclick = () => {
             this.startGame();
         };
-        
+
         document.getElementById('sudokuCheckBtn').onclick = () => {
             this.checkBoard();
         };
-        
+
         document.getElementById('sudokuHintBtn').onclick = () => {
             this.showHint();
         };
-        
+
         // Difficulty change
         document.getElementById('sudokuDifficulty').onchange = () => {
             this.startGame();
         };
+
+        // Keyboard input support
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('sudokuGameModal').style.display === 'block' && this.selectedCell) {
+                const num = parseInt(e.key);
+                if (num >= 1 && num <= 9) {
+                    this.enterNumber(num);
+                } else if (e.key === 'Delete' || e.key === 'Backspace') {
+                    this.enterNumber(0);
+                } else if (e.key === 'Escape') {
+                    this.selectedCell = null;
+                    this.clearHighlights();
+                    this.renderBoard();
+                }
+            }
+        });
+    }
+
+    // Clear all highlights
+    clearHighlights() {
+        document.querySelectorAll('.sudoku-cell.related, .sudoku-cell.same-number, .sudoku-cell.box-highlight').forEach(cell => {
+            cell.classList.remove('related', 'same-number', 'box-highlight');
+        });
+    }
+
+    // Show error message
+    showErrorMessage(message) {
+        this.showMessage(message, 'error');
+    }
+
+    // Show success message
+    showSuccessMessage(message) {
+        this.showMessage(message, 'success');
+    }
+
+    // Show temporary message
+    showMessage(message, type = 'info') {
+        // Create message element if it doesn't exist
+        let messageEl = document.getElementById('sudokuMessage');
+        if (!messageEl) {
+            messageEl = document.createElement('div');
+            messageEl.id = 'sudokuMessage';
+            messageEl.className = 'sudoku-message';
+            const gameArea = document.querySelector('#sudokuGameModal .game-area');
+            if (gameArea) gameArea.appendChild(messageEl);
+        }
+
+        messageEl.textContent = message;
+        messageEl.className = `sudoku-message ${type}`;
+        messageEl.style.display = 'block';
+
+        // Hide after 2 seconds
+        setTimeout(() => {
+            messageEl.style.display = 'none';
+        }, 2000);
     }
 
     checkBoard() {
@@ -759,18 +852,18 @@ class SudokuGame {
 
     showHint() {
         if (!this.selectedCell) {
-            alert('💡 Please select an empty cell first to get a hint.');
+            this.showErrorMessage('💡 Please select an empty cell first to get a hint.');
             return;
         }
 
         const { row, col } = this.selectedCell;
         if (this.given[row][col]) {
-            alert('💡 This cell already contains the correct number.');
+            this.showErrorMessage('💡 This cell already contains the correct number.');
             return;
         }
 
         if (this.board[row][col] !== 0) {
-            alert('💡 This cell is already filled. Clear it first or select an empty cell.');
+            this.showErrorMessage('💡 This cell is already filled. Clear it first or select an empty cell.');
             return;
         }
 
@@ -791,7 +884,7 @@ class SudokuGame {
             }, 3000);
         }
 
-        alert(`💡 Hint: The correct number for this cell is ${correctNumber}`);
+        this.showSuccessMessage(`💡 Hint: The correct number for this cell is ${correctNumber}`);
     }
 }
 
