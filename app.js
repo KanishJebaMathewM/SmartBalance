@@ -64,7 +64,7 @@ function toggleExpenseDetails(checkbox) {
             setTimeout(() => {
                 amountField.focus();
                 amountField.placeholder = "Enter expected amount (₹) - Required *";
-                console.log('�� Amount field focused and placeholder updated');
+                console.log('💰 Amount field focused and placeholder updated');
             }, 200);
 
             // Show notification if Utils is available
@@ -3687,7 +3687,7 @@ class WorkLifeBalanceApp {
             if (amount > max) {
                 insights.push({
                     type: 'info',
-                    icon: '����',
+                    icon: '📈',
                     text: `This will be your highest ${this.getCategoryDisplayName(category)} expense`
                 });
             }
@@ -5379,7 +5379,7 @@ class WorkLifeBalanceApp {
         document.getElementById('dinnerMeal').textContent = suggestions.dinner;
         const dinnerCalories = Utils.calculateCalories(suggestions.dinner);
         document.getElementById('dinnerCalories').textContent = `${dinnerCalories} cal`;
-        document.getElementById('dinnerCost').textContent = `��${this.estimateMealCost(suggestions.dinner)}`;
+        document.getElementById('dinnerCost').textContent = `₹${this.estimateMealCost(suggestions.dinner)}`;
 
         Utils.showNotification('🍽️ New meal plan generated!', 'success');
 
@@ -5899,7 +5899,7 @@ class WorkLifeBalanceApp {
                 });
             } else if (avgDailyCalories < 1800) {
                 insights.push({
-                    icon: '��',
+                    icon: '🍽',
                     title: 'Low Calorie Intake',
                     description: `Your daily average of ${avgDailyCalories} calories seems low. Consider adding more nutritious meals to meet your energy needs.`
                 });
