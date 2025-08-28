@@ -36,7 +36,6 @@ class GamesManager {
             this.queens = new EightQueensGame();
         }
         this.sudoku = new SudokuGame();
-        this.tango = new TangoWordGame();
         this.game2048 = new Game2048();
         this.memory = new MemoryGame();
         this.snake = new SnakeGame();
