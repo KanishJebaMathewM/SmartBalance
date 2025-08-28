@@ -87,6 +87,87 @@ class MemoriesManager {
         }
     }
 
+    initializeSlideshowListeners() {
+        // Start slideshow button
+        const startSlideshowBtn = document.getElementById('startSlideshowBtn');
+        if (startSlideshowBtn) {
+            startSlideshowBtn.addEventListener('click', () => this.startSlideshow());
+        }
+
+        // Slideshow controls
+        const slideshowPlayPause = document.getElementById('slideshowPlayPause');
+        const slideshowSpeed = document.getElementById('slideshowSpeed');
+        const slideshowFullscreen = document.getElementById('slideshowFullscreen');
+        const slideshowPrev = document.getElementById('slideshowPrev');
+        const slideshowNext = document.getElementById('slideshowNext');
+        const closeSlideshowBtn = document.querySelector('.close-slideshow');
+
+        if (slideshowPlayPause) {
+            slideshowPlayPause.addEventListener('click', () => this.toggleSlideshowPlayPause());
+        }
+
+        if (slideshowSpeed) {
+            slideshowSpeed.addEventListener('click', () => this.cycleSlideshowSpeed());
+        }
+
+        if (slideshowFullscreen) {
+            slideshowFullscreen.addEventListener('click', () => this.toggleSlideshowFullscreen());
+        }
+
+        if (slideshowPrev) {
+            slideshowPrev.addEventListener('click', () => this.previousSlide());
+        }
+
+        if (slideshowNext) {
+            slideshowNext.addEventListener('click', () => this.nextSlide());
+        }
+
+        if (closeSlideshowBtn) {
+            closeSlideshowBtn.addEventListener('click', () => this.exitSlideshow());
+        }
+
+        // Keyboard controls for slideshow
+        document.addEventListener('keydown', (e) => {
+            if (!this.slideshow.isActive) return;
+
+            switch (e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    this.previousSlide();
+                    break;
+                case 'ArrowRight':
+                case ' ':
+                    e.preventDefault();
+                    this.nextSlide();
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    this.exitSlideshow();
+                    break;
+                case 'p':
+                case 'P':
+                    e.preventDefault();
+                    this.toggleSlideshowPlayPause();
+                    break;
+                case 'f':
+                case 'F':
+                    e.preventDefault();
+                    this.toggleSlideshowFullscreen();
+                    break;
+            }
+        });
+
+        // Close slideshow when clicking outside image
+        const slideshowModal = document.getElementById('slideshowModal');
+        if (slideshowModal) {
+            slideshowModal.addEventListener('click', (e) => {
+                if (e.target === slideshowModal || e.target.classList.contains('slideshow-container')) {
+                    this.exitSlideshow();
+                }
+            });
+        }
+    }
+
     // Tab Management
     switchTab(tabName) {
         this.currentTab = tabName;
