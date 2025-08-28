@@ -641,8 +641,44 @@ if (typeof window !== 'undefined') {
 
         startGame() {
             this.gameStartTime = Date.now();
+            this.elapsedTime = 0;
             this.resetGame();
+            this.startTimer();
             console.log('8 Queens with Colors game started');
+        }
+
+        startTimer() {
+            if (this.gameTimer) {
+                clearInterval(this.gameTimer);
+            }
+
+            this.gameTimer = setInterval(() => {
+                this.elapsedTime = Math.floor((Date.now() - this.gameStartTime) / 1000);
+                this.updateTimerDisplay();
+            }, 1000);
+        }
+
+        stopTimer() {
+            if (this.gameTimer) {
+                clearInterval(this.gameTimer);
+                this.gameTimer = null;
+            }
+        }
+
+        updateTimerDisplay() {
+            const timerElement = document.getElementById('queensTimer');
+            if (timerElement) {
+                const minutes = Math.floor(this.elapsedTime / 60);
+                const seconds = this.elapsedTime % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        resetGame() {
+            super.resetGame();
+            this.gameStartTime = Date.now();
+            this.elapsedTime = 0;
+            this.updateTimerDisplay();
         }
 
         completeGame(won = false) {
