@@ -72,10 +72,17 @@
                 </div>
                 <div class="input-row">
                     <div class="input-control" style="flex:1">
-                        <input type="text" id="recoveryQuestion" placeholder="Recovery question (e.g., Favorite dish?)" required>
+                        <select id="recoveryQuestion" required>
+                            <option value="" disabled selected>Select a recovery question</option>
+                            <option value="What is your favorite dish?">What is your favorite dish?</option>
+                            <option value="What city were you born in?">What city were you born in?</option>
+                            <option value="What is your first school's name?">What is your first school's name?</option>
+                            <option value="What is the name of your first pet?">What is the name of your first pet?</option>
+                            <option value="What is your favorite teacher's name?">What is your favorite teacher's name?</option>
+                        </select>
                     </div>
                     <div class="input-control" style="flex:1">
-                        <input type="text" id="recoveryAnswer" placeholder="Recovery answer" required>
+                        <input type="text" id="recoveryAnswer" placeholder="Your answer" required>
                     </div>
                 </div>
                 <div id="signupFeedback" class="feedback"></div>
@@ -1772,7 +1779,7 @@
                 </div>
 
                 <div class="automated-info-card">
-                    <h3>🤖 Automated Tracking</h3>
+                    <h3>��� Automated Tracking</h3>
                     <p>Your mood is automatically calculated daily based on your activities. Factors include task completion, workouts, spending, cooking habits, and day patterns.</p>
                     <div class="mood-insight" id="currentMoodText">
                         Calculating today's mood based on your activities...
@@ -2217,7 +2224,7 @@
                             </div>
                             <div class="game-instructions">
                                 <p><strong>Controls:</strong> Use arrow keys to control the snake</p>
-                                <p>Eat food (🍎) to grow longer and increase your score!</p>
+                                <p>Eat food (����) to grow longer and increase your score!</p>
                                 <div class="controls-info">
                                     <p>🔼 ↑ Up | 🔽 ↓ Down | ◀️ ← Left | ▶️ → Right</p>
                                 </div>
