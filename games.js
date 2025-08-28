@@ -759,18 +759,39 @@ class SudokuGame {
 
     showHint() {
         if (!this.selectedCell) {
-            alert('Please select a cell first.');
+            alert('💡 Please select an empty cell first to get a hint.');
             return;
         }
-        
+
         const { row, col } = this.selectedCell;
         if (this.given[row][col]) {
-            alert('This cell is already given.');
+            alert('💡 This cell already contains the correct number.');
             return;
         }
-        
+
+        if (this.board[row][col] !== 0) {
+            alert('💡 This cell is already filled. Clear it first or select an empty cell.');
+            return;
+        }
+
         const correctNumber = this.solution[row][col];
-        alert(`The correct number for this cell is ${correctNumber}`);
+
+        // Highlight the cell with hint styling
+        const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+        if (cell) {
+            cell.classList.add('hint');
+            cell.textContent = correctNumber;
+
+            // Remove hint after 3 seconds
+            setTimeout(() => {
+                cell.classList.remove('hint');
+                if (this.board[row][col] === 0) {
+                    cell.textContent = '';
+                }
+            }, 3000);
+        }
+
+        alert(`💡 Hint: The correct number for this cell is ${correctNumber}`);
     }
 }
 
