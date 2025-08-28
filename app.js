@@ -3458,7 +3458,7 @@ class WorkLifeBalanceApp {
             'education': '📚',
             'fitness': '��',
             'subscriptions': '����',
-            'groceries': '🛒',
+            'groceries': '���',
             'clothing': '👕',
             'other': '���'
         };
@@ -6227,7 +6227,7 @@ class WorkLifeBalanceApp {
             if (meal) {
                 gridHTML += `
                     <div class="meal-card ${meal.status || 'planned'}">
-                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '📅 Planned'}</div>
+                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '���� Planned'}</div>
                         <div class="meal-emoji">${typeInfo.emoji}</div>
                         <h4>${typeInfo.name}</h4>
                         <p class="meal-name">${Utils.sanitizeInput(meal.name)}</p>
@@ -11179,6 +11179,21 @@ class WorkLifeBalanceApp {
                 status
             };
         });
+    }
+
+    // 8 Queens with Colors support methods
+    applySuggestion(suggestionIndex) {
+        // Delegate to the queens game instance
+        if (window.gamesManager && window.gamesManager.queens && window.gamesManager.queens.applySuggestion) {
+            window.gamesManager.queens.applySuggestion(suggestionIndex);
+        }
+    }
+
+    startGame(gameType) {
+        // Delegate to the games manager
+        if (window.gamesManager && window.gamesManager.startGame) {
+            window.gamesManager.startGame(gameType);
+        }
     }
 }
 
