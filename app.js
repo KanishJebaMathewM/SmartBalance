@@ -771,7 +771,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ` • 💰 Expense: ${Utils.formatCurrency(task.amount)}` : ''}
+                        ${task.expenseRelated ? ` �� 💰 Expense: ${Utils.formatCurrency(task.amount)}` : ''}
                         ${task.completed && task.expenseRelated ? ' • ✅ Added to expenses' : ''}
                     </div>
                 </div>
@@ -1074,7 +1074,7 @@ class WorkLifeBalanceApp {
                 </div>
                 <div class="expense-amount">${Utils.formatCurrency(expense.amount)}</div>
                 <div class="expense-actions">
-                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑���</button>
+                    <button onclick="app.deleteExpense(${expense.id})" title="Delete">🗑️</button>
                 </div>
             </div>
         `).join('');
@@ -5107,7 +5107,7 @@ class WorkLifeBalanceApp {
 
         localStorage.setItem('meal_plans', JSON.stringify(savedMealPlans));
 
-        Utils.showNotification('��� Meal plan saved!', 'success');
+        Utils.showNotification('����� Meal plan saved!', 'success');
     }
 
     saveMealToStorage(mealType, mealName, calories, cost) {
@@ -9280,7 +9280,7 @@ class WorkLifeBalanceApp {
             </div>
             <div class="export-options">
                 <button class="btn-secondary export-btn" data-section="report" data-format="csv" onclick="app.exportSectionData('report', 'csv')">📊 Export CSV</button>
-                <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">📄 Export JSON</button>
+                <button class="btn-secondary export-btn" data-section="report" data-format="json" onclick="app.exportSectionData('report', 'json')">���� Export JSON</button>
             </div>
         `;
 
