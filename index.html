@@ -2014,6 +2014,195 @@
                     </div>
                 </div>
 
+                <!-- Game Modals -->
+
+                <!-- 8 Queens Game Modal -->
+                <div id="queensGameModal" class="modal game-modal">
+                    <div class="modal-content game-modal-content">
+                        <span class="close">&times;</span>
+                        <div class="game-header">
+                            <h2>♛ 8 Queens Puzzle</h2>
+                            <div class="game-controls">
+                                <span id="queensTimer">00:00</span>
+                                <button class="btn-secondary" id="queensHintBtn">💡 Hint</button>
+                                <button class="btn-secondary" id="queensResetBtn">🔄 Reset</button>
+                                <button class="btn-secondary" id="queensSolveBtn">🤖 Auto Solve</button>
+                            </div>
+                        </div>
+                        <div class="game-area">
+                            <div id="queensBoard" class="queens-board">
+                                <!-- 8x8 chessboard will be generated here -->
+                            </div>
+                            <div class="game-sidebar">
+                                <div class="game-info">
+                                    <p><strong>Goal:</strong> Place 8 queens on the board so that no two queens can attack each other.</p>
+                                    <p><strong>Rules:</strong> Queens can move horizontally, vertically, and diagonally.</p>
+                                </div>
+                                <div class="game-progress">
+                                    <p>Queens placed: <span id="queensPlaced">0</span>/8</p>
+                                    <p>Conflicts: <span id="queensConflicts">0</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sudoku Game Modal -->
+                <div id="sudokuGameModal" class="modal game-modal">
+                    <div class="modal-content game-modal-content">
+                        <span class="close">&times;</span>
+                        <div class="game-header">
+                            <h2>🔢 Sudoku</h2>
+                            <div class="game-controls">
+                                <select id="sudokuDifficulty">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                                <span id="sudokuTimer">00:00</span>
+                                <button class="btn-secondary" id="sudokuHintBtn">💡 Hint</button>
+                                <button class="btn-secondary" id="sudokuCheckBtn">✓ Check</button>
+                                <button class="btn-secondary" id="sudokuNewBtn">🎲 New Game</button>
+                            </div>
+                        </div>
+                        <div class="game-area">
+                            <div id="sudokuBoard" class="sudoku-board">
+                                <!-- 9x9 sudoku grid will be generated here -->
+                            </div>
+                            <div class="number-pad">
+                                <div class="number-grid">
+                                    <button class="number-btn" data-number="1">1</button>
+                                    <button class="number-btn" data-number="2">2</button>
+                                    <button class="number-btn" data-number="3">3</button>
+                                    <button class="number-btn" data-number="4">4</button>
+                                    <button class="number-btn" data-number="5">5</button>
+                                    <button class="number-btn" data-number="6">6</button>
+                                    <button class="number-btn" data-number="7">7</button>
+                                    <button class="number-btn" data-number="8">8</button>
+                                    <button class="number-btn" data-number="9">9</button>
+                                    <button class="number-btn erase-btn" data-number="0">⌫</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tango Word Game Modal -->
+                <div id="tangoGameModal" class="modal game-modal">
+                    <div class="modal-content game-modal-content">
+                        <span class="close">&times;</span>
+                        <div class="game-header">
+                            <h2>🔤 Tango Word Game</h2>
+                            <div class="game-controls">
+                                <span id="tangoTimer">02:00</span>
+                                <span id="tangoScore">Score: 0</span>
+                                <button class="btn-secondary" id="tangoShuffleBtn">🔀 Shuffle</button>
+                                <button class="btn-secondary" id="tangoNewBtn">🎲 New Letters</button>
+                            </div>
+                        </div>
+                        <div class="game-area">
+                            <div class="tango-game">
+                                <div class="letters-container">
+                                    <div id="tangoLetters" class="tango-letters">
+                                        <!-- Available letters will be shown here -->
+                                    </div>
+                                </div>
+                                <div class="word-input-area">
+                                    <input type="text" id="tangoWordInput" placeholder="Type your word here..." maxlength="12">
+                                    <button class="btn-primary" id="tangoSubmitBtn">Submit Word</button>
+                                </div>
+                                <div class="words-found">
+                                    <h4>Words Found (<span id="wordsFoundCount">0</span>):</h4>
+                                    <div id="wordsFoundList" class="words-list">
+                                        <!-- Found words will be displayed here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2048 Game Modal -->
+                <div id="2048GameModal" class="modal game-modal">
+                    <div class="modal-content game-modal-content">
+                        <span class="close">&times;</span>
+                        <div class="game-header">
+                            <h2>2️⃣ 2048</h2>
+                            <div class="game-controls">
+                                <span id="2048Score">Score: 0</span>
+                                <span id="2048BestScore">Best: 0</span>
+                                <button class="btn-secondary" id="2048NewBtn">🎲 New Game</button>
+                                <button class="btn-secondary" id="2048UndoBtn">↶ Undo</button>
+                            </div>
+                        </div>
+                        <div class="game-area">
+                            <div id="2048Board" class="game-2048-board">
+                                <!-- 4x4 2048 grid will be generated here -->
+                            </div>
+                            <div class="game-instructions">
+                                <p><strong>How to play:</strong> Use arrow keys or swipe to move tiles. When two tiles with the same number touch, they merge into one!</p>
+                                <div class="controls-info">
+                                    <p>🔼 ↑ Up | 🔽 ↓ Down | ◀️ ← Left | ▶️ → Right</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Card Game Modal -->
+                <div id="memoryGameModal" class="modal game-modal">
+                    <div class="modal-content game-modal-content">
+                        <span class="close">&times;</span>
+                        <div class="game-header">
+                            <h2>🧠 Memory Cards</h2>
+                            <div class="game-controls">
+                                <span id="memoryMoves">Moves: 0</span>
+                                <span id="memoryPairs">Pairs: 0/8</span>
+                                <span id="memoryTimer">00:00</span>
+                                <button class="btn-secondary" id="memoryNewBtn">🎲 New Game</button>
+                            </div>
+                        </div>
+                        <div class="game-area">
+                            <div id="memoryBoard" class="memory-board">
+                                <!-- Memory cards will be generated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Snake Game Modal -->
+                <div id="snakeGameModal" class="modal game-modal">
+                    <div class="modal-content game-modal-content">
+                        <span class="close">&times;</span>
+                        <div class="game-header">
+                            <h2>🐍 Snake Game</h2>
+                            <div class="game-controls">
+                                <span id="snakeScore">Score: 0</span>
+                                <span id="snakeLength">Length: 1</span>
+                                <select id="snakeSpeed">
+                                    <option value="slow">Slow</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="fast">Fast</option>
+                                </select>
+                                <button class="btn-secondary" id="snakeNewBtn">🎲 New Game</button>
+                                <button class="btn-secondary" id="snakePauseBtn">⏸️ Pause</button>
+                            </div>
+                        </div>
+                        <div class="game-area">
+                            <div id="snakeBoard" class="snake-board">
+                                <!-- Snake game grid will be generated here -->
+                            </div>
+                            <div class="game-instructions">
+                                <p><strong>Controls:</strong> Use arrow keys to control the snake</p>
+                                <p>Eat food (🟡) to grow longer and increase your score!</p>
+                                <div class="controls-info">
+                                    <p>🔼 ↑ Up | 🔽 ↓ Down | ◀️ ← Left | ▶️ → Right</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </section>
 
             <!-- Report Generator Section -->
