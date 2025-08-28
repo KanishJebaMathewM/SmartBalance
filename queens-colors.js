@@ -595,47 +595,7 @@ class EightQueensWithColors {
         }
     }
 
-    // Load an example puzzle
-    loadExample() {
-        const exampleInput = {
-            "boardColors": this.boardColors,
-            "queens": [
-                {"row": 1, "col": 3},
-                {"row": 2, "col": 6},
-                {"row": 3, "col": 2},
-                {"row": 4, "col": 7},
-                {"row": 5, "col": 1},
-                {"row": 6, "col": 4},
-                {"row": 7, "col": 8},
-                {"row": 8, "col": 5}
-            ],
-            "indexBase": 1
-        };
-        
-        this.queens = exampleInput.queens;
-        this.validateAndUpdate();
-    }
-
-    // Load test input from textarea
-    loadTestInput() {
-        const textarea = document.getElementById('testInput');
-        if (!textarea) return;
-
-        try {
-            const input = JSON.parse(textarea.value);
-            const result = this.validatePuzzle(input);
-            
-            // Display result in a formatted way
-            const formattedResult = JSON.stringify(result, null, 2);
-            alert(`Validation Result:\n\n${formattedResult}`);
-            
-            // Also show in console for debugging
-            console.log('Validation Result:', result);
-            
-        } catch (error) {
-            alert(`Invalid JSON input: ${error.message}`);
-        }
-    }
+    // Removed loadExample and loadTestInput methods to simplify interface
 
     // Apply a suggestion
     applySuggestion(suggestionIndex) {
