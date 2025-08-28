@@ -3456,7 +3456,7 @@ class WorkLifeBalanceApp {
             'entertainment': '🎬',
             'healthcare': '🏥',
             'education': '📚',
-            'fitness': '��',
+            'fitness': '💪',
             'subscriptions': '����',
             'groceries': '���',
             'clothing': '👕',
@@ -6808,7 +6808,7 @@ class WorkLifeBalanceApp {
                         ${mealTypes.map(type => {
                             const meal = dayMeals.find(m => m.type === type);
                             if (meal) {
-                                return `<span class="meal-dot ${meal.status === 'eaten' ? 'eaten' : 'planned'}" title="${meal.name}">•</span>`;
+                                return `<span class="meal-dot ${meal.status === 'eaten' ? 'eaten' : 'planned'}" title="${meal.name}">��</span>`;
                             }
                             return `<span class="meal-dot empty">•</span>`;
                         }).join('')}
