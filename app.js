@@ -1578,7 +1578,7 @@ class WorkLifeBalanceApp {
                 label: 'Today\'s Spending'
             },
             {
-                icon: '💪',
+                icon: '���',
                 value: todayWorkouts,
                 label: 'Workouts Today'
             },
@@ -3035,7 +3035,7 @@ class WorkLifeBalanceApp {
         } else if (percentage > 25) {
             return {
                 type: 'info',
-                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎭🏥📚🎯📺🛒👕📦]/g, '').trim()}`
+                message: `Consider budgeting for ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍���✈️🎭🏥📚🎯📺🛒👕📦]/g, '').trim()}`
             };
         }
         return null;
@@ -7282,6 +7282,18 @@ class WorkLifeBalanceApp {
         const chartHeight = height - 2 * padding;
         const barWidth = chartWidth / (data.length * 2);
 
+        // Empty state when no values
+        if (!data || data.length === 0 || data.every(d => (d.value || 0) === 0)) {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '16px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('No data available', width / 2, height / 2);
+            ctx.font = '12px Inter, sans-serif';
+            ctx.fillText('Add meals to see comparison', width / 2, height / 2 + 25);
+            return;
+        }
+
         const maxValue = Math.max(...data.map(d => d.value)) * 1.1;
 
         // Draw bars
@@ -8262,11 +8274,10 @@ class WorkLifeBalanceApp {
     }
 
     loadFoodAnalytics() {
-        // Load food charts and analytics
-        this.loadCookingFrequencyChart();
-        this.loadCostComparisonChart();
-        this.loadCalorieChart();
-        this.loadMealCostChart();
+        // Use real data pipeline only
+        if (typeof this.updateFoodAnalytics === 'function') {
+            this.updateFoodAnalytics();
+        }
     }
 
     loadCookingFrequencyChart() {
