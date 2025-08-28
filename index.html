@@ -1735,6 +1735,117 @@
                     </div>
                 </div>
 
+                <!-- Games Grid -->
+                <div class="games-grid">
+                    <!-- 8 Queens Puzzle -->
+                    <div class="game-card" data-game="8queens">
+                        <div class="game-icon">♛</div>
+                        <div class="game-info">
+                            <h3>8 Queens Puzzle</h3>
+                            <p>Place 8 queens on a chessboard so none attack each other</p>
+                            <div class="game-meta">
+                                <span class="difficulty">🟡 Medium</span>
+                                <span class="play-time">⏱️ 5-15 min</span>
+                            </div>
+                            <div class="game-stats">
+                                <span id="queens-best-time">Best: --</span>
+                                <span id="queens-attempts">Attempts: 0</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary game-play-btn" onclick="app.startGame('8queens')">Play</button>
+                    </div>
+
+                    <!-- Sudoku -->
+                    <div class="game-card" data-game="sudoku">
+                        <div class="game-icon">🔢</div>
+                        <div class="game-info">
+                            <h3>Sudoku</h3>
+                            <p>Fill the 9×9 grid with digits so each column, row, and 3×3 box contains all digits 1-9</p>
+                            <div class="game-meta">
+                                <span class="difficulty">🟢 Easy-Hard</span>
+                                <span class="play-time">⏱️ 10-30 min</span>
+                            </div>
+                            <div class="game-stats">
+                                <span id="sudoku-completed">Completed: 0</span>
+                                <span id="sudoku-best-time">Best: --</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary game-play-btn" onclick="app.startGame('sudoku')">Play</button>
+                    </div>
+
+                    <!-- Tango Word Game -->
+                    <div class="game-card" data-game="tango">
+                        <div class="game-icon">🔤</div>
+                        <div class="game-info">
+                            <h3>Tango Word Game</h3>
+                            <p>Find all possible words from the given letters. Test your vocabulary!</p>
+                            <div class="game-meta">
+                                <span class="difficulty">🟡 Medium</span>
+                                <span class="play-time">⏱️ 5-10 min</span>
+                            </div>
+                            <div class="game-stats">
+                                <span id="tango-best-score">Best Score: 0</span>
+                                <span id="tango-words-found">Words Found: 0</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary game-play-btn" onclick="app.startGame('tango')">Play</button>
+                    </div>
+
+                    <!-- 2048 -->
+                    <div class="game-card" data-game="2048">
+                        <div class="game-icon">2️⃣</div>
+                        <div class="game-info">
+                            <h3>2048</h3>
+                            <p>Slide tiles to combine numbers and reach the 2048 tile</p>
+                            <div class="game-meta">
+                                <span class="difficulty">🟡 Medium</span>
+                                <span class="play-time">⏱️ 5-20 min</span>
+                            </div>
+                            <div class="game-stats">
+                                <span id="2048-high-score">High Score: 0</span>
+                                <span id="2048-best-tile">Best Tile: 0</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary game-play-btn" onclick="app.startGame('2048')">Play</button>
+                    </div>
+
+                    <!-- Memory Card Game -->
+                    <div class="game-card" data-game="memory">
+                        <div class="game-icon">🧠</div>
+                        <div class="game-info">
+                            <h3>Memory Cards</h3>
+                            <p>Flip cards to find matching pairs. Test your memory skills!</p>
+                            <div class="game-meta">
+                                <span class="difficulty">🟢 Easy</span>
+                                <span class="play-time">⏱️ 3-8 min</span>
+                            </div>
+                            <div class="game-stats">
+                                <span id="memory-best-moves">Best: -- moves</span>
+                                <span id="memory-completed">Completed: 0</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary game-play-btn" onclick="app.startGame('memory')">Play</button>
+                    </div>
+
+                    <!-- Snake Game -->
+                    <div class="game-card" data-game="snake">
+                        <div class="game-icon">🐍</div>
+                        <div class="game-info">
+                            <h3>Snake Game</h3>
+                            <p>Control the snake to eat food and grow longer without hitting walls or yourself</p>
+                            <div class="game-meta">
+                                <span class="difficulty">🟡 Medium</span>
+                                <span class="play-time">⏱️ 2-15 min</span>
+                            </div>
+                            <div class="game-stats">
+                                <span id="snake-high-score">High Score: 0</span>
+                                <span id="snake-longest">Longest: 0</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary game-play-btn" onclick="app.startGame('snake')">Play</button>
+                    </div>
+                </div>
+
                 <!-- Help Instructions Section -->
                 <div class="help-instructions-section">
                     <h3>��� How to Use This App</h3>
