@@ -494,56 +494,76 @@ class EightQueensWithColors {
         this.displayValidationResults(result);
     }
 
-    // Display detailed validation results
+    // Simplified validation display - only show basic info
     displayValidationResults(result) {
-        const resultsElement = document.getElementById('validationResults');
-        if (!resultsElement) return;
+        // Remove the complex validation results display
+        // Keep only essential feedback through the progress stats
+        return;
+    }
 
-        if (result.summary.placed === 0) {
-            resultsElement.style.display = 'none';
-            return;
+    // Show hint functionality
+    showHint() {
+        const hint = this.generateHint();
+        const hintSection = document.getElementById('hintsSection');
+        const hintMessage = document.getElementById('hintMessage');
+
+        if (hintSection && hintMessage && hint) {
+            hintMessage.textContent = hint;
+            hintSection.style.display = 'block';
+
+            // Hide hint after 5 seconds
+            setTimeout(() => {
+                this.hideHint();
+            }, 5000);
+        }
+    }
+
+    hideHint() {
+        const hintSection = document.getElementById('hintsSection');
+        if (hintSection) {
+            hintSection.style.display = 'none';
+        }
+    }
+
+    generateHint() {
+        if (this.queens.length === 0) {
+            return "Start by placing a queen on any colored square. Remember, each queen must be on a unique color!";
         }
 
-        resultsElement.style.display = 'block';
-        resultsElement.classList.add('show');
-
-        let html = `
-            <div class="validation-summary ${result.summary.status}">
-                <strong>${result.summary.status.toUpperCase()}</strong>: 
-                Score ${result.summary.score}/100
-            </div>
-        `;
-
-        // Show messages
-        if (result.messages.length > 0) {
-            html += `<div class="messages-section">`;
-            result.messages.forEach(message => {
-                html += `<p class="message">${message}</p>`;
-            });
-            html += `</div>`;
+        if (this.queens.length < 4) {
+            const usedColors = this.queens.map(q => this.getQueenColor(q, this.boardColors, this.indexBase));
+            const availableColors = this.colorNames.filter(color => !usedColors.includes(color));
+            return `Try placing a queen on a ${availableColors[0]} square while avoiding row/column conflicts.`;
         }
 
-        // Show conflicts
+        // Check for conflicts and provide specific hints
+        const result = this.validatePuzzle();
         if (result.conflicts.length > 0) {
-            html += `<div class="conflict-list"><strong>Conflicts:</strong>`;
-            result.conflicts.forEach(conflict => {
-                html += `<div class="conflict-item">Q${conflict.qA} vs Q${conflict.qB}: ${conflict.types.join(', ')}</div>`;
-            });
-            html += `</div>`;
+            const conflict = result.conflicts[0];
+            if (conflict.types.includes('sameRow')) {
+                return "Two queens are on the same row! Move one to a different row.";
+            } else if (conflict.types.includes('sameColumn')) {
+                return "Two queens are on the same column! Move one to a different column.";
+            } else if (conflict.types.includes('duplicateColor')) {
+                return `Two queens are on the same color (${conflict.details.color})! Each queen needs a unique color.`;
+            } else if (conflict.types.includes('adjacentDiagonal')) {
+                return "Two queens are attacking each other diagonally (distance = 1)! Move them apart.";
+            }
         }
 
-        // Show suggestions
-        if (result.suggestions.length > 0) {
-            html += `<div class="suggestions-list"><strong>Suggestions:</strong>`;
-            result.suggestions.forEach((suggestion, index) => {
-                html += `<div class="suggestion-item" onclick="app.applySuggestion(${index})">
-                    Move Q${suggestion.forQueenIndex + 1} to (${suggestion.moveTo.row}, ${suggestion.moveTo.col}) - ${suggestion.reason}
-                </div>`;
-            });
-            html += `</div>`;
+        if (this.queens.length < 8) {
+            const usedRows = this.queens.map(q => q.row);
+            const usedCols = this.queens.map(q => q.col);
+            const availableRows = [];
+            for (let i = 1; i <= 8; i++) {
+                if (!usedRows.includes(i)) availableRows.push(i);
+            }
+            if (availableRows.length > 0) {
+                return `Try placing a queen on row ${availableRows[0]}. Make sure it's on an unused color!`;
+            }
         }
 
-        resultsElement.innerHTML = html;
+        return "You're doing great! Keep placing queens while following the rules.";
     }
 
     // Setup event listeners
@@ -554,22 +574,10 @@ class EightQueensWithColors {
             resetBtn.addEventListener('click', () => this.resetGame());
         }
 
-        // Validate button
-        const validateBtn = document.getElementById('queensValidateBtn');
-        if (validateBtn) {
-            validateBtn.addEventListener('click', () => this.validateAndUpdate());
-        }
-
-        // Example button
-        const exampleBtn = document.getElementById('queensExampleBtn');
-        if (exampleBtn) {
-            exampleBtn.addEventListener('click', () => this.loadExample());
-        }
-
-        // Load input button
-        const loadInputBtn = document.getElementById('loadInputBtn');
-        if (loadInputBtn) {
-            loadInputBtn.addEventListener('click', () => this.loadTestInput());
+        // Hint button
+        const hintBtn = document.getElementById('queensHintBtn');
+        if (hintBtn) {
+            hintBtn.addEventListener('click', () => this.showHint());
         }
     }
 
@@ -699,7 +707,7 @@ if (typeof window !== 'undefined') {
             
             if (this.validationResult && this.validationResult.summary.status === 'perfect') {
                 setTimeout(() => {
-                    alert('🎉 Congratulations! You solved the 8 Queens with Colors puzzle!');
+                    alert('���� Congratulations! You solved the 8 Queens with Colors puzzle!');
                     this.completeGame(true);
                 }, 500);
             }
