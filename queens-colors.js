@@ -635,6 +635,8 @@ if (typeof window !== 'undefined') {
         constructor() {
             super();
             this.gameStartTime = null;
+            this.gameTimer = null;
+            this.elapsedTime = 0;
         }
 
         startGame() {
