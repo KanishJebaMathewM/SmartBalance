@@ -726,7 +726,7 @@ class Utils {
             const withinBudget = Object.values(budgetStatus).every(status => !status.overBudget);
             if (withinBudget && Object.keys(budgetStatus).length > 0) {
                 newBadges.budgetBoss = true;
-                badgesEarned.push('��� Budget Boss');
+                badgesEarned.push('💰 Budget Boss');
             }
         }
 
@@ -864,7 +864,7 @@ class Utils {
             const moodStreak = this.getMoodStreak(data.moods);
             if (moodStreak >= 100) {
                 newBadges.zenMaster = true;
-                badgesEarned.push('☯️ Zen Master');
+                badgesEarned.push('☯�� Zen Master');
             }
         }
 
