@@ -1846,7 +1846,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧��️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -3192,7 +3192,7 @@ class WorkLifeBalanceApp {
         if (suggestionEl) {
             const categoryDisplayName = this.getCategoryDisplayName(category);
             suggestionEl.innerHTML = `
-                <span>�� Suggested category: <strong>${categoryDisplayName}</strong></span>
+                <span>💡 Suggested category: <strong>${categoryDisplayName}</strong></span>
                 <button type="button" onclick="app.applyCategorySuggestion('${category}')" class="btn-link">Apply</button>
             `;
             suggestionEl.style.display = 'block';
@@ -4516,7 +4516,7 @@ class WorkLifeBalanceApp {
     getCategoryIcon(category) {
         const icons = {
             'work': '💼',
-            'personal': '����',
+            'personal': '👤',
             'health': '🏥',
             'food': '🍕',
             'bills': '📧',
@@ -8215,7 +8215,7 @@ class WorkLifeBalanceApp {
         if (homeCookingRate >= 70) {
             insights.push('🍳 Excellent home cooking habits! Keep it up.');
         } else if (homeCookingRate >= 50) {
-            insights.push('������ Good balance of home cooking and dining out.');
+            insights.push('������� Good balance of home cooking and dining out.');
         } else {
             insights.push('🏠 Try cooking more meals at home for better health and savings.');
         }
