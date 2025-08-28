@@ -244,6 +244,9 @@ class WorkLifeBalanceApp {
             window.app.applyCategorySuggestion = this.applyCategorySuggestion.bind(this);
             window.app.applyAmountSuggestion = this.applyAmountSuggestion.bind(this);
             window.app.applyDescriptionSuggestion = this.applyDescriptionSuggestion.bind(this);
+            // 8 Queens with Colors support
+            window.app.applySuggestion = this.applySuggestion.bind(this);
+            window.app.startGame = this.startGame.bind(this);
         }
 
         console.log('✅ Global app access ensured for calendar functionality');
