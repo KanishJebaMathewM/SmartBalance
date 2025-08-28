@@ -9192,7 +9192,7 @@ class WorkLifeBalanceApp {
         const areas = [
             { name: 'Fitness', score: scores.fitness, icon: '���' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
-            { name: 'Productivity', score: scores.productivity, icon: '����' },
+            { name: 'Productivity', score: scores.productivity, icon: '💼' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
             { name: 'Wellness', score: scores.wellness, icon: '����' }
         ];
@@ -9377,7 +9377,7 @@ class WorkLifeBalanceApp {
         const incompleteTasks = tasks.filter(t => !t.completed).length;
         if (incompleteTasks > 10) {
             recommendations.push({
-                icon: '����',
+                icon: '📋',
                 title: 'Manage Task Backlog',
                 description: `You have ${incompleteTasks} incomplete tasks. Consider prioritizing or breaking them into smaller steps.`,
                 priority: 'high'
@@ -9394,7 +9394,7 @@ class WorkLifeBalanceApp {
 
         if (stressedDays >= 4) {
             recommendations.push({
-                icon: '����',
+                icon: '🧘',
                 title: 'Stress Management',
                 description: 'You had multiple stressful days this week. Try breathing exercises or short meditation sessions.',
                 priority: 'high',
@@ -9646,7 +9646,7 @@ class WorkLifeBalanceApp {
 
         if (topArea.score >= 80) {
             insights.push({
-                icon: '����',
+                icon: '🌟',
                 title: `${topArea.name} Excellence`,
                 description: `Your ${topArea.name.toLowerCase()} score of ${topArea.score}/100 is outstanding! Keep up the excellent work.`,
                 type: 'success'
