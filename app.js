@@ -100,7 +100,7 @@ window.testExpenseToggle = function() {
     if (checkbox && details) {
         // Force check the checkbox first
         checkbox.checked = true;
-        console.log('��� Forced checkbox to checked');
+        console.log('✅ Forced checkbox to checked');
 
         // Apply all methods to show
         details.removeAttribute('style');
@@ -1034,7 +1034,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ` ��� ���� Expense: ${Utils.formatCurrency(task.amount)}` : ''}
+                        ${task.expenseRelated ? ` 💰 💳 Expense: ${Utils.formatCurrency(task.amount)}` : ''}
                         ${task.completed && task.expenseRelated ? ' • ✅ Added to expenses' : ''}
                     </div>
                 </div>
@@ -5398,7 +5398,7 @@ class WorkLifeBalanceApp {
             breakfast: {
                 name: document.getElementById('breakfastMeal').textContent,
                 calories: parseInt(document.getElementById('breakfastCalories').textContent),
-                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('���', ''))
+                cost: parseInt(document.getElementById('breakfastCost').textContent.replace('₹', ''))
             },
             lunch: {
                 name: document.getElementById('lunchMeal').textContent,
@@ -5426,7 +5426,7 @@ class WorkLifeBalanceApp {
 
         localStorage.setItem('meal_plans', JSON.stringify(savedMealPlans));
 
-        Utils.showNotification('����� Meal plan saved!', 'success');
+        Utils.showNotification('🍽️ Meal plan saved!', 'success');
     }
 
     saveMealToStorage(mealType, mealName, calories, cost) {
