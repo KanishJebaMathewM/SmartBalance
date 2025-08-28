@@ -8454,7 +8454,7 @@ class WorkLifeBalanceApp {
         const fitnessStressCorrelation = this.analyzeFitnessStressCorrelation(data.workouts, data.moods);
         if (fitnessStressCorrelation.correlation > 0.3) {
             correlationInsights.push({
-                title: '���� Fitness Boost',
+                title: '💪 Fitness Boost',
                 insight: `Your mood is ${Math.round(fitnessStressCorrelation.correlation * 100)}% better on workout days!`,
                 strength: fitnessStressCorrelation.correlation
             });
@@ -11218,17 +11218,17 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '�������️ Travel & Transport',
+            'travel': '✈️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
-            'education': '���� Education',
+            'education': '📚 Education',
             'fitness': '💪 Fitness & Sports',
             'subscriptions': '📺 Subscriptions',
             'groceries': '🛒 Groceries',
             'clothing': '👕 Clothing',
             'other': '📦 Other'
         };
-        return categoryNames[category] || '�� Other';
+        return categoryNames[category] || '📦 Other';
     }
 
     getCategoryIcon(category) {
@@ -11239,8 +11239,8 @@ class WorkLifeBalanceApp {
             'travel': '✈️',
             'entertainment': '🎬',
             'healthcare': '🏥',
-            'education': '��',
-            'fitness': '����',
+            'education': '📚',
+            'fitness': '💪',
             'subscriptions': '📺',
             'groceries': '🛒',
             'clothing': '👕',
@@ -11254,10 +11254,10 @@ class WorkLifeBalanceApp {
             'cash': '💵 Cash',
             'card': '💳 Card',
             'upi': '📱 UPI',
-            'bank': '������� Bank Transfer',
+            'bank': '🏦 Bank Transfer',
             'wallet': '📱 Digital Wallet'
         };
-        return paymentMethods[method] || '��� Cash';
+        return paymentMethods[method] || '💵 Cash';
     }
 
     // Export functionality
@@ -11896,7 +11896,7 @@ class WorkLifeBalanceApp {
         const hotelCost = hotelMeals.reduce((sum, meal) =>
             sum + (parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0), 0);
 
-        // Estimate potential savings: assume each home meal saves ₹150 on average
+        // Estimate potential savings: assume each home meal saves ���150 on average
         const potentialSavings = homeMeals.length * 150;
         return Math.max(0, potentialSavings - homeCost);
     }
