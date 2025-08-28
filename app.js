@@ -1846,7 +1846,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥���💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -4526,7 +4526,7 @@ class WorkLifeBalanceApp {
             'education': '📚',
             'fitness': '💪',
             'subscriptions': '📺',
-            'groceries': '�����',
+            'groceries': '🛒',
             'clothing': '👕',
             'healthcare': '��',
             'reminder': '⏰',
@@ -8215,7 +8215,7 @@ class WorkLifeBalanceApp {
         if (homeCookingRate >= 70) {
             insights.push('🍳 Excellent home cooking habits! Keep it up.');
         } else if (homeCookingRate >= 50) {
-            insights.push('������� Good balance of home cooking and dining out.');
+            insights.push('������ Good balance of home cooking and dining out.');
         } else {
             insights.push('🏠 Try cooking more meals at home for better health and savings.');
         }
