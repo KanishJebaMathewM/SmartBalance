@@ -3457,7 +3457,7 @@ class WorkLifeBalanceApp {
             'healthcare': '🏥',
             'education': '📚',
             'fitness': '💪',
-            'subscriptions': '����',
+            'subscriptions': '📺',
             'groceries': '���',
             'clothing': '👕',
             'other': '���'
@@ -3979,7 +3979,7 @@ class WorkLifeBalanceApp {
         const correlation = this.calculateTaskMoodCorrelation(tasks, moods);
         const percentage = Math.abs(correlation * 100);
         const insight = correlation > 0.3 ?
-            '�� High productivity increases stress - consider work-life balance!' :
+            '��� High productivity increases stress - consider work-life balance!' :
             correlation < -0.3 ?
             '������ Completing tasks reduces your stress levels!' :
             '�� Keep tracking to understand your productivity-stress patterns';
@@ -4519,7 +4519,7 @@ class WorkLifeBalanceApp {
             'personal': '����',
             'health': '🏥',
             'food': '🍕',
-            'bills': '📧',
+            'bills': '����',
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
@@ -6808,7 +6808,7 @@ class WorkLifeBalanceApp {
                         ${mealTypes.map(type => {
                             const meal = dayMeals.find(m => m.type === type);
                             if (meal) {
-                                return `<span class="meal-dot ${meal.status === 'eaten' ? 'eaten' : 'planned'}" title="${meal.name}">��</span>`;
+                                return `<span class="meal-dot ${meal.status === 'eaten' ? 'eaten' : 'planned'}" title="${meal.name}">•</span>`;
                             }
                             return `<span class="meal-dot empty">•</span>`;
                         }).join('')}
