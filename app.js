@@ -771,7 +771,7 @@ class WorkLifeBalanceApp {
                     <div class="task-title">${Utils.sanitizeInput(task.title)}</div>
                     <div class="task-meta">
                         ${task.category} • ${Utils.formatDate(task.createdAt)}
-                        ${task.expenseRelated ? ` �� 💰 Expense: ${Utils.formatCurrency(task.amount)}` : ''}
+                        ${task.expenseRelated ? ` �� ���� Expense: ${Utils.formatCurrency(task.amount)}` : ''}
                         ${task.completed && task.expenseRelated ? ' • ✅ Added to expenses' : ''}
                     </div>
                 </div>
@@ -3460,9 +3460,9 @@ class WorkLifeBalanceApp {
             'subscriptions': '📺',
             'groceries': '🛒',
             'clothing': '👕',
-            'other': '���'
+            'other': '📦'
         };
-        return categoryIcons[category] || '����';
+        return categoryIcons[category] || '📦';
     }
 
     resetExpenseForm() {
@@ -8766,7 +8766,7 @@ class WorkLifeBalanceApp {
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
             { name: 'Productivity', score: scores.productivity, icon: '����' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
-            { name: 'Wellness', score: scores.wellness, icon: '��' }
+            { name: 'Wellness', score: scores.wellness, icon: '����' }
         ];
 
         const topAreas = areas.filter(area => area.score >= 70).sort((a, b) => b.score - a.score);
@@ -10638,7 +10638,7 @@ class WorkLifeBalanceApp {
         const csvRows = expenses.map(expense => [
             new Date(expense.createdAt).toLocaleDateString(),
             `"${(expense.notes || 'No description').replace(/"/g, '""')}"`,
-            this.getCategoryDisplayName(expense.category).replace(/[🍕📧🛍️✈️🎬🏥���💪������👕📦]/g, '').trim(),
+            this.getCategoryDisplayName(expense.category).replace(/[🍕📧����️✈️🎬🏥���💪������👕📦]/g, '').trim(),
             this.getPaymentMethodDisplayName(expense.paymentMethod || 'cash').replace(/[💵💳📱🏦]/g, '').trim(),
             expense.amount
         ]);
