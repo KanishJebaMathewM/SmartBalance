@@ -29,7 +29,7 @@ function toggleExpenseDetails(checkbox) {
             expenseDetails.style.setProperty('display', 'block', 'important');
             expenseDetails.style.setProperty('visibility', 'visible', 'important');
             expenseDetails.style.setProperty('opacity', '1', 'important');
-            console.log('🔧 Set individual CSS properties with important');
+            console.log('���� Set individual CSS properties with important');
 
             // Method 4: Direct manipulation
             expenseDetails.hidden = false;
@@ -596,6 +596,12 @@ class WorkLifeBalanceApp {
     // Initialize automated mood tracking system
     initializeAutomatedMoodTracking() {
         console.log('🤖 Initializing automated mood tracking...');
+
+        // Skip automated mood generation for brand new users with no activity
+        if (!this.hasUserActivity()) {
+            console.log('⏭️ Skipping mood automation: no user activity yet.');
+            return;
+        }
 
         // Show welcome notification about automated system
         setTimeout(() => {
@@ -3901,7 +3907,7 @@ class WorkLifeBalanceApp {
         // Add games insights
         if (games.totalGamesPlayed > 0) {
             if (games.analytics?.improvementTrend === 'improving') {
-                insights.push('🎮 Your gaming skills are improving! Keep practicing.');
+                insights.push('�� Your gaming skills are improving! Keep practicing.');
             } else if (games.totalGamesPlayed >= 10) {
                 insights.push('🎮 You\'re an active gamer! Mental challenges help keep your mind sharp.');
             }
@@ -12123,7 +12129,7 @@ class WorkLifeBalanceApp {
             'food': '🍕 Food & Dining',
             'bills': '📧 Bills & Utilities',
             'shopping': '🛍️ Shopping',
-            'travel': '✈️ Travel & Transport',
+            'travel': '���️ Travel & Transport',
             'entertainment': '🎬 Entertainment',
             'healthcare': '🏥 Healthcare',
             'education': '📚 Education',
@@ -12139,7 +12145,7 @@ class WorkLifeBalanceApp {
     getCategoryIcon(category) {
         const categoryIcons = {
             'food': '🍕',
-            'bills': '���',
+            'bills': '📧',
             'shopping': '🛍️',
             'travel': '✈️',
             'entertainment': '🎬',
