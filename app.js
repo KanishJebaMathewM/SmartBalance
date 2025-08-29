@@ -7776,7 +7776,7 @@ class WorkLifeBalanceApp {
             if (meal) {
                 gridHTML += `
                     <div class="meal-card ${meal.status || 'planned'}">
-                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '🍽️ Planned'}</div>
+                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '��️ Planned'}</div>
                         <div class="meal-emoji">${typeInfo.emoji}</div>
                         <h4>${typeInfo.name}</h4>
                         <p class="meal-name">${Utils.sanitizeInput(meal.name)}</p>
@@ -11218,7 +11218,7 @@ class WorkLifeBalanceApp {
         // Financial recommendations
         const totalExpenses = data.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
         if (totalExpenses > 5000) {
-            recommendations.push('💰 Review your spending patterns and consider budgeting');
+            recommendations.push('��� Review your spending patterns and consider budgeting');
         }
 
         return recommendations.map(rec => `
@@ -12347,22 +12347,49 @@ class WorkLifeBalanceApp {
         const tbody = document.getElementById('monthlyTrendsBody');
         if (!tbody) return;
 
-        tbody.innerHTML = monthlyData.map(item => {
-            const changeClass = item.changeFromPrevious > 0 ? 'positive' : item.changeFromPrevious < 0 ? 'negative' : 'neutral';
-            const changeSymbol = item.changeFromPrevious > 0 ? '+' : '';
+        const rows = [];
+        for (let i = 0; i < monthlyData.length; i++) {
+            const item = monthlyData[i] || {};
+            const prev = i > 0 ? monthlyData[i - 1] : null;
 
-            return `
+            // Derive per-day average when not provided
+            let perDayAvg = item.dailyAverage;
+            if (!(typeof perDayAvg === 'number' && isFinite(perDayAvg))) {
+                let days = 30;
+                if (item.date instanceof Date) {
+                    const name = String(item.name || '').toLowerCase();
+                    days = name.startsWith('week') ? 7 : 1;
+                } else if (typeof item.year === 'number' && typeof item.month === 'number') {
+                    days = new Date(item.year, item.month + 1, 0).getDate();
+                }
+                const amt = parseFloat(item.amount) || 0;
+                perDayAvg = amt / Math.max(days, 1);
+            }
+
+            // Derive change from previous when not provided
+            let change = item.changeFromPrevious;
+            if (!(typeof change === 'number' && isFinite(change))) {
+                const currAmt = parseFloat(item.amount) || 0;
+                const prevAmt = prev ? (parseFloat(prev.amount) || 0) : 0;
+                change = prev ? (prevAmt > 0 ? ((currAmt - prevAmt) / prevAmt) * 100 : 0) : 0;
+            }
+
+            const changeClass = change > 0 ? 'positive' : change < 0 ? 'negative' : 'neutral';
+            const changeSymbol = change > 0 ? '+' : '';
+
+            rows.push(`
                 <tr>
-                    <td>${item.name}</td>
-                    <td>${Utils.formatCurrency(item.amount)}</td>
-                    <td>${item.transactions}</td>
-                    <td>${Utils.formatCurrency(item.dailyAverage)}</td>
+                    <td>${item.name || '-'}</td>
+                    <td>${Utils.formatCurrency(item.amount || 0)}</td>
+                    <td>${item.transactions != null ? item.transactions : 0}</td>
+                    <td>${Utils.formatCurrency(perDayAvg)}</td>
                     <td class="${changeClass}">
-                        ${changeSymbol}${item.changeFromPrevious.toFixed(1)}%
+                        ${changeSymbol}${(isFinite(change) ? change.toFixed(1) : '0.0')}%
                     </td>
                 </tr>
-            `;
-        }).join('');
+            `);
+        }
+        tbody.innerHTML = rows.join('');
     }
 
     populateTopExpenses(topExpenses) {
