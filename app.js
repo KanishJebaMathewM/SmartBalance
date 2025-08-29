@@ -1458,9 +1458,20 @@ class WorkLifeBalanceApp {
     updateExpensesWidget() {
         const weeklyExpense = window.storage.getWeeklyExpenses();
         const weeklyExpenseEl = document.getElementById('weeklyExpense');
-        
+
         if (weeklyExpenseEl) {
             weeklyExpenseEl.textContent = Utils.formatCurrency(weeklyExpense);
+        }
+
+        // Update amount in purse on dashboard
+        const purseAmountEl = document.getElementById('purseAmount');
+        if (purseAmountEl) {
+            const monthlyExpenses = window.storage.getMonthlyExpenses();
+            const settings = window.storage.getSettings();
+            const monthlyIncome = settings.monthlyIncome || 0;
+            const amountInPurse = monthlyIncome - monthlyExpenses;
+            purseAmountEl.textContent = Utils.formatCurrency(amountInPurse);
+            purseAmountEl.title = "Monthly income minus this month's spending";
         }
     }
 
