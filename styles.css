@@ -2153,8 +2153,16 @@ body.dark-mode {
 .report-summary h2 {
     color: #1e293b;
     margin-bottom: 24px;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
+}
+
+.overall-report-section .summary-grid {
+    gap: 24px;
+}
+
+.overall-report-section .summary-card {
+    border-radius: 16px;
 }
 
 .dark-mode .report-summary h2 {
