@@ -7804,6 +7804,24 @@ body.dark-mode {
     margin-bottom: 8px;
 }
 
+/* Dashboard: Amount in Purse styling */
+#purseAmount {
+    font-weight: 700;
+    color: #059669;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 10px;
+    background: #ecfdf5;
+    border: 1px solid #d1fae5;
+    line-height: 1.2;
+}
+
+.dark-mode #purseAmount {
+    color: #10b981;
+    background: #064e3b;
+    border-color: #065f46;
+}
+
 .savings-goal {
     background: #ffffff;
     padding: 24px;
