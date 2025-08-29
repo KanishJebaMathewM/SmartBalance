@@ -10423,7 +10423,7 @@ class WorkLifeBalanceApp {
         const areas = [
             { name: 'Fitness', score: scores.fitness, icon: '💪' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
-            { name: 'Productivity', score: scores.productivity, icon: '💼' },
+            { name: 'Productivity', score: scores.productivity, icon: '����' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
             { name: 'Wellness', score: scores.wellness, icon: '🧘' }
         ];
@@ -12464,11 +12464,11 @@ class WorkLifeBalanceApp {
                         ${Utils.formatCurrency(Math.abs(item.remaining))}
                     </td>
                     <td>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 60px; height: 8px; background: #e5e7eb; border-radius: 4px; overflow: hidden;">
-                                <div style="width: ${progressWidth}%; height: 100%; background: ${statusClass === 'over' ? '#ef4444' : statusClass === 'warning' ? '#f59e0b' : '#10b981'}; transition: width 0.3s ease;"></div>
+                        <div class="budget-progress">
+                            <div class="budget-progress-track">
+                                <div class="budget-progress-fill status-${statusClass}" style="width: ${progressWidth}%;"></div>
                             </div>
-                            <span style="font-size: 0.8rem; color: #6b7280;">${item.progress.toFixed(0)}%</span>
+                            <span class="budget-progress-value">${item.progress.toFixed(0)}%</span>
                         </div>
                     </td>
                     <td class="status-${statusClass}">${statusText}</td>
