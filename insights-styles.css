@@ -901,11 +901,13 @@
     padding: 20px 32px;
     background: #f9fafb;
     border-bottom: 1px solid #e5e7eb;
+    color: #111827;
 }
 
 .dark-mode .report-header {
     background: #374151;
     border-bottom-color: #4b5563;
+    color: #f9fafb;
 }
 
 .report-header h3 {
@@ -1558,11 +1560,13 @@
     padding: 16px 32px;
     background: #f9fafb;
     border-bottom: 1px solid #e5e7eb;
+    color: #6b7280;
 }
 
 .dark-mode .report-info {
     background: #374151;
     border-bottom-color: #4b5563;
+    color: #9ca3af;
 }
 
 .report-meta {
