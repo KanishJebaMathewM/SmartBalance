@@ -602,7 +602,7 @@ class WorkLifeBalanceApp {
             {
                 label: 'Savings',
                 value: savingsStreak,
-                icon: '💰',
+                icon: '����',
                 color: savingsStreak >= 30 ? '#10b981' : savingsStreak >= 7 ? '#f59e0b' : '#6b7280',
                 unit: 'days'
             }
@@ -2929,6 +2929,7 @@ class WorkLifeBalanceApp {
         // Use month-specific data for category insights and patterns
         this.loadCategoryInsights(monthExpenses);
         this.generateSpendingPredictions(allExpenses); // Keep predictions based on all data
+        this.generateCategoryPredictions(allExpenses);
         this.generateSpendingPatterns(monthExpenses);
         this.generateSmartRecommendations(monthExpenses);
     }
