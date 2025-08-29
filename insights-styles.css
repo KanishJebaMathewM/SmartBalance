@@ -1693,6 +1693,17 @@
     font-size: 0.9rem;
 }
 
+.category-breakdown-table thead th,
+.payment-method-table thead th,
+.monthly-trends-table thead th,
+.top-expenses-table thead th,
+.recent-transactions-table thead th,
+.budget-performance-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
 .category-breakdown-table th,
 .payment-method-table th,
 .monthly-trends-table th,
