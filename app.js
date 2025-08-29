@@ -3955,6 +3955,12 @@ class WorkLifeBalanceApp {
 
 
     startExercise(exerciseType) {
+        // Directly open breathing modal from fitness section for deep breathing
+        if (exerciseType === 'breathing') {
+            this.openModal('breathingModal');
+            return;
+        }
+
         const exercise = Utils.getExerciseInstructions(exerciseType);
         if (!exercise) return;
 
@@ -7729,7 +7735,7 @@ class WorkLifeBalanceApp {
         if (avgHomeCost > 0 && avgHotelCost > 0) {
             const savings = avgHotelCost - avgHomeCost;
             insights.push({
-                icon: '💰',
+                icon: '��',
                 title: 'Cost Comparison',
                 description: `On average, home cooking saves you ${Utils.formatCurrency(savings)} per meal compared to ordering out.`
             });
@@ -10020,7 +10026,7 @@ class WorkLifeBalanceApp {
 
         // Mood tracking
         if (data.moods.length >= 7) {
-            insights.push('😌 Great job tracking your mood consistently!');
+            insights.push('��� Great job tracking your mood consistently!');
         } else if (data.moods.length > 0) {
             insights.push('📊 Keep tracking your mood to identify patterns.');
         } else {
