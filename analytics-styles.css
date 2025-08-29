@@ -57,32 +57,32 @@
 }
 
 /* Dark mode styles */
-.dark .analytics-header,
-.dark .insights-header {
+.dark-mode .analytics-header,
+.dark-mode .insights-header {
     border-bottom-color: #374151;
 }
 
-.dark .analysis-navigation h3 {
+.dark-mode .analysis-navigation h3 {
     color: #f3f4f6;
 }
 
-.dark .btn-icon {
+.dark-mode .btn-icon {
     background: #374151;
     border-color: #4b5563;
     color: #9ca3af;
 }
 
-.dark .btn-icon:hover:not(:disabled) {
+.dark-mode .btn-icon:hover:not(:disabled) {
     background: #4b5563;
     color: #f3f4f6;
     border-color: #6b7280;
 }
 
-.dark .btn-icon:disabled {
+.dark-mode .btn-icon:disabled {
     background: #1f2937;
     color: #4b5563;
 }
 
-.dark .btn-icon:active:not(:disabled) {
+.dark-mode .btn-icon:active:not(:disabled) {
     background: #4b5563;
 }
