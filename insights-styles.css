@@ -1620,6 +1620,23 @@
 .recent-transactions-container,
 .budget-performance-container {
     overflow-x: auto;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.dark-mode .category-breakdown-container,
+.dark-mode .payment-method-container,
+.dark-mode .monthly-trends-container,
+.dark-mode .top-expenses-container,
+.dark-mode .recent-transactions-container,
+.dark-mode .budget-performance-container {
+    background: #1f2937;
+    border-color: #374151;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Budget progress bar */
