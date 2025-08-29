@@ -1582,6 +1582,49 @@
     overflow-x: auto;
 }
 
+/* Budget progress bar */
+.budget-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.budget-progress-track {
+    width: 100%;
+    max-width: 180px;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.dark-mode .budget-progress-track {
+    background: #4b5563;
+}
+
+.budget-progress-fill {
+    height: 100%;
+    background: #10b981;
+    transition: width 0.3s ease;
+}
+
+.budget-progress-fill.status-warning {
+    background: #f59e0b;
+}
+
+.budget-progress-fill.status-over {
+    background: #ef4444;
+}
+
+.budget-progress-value {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.dark-mode .budget-progress-value {
+    color: #9ca3af;
+}
+
 .category-breakdown-table,
 .payment-method-table,
 .monthly-trends-table,
