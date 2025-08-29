@@ -13,7 +13,7 @@ function toggleExpenseDetails(checkbox) {
 
     if (expenseDetails) {
         console.log('💰 Current state - display:', window.getComputedStyle(expenseDetails).display);
-        console.log('💰 Current inline style:', expenseDetails.style.cssText);
+        console.log('��� Current inline style:', expenseDetails.style.cssText);
 
         if (checkbox.checked) {
             // Method 1: Remove all inline styles
@@ -800,6 +800,15 @@ class WorkLifeBalanceApp {
 
         // Button actions
         this.initializeButtonHandlers();
+        // Delegated handler to ensure Start Exercise works reliably
+        document.addEventListener('click', (e) => {
+            const startBtn = e.target.closest('.exercise-card .btn-secondary');
+            if (startBtn) {
+                const card = startBtn.closest('.exercise-card');
+                const exerciseType = card && card.dataset.exercise;
+                if (exerciseType) this.startExercise(exerciseType);
+            }
+        });
 
         // Filter buttons
         this.initializeFilterHandlers();
@@ -11031,7 +11040,7 @@ class WorkLifeBalanceApp {
 
         if (weakestArea.score < 50) {
             insights.push({
-                icon: '🎯',
+                icon: '���',
                 title: `Focus on ${weakestArea.name}`,
                 description: `Your ${weakestArea.name.toLowerCase()} area needs attention. Small consistent improvements here will boost your overall balance.`,
                 type: 'improvement'
