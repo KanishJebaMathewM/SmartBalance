@@ -3265,7 +3265,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈��🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕��🛍️✈��🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -5964,6 +5964,7 @@ class WorkLifeBalanceApp {
         const monthlySpendingTotalEl = document.getElementById('monthlySpendingTotal');
         const monthlySavingsAmountEl = document.getElementById('monthlySavingsAmount');
         const savingsPercentageEl = document.getElementById('savingsPercentage');
+        const purseAmountEl = document.getElementById('purseAmount');
 
         if (incomeDisplayEl) {
             incomeDisplayEl.textContent = Utils.formatCurrency(monthlyIncome);
@@ -5976,6 +5977,11 @@ class WorkLifeBalanceApp {
         }
         if (savingsPercentageEl) {
             savingsPercentageEl.textContent = `${savingsPercentage}%`;
+        }
+        if (purseAmountEl) {
+            const amountInPurse = monthlyIncome - monthlyExpenses;
+            purseAmountEl.textContent = Utils.formatCurrency(amountInPurse);
+            purseAmountEl.title = "Monthly income minus this month's spending";
         }
     }
 
@@ -9109,7 +9115,7 @@ class WorkLifeBalanceApp {
                     <span class="breakdown-value ${this.getScoreClass(nutritionScore)}">${nutritionScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
-                    <span class="breakdown-label">💼 Productivity</span>
+                    <span class="breakdown-label">��� Productivity</span>
                     <span class="breakdown-value ${this.getScoreClass(productivityScore)}">${productivityScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
