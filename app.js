@@ -3316,6 +3316,83 @@ class WorkLifeBalanceApp {
         };
     }
 
+    // Category-wise predictions for Insights tab
+    generateCategoryPredictions(expenses) {
+        const grid = document.getElementById('categoryPredictions');
+        if (!grid) return;
+
+        const predictions = this.calculateCategoryWisePredictions(expenses);
+        if (predictions.length === 0) {
+            grid.innerHTML = '<div class="category-prediction-item">No data yet to predict by category.</div>';
+            return;
+        }
+
+        grid.innerHTML = predictions.map(item => {
+            const trendIcon = item.trend === 'up' ? '⬆️' : item.trend === 'down' ? '⬇️' : '➡️';
+            const trendClass = item.trend === 'up' ? 'positive' : item.trend === 'down' ? 'negative' : 'neutral';
+            return `
+                <div class="category-prediction-item">
+                    <div class="category-prediction-header">
+                        <div class="category-prediction-name">
+                            ${this.getCategoryIcon(item.category)}
+                            ${this.getCategoryDisplayName(item.category)}
+                        </div>
+                        <div class="category-prediction-amount">${Utils.formatCurrency(item.predicted)}</div>
+                    </div>
+                    <div class="category-prediction-trend ${trendClass}">
+                        ${trendIcon} ${item.changePct.toFixed(1)}% vs last month · Confidence ${item.confidence}%
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    calculateCategoryWisePredictions(expenses) {
+        // Group last 4 months by category and month
+        const now = new Date();
+        const monthsBack = 4;
+        const monthKeys = [];
+        for (let i = monthsBack - 1; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            monthKeys.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+        }
+
+        const byCatMonth = {};
+        expenses.forEach(exp => {
+            const d = new Date(exp.date || exp.createdAt);
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            if (!monthKeys.includes(key)) return;
+            const cat = exp.category || 'other';
+            byCatMonth[cat] = byCatMonth[cat] || {};
+            byCatMonth[cat][key] = (byCatMonth[cat][key] || 0) + (parseFloat(exp.amount) || 0);
+        });
+
+        const results = Object.keys(byCatMonth).map(cat => {
+            const series = monthKeys.map(k => byCatMonth[cat][k] || 0);
+            const lastIdx = series.length - 1;
+            const last = series[lastIdx] || 0;
+            const recent = series.slice(Math.max(0, series.length - 3));
+            const avgRecent = recent.length ? recent.reduce((s, v) => s + v, 0) / recent.length : 0;
+
+            // Simple trend from first to last of recent
+            let trend = 'flat';
+            if (recent.length >= 2) {
+                const diff = recent[recent.length - 1] - recent[0];
+                if (diff > avgRecent * 0.05) trend = 'up';
+                else if (diff < -avgRecent * 0.05) trend = 'down';
+            }
+
+            const predicted = avgRecent;
+            const changePct = last > 0 ? ((predicted - last) / last) * 100 : 0;
+            const observedMonths = series.filter(v => v > 0).length;
+            const confidence = Math.min(90, 40 + observedMonths * 15);
+
+            return { category: cat, predicted, changePct, trend, confidence };
+        }).filter(r => isFinite(r.predicted));
+
+        return results.sort((a, b) => b.predicted - a.predicted).slice(0, 8);
+    }
+
     generateSpendingPatterns(expenses) {
         const patterns = this.analyzeSpendingPatterns(expenses);
         const patternAnalysisEl = document.getElementById('patternAnalysis');
