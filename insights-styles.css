@@ -1791,4 +1791,8 @@
     .budget-performance-table td {
         padding: 8px 12px;
     }
+
+    .budget-progress-track {
+        max-width: 140px;
+    }
 }
