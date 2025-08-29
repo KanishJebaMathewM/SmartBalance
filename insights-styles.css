@@ -1394,13 +1394,13 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 20px;
+    padding: 12px 24px;
     border: 1px solid #d1d5db;
-    background: #ffffff;
+    background: #f3f4f6;
     color: #374151;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.9rem;
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
