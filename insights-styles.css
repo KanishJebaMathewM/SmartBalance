@@ -1757,7 +1757,7 @@
 .top-expenses-table tr:nth-child(even),
 .recent-transactions-table tr:nth-child(even),
 .budget-performance-table tr:nth-child(even) {
-    background: #f9fafb;
+    background: #f8fafc;
 }
 
 .dark-mode .category-breakdown-table tr:nth-child(even),
