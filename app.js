@@ -4080,39 +4080,65 @@ class WorkLifeBalanceApp {
         const circle = document.querySelector('.circle');
         const text = document.getElementById('breathingText');
         const button = document.getElementById('startBreathingBtn');
-        
+        const container = document.getElementById('breathingCircle');
+
         if (this.breathingState === 'running') {
-            // Stop exercise
             this.stopBreathingExercise();
             return;
         }
-        
+
         this.breathingState = 'running';
         button.textContent = 'Stop Exercise';
-        
-        let cycle = 0;
+
+        // Setup countdown timer (5 cycles, 4s inhale + 2s hold + 4s exhale = 10s/cycle)
         const maxCycles = 5;
-        
+        const inhaleMs = 4000, holdMs = 2000, exhaleMs = 4000;
+        const totalSeconds = Math.round((maxCycles * (inhaleMs + holdMs + exhaleMs)) / 1000);
+        this.breathingCountdownRemaining = totalSeconds;
+
+        let timerEl = document.getElementById('breathingTimerDisplay');
+        if (!timerEl && container) {
+            timerEl = document.createElement('div');
+            timerEl.id = 'breathingTimerDisplay';
+            timerEl.textContent = this.formatTime ? this.formatTime(this.breathingCountdownRemaining) : `${String(Math.floor(this.breathingCountdownRemaining/60)).padStart(2,'0')}:${String(this.breathingCountdownRemaining%60).padStart(2,'0')}`;
+            container.appendChild(timerEl);
+        }
+
+        if (this.breathingCountdownInterval) clearInterval(this.breathingCountdownInterval);
+        this.breathingCountdownInterval = setInterval(() => {
+            if (this.breathingState !== 'running') return;
+            this.breathingCountdownRemaining = Math.max(0, this.breathingCountdownRemaining - 1);
+            const display = document.getElementById('breathingTimerDisplay');
+            if (display) {
+                const secs = this.breathingCountdownRemaining;
+                const mm = String(Math.floor(secs / 60)).padStart(2, '0');
+                const ss = String(secs % 60).padStart(2, '0');
+                display.textContent = `${mm}:${ss}`;
+            }
+            if (this.breathingCountdownRemaining <= 0) {
+                clearInterval(this.breathingCountdownInterval);
+            }
+        }, 1000);
+
+        let cycle = 0;
         const runCycle = () => {
             if (this.breathingState !== 'running') return;
-            
+
             // Inhale phase
             circle.classList.add('inhale');
             text.textContent = 'Breathe in...';
-            
+
             setTimeout(() => {
                 if (this.breathingState !== 'running') return;
-                
                 // Hold phase
                 text.textContent = 'Hold...';
-                
+
                 setTimeout(() => {
                     if (this.breathingState !== 'running') return;
-                    
                     // Exhale phase
                     circle.classList.remove('inhale');
                     text.textContent = 'Breathe out...';
-                    
+
                     setTimeout(() => {
                         cycle++;
                         if (cycle < maxCycles && this.breathingState === 'running') {
@@ -4121,11 +4147,11 @@ class WorkLifeBalanceApp {
                             this.stopBreathingExercise();
                             Utils.showNotification('Breathing exercise completed! 🧘', 'success');
                         }
-                    }, 4000);
-                }, 2000);
-            }, 4000);
+                    }, exhaleMs);
+                }, holdMs);
+            }, inhaleMs);
         };
-        
+
         runCycle();
     }
 
@@ -4134,7 +4160,11 @@ class WorkLifeBalanceApp {
         const circle = document.querySelector('.circle');
         const text = document.getElementById('breathingText');
         const button = document.getElementById('startBreathingBtn');
-        
+
+        if (this.breathingCountdownInterval) clearInterval(this.breathingCountdownInterval);
+        const timerEl = document.getElementById('breathingTimerDisplay');
+        if (timerEl) timerEl.textContent = '00:00';
+
         if (circle) circle.classList.remove('inhale');
         if (text) text.textContent = 'Click Start to begin';
         if (button) button.textContent = 'Start Exercise';
@@ -6168,7 +6198,7 @@ class WorkLifeBalanceApp {
             'bills': '📧',
             'shopping': '🛍️',
             'travel': '✈️',
-            'entertainment': '🎬',
+            'entertainment': '���',
             'education': '📚',
             'fitness': '💪',
             'subscriptions': '📺',
