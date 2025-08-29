@@ -23,7 +23,7 @@ function toggleExpenseDetails(checkbox) {
             // Method 2: Add CSS class for show
             expenseDetails.classList.add('expense-details-show');
             expenseDetails.classList.remove('expense-details-hide');
-            console.log('��� Added show class, removed hide class');
+            console.log('Added show class, removed hide class');
 
             // Method 3: Force inline styles as backup
             expenseDetails.style.setProperty('display', 'block', 'important');
@@ -602,7 +602,7 @@ class WorkLifeBalanceApp {
             {
                 label: 'Savings',
                 value: savingsStreak,
-                icon: '����',
+                icon: '💰',
                 color: savingsStreak >= 30 ? '#10b981' : savingsStreak >= 7 ? '#f59e0b' : '#6b7280',
                 unit: 'days'
             }
@@ -702,7 +702,7 @@ class WorkLifeBalanceApp {
 
         const progressHTML = `
             <div class="progress-rings-section">
-                <h3>�� Daily Progress</h3>
+                <h3>📊 Daily Progress</h3>
                 <div class="progress-rings" id="progressRings">
                     <!-- Progress rings will be populated by updateProgressRings -->
                 </div>
@@ -1183,7 +1183,7 @@ class WorkLifeBalanceApp {
     }
 
     initializeExpenseCheckbox() {
-        console.log('��� Initializing expense checkbox...');
+        console.log('Initializing expense checkbox...');
 
         // Use a more direct approach - set up the event listener immediately
         document.addEventListener('change', (e) => {
@@ -3276,7 +3276,7 @@ class WorkLifeBalanceApp {
         if (percentage > 40) {
             return {
                 type: 'warning',
-                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕��🛍️✈��🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
+                message: `High spending in ${this.getCategoryDisplayName(category).replace(/[🍕📧🛍️✈️🎬🏥📚💪📺🛒👕📦]/g, '').trim()}`
             };
         } else if (percentage > 25) {
             return {
@@ -3957,44 +3957,58 @@ class WorkLifeBalanceApp {
     startExercise(exerciseType) {
         const exercise = Utils.getExerciseInstructions(exerciseType);
         if (!exercise) return;
-        
-        // Update exercise modal content
-        const exerciseModal = document.getElementById('exerciseModal');
-        if (exerciseModal) {
-            const titleEl = exerciseModal.querySelector('#exerciseTitle');
-            const instructionsEl = exerciseModal.querySelector('#exerciseInstructions');
-            
-            if (titleEl) titleEl.textContent = exercise.title;
-            if (instructionsEl) {
-                instructionsEl.innerHTML = `
-                    <div class="exercise-details">
-                        <p><strong>Duration:</strong> ${exercise.duration}</p>
-                        <p><strong>Calories burned:</strong> ~${exercise.calories}</p>
-                        <h4>Instructions:</h4>
-                        <ol>
-                            ${exercise.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
-                        </ol>
-                    </div>
-                `;
-            }
-            
-            this.openModal('exerciseModal');
 
-            // Handle complete button
-            const completeBtn = document.getElementById('completeExerciseBtn');
-            if (completeBtn) {
-                completeBtn.onclick = () => {
+        // Use enhanced flow to setup modal and timer UI
+        if (typeof this.startExerciseEnhanced === 'function') {
+            this.startExerciseEnhanced(exerciseType);
+        } else {
+            // Fallback: basic modal population
+            const exerciseModal = document.getElementById('exerciseModal');
+            if (exerciseModal) {
+                const titleEl = exerciseModal.querySelector('#exerciseTitle');
+                const instructionsEl = exerciseModal.querySelector('#exerciseInstructions');
+                if (titleEl) titleEl.textContent = exercise.title;
+                if (instructionsEl) {
+                    instructionsEl.innerHTML = `
+                        <div class="exercise-details">
+                            <p><strong>Duration:</strong> ${exercise.duration}</p>
+                            <p><strong>Calories burned:</strong> ~${exercise.calories}</p>
+                            <h4>Instructions:</h4>
+                            <ol>
+                                ${exercise.instructions.map(instruction => `<li>${instruction}</li>`).join('')}
+                            </ol>
+                        </div>
+                    `;
+                }
+                this.openModal('exerciseModal');
+            }
+        }
+
+        // Auto-start timer for timed exercises (exclude breathing)
+        if (exercise.duration && exerciseType !== 'breathing') {
+            // Ensure timer values are initialized
+            if (typeof this.parseDurationToSeconds === 'function') {
+                this.timerDuration = this.parseDurationToSeconds(exercise.duration);
+                this.timerRemaining = this.timerDuration;
+            }
+            // Start the countdown immediately
+            this.startExerciseTimer();
+        }
+
+        // Wire buttons to enhanced completion handlers if available
+        const completeBtn = document.getElementById('completeExerciseBtn');
+        if (completeBtn) {
+            completeBtn.onclick = () => {
+                if (typeof this.completeExerciseEnhanced === 'function') {
+                    this.completeExerciseEnhanced(exerciseType, exercise);
+                } else {
                     this.completeExercise(exerciseType, exercise);
-                };
-            }
-
-            // Handle skip button
-            const skipBtn = document.getElementById('skipExerciseBtn');
-            if (skipBtn) {
-                skipBtn.onclick = () => {
-                    this.skipExercise(exerciseType, exercise);
-                };
-            }
+                }
+            };
+        }
+        const skipBtn = document.getElementById('skipExerciseBtn');
+        if (skipBtn) {
+            skipBtn.onclick = () => this.skipExercise(exerciseType, exercise);
         }
     }
 
@@ -5553,7 +5567,7 @@ class WorkLifeBalanceApp {
             '💪 Working out significantly improves your mood!' :
             correlation < -0.3 ?
             '😰 High workout intensity might be causing stress' :
-            '�� Moderate correlation - keep tracking for better insights';
+            'ℹ️ Moderate correlation - keep tracking for better insights';
 
         this.updateCorrelationDisplay('fitnessStressCorrelation', percentage, insight);
     }
@@ -6161,7 +6175,7 @@ class WorkLifeBalanceApp {
             'groceries': '🛒',
             'clothing': '👕',
             'healthcare': '🏥',
-            'reminder': '���',
+            'reminder': '🔔',
             'other': '📦'
         };
         return icons[category] || '📦';
@@ -7871,7 +7885,7 @@ class WorkLifeBalanceApp {
             if (meal) {
                 gridHTML += `
                     <div class="meal-card ${meal.status || 'planned'}">
-                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '��️ Planned'}</div>
+                        <div class="meal-status ${meal.status || 'planned'}">${meal.status === 'eaten' ? '✅ Eaten' : '🗓️ Planned'}</div>
                         <div class="meal-emoji">${typeInfo.emoji}</div>
                         <h4>${typeInfo.name}</h4>
                         <p class="meal-name">${Utils.sanitizeInput(meal.name)}</p>
@@ -9126,7 +9140,7 @@ class WorkLifeBalanceApp {
                     <span class="breakdown-value ${this.getScoreClass(nutritionScore)}">${nutritionScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
-                    <span class="breakdown-label">��� Productivity</span>
+                    <span class="breakdown-label">💼 Productivity</span>
                     <span class="breakdown-value ${this.getScoreClass(productivityScore)}">${productivityScore}/100</span>
                 </div>
                 <div class="balance-breakdown-item">
@@ -10518,7 +10532,7 @@ class WorkLifeBalanceApp {
         const areas = [
             { name: 'Fitness', score: scores.fitness, icon: '💪' },
             { name: 'Nutrition', score: scores.nutrition, icon: '🍲' },
-            { name: 'Productivity', score: scores.productivity, icon: '����' },
+            { name: 'Productivity', score: scores.productivity, icon: '💼' },
             { name: 'Financial', score: scores.financial, icon: '💰' },
             { name: 'Wellness', score: scores.wellness, icon: '🧘' }
         ];
@@ -11126,7 +11140,7 @@ class WorkLifeBalanceApp {
                 </div>
 
                 <div class="report-section">
-                    <h3>��� Key Insights</h3>
+                    <h3>💡 Key Insights</h3>
                     <div class="insights-grid">
                         ${this.generateInsightCards(data)}
                     </div>
@@ -11313,7 +11327,7 @@ class WorkLifeBalanceApp {
         // Financial recommendations
         const totalExpenses = data.expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
         if (totalExpenses > 5000) {
-            recommendations.push('��� Review your spending patterns and consider budgeting');
+            recommendations.push('💡 Review your spending patterns and consider budgeting');
         }
 
         return recommendations.map(rec => `
