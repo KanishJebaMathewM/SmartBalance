@@ -1375,6 +1375,21 @@
     margin-bottom: 16px;
 }
 
+.period-navigation .nav-btn {
+    min-width: 120px;
+    justify-content: center;
+}
+
+@media (max-width: 640px) {
+    .period-navigation {
+        gap: 12px;
+    }
+    .period-navigation .nav-btn {
+        min-width: 96px;
+        padding: 8px 14px;
+    }
+}
+
 .nav-btn {
     display: inline-flex;
     align-items: center;
