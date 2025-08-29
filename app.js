@@ -13,7 +13,7 @@ function toggleExpenseDetails(checkbox) {
 
     if (expenseDetails) {
         console.log('💰 Current state - display:', window.getComputedStyle(expenseDetails).display);
-        console.log('��� Current inline style:', expenseDetails.style.cssText);
+        console.log('💰 Current inline style:', expenseDetails.style.cssText);
 
         if (checkbox.checked) {
             // Method 1: Remove all inline styles
@@ -802,12 +802,13 @@ class WorkLifeBalanceApp {
         this.initializeButtonHandlers();
         // Delegated handler to ensure Start Exercise works reliably
         document.addEventListener('click', (e) => {
-            const startBtn = e.target.closest('.exercise-card .btn-secondary');
-            if (startBtn) {
-                const card = startBtn.closest('.exercise-card');
-                const exerciseType = card && card.dataset.exercise;
-                if (exerciseType) this.startExercise(exerciseType);
-            }
+            const btn = e.target.closest('.btn-secondary');
+            if (!btn) return;
+            const card = btn.closest('.exercise-card');
+            if (!card) return;
+            if (!btn.closest('#fitness')) return; // limit to fitness section
+            const exerciseType = card.dataset.exercise;
+            if (exerciseType) this.startExercise(exerciseType);
         });
 
         // Filter buttons
@@ -7939,7 +7940,7 @@ class WorkLifeBalanceApp {
                             <span class="cost">₹${meal.source === 'home' ? (meal.ingredientCost || 0) : ((parseFloat(meal.mealCost) || 0) + (parseFloat(meal.deliveryCharges) || 0))}</span>
                         </div>
                         <div class="meal-source-indicator ${meal.source}">
-                            <span>${meal.source === 'home' ? '🏠' : '🏨'}</span>
+                            <span>${meal.source === 'home' ? '����' : '🏨'}</span>
                             <span>${meal.source === 'home' ? 'Home Cooked' : 'Ordered'}</span>
                         </div>
                         <div class="meal-actions">
@@ -11040,7 +11041,7 @@ class WorkLifeBalanceApp {
 
         if (weakestArea.score < 50) {
             insights.push({
-                icon: '���',
+                icon: '🎯',
                 title: `Focus on ${weakestArea.name}`,
                 description: `Your ${weakestArea.name.toLowerCase()} area needs attention. Small consistent improvements here will boost your overall balance.`,
                 type: 'improvement'
