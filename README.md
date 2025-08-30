@@ -131,3 +131,22 @@ SmartBalance is a privacy‑first, single‑page web app that helps you stay on 
 
 ——
 SmartBalance is built to reduce friction, not add it. Open it, take a breath, and move one step at a time — the app will keep score for you so you can focus on living well.
+
+## Contributing
+- Contributions to SmartBalance are welcome.
+- Fork the repository, create a feature branch, commit changes with clear messages, push your branch, and open a Pull Request for review.
+- Your contributions help improve the app and make it more user-friendly.
+
+## Acknowledgements
+- SmartBalance was inspired by the need for tools that help professionals and individuals achieve better work-life balance.
+- Special thanks to early users and testers who provided valuable feedback.
+
+## License
+- This project is licensed under the MIT License.
+- You are free to use, modify, and distribute it under the license terms.
+
+## Live Demo
+- Experience SmartBalance directly in your browser: [SmartBalance Live](https://kanishjebamathewm.github.io/SmartBalance/)
+
+## Blog
+- Read the full story behind SmartBalance and its development journey: [The Story of SmartBalance on Medium](https://medium.com/@kanishjebamathew.m/the-story-of-smartbalance-80e8c68424ec)
